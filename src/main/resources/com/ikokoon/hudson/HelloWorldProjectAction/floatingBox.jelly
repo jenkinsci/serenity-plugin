@@ -1,0 +1,11 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
+    <j:choose>
+      <j:when test="${from.hasResult()}">
+        <h1>Serenity: ${from.lastCoverageTotal}</h1>
+      </j:when>
+      <j:otherwise>
+        <h1>A Serenity report has not been generated yet</h1>
+      </j:otherwise>
+    </j:choose>
+</j:jelly>

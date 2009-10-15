@@ -1,0 +1,47 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<b>Class : ${it.klass.name} </b>
+	<table class="pane" width="100%">
+		<tr>
+			<td class="pane-header" width="30%">Name</td>
+			<td class="pane-header" width="5%">Cover</td>
+			<td class="pane-header" width="5%">Complex</td>
+			<td class="pane-header" width="5%">Lines</td>
+			<td class="pane-header" width="55%">Descr</td>
+		</tr>
+		<tbody>
+		<j:set var="color" value="#339900" />
+		<j:forEach var="method" items="${it.klass.methods}">
+		<tr>
+			<td class="pane">
+				<b><a href="${it.url}${method.name}?methodName=${method.name}">${method.name}</a></b>
+			</td>
+			<td class="pane">
+				<j:if test="${method.coverage &lt; 50}">
+					<j:set var="color" value="#842424" />
+				</j:if>
+				<font color="${color}">${method.coverage}</font>
+				<j:set var="color" value="#339900" />
+			</td>
+			<td class="pane">
+				<j:if test="${method.complexity &gt; 10}">
+					<j:set var="color" value="#842424" />
+				</j:if>
+				<font color="${color}">${method.complexity}</font>
+				<j:set var="color" value="#339900" />
+			</td>
+			<td class="pane">
+				<j:if test="${method.complexity &gt; 100}">
+					<j:set var="color" value="#842424" />
+				</j:if>
+				<font color="${color}">${method.lines}</font>
+				<j:set var="color" value="#339900" />
+			</td>
+			<td class="pane">
+				<input type="text" size="80" maxlength="1024" value="${method.description}" readonly="true"></input>
+			</td>
+		</tr>
+		</j:forEach>
+		<tr><td> </td></tr>
+		</tbody>
+	</table>
+</j:jelly>

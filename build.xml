@@ -1,0 +1,101 @@
+<?xml version="1.0" ?>
+<project name="Coverage" default="clean.compile.build.test" basedir=".">
+
+	<!-- Some properties -->
+	<property name="lib" value="lib" />
+	<property name="src" value="src/main/java" />
+	<property name="bin" value="target/Serenity/WEB-INF/classes" />
+	<property name="test" value="src/test/java" />
+	<property name="test.resources" value="src/test/resources" />
+	<property name="test.classes" value="bin" />
+	<property name="serenity" value="serenity" />
+	<property name="serenity.jar" value="lib/serenity.jar" />
+
+	<!-- Set the classpath -->
+	<path id="build.classpath">
+		<fileset dir=".">
+			<include name="*.jar" />
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement path="${bin}" />
+		<pathelement location="${bin}" />
+		<pathelement location="${test.classes}" />
+		<pathelement location="${test.resources}" />
+	</path>
+
+	<!-- Target to run the other targets in order -->
+	<target name="clean.compile.build.test">
+		<antcall target="clean" />
+		<antcall target="compile" />
+		<antcall target="build" />
+		<antcall target="test" />
+	</target>
+
+	<target name="build">
+		<delete file="${serenity.jar}" failonerror="false" />
+		<jar jarfile="${serenity.jar}" update="no" manifest="${src}/META-INF/MANIFEST.MF">
+			<fileset dir="${bin}">
+				<include name="**" />
+			</fileset>
+			<fileset dir="${src}">
+				<include name="**" />
+			</fileset>
+		</jar>
+		<delete file="../Dummy/lib/serenity.jar" failonerror="true" />
+		<copy todir="../Dummy/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" />
+		<delete file="../Search/lib/serenity.jar" failonerror="true" />
+		<copy todir="../Search/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" />
+		<delete file="../Lucene/lib/serenity.jar" failonerror="true" />
+		<copy todir="../Lucene/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" />
+		<delete file="../Findbugs/lib/serenity.jar" failonerror="true" />
+		<copy todir="../Findbugs/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" />
+		<delete file="../log4j/lib/serenity.jar" failonerror="true" />
+		<copy todir="../log4j/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" />
+	</target>
+
+	<!-- Clean the output directory -->
+	<target name="clean">
+		<delete dir="${bin}" />
+		<mkdir dir="${bin}" />
+	</target>
+
+	<target name="clean.compile.build">
+		<antcall target="clean" />
+		<antcall target="compile" />
+		<antcall target="build" />
+	</target>
+
+	<!-- Compile everything -->
+	<target name="compile">
+		<!-- First build the project classes -->
+		<javac debug="true" optimize="false" srcdir="${src}" destdir="${bin}" encoding="UTF8" failonerror="true">
+			<classpath refid="build.classpath" />
+		</javac>
+		<!-- Then build the test classes -->
+		<javac debug="true" optimize="false" srcdir="${test}" destdir="${bin}" encoding="UTF8" failonerror="true">
+			<classpath refid="build.classpath" />
+		</javac>
+	</target>
+
+	<!-- Run the tests -->
+	<target name="test">
+		<junit fork="true" forkmode="once" filtertrace="true" printsummary="true" showoutput="true">
+			<classpath refid="build.classpath" />
+			<sysproperty key="included.packages" value="com.ikokoon.target" />
+			<sysproperty key="included.adapters" value="
+										com.ikokoon.instrumentation.coverage.CoverageClassAdapter;
+										com.ikokoon.instrumentation.dependency.DependencyClassAdapter;
+										com.ikokoon.instrumentation.complexity.ComplexityClassAdapter;" />
+			<jvmarg line="-javaagent:lib/serenity.jar" />
+			<batchtest todir="${serenity}" haltonerror="false" haltonfailure="false">
+				<formatter type="xml" />
+				<fileset dir="${test}">
+					<!-- include name="**/DataBaseNeodatisTest.java" />
+					<include name="**/ToolkitTest.java" / -->
+					<include name="**/TargetTest.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+</project>

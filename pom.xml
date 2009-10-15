@@ -1,0 +1,131 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.jvnet.hudson.plugins</groupId>
+		<artifactId>plugin</artifactId>
+		<version>1.323</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<groupId>com.ikokoon</groupId>
+	<artifactId>serenity</artifactId>
+	<version>1.0</version>
+	<packaging>hpi</packaging>
+	<name>Hudson Serenity plugin</name>
+	<url>http://wiki.hudson-ci.org/display/HUDSON/Serenity+Plugin</url>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy.hpi.task</id>
+						<phase>install</phase>
+						<configuration>
+							<tasks verbose="true">
+								<echo message="Copying HPI and serenity.jar file to the project directory" />
+								<delete file="lib/serenity.hpi" failonerror="true" />
+								<copy todir="lib" file="target/serenity.hpi" overwrite="true" failonerror="true" />
+								<delete file="lib/serenity.jar" failonerror="true" />
+								<copy todir="lib" file="target/serenity.jar" overwrite="true" failonerror="true" />
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>asm</groupId>
+			<artifactId>asm</artifactId>
+			<version>3.1</version>
+			<type>jar</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>persistence-api</artifactId>
+			<version>1.0</version>
+			<type>jar</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.7</version>
+			<type>jar</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.5</version>
+			<type>jar</type>
+			<scope>runtime</scope>
+		</dependency>
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>m.g.o-public</id>
+			<url>http://maven.glassfish.org/content/groups/public/</url>
+		</repository>
+		<repository>
+			<id>repo1.maven.org</id>
+			<name>repo1 Mirror of http://repo1.maven.org/maven2</name>
+			<url>http://repo1.maven.org/maven2</url>
+		</repository>
+		<repository>
+			<id>repo2.maven.org</id>
+			<name>repo2 Mirror of http://repo2.maven.org/maven2</name>
+			<url>http://repo2.maven.org/maven2</url>
+		</repository>
+		<repository>
+			<id>ibiblio.org</id>
+			<name>ibiblio Mirror of http://repo1.maven.org/maven2/</name>
+			<url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
+		</repository>
+		<repository>
+			<id>jboss.com/maven2</id>
+			<name>repo2 Mirror of http://repository.jboss.com/maven2/</name>
+			<url>http://repository.jboss.com/maven2</url>
+		</repository>
+		<repository>
+			<id>maven2-repository.dev.java.net</id>
+			<name>Java.net Repository for Maven</name>
+			<url>http://download.java.net/maven/2/</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>java.net2</id>
+			<url>http://download.java.net/maven/2</url>
+		</repository>
+		<repository>
+			<id>hudson-libs</id>
+			<url>https://hudson.dev.java.net/source/browse/*checkout*/hudson/hudson/main/lib
+			</url>
+			<layout>legacy</layout>
+			<releases>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>m.g.o-public</id>
+			<url>http://maven.glassfish.org/content/groups/public/</url>
+		</pluginRepository>
+	</pluginRepositories>
+</project>

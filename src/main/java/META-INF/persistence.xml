@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+    http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd" version="1.0">
+
+	<persistence-unit name="SerenityPersistenceUnit" transaction-type="RESOURCE_LOCAL">
+		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+
+		<class>com.ikokoon.instrumentation.model.Package</class>
+		<class>com.ikokoon.instrumentation.model.Class</class>
+		<class>com.ikokoon.instrumentation.model.Method</class>
+		<class>com.ikokoon.instrumentation.model.Line</class>
+		<class>com.ikokoon.instrumentation.model.Efferent</class>
+		<class>com.ikokoon.instrumentation.model.Afferent</class>
+
+		<!-- HSQLDB/OpenJpa -->
+		<properties>
+			<property name="openjpa.ConnectionURL" value="jdbc:hsqldb:file:./serenity/serenity.db;shutdown=true" />
+			<property name="openjpa.ConnectionDriverName" value="org.hsqldb.jdbcDriver" />
+			<property name="openjpa.ConnectionUserName" value="sa" />
+			<property name="openjpa.ConnectionPassword" value="" />
+			<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)" />
+			<property name="openjpa.Log" value="DefaultLevel=INFO,SQL=INFO,File=./serenity/openjpa.log,Runtime=INFO,Tool=INFO,SQL=TRACE" />
+			<property name="openjpa.ConnectionFactoryProperties" value="PrettyPrint=true,PrettyPrintLineLength=150" />
+			<property name="openjpa.RemoteCommitProvider" value="sjvm" />
+			<property name="openjpa.DataCache" value="true(CacheSize=500000, SoftReferenceSize=0)" />
+			<property name="openjpa.QueryCache" value="CacheSize=500000, SoftReferenceSize=0" />
+			<property name="openjpa.RefreshFromDataCache" value="true" />
+		</properties>
+
+		<!-- DB2/OpenJpa -->
+		<!-- properties>
+			<property name="openjpa.ConnectionUserName" value="db2admin" />
+			<property name="openjpa.ConnectionPassword" value="db2admin" />
+			<property name="openjpa.ConnectionDriverName" value="com.ibm.db2.jcc.DB2Driver" />
+			<property name="openjpa.ConnectionURL" value="jdbc:db2://192.168.0.10:50000/CCFFW1:currentSchema=MICHAELCOUCK;" />
+			<property name="openjpa.ConnectionFactoryProperties" value="PrettyPrint=true,PrettyPrintLineLength=150" />
+			<property name="openjpa.Log" value="DefaultLevel=INFO,SQL=INFO,File=./serenity/openjpa.log" />
+			<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)" />
+			<property name="openjpa.jdbc.Schema" value="MICHAELCOUCK" />
+
+			<property name="openjpa.RemoteCommitProvider" value="sjvm" />
+			<property name="openjpa.DataCache" value="true(CacheSize=500000, SoftReferenceSize=0)" />
+			<property name="openjpa.QueryCache" value="CacheSize=500000, SoftReferenceSize=0" />
+			<property name="openjpa.RefreshFromDataCache" value="true" />
+		</properties-->
+
+	</persistence-unit>
+</persistence>

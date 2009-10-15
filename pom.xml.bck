@@ -1,0 +1,234 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.ikokoon.hudson.plugins</groupId>
+	<artifactId>Serenity</artifactId>
+	<packaging>hpi</packaging>
+	<name>Serenity</name>
+	<version>1.0</version>
+
+	<properties>
+		<hudsonVersion>1.258</hudsonVersion>
+		<hudsonGroupName>org.jvnet.hudson.main</hudsonGroupName>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>asm</groupId>
+			<artifactId>asm-all</artifactId>
+			<version>3.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.5</version>
+		</dependency>
+		<dependency>
+			<groupId>${hudsonGroupName}</groupId>
+			<artifactId>hudson-core</artifactId>
+			<version>${hudsonVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>${hudsonGroupName}</groupId>
+			<artifactId>hudson-war</artifactId>
+			<version>${hudsonVersion}</version>
+			<type>war</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.7</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.7</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>db4o</groupId>
+			<artifactId>db4o</artifactId>
+			<version>7.4</version>
+			<type>jar</type>
+			<scope>runtime</scope>
+		</dependency>
+	</dependencies>
+	<description>Coverage, complexity and dependancy package with a Hudson plugin.</description>
+	<url>www.ikokoon.com</url>
+	<organization>
+		<name>Ikokoon</name>
+		<url>www.ikokoon.com</url>
+	</organization>
+
+	<build>
+		<!--
+	      Since new versions need to overwrite old versions, it's better
+    	  not to have version number in the .hpi file name.
+    	-->
+		<finalName>${project.artifactId}</finalName>
+		<defaultGoal>package</defaultGoal>
+		<resources>
+		</resources>
+		<filters>
+		</filters>
+		<plugins>
+			<plugin>
+				<groupId>org.jvnet.hudson.tools</groupId>
+				<artifactId>maven-hpi-plugin</artifactId>
+				<version>1.41</version>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<target>1.6</target>
+					<source>1.6</source>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.4.2</version>
+				<configuration>
+					<systemProperties>
+						<forkMode>once</forkMode>
+						<property>
+							<name>java.class.path</name>
+							<value>${java.class.path}</value>
+						</property>
+						<argLine>-javaagent:serenity.jar -Xms512m -Xmx1024m -Dcoverage.packages=com.ikokoon.target</argLine>
+						<additionalClasspathElements>${surefire.test.class.path}</additionalClasspathElements>
+					</systemProperties>
+				</configuration>
+			</plugin>
+		</plugins>
+		<extensions>
+		</extensions>
+	</build>
+
+	<repositories>
+		<!-- First the local reposiroty should be the fastest. -->
+		<repository>
+			<id>ext-releases-local</id>
+			<url>http://localhost:8080/artifactory-2.0.8/ext-releases-local</url>
+			<layout>legacy</layout>
+			<releases>
+				<enabled>true</enabled>
+				<!-- only look for jars here when they are not present locally -->
+				<updatePolicy>always</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>hudson-libs</id>
+			<url>http://localhost:8080/artifactory-2.0.8/hudson-libs</url>
+			<layout>legacy</layout>
+			<releases>
+				<enabled>true</enabled>
+				<!-- only look for jars here when they are not present locally -->
+				<updatePolicy>always</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<!--  We put the central repository first, as most artifacts will be found there -->
+		<repository>
+			<id>central</id>
+			<url>http://repo1.maven.org/maven2</url>
+			<releases>
+				<enabled>true</enabled>
+				<!-- only look for jars here when they are not present locally -->
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>java.net2</id>
+			<url>http://download.java.net/maven/2</url>
+			<releases>
+				<enabled>true</enabled>
+				<!-- only look for jars here when they are not present locally -->
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>java.net</id>
+			<url>http://download.java.net/maven/1</url>
+			<layout>legacy</layout>
+			<releases>
+				<enabled>true</enabled>
+				<!-- only look for jars here when they are not present locally -->
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>hudson-libs</id>
+			<url>https://hudson.dev.java.net/source/browse/*checkout*/hudson/hudson/main/lib
+			</url>
+			<layout>legacy</layout>
+			<releases>
+				<enabled>false</enabled>
+				<!-- only look for jars here when they are not present locally -->
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
+		<!--
+			We put the java.net2 repository second, as it's a Maven2 format and therefore _should_ be faster for Maven2. Hopefully, people will stop pushing
+			their artifacts to java.net and push to java.net2 or somebody will put a synchronizer in place to require only the java.net2 repository.
+		-->
+
+		<!-- Now for the java.net repository (legacy layout) -->
+		<!-- Finally, the slowest repository of them all -->
+	</repositories>
+
+	<pluginRepositories>
+		<!--  We put the central repository first, as most artifacts will be found there -->
+		<pluginRepository>
+			<id>central</id>
+			<url>http://repo1.maven.org/maven2</url>
+			<releases>
+				<enabled>true</enabled>
+				<!-- only look for jars here when they are not present locally -->
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>java.net2</id>
+			<url>http://download.java.net/maven/2</url>
+			<releases>
+				<enabled>true</enabled>
+				<!-- only look for jars here when they are not present locally -->
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+</project>

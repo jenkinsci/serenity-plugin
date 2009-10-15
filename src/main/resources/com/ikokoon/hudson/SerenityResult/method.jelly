@@ -1,0 +1,17 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<b>Method : ${it.method.name}</b>
+	<table class="pane" width="10%">
+		<tr>
+			<td class="pane-header" width="5%">Number</td>
+			<td class="pane-header" width="5%">Counter</td>
+		</tr>
+		<tbody>
+		<j:forEach var="line" items="${it.method.linesList}">
+		<tr>
+			<td class="pane">${line.number}</td>
+			<td class="pane">${line.counter}</td>
+		</tr>
+		</j:forEach>
+		</tbody>
+	</table>
+</j:jelly>

@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Class-Path: asm-all-3.1.jar dom4j-1.6.1.jar log4j-1.2.15.jar mockito-all-1.7.jar
+Premain-Class: com.ikokoon.instrumentation.Transformer
