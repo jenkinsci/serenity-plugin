@@ -5,20 +5,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+//import javax.persistence.CascadeType;
+//import javax.persistence.Entity;
+//import javax.persistence.FetchType;
+//import javax.persistence.GeneratedValue;
+//import javax.persistence.GenerationType;
+//import javax.persistence.Id;
+//import javax.persistence.Inheritance;
+//import javax.persistence.InheritanceType;
+//import javax.persistence.ManyToMany;
+//import javax.persistence.ManyToOne;
+//import javax.persistence.NamedQueries;
+//import javax.persistence.NamedQuery;
+// import javax.persistence.OneToMany;
 
+import com.ikokoon.persistence.Id;
 import com.ikokoon.persistence.Identifier;
 import com.ikokoon.persistence.Unique;
 import com.ikokoon.toolkit.Toolkit;
@@ -28,11 +29,11 @@ import com.ikokoon.toolkit.Toolkit;
  * @since 12.08.09
  * @version 01.00
  */
-@Entity
+// @Entity
+// @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+// @NamedQueries( { @NamedQuery(name = Class.SELECT_CLASSES, query = Class.SELECT_CLASSES),
+// @NamedQuery(name = Class.SELECT_CLASSS_BY_NAME, query = Class.SELECT_CLASSS_BY_NAME) })
 @Unique(fields = { "name" })
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@NamedQueries( { @NamedQuery(name = Class.SELECT_CLASSES, query = Class.SELECT_CLASSES),
-		@NamedQuery(name = Class.SELECT_CLASSS_BY_NAME, query = Class.SELECT_CLASSS_BY_NAME) })
 public class Class implements Comparable<Class>, Serializable {
 
 	public static final String SELECT_CLASSES = "select a from Class as a";
@@ -55,7 +56,7 @@ public class Class implements Comparable<Class>, Serializable {
 	private Collection<Afferent> afferentPackages = new ArrayList<Afferent>();
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	// @GeneratedValue(strategy = GenerationType.SEQUENCE)
 	public Long getId() {
 		return id;
 	}
@@ -73,7 +74,7 @@ public class Class implements Comparable<Class>, Serializable {
 		this.name = name;
 	}
 
-	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.EAGER)
+	// @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.EAGER)
 	public Package getParent() {
 		return parent;
 	}
@@ -148,7 +149,7 @@ public class Class implements Comparable<Class>, Serializable {
 		this.timestamp = timestamp;
 	}
 
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.EAGER)
+	// @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.EAGER)
 	public Collection<Method> getChildren() {
 		return children;
 	}
@@ -157,7 +158,7 @@ public class Class implements Comparable<Class>, Serializable {
 		this.children = children;
 	}
 
-	@ManyToMany(targetEntity = Efferent.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+	// @ManyToMany(targetEntity = Efferent.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public Collection<Efferent> getEfferentPackages() {
 		return efferentPackages;
 	}
@@ -166,7 +167,7 @@ public class Class implements Comparable<Class>, Serializable {
 		this.efferentPackages = errerent;
 	}
 
-	@ManyToMany(targetEntity = Afferent.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+	// @ManyToMany(targetEntity = Afferent.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public Collection<Afferent> getAfferentPackages() {
 		return afferentPackages;
 	}

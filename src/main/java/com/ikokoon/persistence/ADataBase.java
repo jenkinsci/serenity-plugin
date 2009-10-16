@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Id;
-
 import org.apache.log4j.Logger;
 
 import com.ikokoon.IConstants;
@@ -72,7 +70,7 @@ public abstract class ADataBase implements IDataBase {
 	 *            the object to get the id field from
 	 * @return the id from the object or null if no id field is available or the id is null
 	 */
-	public Long getId(Class klass, Object object) {
+	public Long getId(Class<?> klass, Object object) {
 		Method idGetterMethod = idGetterMethods.get(klass);
 		if (idGetterMethod == null) {
 			Method[] methods = klass.getDeclaredMethods();

@@ -5,27 +5,28 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.ManyToMany;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+//import javax.persistence.CascadeType;
+//import javax.persistence.Entity;
+//import javax.persistence.FetchType;
+//import javax.persistence.GeneratedValue;
+//import javax.persistence.GenerationType;
+//import javax.persistence.Id;
+//import javax.persistence.Inheritance;
+//import javax.persistence.InheritanceType;
+//import javax.persistence.ManyToMany;
+//import javax.persistence.NamedQueries;
+//import javax.persistence.NamedQuery;
 
+import com.ikokoon.persistence.Id;
 import com.ikokoon.persistence.Identifier;
 import com.ikokoon.persistence.Unique;
 
-@Entity
+//@Entity
+//@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+//@NamedQueries( { @NamedQuery(name = Efferent.SELECT_EFFERENTS, query = Efferent.SELECT_EFFERENTS),
+//		@NamedQuery(name = Efferent.SELECT_EFFERENTS_BY_NAME, query = Efferent.SELECT_EFFERENTS_BY_NAME),
+//		@NamedQuery(name = Efferent.SELECT_EFFERENTS_BY_NAME_AND_TYPE, query = Efferent.SELECT_EFFERENTS_BY_NAME_AND_TYPE) })
 @Unique(fields = { "name" })
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@NamedQueries( { @NamedQuery(name = Efferent.SELECT_EFFERENTS, query = Efferent.SELECT_EFFERENTS),
-		@NamedQuery(name = Efferent.SELECT_EFFERENTS_BY_NAME, query = Efferent.SELECT_EFFERENTS_BY_NAME),
-		@NamedQuery(name = Efferent.SELECT_EFFERENTS_BY_NAME_AND_TYPE, query = Efferent.SELECT_EFFERENTS_BY_NAME_AND_TYPE) })
 public class Efferent implements Comparable<Efferent>, Serializable {
 
 	public static final String SELECT_EFFERENTS = "select a from Efferent as a";
@@ -38,7 +39,7 @@ public class Efferent implements Comparable<Efferent>, Serializable {
 	private Collection<Class> bases = new ArrayList<Class>();
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	// @GeneratedValue(strategy = GenerationType.SEQUENCE)
 	public Long getId() {
 		return id;
 	}
@@ -64,7 +65,8 @@ public class Efferent implements Comparable<Efferent>, Serializable {
 		this.timestamp = timestamp;
 	}
 
-	@ManyToMany(targetEntity = Class.class, mappedBy = "efferentPackages", cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+	// @ManyToMany(targetEntity = Class.class, mappedBy = "efferentPackages", cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH
+	// }, fetch = FetchType.LAZY)
 	public Collection<Class> getBases() {
 		return bases;
 	}

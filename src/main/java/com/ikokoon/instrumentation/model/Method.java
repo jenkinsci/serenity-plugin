@@ -5,19 +5,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+//import javax.persistence.CascadeType;
+//import javax.persistence.Entity;
+//import javax.persistence.FetchType;
+//import javax.persistence.GeneratedValue;
+//import javax.persistence.GenerationType;
+//import javax.persistence.Id;
+//import javax.persistence.Inheritance;
+//import javax.persistence.InheritanceType;
+//import javax.persistence.ManyToOne;
+//import javax.persistence.NamedQueries;
+//import javax.persistence.NamedQuery;
+//import javax.persistence.OneToMany;
 
+import com.ikokoon.persistence.Id;
 import com.ikokoon.persistence.Identifier;
 import com.ikokoon.persistence.Unique;
 import com.ikokoon.toolkit.Toolkit;
@@ -27,13 +28,14 @@ import com.ikokoon.toolkit.Toolkit;
  * @since 12.08.09
  * @version 01.00
  */
-@Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+// @Entity
+// @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+// @NamedQueries( {
+// @NamedQuery(name = Method.SELECT_METHODS, query = Method.SELECT_METHODS),
+// @NamedQuery(name = Method.SELECT_METHODS_BY_NAME, query = Method.SELECT_METHODS_BY_NAME),
+// @NamedQuery(name = Method.SELECT_METHOD_BY_CLASS_NAME_AND_METHOD_NAME_AND_METHOD_DESCRIPTION, query =
+// Method.SELECT_METHOD_BY_CLASS_NAME_AND_METHOD_NAME_AND_METHOD_DESCRIPTION) })
 @Unique(fields = { "parent", "name", "description" })
-@NamedQueries( {
-		@NamedQuery(name = Method.SELECT_METHODS, query = Method.SELECT_METHODS),
-		@NamedQuery(name = Method.SELECT_METHODS_BY_NAME, query = Method.SELECT_METHODS_BY_NAME),
-		@NamedQuery(name = Method.SELECT_METHOD_BY_CLASS_NAME_AND_METHOD_NAME_AND_METHOD_DESCRIPTION, query = Method.SELECT_METHOD_BY_CLASS_NAME_AND_METHOD_NAME_AND_METHOD_DESCRIPTION) })
 public class Method implements Comparable<Method>, Serializable {
 
 	public static final String SELECT_METHODS = "select a from Method as a";
@@ -54,7 +56,7 @@ public class Method implements Comparable<Method>, Serializable {
 	private Collection<Line> children = new ArrayList<Line>();
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	// @GeneratedValue(strategy = GenerationType.SEQUENCE)
 	public Long getId() {
 		return id;
 	}
@@ -72,7 +74,7 @@ public class Method implements Comparable<Method>, Serializable {
 		this.name = name;
 	}
 
-	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.EAGER)
+	// @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.EAGER)
 	public Class getParent() {
 		return parent;
 	}
@@ -97,7 +99,7 @@ public class Method implements Comparable<Method>, Serializable {
 		this.timestamp = timestamp;
 	}
 
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.EAGER)
+	// @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.EAGER)
 	public Collection<Line> getChildren() {
 		return children;
 	}

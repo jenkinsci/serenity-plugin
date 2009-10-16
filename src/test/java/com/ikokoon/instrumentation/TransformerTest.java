@@ -1,8 +1,8 @@
 package com.ikokoon.instrumentation;
 
+import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -12,7 +12,6 @@ import java.security.ProtectionDomain;
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -23,7 +22,6 @@ import org.objectweb.asm.MethodVisitor;
 import com.ikokoon.ATest;
 import com.ikokoon.instrumentation.coverage.CoverageClassAdapter;
 import com.ikokoon.target.Target;
-import com.ikokoon.toolkit.ObjectFactory;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -38,10 +36,8 @@ public class TransformerTest extends ATest {
 	/** The logger for the class. */
 	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(TransformerTest.class);
-	@Mock
-	private Instrumentation instrumentation = mock(Instrumentation.class);
-	@Mock
-	private ProtectionDomain protectionDomain = mock(ProtectionDomain.class);
+	private Instrumentation instrumentation = createMock(Instrumentation.class);
+	private ProtectionDomain protectionDomain; // = createMock(ProtectionDomain.class);
 
 	@Before
 	public void setUp() {
@@ -75,7 +71,7 @@ public class TransformerTest extends ATest {
 		byteCodes = new String(classfileBuffer);
 		assertTrue(byteCodes.indexOf(Collector.class.getSimpleName()) > -1);
 
-		ClassVisitor classVisitor = null;  // new ClassAdapter();
+		ClassVisitor classVisitor = null; // new ClassAdapter();
 
 	}
 

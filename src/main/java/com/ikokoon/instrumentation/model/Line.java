@@ -3,18 +3,19 @@ package com.ikokoon.instrumentation.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+//import javax.persistence.CascadeType;
+//import javax.persistence.Entity;
+//import javax.persistence.FetchType;
+//import javax.persistence.GeneratedValue;
+//import javax.persistence.GenerationType;
+//import javax.persistence.Id;
+//import javax.persistence.Inheritance;
+//import javax.persistence.InheritanceType;
+//import javax.persistence.ManyToOne;
+//import javax.persistence.NamedQueries;
+//import javax.persistence.NamedQuery;
 
+import com.ikokoon.persistence.Id;
 import com.ikokoon.persistence.Identifier;
 import com.ikokoon.persistence.Unique;
 import com.ikokoon.toolkit.Toolkit;
@@ -24,12 +25,13 @@ import com.ikokoon.toolkit.Toolkit;
  * @since 12.08.09
  * @version 01.00
  */
-@Entity
+// @Entity
+// @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+// @NamedQueries( {
+// @NamedQuery(name = Line.SELECT_LINES, query = Line.SELECT_LINES),
+// @NamedQuery(name = Line.SELECT_LINES_BY_CLASS_NAME_AND_METHOD_NAME_AND_DESCRIPTION_AND_NUMBER, query =
+// Line.SELECT_LINES_BY_CLASS_NAME_AND_METHOD_NAME_AND_DESCRIPTION_AND_NUMBER) })
 @Unique(fields = { "className", "methodName", "number" })
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@NamedQueries( {
-		@NamedQuery(name = Line.SELECT_LINES, query = Line.SELECT_LINES),
-		@NamedQuery(name = Line.SELECT_LINES_BY_CLASS_NAME_AND_METHOD_NAME_AND_DESCRIPTION_AND_NUMBER, query = Line.SELECT_LINES_BY_CLASS_NAME_AND_METHOD_NAME_AND_DESCRIPTION_AND_NUMBER) })
 public class Line implements Comparable<Line>, Serializable {
 
 	public static final String SELECT_LINES = "select a from Line as a";
@@ -50,7 +52,7 @@ public class Line implements Comparable<Line>, Serializable {
 	private Date timestamp;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	// @GeneratedValue(strategy = GenerationType.SEQUENCE)
 	public Long getId() {
 		return id;
 	}
@@ -60,7 +62,7 @@ public class Line implements Comparable<Line>, Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.EAGER)
+	// @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.EAGER)
 	public Method getParent() {
 		return parent;
 	}
@@ -108,7 +110,7 @@ public class Line implements Comparable<Line>, Serializable {
 	public void setCounter(double counter) {
 		this.counter = counter;
 	}
-	
+
 	public void increment() {
 		this.counter++;
 	}

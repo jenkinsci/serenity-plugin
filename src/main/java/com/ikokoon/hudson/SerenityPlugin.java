@@ -43,7 +43,6 @@ public class SerenityPlugin extends Plugin {
 		// plugins normally extend Hudson by providing custom implementations
 		// of 'extension points'. In this example, we'll add one builder.
 		BuildStep.PUBLISHERS.add(SerenityPublisher.DESCRIPTOR);
-		BuildStep.PUBLISHERS.add(HelloWorldPublisher.DESCRIPTOR);
 	}
 
 }

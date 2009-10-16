@@ -5,18 +5,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+//import javax.persistence.CascadeType;
+//import javax.persistence.Entity;
+//import javax.persistence.FetchType;
+//import javax.persistence.GeneratedValue;
+//import javax.persistence.GenerationType;
+//import javax.persistence.Id;
+//import javax.persistence.Inheritance;
+//import javax.persistence.InheritanceType;
+//import javax.persistence.NamedQueries;
+//import javax.persistence.NamedQuery;
+//import javax.persistence.OneToMany;
 
+import com.ikokoon.persistence.Id;
 import com.ikokoon.persistence.Identifier;
 import com.ikokoon.persistence.Parent;
 import com.ikokoon.persistence.Unique;
@@ -27,12 +28,12 @@ import com.ikokoon.toolkit.Toolkit;
  * @since 12.08.09
  * @version 01.00
  */
-@Entity
+// @Entity
+// @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+// @NamedQueries( { @NamedQuery(name = Package.SELECT_PACKAGES, query = Package.SELECT_PACKAGES),
+// @NamedQuery(name = Package.SELECT_PACKAGES_BY_NAME, query = Package.SELECT_PACKAGES_BY_NAME) })
 @Parent(parent = true)
 @Unique(fields = { "name" })
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@NamedQueries( { @NamedQuery(name = Package.SELECT_PACKAGES, query = Package.SELECT_PACKAGES),
-		@NamedQuery(name = Package.SELECT_PACKAGES_BY_NAME, query = Package.SELECT_PACKAGES_BY_NAME) })
 public class Package implements Comparable<Package>, Serializable {
 
 	public static final String SELECT_PACKAGES = "select a from Package as a";
@@ -55,7 +56,7 @@ public class Package implements Comparable<Package>, Serializable {
 	private Collection<Class> children = new ArrayList<Class>();
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	// @GeneratedValue(strategy = GenerationType.SEQUENCE)
 	public Long getId() {
 		return id;
 	}
@@ -81,7 +82,7 @@ public class Package implements Comparable<Package>, Serializable {
 		this.timestamp = timestamp;
 	}
 
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.EAGER)
+	// @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.EAGER)
 	public Collection<Class> getChildren() {
 		return children;
 	}
