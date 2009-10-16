@@ -2,13 +2,10 @@ package com.ikokoon.persistence;
 
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,28 +36,26 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 	 */
 	public DataBaseXml(File file) {
 		logger.error("Initilizing the database data model in memory");
+		InputStream inputStream = null;
 		try {
 			file = getFile(file);
-			ByteArrayOutputStream byteArrayOutputStream = Toolkit.getContents(file);
-			InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+			inputStream = new FileInputStream(file);
 			// ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
 			// cache = (Map<Class, Map<Long, Object>>) objectInputStream.readObject();
-			ClassLoader loader = XMLDecoder.class.getClassLoader();
-			logger.info("Decoder classloader : " + loader);
-
-			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			Thread.currentThread().setContextClassLoader(classLoader);
-			classLoader.loadClass(XMLDecoder.class.getName());
-			this.getClass().getClassLoader().loadClass(XMLDecoder.class.getName());
-			Class.forName(XMLDecoder.class.getName());
-
-			loader = XMLDecoder.class.getClassLoader();
-			logger.info("Decoder classloader : " + loader);
-
-			XMLDecoder decoder = new XMLDecoder(inputStream, null, null, this.getClass().getClassLoader());
+			XMLDecoder decoder = new XMLDecoder(inputStream, null, null, Package.class.getClassLoader());
 			cache = (Map<Class, Map<Long, Object>>) decoder.readObject();
+			// XStream stream = new XStream(new DomDriver());
+			// cache = (Map<Class, Map<Long, Object>>) stream.fromXML(inputStream);
 		} catch (Exception e) {
 			logger.error("Exception reading the data from the serialized file", e);
+		} finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (Exception e) {
+					logger.error("", e);
+				}
+			}
 		}
 		logger.error("Finished initilizing the database data model in memory");
 	}
@@ -248,24 +243,13 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 		try {
 			File file = getFile(null);
 			fileOutputStream = new FileOutputStream(file);
-			OutputStream outputStream = new BufferedOutputStream(fileOutputStream);
 			// ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
 			// objectOutputStream.writeObject(cache);
-			ClassLoader loader = XMLEncoder.class.getClassLoader();
-			logger.info("XMLEncoder class loader : " + loader);
-
-			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			Thread.currentThread().setContextClassLoader(classLoader);
-			classLoader.loadClass(XMLDecoder.class.getName());
-			this.getClass().getClassLoader().loadClass(XMLDecoder.class.getName());
-			Class.forName(XMLDecoder.class.getName());
-
-			loader = XMLEncoder.class.getClassLoader();
-			logger.info("XMLEncoder class loader : " + loader);
-
-			XMLEncoder encoder = new XMLEncoder(outputStream);
+			XMLEncoder encoder = new XMLEncoder(fileOutputStream);
 			encoder.writeObject(cache);
 			encoder.close();
+			// XStream stream = new XStream(new DomDriver());
+			// stream.toXML(cache, fileOutputStream);
 		} catch (Exception e) {
 			logger.error("Couldn't find the database file? Permissioning on the OS perhaps?", e);
 		} finally {
