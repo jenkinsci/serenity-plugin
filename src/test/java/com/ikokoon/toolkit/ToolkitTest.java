@@ -61,9 +61,10 @@ public class ToolkitTest extends ATest {
 	@Test
 	public void formatString() {
 		int precision = 3;
-		String string = Toolkit.format("123456789,123456789", precision);
+		com.ikokoon.instrumentation.model.Package pakkage = new com.ikokoon.instrumentation.model.Package();
+		String string = pakkage.format("123456789,123456789", precision);
 		assertEquals(precision, string.substring(string.indexOf(',') + 1, string.length()).length());
-		string = Toolkit.format("123456789.123456789", precision);
+		string = pakkage.format("123456789.123456789", precision);
 		assertEquals(precision, string.substring(string.indexOf('.') + 1, string.length()).length());
 	}
 
@@ -71,7 +72,8 @@ public class ToolkitTest extends ATest {
 	public void formatDouble() {
 		int precision = 3;
 		double d = 123456.8755135d;
-		d = Toolkit.format(d, precision);
+		com.ikokoon.instrumentation.model.Package pakkage = new com.ikokoon.instrumentation.model.Package();
+		d = pakkage.format(d, precision);
 		assertTrue(123456.875 == d);
 		assertFalse(123456.8755 == d);
 	}

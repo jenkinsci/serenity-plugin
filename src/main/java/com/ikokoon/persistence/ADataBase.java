@@ -10,6 +10,9 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.ikokoon.IConstants;
+import com.ikokoon.instrumentation.model.Id;
+import com.ikokoon.instrumentation.model.Identifier;
+import com.ikokoon.instrumentation.model.Unique;
 import com.ikokoon.toolkit.Toolkit;
 
 /**

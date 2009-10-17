@@ -17,9 +17,6 @@ import java.util.Date;
 //import javax.persistence.NamedQueries;
 //import javax.persistence.NamedQuery;
 
-import com.ikokoon.persistence.Id;
-import com.ikokoon.persistence.Identifier;
-import com.ikokoon.persistence.Unique;
 
 // @Entity
 //@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)

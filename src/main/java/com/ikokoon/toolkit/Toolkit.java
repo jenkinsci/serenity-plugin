@@ -413,67 +413,6 @@ public class Toolkit {
 	}
 
 	/**
-	 * Formats a double to the required precision.
-	 * 
-	 * @param d
-	 *            the double to format
-	 * @param precision
-	 *            the precision for the result
-	 * @return the double formatted to the required precision
-	 */
-	public static double format(double d, int precision) {
-		String doubleString = Double.toString(d);
-		doubleString = format(doubleString, precision);
-		try {
-			d = Double.parseDouble(doubleString);
-		} catch (Exception e) {
-			logger.error("Exception parsing double : " + d, e);
-		}
-		return d;
-	}
-
-	/**
-	 * Formats a string to the desired precision.
-	 * 
-	 * @param string
-	 *            the string to format to a precision
-	 * @param precision
-	 *            the precision of the result
-	 * @return the string formatted to the required precision
-	 */
-	public static String format(String string, int precision) {
-		if (string == null) {
-			return string;
-		}
-		char[] chars = string.trim().toCharArray();
-		StringBuilder builder = new StringBuilder();
-		int decimal = 1;
-		int state = 0;
-		int decimals = 0;
-		for (char c : chars) {
-			switch (c) {
-			case '.':
-				state = decimal;
-				builder.append(c);
-				break;
-			case ',':
-				state = decimal;
-				builder.append(c);
-				break;
-			default:
-				if (state == decimal) {
-					if (decimals++ >= precision) {
-						break;
-					}
-				}
-				builder.append(c);
-				break;
-			}
-		}
-		return builder.toString();
-	}
-
-	/**
 	 * Reads the contents of the file and returns the contents in a byte array form.
 	 * 
 	 * @param file

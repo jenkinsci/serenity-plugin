@@ -18,11 +18,6 @@ import java.util.Date;
 //import javax.persistence.NamedQuery;
 //import javax.persistence.OneToMany;
 
-import com.ikokoon.persistence.Id;
-import com.ikokoon.persistence.Identifier;
-import com.ikokoon.persistence.Unique;
-import com.ikokoon.toolkit.Toolkit;
-
 /**
  * @author Michael Couck
  * @since 12.08.09
@@ -36,13 +31,11 @@ import com.ikokoon.toolkit.Toolkit;
 // @NamedQuery(name = Method.SELECT_METHOD_BY_CLASS_NAME_AND_METHOD_NAME_AND_METHOD_DESCRIPTION, query =
 // Method.SELECT_METHOD_BY_CLASS_NAME_AND_METHOD_NAME_AND_METHOD_DESCRIPTION) })
 @Unique(fields = { "parent", "name", "description" })
-public class Method implements Comparable<Method>, Serializable {
+public class Method extends Base implements Comparable<Method>, Serializable {
 
 	public static final String SELECT_METHODS = "select a from Method as a";
 	public static final String SELECT_METHODS_BY_NAME = "select a from Method as a where a.name = :name";
 	public static final String SELECT_METHOD_BY_CLASS_NAME_AND_METHOD_NAME_AND_METHOD_DESCRIPTION = "select a from Method as a where a.parent.name = :className and a.name = :methodName and a.description = :methodDescription";
-
-	public static final int PRECISION = 2;
 
 	private Long id;
 	private String name;
@@ -117,7 +110,7 @@ public class Method implements Comparable<Method>, Serializable {
 	}
 
 	public double getComplexity() {
-		return Toolkit.format(complexity, PRECISION);
+		return format(complexity, PRECISION);
 	}
 
 	public void setComplexity(double complexity) {
@@ -125,7 +118,7 @@ public class Method implements Comparable<Method>, Serializable {
 	}
 
 	public double getLines() {
-		return Toolkit.format(lines, PRECISION);
+		return format(lines, PRECISION);
 	}
 
 	public void setLines(double lines) {
@@ -133,7 +126,7 @@ public class Method implements Comparable<Method>, Serializable {
 	}
 
 	public double getCoverage() {
-		return Toolkit.format(coverage, PRECISION);
+		return format(coverage, PRECISION);
 	}
 
 	public void setCoverage(double coverage) {

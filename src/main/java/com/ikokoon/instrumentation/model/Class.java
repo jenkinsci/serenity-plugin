@@ -5,25 +5,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-//import javax.persistence.CascadeType;
-//import javax.persistence.Entity;
-//import javax.persistence.FetchType;
-//import javax.persistence.GeneratedValue;
-//import javax.persistence.GenerationType;
-//import javax.persistence.Id;
-//import javax.persistence.Inheritance;
-//import javax.persistence.InheritanceType;
-//import javax.persistence.ManyToMany;
-//import javax.persistence.ManyToOne;
-//import javax.persistence.NamedQueries;
-//import javax.persistence.NamedQuery;
-// import javax.persistence.OneToMany;
-
-import com.ikokoon.persistence.Id;
-import com.ikokoon.persistence.Identifier;
-import com.ikokoon.persistence.Unique;
-import com.ikokoon.toolkit.Toolkit;
-
 /**
  * @author Michael Couck
  * @since 12.08.09
@@ -34,12 +15,10 @@ import com.ikokoon.toolkit.Toolkit;
 // @NamedQueries( { @NamedQuery(name = Class.SELECT_CLASSES, query = Class.SELECT_CLASSES),
 // @NamedQuery(name = Class.SELECT_CLASSS_BY_NAME, query = Class.SELECT_CLASSS_BY_NAME) })
 @Unique(fields = { "name" })
-public class Class implements Comparable<Class>, Serializable {
+public class Class extends Base implements Comparable<Class>, Serializable {
 
 	public static final String SELECT_CLASSES = "select a from Class as a";
 	public static final String SELECT_CLASSS_BY_NAME = "select a from Class as a where a.name = :className";
-
-	public static final int PRECISION = 2;
 
 	private Long id;
 	private String name;
@@ -94,7 +73,7 @@ public class Class implements Comparable<Class>, Serializable {
 	}
 
 	public double getComplexity() {
-		return Toolkit.format(complexity, PRECISION);
+		return format(complexity, PRECISION);
 	}
 
 	public void setComplexity(double complexity) {
@@ -102,7 +81,7 @@ public class Class implements Comparable<Class>, Serializable {
 	}
 
 	public double getCoverage() {
-		return Toolkit.format(coverage, PRECISION);
+		return format(coverage, PRECISION);
 	}
 
 	public void setCoverage(double coverage) {
@@ -110,7 +89,7 @@ public class Class implements Comparable<Class>, Serializable {
 	}
 
 	public double getStability() {
-		return Toolkit.format(stability, PRECISION);
+		return format(stability, PRECISION);
 	}
 
 	public void setStability(double stability) {
@@ -118,7 +97,7 @@ public class Class implements Comparable<Class>, Serializable {
 	}
 
 	public double getEfferent() {
-		return Toolkit.format(efferent, PRECISION);
+		return format(efferent, PRECISION);
 	}
 
 	public void setEfferent(double efferent) {
@@ -126,7 +105,7 @@ public class Class implements Comparable<Class>, Serializable {
 	}
 
 	public double getAfferent() {
-		return Toolkit.format(afferent, PRECISION);
+		return format(afferent, PRECISION);
 	}
 
 	public void setAfferent(double afferent) {

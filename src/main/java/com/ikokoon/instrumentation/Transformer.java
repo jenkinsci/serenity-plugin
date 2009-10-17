@@ -73,7 +73,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 
 				IDataBase dataBase = IDataBase.DataBase.getDataBase();
 				dataBase.close();
-				long million = 1000000;
+				long million = 1000 * 1000;
 				LOGGER.warn("Total memory : " + (Runtime.getRuntime().totalMemory() / million) + ", max memory : "
 						+ (Runtime.getRuntime().maxMemory() / million) + ", free memory : " + (Runtime.getRuntime().freeMemory() / million));
 			}

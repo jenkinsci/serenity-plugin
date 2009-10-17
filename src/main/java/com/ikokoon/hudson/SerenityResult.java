@@ -18,7 +18,6 @@ import com.ikokoon.instrumentation.model.Class;
 import com.ikokoon.instrumentation.model.Method;
 import com.ikokoon.instrumentation.model.Package;
 import com.ikokoon.persistence.IDataBase;
-import com.ikokoon.toolkit.Toolkit;
 
 /**
  * This is the result that will be used to render the results on the front end.
@@ -178,21 +177,21 @@ public class SerenityResult implements ISerenityResult {
 			interfaces += pakkage.getInterfaces() > 0 ? pakkage.getInterfaces() : 0;
 			stability += pakkage.getStability() > 0 ? pakkage.getStability() : 0;
 		}
-		StringBuilder builder = new StringBuilder();
-		int precision = 2;
-		double packageSize = packages.size() > 0 ? packages.size() : 1;
-		builder.append("Coverage : ");
-		builder.append(Toolkit.format((coverage / packageSize), precision));
-		builder.append(", complexity : ");
-		builder.append(Toolkit.format((complexity / packageSize), precision));
-		builder.append(", interfaces : ");
-		builder.append(Toolkit.format(interfaces, precision));
-		builder.append(", implementations : ");
-		builder.append(Toolkit.format(implementations, precision));
-		builder.append(", stability : ");
-		builder.append(Toolkit.format(stability / packageSize, precision));
-		builder.append(", abstractness : ");
-		builder.append(Toolkit.format(abstractness / packageSize, precision));
+		StringBuilder builder = new StringBuilder("Dummy metrics");
+		// int precision = 2;
+		// double packageSize = packages.size() > 0 ? packages.size() : 1;
+		// builder.append("Coverage : ");
+		// builder.append(pakkage.format((coverage / packageSize), precision));
+		// builder.append(", complexity : ");
+		// builder.append(pakkage.format((complexity / packageSize), precision));
+		// builder.append(", interfaces : ");
+		// builder.append(pakkage.format(interfaces, precision));
+		// builder.append(", implementations : ");
+		// builder.append(pakkage.format(implementations, precision));
+		// builder.append(", stability : ");
+		// builder.append(pakkage.format(stability / packageSize, precision));
+		// builder.append(", abstractness : ");
+		// builder.append(pakkage.format(abstractness / packageSize, precision));
 		return builder.toString();
 	}
 

@@ -17,12 +17,6 @@ import java.util.Date;
 //import javax.persistence.NamedQuery;
 //import javax.persistence.OneToMany;
 
-import com.ikokoon.persistence.Id;
-import com.ikokoon.persistence.Identifier;
-import com.ikokoon.persistence.Parent;
-import com.ikokoon.persistence.Unique;
-import com.ikokoon.toolkit.Toolkit;
-
 /**
  * @author Michael Couck
  * @since 12.08.09
@@ -34,7 +28,7 @@ import com.ikokoon.toolkit.Toolkit;
 // @NamedQuery(name = Package.SELECT_PACKAGES_BY_NAME, query = Package.SELECT_PACKAGES_BY_NAME) })
 @Parent(parent = true)
 @Unique(fields = { "name" })
-public class Package implements Comparable<Package>, Serializable {
+public class Package extends Base implements Comparable<Package>, Serializable {
 
 	public static final String SELECT_PACKAGES = "select a from Package as a";
 	public static final String SELECT_PACKAGES_BY_NAME = "select a from Package as a where a.name = :name";
@@ -92,7 +86,7 @@ public class Package implements Comparable<Package>, Serializable {
 	}
 
 	public double getComplexity() {
-		return Toolkit.format(complexity, PRECISION);
+		return format(complexity, PRECISION);
 	}
 
 	public void setComplexity(double complexity) {
@@ -100,7 +94,7 @@ public class Package implements Comparable<Package>, Serializable {
 	}
 
 	public double getCoverage() {
-		return Toolkit.format(coverage, PRECISION);
+		return format(coverage, PRECISION);
 	}
 
 	public void setCoverage(double coverage) {
@@ -108,7 +102,7 @@ public class Package implements Comparable<Package>, Serializable {
 	}
 
 	public double getAbstractness() {
-		return Toolkit.format(abstractness, PRECISION);
+		return format(abstractness, PRECISION);
 	}
 
 	public void setAbstractness(double abstractness) {
@@ -116,7 +110,7 @@ public class Package implements Comparable<Package>, Serializable {
 	}
 
 	public double getStability() {
-		return Toolkit.format(stability, PRECISION);
+		return format(stability, PRECISION);
 	}
 
 	public void setStability(double stability) {
@@ -124,7 +118,7 @@ public class Package implements Comparable<Package>, Serializable {
 	}
 
 	public double getDistance() {
-		return Toolkit.format(distance, PRECISION);
+		return format(distance, PRECISION);
 	}
 
 	public void setDistance(double distance) {
@@ -132,7 +126,7 @@ public class Package implements Comparable<Package>, Serializable {
 	}
 
 	public double getInterfaces() {
-		return Toolkit.format(interfaces, PRECISION);
+		return format(interfaces, PRECISION);
 	}
 
 	public void setInterfaces(double interfaces) {
@@ -140,7 +134,7 @@ public class Package implements Comparable<Package>, Serializable {
 	}
 
 	public double getImplementations() {
-		return Toolkit.format(implementations, PRECISION);
+		return format(implementations, PRECISION);
 	}
 
 	public void setImplementations(double implementations) {
@@ -148,7 +142,7 @@ public class Package implements Comparable<Package>, Serializable {
 	}
 
 	public double getEfferent() {
-		return Toolkit.format(efferent, PRECISION);
+		return format(efferent, PRECISION);
 	}
 
 	public void setEfferent(double efferent) {
@@ -156,7 +150,7 @@ public class Package implements Comparable<Package>, Serializable {
 	}
 
 	public double getAfferent() {
-		return Toolkit.format(afferent, PRECISION);
+		return format(afferent, PRECISION);
 	}
 
 	public void setAfferent(double afferent) {

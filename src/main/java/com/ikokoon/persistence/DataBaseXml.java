@@ -15,6 +15,8 @@ import java.util.Map;
 
 import com.ikokoon.instrumentation.model.Package;
 import com.ikokoon.toolkit.Toolkit;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
 /**
  * This database implementation is in memory and serializes the data model to XML when it closes.
@@ -35,6 +37,10 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 	 * execution as the insertion into the data model takes far longer than selection due to the reindexing of the indexes etc.
 	 */
 	public DataBaseXml(File file) {
+		this(file, null);
+	}
+
+	public DataBaseXml(File file, ClassLoader classLoader) {
 		logger.error("Initilizing the database data model in memory");
 		InputStream inputStream = null;
 		try {
@@ -42,10 +48,16 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 			inputStream = new FileInputStream(file);
 			// ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
 			// cache = (Map<Class, Map<Long, Object>>) objectInputStream.readObject();
-			XMLDecoder decoder = new XMLDecoder(inputStream, null, null, Package.class.getClassLoader());
+			// if (classLoader == null) {
+			// classLoader =Package.class.getClassLoader();
+			// }
+			// classLoader = getClass().getClassLoader();
+			XMLDecoder decoder = new XMLDecoder(inputStream);
 			cache = (Map<Class, Map<Long, Object>>) decoder.readObject();
 			// XStream stream = new XStream(new DomDriver());
 			// cache = (Map<Class, Map<Long, Object>>) stream.fromXML(inputStream);
+			// XStream2 stream2 = new XStream2(new DomDriver());
+			// stream2.fromXML(inputStream);
 		} catch (Exception e) {
 			logger.error("Exception reading the data from the serialized file", e);
 		} finally {
@@ -250,6 +262,8 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 			encoder.close();
 			// XStream stream = new XStream(new DomDriver());
 			// stream.toXML(cache, fileOutputStream);
+			// XStream2 stream2 = new XStream2(new DomDriver());
+			// stream2.toXML(cache, fileOutputStream);
 		} catch (Exception e) {
 			logger.error("Couldn't find the database file? Permissioning on the OS perhaps?", e);
 		} finally {

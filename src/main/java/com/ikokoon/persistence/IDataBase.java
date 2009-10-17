@@ -30,13 +30,17 @@ public interface IDataBase {
 				// dataBase = new DataBaseCache(new DataBaseJpa(null));
 				// dataBase = new DataBaseDb4o();
 				// dataBase = new DataBaseNeodatis();
-				dataBase = new DataBaseXml(null);
+				dataBase = getDataBase(null);
 			}
 			return dataBase;
 		}
 
 		public static IDataBase getDataBase(File file) {
-			return new DataBaseXml(file);
+			return getDataBase(file, null);
+		}
+
+		public static IDataBase getDataBase(File file, ClassLoader classLoader) {
+			return new DataBaseXml(file, classLoader);
 		}
 	}
 

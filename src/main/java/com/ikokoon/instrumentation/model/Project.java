@@ -10,10 +10,6 @@ import java.util.Date;
 //import javax.persistence.Inheritance;
 //import javax.persistence.InheritanceType;
 
-import com.ikokoon.persistence.Id;
-import com.ikokoon.persistence.Identifier;
-import com.ikokoon.persistence.Parent;
-import com.ikokoon.persistence.Unique;
 
 /**
  * @author Michael Couck
