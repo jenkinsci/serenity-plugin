@@ -1,7 +1,6 @@
 package com.ikokoon.hudson;
 
 import hudson.Plugin;
-import hudson.tasks.BuildStep;
 
 import java.net.URL;
 import java.util.Properties;
@@ -76,15 +75,4 @@ public class SerenityPlugin extends Plugin {
 		properties.put("log4j.category.com.ikokoon.instrumentation.profiling", "INFO");
 		return properties;
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("deprecation")
-	public void start() throws Exception {
-		// plugins normally extend Hudson by providing custom implementations
-		// of 'extension points'. In this example, we'll add one builder.
-		BuildStep.PUBLISHERS.add(SerenityPublisher.DESCRIPTOR);
-	}
-
 }

@@ -1,15 +1,19 @@
 package com.ikokoon.hudson;
 
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.Project;
 import hudson.model.Result;
+import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -30,11 +34,12 @@ import com.ikokoon.IConstants;
  * @since 12.07.09
  * @version 01.00
  */
-@SuppressWarnings( { "unchecked", "deprecation" })
-public class SerenityPublisher extends hudson.tasks.Publisher {
+@SuppressWarnings("unchecked")
+public class SerenityPublisher extends Recorder {
 
 	protected static Logger logger = Logger.getLogger(SerenityPublisher.class);
 	/** The description for Hudson. */
+        @Extension
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 	/** The pattern for the object database file. */
 	private String coverageReportPattern;
@@ -64,7 +69,7 @@ public class SerenityPublisher extends hudson.tasks.Publisher {
 		buildListener.getLogger().println("Publishing Serenity reports...");
 
 		FilePath[] reports = new FilePath[0];
-		final FilePath moduleRoot = build.getParent().getWorkspace();
+		final FilePath moduleRoot = build.getWorkspace();
 		try {
 			reports = moduleRoot.list(coverageReportPattern);
 		} catch (IOException e) {
@@ -114,15 +119,6 @@ public class SerenityPublisher extends hudson.tasks.Publisher {
 		return new SerenityProjectAction(project);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Descriptor<hudson.tasks.Publisher> getDescriptor() {
-		logger.info("SerenityPublisher:getDescriptor");
-		// see Descriptor JavaDoc for more about what a descriptor is.
-		return DESCRIPTOR;
-	}
-
 	public void setCoverageReportPattern(String coverageReportPattern) {
 		logger.info("SerenityPublisher:setCoverageReportPattern");
 		this.coverageReportPattern = coverageReportPattern;
@@ -139,7 +135,7 @@ public class SerenityPublisher extends hudson.tasks.Publisher {
 	 * <p/>
 	 * See <tt>views/hudson/plugins/coverage/CoveragePublisher/*.jelly</tt> for the actual HTML fragment for the configuration screen.
 	 */
-	public static final class DescriptorImpl extends Descriptor<hudson.tasks.Publisher> {
+	public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 		/**
 		 * Constructs a new DescriptorImpl.
 		 */
@@ -156,28 +152,27 @@ public class SerenityPublisher extends hudson.tasks.Publisher {
 			return "Publish Serenity Report";
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
-		public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
-			logger.info("SerenityPublisher:configure");
-			return configure(req);
+		@Override
+		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+			return true;
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
-		public boolean configure(StaplerRequest req) throws FormException {
+		@Override
+		public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
 			logger.info("SerenityPublisher:configure");
 			req.bindParameters(this, "serenity.");
 			save();
-			return super.configure(req);
+			return super.configure(req, json);
 		}
 
 		/**
 		 * Creates a new instance of {@link SerenityPublisher} from a submitted form.
 		 */
-		public SerenityPublisher newInstance(StaplerRequest req) throws FormException {
+		@Override
+		public SerenityPublisher newInstance(StaplerRequest req, JSONObject json) throws FormException {
 			logger.info("SerenityPublisher:newInstance");
 			SerenityPublisher instance = req.bindParameters(SerenityPublisher.class, "serenity.");
 			return instance;
