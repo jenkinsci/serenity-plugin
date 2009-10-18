@@ -14,9 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.ikokoon.instrumentation.model.Package;
+import com.ikokoon.toolkit.ObjectFactory;
 import com.ikokoon.toolkit.Toolkit;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 
 /**
  * This database implementation is in memory and serializes the data model to XML when it closes.
@@ -52,7 +51,9 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 			// classLoader =Package.class.getClassLoader();
 			// }
 			// classLoader = getClass().getClassLoader();
-			XMLDecoder decoder = new XMLDecoder(inputStream);
+			Class<XMLDecoder> klass = (Class<XMLDecoder>) this.getClass().getClassLoader().loadClass(XMLDecoder.class.getName());
+			XMLDecoder decoder = ObjectFactory.getObject(klass, new Object[] { inputStream });
+			// decoder = new XMLDecoder(inputStream);
 			cache = (Map<Class, Map<Long, Object>>) decoder.readObject();
 			// XStream stream = new XStream(new DomDriver());
 			// cache = (Map<Class, Map<Long, Object>>) stream.fromXML(inputStream);
