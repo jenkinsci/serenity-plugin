@@ -4,21 +4,10 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Unique(fields = { "name" }, discriminator = "com.ikokoon.instrumentation.model.Afferent")
-public class Afferent implements Comparable<Afferent>, Serializable {
+public class Afferent extends Composite implements Comparable<Afferent>, Serializable {
 
-	private Long id;
 	private String name;
 	private Date timestamp;
-
-	@Id
-	public Long getId() {
-		return id;
-	}
-
-	@Identifier
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;
@@ -37,7 +26,7 @@ public class Afferent implements Comparable<Afferent>, Serializable {
 	}
 
 	public String toString() {
-		return id + ":" + name;
+		return getId() + ":" + name;
 	}
 
 	public int compareTo(Afferent o) {

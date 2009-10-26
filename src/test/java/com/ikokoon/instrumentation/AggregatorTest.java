@@ -2,10 +2,7 @@ package com.ikokoon.instrumentation;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.junit.Test;
@@ -16,11 +13,12 @@ import com.ikokoon.IConstants;
 import com.ikokoon.instrumentation.model.Afferent;
 import com.ikokoon.instrumentation.model.Class;
 import com.ikokoon.instrumentation.model.Efferent;
+import com.ikokoon.instrumentation.model.IComposite;
 import com.ikokoon.instrumentation.model.Line;
 import com.ikokoon.instrumentation.model.Method;
 import com.ikokoon.instrumentation.model.Package;
+import com.ikokoon.instrumentation.model.Project;
 import com.ikokoon.instrumentation.process.Aggregator;
-import com.ikokoon.persistence.IDataBase;
 import com.ikokoon.target.Target;
 import com.ikokoon.target.one.One;
 import com.ikokoon.toolkit.Toolkit;
@@ -43,11 +41,13 @@ public class AggregatorTest extends ATest implements IConstants {
 
 	@Test
 	public void onePackageClassMethodAndLine() {
-		IDataBase dataBase = IDataBase.DataBase.getDataBase();
+		Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
 		Package pakkage = getPackage();
 		Class klass = getClass(pakkage, Target.class.getName());
 		Method method = getMethod(klass, "method name one", "method description one", 10, 10);
 		Line line = getline(method, 1, 5);
+
+		project.getChildren().add(pakkage);
 
 		dataBase.persist(pakkage);
 
@@ -89,11 +89,13 @@ public class AggregatorTest extends ATest implements IConstants {
 
 	@Test
 	public void onePackageTwoClassesTwoMethodsAndTwoLines() {
-		IDataBase dataBase = IDataBase.DataBase.getDataBase();
+		Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
 		Efferent efferent = new Efferent();
 		efferent.setName(Logger.class.getPackage().getName());
 
 		Package pakkage = getPackage();
+
+		project.getChildren().add(pakkage);
 
 		Class classTarget = getClass(pakkage, Target.class.getName());
 		classTarget.setInterfaze(true);
@@ -187,38 +189,19 @@ public class AggregatorTest extends ATest implements IConstants {
 		assertEquals(2, methodFour.getChildren().size());
 	}
 
-	@Test
-	public void findBugsData() {
-		File file = new File("C:/Eclipse/workspace/Findbugs/serenity/serenity.db");
-		logger.error(file.getAbsolutePath());
-		IDataBase dataBase = IDataBase.DataBase.getDataBase(file);
-
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(NAME, "edu.umd.cs.findbugs.ba");
-
-		// Package pakkage = dataBase.find(Package.class, parameters);
-		// printModel(pakkage);
-
-		Aggregator aggregator = new Aggregator(null, dataBase);
-		aggregator.execute();
-
-		Package pakkage = dataBase.find(Package.class, parameters);
-		printModel(pakkage);
-	}
-
 	private void printModel(Package pakkage) {
 		logger.info("PRINTING MODEL");
 		printEntity(pakkage);
 		logger.info("Classes : " + pakkage.getChildren().size());
-		for (Class klass : pakkage.getChildren()) {
+		for (IComposite klass : pakkage.getChildren()) {
 			logger.info("");
 			printEntity(klass);
 			logger.info("Methods : " + klass.getChildren().size());
-			for (Method method : klass.getChildren()) {
+			for (IComposite method : klass.getChildren()) {
 				logger.info("");
 				printEntity(method);
 				logger.info("Lines : " + method.getChildren().size());
-				for (Line line : method.getChildren()) {
+				for (IComposite line : method.getChildren()) {
 					logger.info("");
 					printEntity(line);
 				}

@@ -10,7 +10,6 @@
 	<property name="test.classes" value="bin" />
 	<property name="serenity" value="serenity" />
 	<property name="serenity.jar" value="lib/serenity.jar" />
-	<property name="serenity.model.jar" value="lib/serenity-model.jar" />
 
 	<!-- Set the classpath -->
 	<path id="build.classpath">
@@ -40,14 +39,6 @@
 			</fileset>
 			<fileset dir="${src}">
 				<include name="**" />
-			</fileset>
-		</jar>
-		<jar jarfile="${serenity.model.jar}" update="no">
-			<fileset dir="${bin}">
-				<include name="**/model/**" />
-			</fileset>
-			<fileset dir="${src}">
-				<include name="**/model/**" />
 			</fileset>
 		</jar>
 		<delete file="../Lucene/lib/serenity.jar" failonerror="true" />

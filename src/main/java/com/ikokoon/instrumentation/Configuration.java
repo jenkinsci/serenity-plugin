@@ -47,7 +47,6 @@ public class Configuration {
 	}
 
 	private Configuration() {
-		configuration = this;
 		addIncludedPackages();
 		addExcludedPackages();
 		addIncludedClassAdapters();

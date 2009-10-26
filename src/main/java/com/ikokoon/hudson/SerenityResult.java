@@ -5,10 +5,8 @@ import hudson.model.AbstractProject;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.kohsuke.stapler.StaplerRequest;
@@ -16,6 +14,7 @@ import org.kohsuke.stapler.StaplerResponse;
 
 import com.ikokoon.IConstants;
 import com.ikokoon.instrumentation.model.Class;
+import com.ikokoon.instrumentation.model.IComposite;
 import com.ikokoon.instrumentation.model.Method;
 import com.ikokoon.instrumentation.model.Package;
 import com.ikokoon.instrumentation.model.Project;
@@ -62,8 +61,7 @@ public class SerenityResult implements ISerenityResult {
 	private void initilize() {
 		File file = new File(owner.getRootDir(), IConstants.DATABASE_FILE);
 		dataBase = IDataBase.DataBase.getDataBase(file);
-
-		Project project = getProject();
+		Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
 		StringBuilder builder = new StringBuilder();
 		builder.append("Total lines : ");
 		builder.append(project.getTotalLines());
@@ -74,7 +72,6 @@ public class SerenityResult implements ISerenityResult {
 		builder.append(", total methods executed : ");
 		builder.append(project.getTotalMethodsExecuted());
 		metrics = builder.toString();
-
 		logger.debug("Metrics : " + metrics);
 	}
 
@@ -100,40 +97,27 @@ public class SerenityResult implements ISerenityResult {
 		this.klass = null;
 		this.method = null;
 
-		Map<String, Object> parameters = new HashMap<String, Object>();
+		List<Object> parameters = new ArrayList<Object>();
 
 		String packageName = req.getParameter("packageName");
 		String className = req.getParameter("className");
 		String methodName = req.getParameter("methodName");
 		String methodDescription = req.getParameter("methodDescription");
 
-		// StringBuilder builder = new StringBuilder();
-		// builder.append("Parameters : ");
-		// builder.append(req.getParameterMap());
-		// builder.append(", package name : ");
-		// builder.append(packageName);
-		// builder.append(", class name : ");
-		// builder.append(className);
-		// builder.append(", method name : ");
-		// builder.append(methodName);
-		// builder.append(", method description : ");
-		// builder.append(methodDescription);
-		// metrics = builder.toString();
-
 		if (className != null && methodName != null && methodDescription != null) {
 			parameters.clear();
-			parameters.put(IConstants.CLASS_NAME, className);
-			parameters.put(IConstants.NAME, methodName);
-			parameters.put(IConstants.DESCRIPTION, methodDescription);
-			this.method = dataBase.find(Method.class, parameters);
+			parameters.add(className);
+			parameters.add(methodName);
+			parameters.add(methodDescription);
+			this.method = (Method) dataBase.find(parameters);
 		} else if (className != null) {
 			parameters.clear();
-			parameters.put(IConstants.NAME, className);
-			this.klass = dataBase.find(Class.class, parameters);
+			parameters.add(className);
+			this.klass = (Class) dataBase.find(parameters);
 		} else if (packageName != null) {
 			parameters.clear();
-			parameters.put(IConstants.NAME, packageName);
-			this.pakkage = dataBase.find(Package.class, parameters);
+			parameters.add(packageName);
+			this.pakkage = (Package) dataBase.find(parameters);
 		}
 
 		url = req.getOriginalRequestURI().replaceAll(token, "");
@@ -161,10 +145,8 @@ public class SerenityResult implements ISerenityResult {
 		return metrics;
 	}
 
-	public List<Package> getPackages() {
-		String name = Project.class.getName();
-		Long id = Toolkit.hash(name);
-		Project project = dataBase.find(Project.class, id);
+	public List<IComposite> getPackages() {
+		Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
 		return project.getChildren();
 	}
 
@@ -192,37 +174,6 @@ public class SerenityResult implements ISerenityResult {
 			}
 		}
 		return "No name Project...";
-	}
-
-	private Project getProject() {
-		Project project = new Project();
-
-		double totalLines = 0d;
-		double totalMethods = 0d;
-		double totalLinesExecuted = 0d;
-		double totalMethodsExecuted = 0d;
-
-		List<Package> packages = getPackages();
-		for (Package pakkage : packages) {
-			for (Class klass : pakkage.getChildren()) {
-				for (Method method : klass.getChildren()) {
-					totalLines += method.getLines();
-					totalMethods++;
-					totalLinesExecuted += method.getTotalLinesExecuted();
-					if (method.getTotalLinesExecuted() > 0) {
-						totalMethodsExecuted++;
-					}
-				}
-			}
-		}
-
-		project.setTimestamp(new Date());
-		project.setTotalLines(totalLines);
-		project.setTotalLinesExecuted(totalLinesExecuted);
-		project.setTotalMethods(totalMethods);
-		project.setTotalMethodsExecuted(totalMethodsExecuted);
-
-		return project;
 	}
 
 }

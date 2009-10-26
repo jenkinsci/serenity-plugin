@@ -37,7 +37,7 @@ import com.ikokoon.IConstants;
 @SuppressWarnings("unchecked")
 public class SerenityPublisher extends Recorder {
 
-	protected static Logger logger = Logger.getLogger(SerenityPublisher.class);
+	protected static final Logger logger = Logger.getLogger(SerenityPublisher.class);
 	/** The description for Hudson. */
         @Extension
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();

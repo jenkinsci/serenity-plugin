@@ -37,10 +37,10 @@ public class SerenityBuildAction implements StaplerProxy, Action {
 	 */
 	public SerenityBuildAction(AbstractBuild owner, ISerenityResult result) {
 		logger.info("SerenityBuildAction:");
-		setResult(result);
 		if (owner == null) {
 			throw new RuntimeException("owner cannot be null");
 		}
+		setResult(result);
 		this.owner = owner;
 	}
 

@@ -1,8 +1,8 @@
 package com.ikokoon.instrumentation.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -10,11 +10,10 @@ import java.util.List;
  * @since 12.08.09
  * @version 01.00
  */
-@Parent(parent = true)
 @Unique(fields = { "name" })
-public class Project implements Serializable {
+public class Project extends Composite implements Serializable {
 
-	private Long id;
+	private String name = this.getClass().getName();
 	private Date timestamp;
 
 	private double totalLines;
@@ -23,17 +22,14 @@ public class Project implements Serializable {
 	private double totalLinesExecuted;
 	private double totalMethodsExecuted;
 
-	private List<Package> children = new LinkedList<Package>();
-	private List<Object> index = new LinkedList<Object>();
+	private List<IComposite> index = new ArrayList<IComposite>();
 
-	@Id
-	public Long getId() {
-		return id;
+	public String getName() {
+		return name;
 	}
 
-	@Identifier
-	public void setId(Long id) {
-		this.id = id;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Date getTimestamp() {
@@ -76,19 +72,11 @@ public class Project implements Serializable {
 		this.totalMethodsExecuted = totalMethodsExecuted;
 	}
 
-	public List<Package> getChildren() {
-		return children;
-	}
-
-	public void setChildren(List<Package> children) {
-		this.children = children;
-	}
-
-	public List<Object> getIndex() {
+	public List<IComposite> getIndex() {
 		return index;
 	}
 
-	public void setIndex(List<Object> index) {
+	public void setIndex(List<IComposite> index) {
 		this.index = index;
 	}
 

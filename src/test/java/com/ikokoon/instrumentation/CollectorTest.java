@@ -4,9 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
@@ -15,6 +14,7 @@ import com.ikokoon.ATest;
 import com.ikokoon.IConstants;
 import com.ikokoon.instrumentation.model.Afferent;
 import com.ikokoon.instrumentation.model.Class;
+import com.ikokoon.instrumentation.model.IComposite;
 import com.ikokoon.instrumentation.model.Method;
 import com.ikokoon.instrumentation.model.Package;
 import com.ikokoon.toolkit.Toolkit;
@@ -37,35 +37,33 @@ public class CollectorTest extends ATest implements IConstants {
 		Collector.collectCoverage(className, Double.toString(lineNumber), methodName, methodDescription);
 		// We must test that the package is correct
 
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(NAME, packageName);
-		Package pakkage = dataBase.find(Package.class, parameters);
+		List<Object> parameters = new ArrayList<Object>();
+		parameters.add(packageName);
+		Package pakkage = (Package) dataBase.find(parameters);
 		assertNotNull(pakkage);
 
 		// We must test that the class element is correct
 		parameters.clear();
-		parameters.put(NAME, className);
-		Class klass = dataBase.find(Class.class, parameters);
+		parameters.add(className);
+		Class klass = (Class) dataBase.find(parameters);
 		assertNotNull(klass);
+
 		// We must test that the method element is correct
-		parameters.clear();
-		parameters.put(PARENT, klass);
-		List<Method> methods = dataBase.find(Method.class, parameters, 0, Integer.MAX_VALUE);
-		assertTrue(methods.size() > 0);
+		assertTrue(klass.getChildren().size() > 0);
 	}
 
 	@Test
 	public void collectCoverageLineCounter() {
 		Collector.collectCoverage(className, methodName, methodDescription);
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(NAME, className);
-		Class klass = dataBase.find(Class.class, parameters);
+		List<Object> parameters = new ArrayList<Object>();
+		parameters.add(className);
+		Class klass = (Class) dataBase.find(parameters);
 
 		parameters.clear();
-		parameters.put(PARENT, klass);
-		parameters.put(NAME, methodName);
-		parameters.put(DESCRIPTION, methodDescription);
-		Method method = dataBase.find(Method.class, parameters);
+		parameters.add(klass.getName());
+		parameters.add(methodName);
+		parameters.add(methodDescription);
+		Method method = (Method) dataBase.find(parameters);
 		assertNotNull(method);
 		assertEquals(methodName, method.getName());
 	}
@@ -73,22 +71,21 @@ public class CollectorTest extends ATest implements IConstants {
 	@Test
 	public void collectMetricsInterface() {
 		Collector.collectMetrics(className, access);
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(NAME, className);
-		Class klass = dataBase.find(Class.class, parameters);
+		List<Object> parameters = new ArrayList<Object>();
+		parameters.add(className);
+		Class klass = (Class) dataBase.find(parameters);
 		assertNotNull(klass);
 		assertTrue(klass.getInterfaze());
 	}
 
 	@Test
 	public void collectComplexity() {
-		Toolkit.dump(dataBase);
 		Collector.collectComplexity(className, methodName, methodDescription, complexity, 1000);
-		Toolkit.dump(dataBase);
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(NAME, methodName);
-		parameters.put(DESCRIPTION, methodDescription);
-		Method method = dataBase.find(Method.class, parameters);
+		List<Object> parameters = new ArrayList<Object>();
+		parameters.add(className);
+		parameters.add(methodName);
+		parameters.add(methodDescription);
+		Method method = (Method) dataBase.find(parameters);
 		assertNotNull(method);
 		assertTrue(complexity == method.getComplexity());
 	}
@@ -96,12 +93,12 @@ public class CollectorTest extends ATest implements IConstants {
 	@Test
 	public void collectMetricsAfferentEfferent() {
 		Collector.collectMetrics(className, Logger.class.getName());
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(NAME, packageName);
-		Package pakkage = dataBase.find(Package.class, parameters);
+		List<Object> parameters = new ArrayList<Object>();
+		parameters.add(packageName);
+		Package pakkage = (Package) dataBase.find(parameters);
 		assertNotNull(pakkage);
 		boolean containsLogger = false;
-		outer: for (Class baseKlass : pakkage.getChildren()) {
+		outer: for (IComposite baseKlass : pakkage.getChildren()) {
 			Class klass = (Class) baseKlass;
 			for (Afferent afferent : klass.getAfferentPackages()) {
 				if (afferent.getName().indexOf(Logger.class.getPackage().getName()) > -1) {
@@ -115,7 +112,7 @@ public class CollectorTest extends ATest implements IConstants {
 
 	@Test
 	public void collectLinePerformance() {
-		int iterations = 10000;
+		int iterations = 1000;
 		String className = this.className;
 		String lineNumber = Double.toString(this.lineNumber);
 		String methodName = this.methodName;
@@ -125,16 +122,9 @@ public class CollectorTest extends ATest implements IConstants {
 			if (i % 1000 == 0) {
 				logger.info("Iteration : " + i);
 			}
-			double random = Math.random();
-			if (random < 0.1d) {
-				className = this.className + random;
-			}
-			if (random > 0.9d) {
-				methodName = this.methodName + random;
-			}
-			if (random > 0.2d && random < 0.8d) {
-				lineNumber = Double.toString(this.lineNumber + random);
-			}
+			className = this.className + i;
+			methodName = this.methodName + i;
+			lineNumber = Double.toString(this.lineNumber + i);
 			Collector.collectCoverage(className, lineNumber, methodName, methodDescription);
 		}
 		double end = System.currentTimeMillis();

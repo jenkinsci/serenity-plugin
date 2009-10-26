@@ -1,20 +1,18 @@
 package com.ikokoon.instrumentation.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author Michael Couck
  * @since 12.08.09
  * @version 01.00
  */
-@Parent(parent = true)
 @Unique(fields = { "name" })
-public class Package extends Base implements Comparable<Package>, Serializable {
+public class Package extends Composite implements Comparable<Package>, Serializable {
 
-	private Long id;
 	private String name;
 	private double lines;
 	private double complexity;
@@ -27,19 +25,8 @@ public class Package extends Base implements Comparable<Package>, Serializable {
 	private double efferent;
 	private double afferent;
 	private Date timestamp;
-	private Collection<Class> children = new ArrayList<Class>();
-	private Collection<Efferent> efference = new ArrayList<Efferent>();
-	private Collection<Afferent> afference = new ArrayList<Afferent>();
-
-	@Id
-	public Long getId() {
-		return id;
-	}
-
-	@Identifier
-	public void setId(Long id) {
-		this.id = id;
-	}
+	private Set<Efferent> efference = new TreeSet<Efferent>();
+	private Set<Afferent> afference = new TreeSet<Afferent>();
 
 	public String getName() {
 		return name;
@@ -63,14 +50,6 @@ public class Package extends Base implements Comparable<Package>, Serializable {
 
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
-	}
-
-	public Collection<Class> getChildren() {
-		return children;
-	}
-
-	public void setChildren(Collection<Class> children) {
-		this.children = children;
 	}
 
 	public double getComplexity() {
@@ -145,24 +124,24 @@ public class Package extends Base implements Comparable<Package>, Serializable {
 		this.afferent = afferent;
 	}
 
-	public Collection<Efferent> getEfference() {
+	public Set<Efferent> getEfference() {
 		return efference;
 	}
 
-	public void setEfference(Collection<Efferent> efference) {
+	public void setEfference(Set<Efferent> efference) {
 		this.efference = efference;
 	}
 
-	public Collection<Afferent> getAfference() {
+	public Set<Afferent> getAfference() {
 		return afference;
 	}
 
-	public void setAfference(Collection<Afferent> afference) {
+	public void setAfference(Set<Afferent> afference) {
 		this.afference = afference;
 	}
 
 	public String toString() {
-		return id + ":" + name;
+		return getId() + ":" + name;
 	}
 
 	public int compareTo(Package o) {

@@ -1,6 +1,7 @@
 package com.ikokoon.toolkit;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import org.apache.log4j.Logger;
 
@@ -33,19 +34,35 @@ public abstract class ObjectFactory {
 		Constructor<E> constructor = getConstructor(klass, allParameters);
 		LOGGER.debug("Got constructor : " + constructor);
 		if (constructor != null) {
+			if (!constructor.isAccessible()) {
+				constructor.setAccessible(true);
+			}
+			E e = null;
 			try {
-				if (!constructor.isAccessible()) {
-					constructor.setAccessible(true);
+				e = constructor.newInstance(allParameters);
+			} catch (IllegalArgumentException e1) {
+				LOGGER.error("Exception generating the action for " + klass + ", with parameters : ", e1);
+				for (Object parameter : allParameters) {
+					LOGGER.error("		: " + parameter);
 				}
-				E e = constructor.newInstance(allParameters);
-				LOGGER.debug("Instanciated : " + e);
-				return e;
-			} catch (Exception e) {
-				LOGGER.error("Exception generating the action for " + klass + ", with parameters : ", e);
+			} catch (InstantiationException e1) {
+				LOGGER.error("Exception generating the action for " + klass + ", with parameters : ", e1);
+				for (Object parameter : allParameters) {
+					LOGGER.error("		: " + parameter);
+				}
+			} catch (IllegalAccessException e1) {
+				LOGGER.error("Exception generating the action for " + klass + ", with parameters : ", e1);
+				for (Object parameter : allParameters) {
+					LOGGER.error("		: " + parameter);
+				}
+			} catch (InvocationTargetException e1) {
+				LOGGER.error("Exception generating the action for " + klass + ", with parameters : ", e1);
 				for (Object parameter : allParameters) {
 					LOGGER.error("		: " + parameter);
 				}
 			}
+			LOGGER.debug("Instanciated : " + e);
+			return e;
 		}
 		return null;
 	}

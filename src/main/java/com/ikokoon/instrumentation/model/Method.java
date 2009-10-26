@@ -1,8 +1,6 @@
 package com.ikokoon.instrumentation.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -10,12 +8,10 @@ import java.util.Date;
  * @since 12.08.09
  * @version 01.00
  */
-@Unique(fields = { "parent", "name", "description" })
-public class Method extends Base implements Comparable<Method>, Serializable {
+@Unique(fields = { "className", "name", "description" })
+public class Method extends Composite implements Comparable<Method>, Serializable {
 
-	private Long id;
 	private String name;
-	private Class parent;
 	private String className;
 	private String description;
 	private double complexity;
@@ -23,17 +19,6 @@ public class Method extends Base implements Comparable<Method>, Serializable {
 	private double totalLinesExecuted;
 	private double coverage;
 	private Date timestamp;
-	private Collection<Line> children = new ArrayList<Line>();
-
-	@Id
-	public Long getId() {
-		return id;
-	}
-
-	@Identifier
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;
@@ -41,14 +26,6 @@ public class Method extends Base implements Comparable<Method>, Serializable {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public Class getParent() {
-		return parent;
-	}
-
-	public void setParent(Class parent) {
-		this.parent = parent;
 	}
 
 	public String getClassName() {
@@ -65,14 +42,6 @@ public class Method extends Base implements Comparable<Method>, Serializable {
 
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
-	}
-
-	public Collection<Line> getChildren() {
-		return children;
-	}
-
-	public void setChildren(Collection<Line> children) {
-		this.children = children;
 	}
 
 	public String getDescription() {
@@ -116,7 +85,7 @@ public class Method extends Base implements Comparable<Method>, Serializable {
 	}
 
 	public String toString() {
-		return id + ":" + name;
+		return getId() + ":" + name;
 	}
 
 	public int compareTo(Method o) {

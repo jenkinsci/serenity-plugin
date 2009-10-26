@@ -1,8 +1,39 @@
 package com.ikokoon.instrumentation.model;
 
-public class Base {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Composite implements IComposite {
 
 	public static final int PRECISION = 2;
+
+	private Long id;
+	private IComposite parent;
+	private List<IComposite> children = new ArrayList<IComposite>();
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public IComposite getParent() {
+		return parent;
+	}
+
+	public void setParent(IComposite parent) {
+		this.parent = parent;
+	}
+
+	public List<IComposite> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<IComposite> children) {
+		this.children = children;
+	}
 
 	/**
 	 * Formats a double to the required precision.
@@ -45,9 +76,6 @@ public class Base {
 		for (char c : chars) {
 			switch (c) {
 			case '.':
-				state = decimal;
-				builder.append(c);
-				break;
 			case ',':
 				state = decimal;
 				builder.append(c);
@@ -64,4 +92,5 @@ public class Base {
 		}
 		return builder.toString();
 	}
+
 }

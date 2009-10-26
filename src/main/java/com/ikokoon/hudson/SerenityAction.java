@@ -75,11 +75,12 @@ public class SerenityAction extends Actionable implements ProminentProjectAction
 			SerenityBuildAction action = build.getAction(SerenityBuildAction.class);
 			return action.getResult();
 		} else {
-			return new ISerenityResult() {
+			class SerenityResult implements ISerenityResult {
 				public String getMetrics() {
 					return "metrics";
 				}
-			};
+			}
+			return new SerenityResult();
 		}
 	}
 

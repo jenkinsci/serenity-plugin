@@ -3,9 +3,7 @@ package com.ikokoon.instrumentation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -13,6 +11,7 @@ import com.ikokoon.IConstants;
 import com.ikokoon.instrumentation.model.Afferent;
 import com.ikokoon.instrumentation.model.Class;
 import com.ikokoon.instrumentation.model.Efferent;
+import com.ikokoon.instrumentation.model.IComposite;
 import com.ikokoon.instrumentation.model.Line;
 import com.ikokoon.instrumentation.model.Method;
 import com.ikokoon.instrumentation.model.Package;
@@ -35,19 +34,19 @@ public class Collector implements IConstants {
 	/** The logger. */
 	private static final Logger LOGGER = Logger.getLogger(Collector.class);
 	/** The timestamp for the build. */
-	public static Date timestamp = new Date();
+	public static final Date timestamp = new Date();
 	/** The database/persistence object. */
 	private static IDataBase dataBase;
 	static {
 		try {
 			dataBase = IDataBase.DataBase.getDataBase();
 			// Reset the counter for all the lines
-			Project project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
-			for (Package pakkage : project.getChildren()) {
-				for (Class klass : pakkage.getChildren()) {
-					for (Method method : klass.getChildren()) {
-						for (Line line : method.getChildren()) {
-							line.setCounter(0d);
+			Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
+			for (IComposite pakkage : project.getChildren()) {
+				for (IComposite klass : pakkage.getChildren()) {
+					for (IComposite method : klass.getChildren()) {
+						for (IComposite line : method.getChildren()) {
+							((Line) line).setCounter(0d);
 						}
 					}
 				}
@@ -72,7 +71,6 @@ public class Collector implements IConstants {
 	public static final void collectCoverage(String className, String lineNumber, String methodName, String methodDescription) {
 		Line line = getLine(className, methodName, methodDescription, lineNumber);
 		line.increment();
-		dataBase.merge(line);
 	}
 
 	/**
@@ -88,8 +86,7 @@ public class Collector implements IConstants {
 	 *            the description of the method
 	 */
 	public static final void collectLines(String className, String lineNumber, String methodName, String methodDescription) {
-		Line line = getLine(className, methodName, methodDescription, lineNumber);
-		dataBase.merge(line);
+		getLine(className, methodName, methodDescription, lineNumber);
 	}
 
 	/**
@@ -106,8 +103,7 @@ public class Collector implements IConstants {
 	 *            the number of lines in the method
 	 */
 	public static final void collectCoverage(String className, String methodName, String methodDescription) {
-		Method method = getMethod(className, methodName, methodDescription);
-		dataBase.merge(method);
+		getMethod(className, methodName, methodDescription);
 	}
 
 	/**
@@ -125,7 +121,6 @@ public class Collector implements IConstants {
 		Method method = getMethod(className, methodName, methodDescription);
 		method.setComplexity(complexity);
 		method.setLines(lineCounter);
-		dataBase.merge(method);
 	}
 
 	/**
@@ -157,14 +152,12 @@ public class Collector implements IConstants {
 			Afferent afferent = getAfferent(klass, targetPackageName);
 			if (!klass.getAfferentPackages().contains(afferent)) {
 				klass.getAfferentPackages().add(afferent);
-				dataBase.merge(klass);
 			}
 			// Add this package to the eferent packages of the target
 			Class targetClass = getClass(targetClassName);
 			Efferent efferent = getEfferent(targetClass, packageName);
 			if (!targetClass.getEfferentPackages().contains(efferent)) {
 				targetClass.getEfferentPackages().add(efferent);
-				dataBase.merge(targetClass);
 			}
 		}
 	}
@@ -182,7 +175,6 @@ public class Collector implements IConstants {
 			Class klass = getClass(className);
 			if (!klass.getInterfaze()) {
 				klass.setInterfaze(true);
-				dataBase.merge(klass);
 			}
 		}
 	}
@@ -191,9 +183,9 @@ public class Collector implements IConstants {
 		className = Toolkit.slashToDot(className);
 		String packageName = Toolkit.classNameToPackageName(className);
 
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(NAME, packageName);
-		Package pakkage = dataBase.find(Package.class, parameters);
+		List<Object> parameters = new ArrayList<Object>();
+		parameters.add(packageName);
+		Package pakkage = (Package) dataBase.find(parameters);
 
 		if (pakkage == null) {
 			pakkage = new Package();
@@ -206,7 +198,12 @@ public class Collector implements IConstants {
 			pakkage.setInterfaces(0d);
 			pakkage.setImplementations(0d);
 			pakkage.setTimestamp(timestamp);
-			pakkage = dataBase.persist(pakkage);
+			pakkage = (Package) dataBase.persist(pakkage);
+
+			Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
+			project.getChildren().add(pakkage);
+			pakkage.setParent(project);
+
 			LOGGER.debug("Added package : " + pakkage);
 		}
 		return pakkage;
@@ -215,9 +212,9 @@ public class Collector implements IConstants {
 	private static final Class getClass(String className) {
 		className = Toolkit.slashToDot(className);
 
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(NAME, className);
-		Class klass = dataBase.find(Class.class, parameters);
+		List<Object> parameters = new ArrayList<Object>();
+		parameters.add(className);
+		Class klass = (Class) dataBase.find(parameters);
 
 		if (klass == null) {
 			klass = new Class();
@@ -235,7 +232,7 @@ public class Collector implements IConstants {
 			pakkage.getChildren().add(klass);
 			klass.setParent(pakkage);
 
-			klass = dataBase.persist(klass);
+			klass = (Class) dataBase.persist(klass);
 			LOGGER.debug("Added class  : " + klass);
 		}
 		return klass;
@@ -245,11 +242,11 @@ public class Collector implements IConstants {
 		className = Toolkit.slashToDot(className);
 		methodName = methodName.replace('<', ' ').replace('>', ' ').trim();
 
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(CLASS_NAME, className);
-		parameters.put(NAME, methodName);
-		parameters.put(DESCRIPTION, methodDescription);
-		Method method = dataBase.find(Method.class, parameters);
+		List<Object> parameters = new ArrayList<Object>();
+		parameters.add(className);
+		parameters.add(methodName);
+		parameters.add(methodDescription);
+		Method method = (Method) dataBase.find(parameters);
 
 		if (method == null) {
 			method = new Method();
@@ -264,7 +261,7 @@ public class Collector implements IConstants {
 			Class klass = getClass(className);
 			method.setParent(klass);
 			if (klass.getChildren() == null) {
-				List<Method> children = new ArrayList<Method>();
+				List<IComposite> children = new ArrayList<IComposite>();
 				klass.setChildren(children);
 			}
 			klass.getChildren().add(method);
@@ -279,11 +276,11 @@ public class Collector implements IConstants {
 		double lineNumberDouble = Double.parseDouble(lineNumber);
 		className = Toolkit.slashToDot(className);
 
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(CLASS_NAME, className);
-		parameters.put(METHOD_NAME, methodName);
-		parameters.put(NUMBER, lineNumberDouble);
-		line = dataBase.find(Line.class, parameters);
+		List<Object> parameters = new ArrayList<Object>();
+		parameters.add(className);
+		parameters.add(methodName);
+		parameters.add(lineNumberDouble);
+		line = (Line) dataBase.find(parameters);
 
 		if (line == null) {
 			line = new Line();
@@ -295,22 +292,26 @@ public class Collector implements IConstants {
 			line.setMethodName(methodName);
 
 			Method method = getMethod(className, methodName, methodDescription);
-			Collection<Line> lines = method.getChildren();
-			// LOGGER.error("Method lines : 1 : " + method.getName() + ", " + lines.size() + ", " + lines.hashCode());
+			Collection<IComposite> lines = method.getChildren();
 			line.setParent(method);
 			lines.add(line);
-			// LOGGER.error("Method lines : 2 : " + method.getName() + ", " + lines.size() + ", " + lines.hashCode());
 
 			dataBase.persist(line);
 		}
-		// LOGGER.error("Method lines : 3 : " + line.getParent().getName() + ", " + line.getParent().getChildren().size());
 		return line;
 	}
 
 	private static final Efferent getEfferent(Class klass, String packageName) {
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(NAME, packageName);
-		Efferent efferent = dataBase.find(Efferent.class, parameters);
+		List<Object> parameters = new ArrayList<Object>();
+
+		StringBuilder builder = new StringBuilder("<");
+		builder.append("e:");
+		builder.append(packageName);
+		builder.append(">");
+		packageName = builder.toString();
+
+		parameters.add(packageName);
+		Efferent efferent = (Efferent) dataBase.find(parameters);
 		if (efferent == null) {
 			efferent = new Efferent();
 			efferent.setName(packageName);
@@ -324,9 +325,16 @@ public class Collector implements IConstants {
 	}
 
 	private static final Afferent getAfferent(Class klass, String packageName) {
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(NAME, packageName);
-		Afferent afferent = dataBase.find(Afferent.class, parameters);
+		List<Object> parameters = new ArrayList<Object>();
+
+		StringBuilder builder = new StringBuilder("<");
+		builder.append("a:");
+		builder.append(packageName);
+		builder.append(">");
+		packageName = builder.toString();
+
+		parameters.add(packageName);
+		Afferent afferent = (Afferent) dataBase.find(parameters);
 		if (afferent == null) {
 			afferent = new Afferent();
 			afferent.setName(packageName);

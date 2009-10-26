@@ -1,7 +1,7 @@
 package com.ikokoon;
 
 import java.net.URL;
-import java.util.TreeSet;
+import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -15,12 +15,12 @@ import com.ikokoon.instrumentation.dependency.DependencyClassAdapter;
 import com.ikokoon.instrumentation.model.Afferent;
 import com.ikokoon.instrumentation.model.Class;
 import com.ikokoon.instrumentation.model.Efferent;
+import com.ikokoon.instrumentation.model.IComposite;
 import com.ikokoon.instrumentation.model.Line;
 import com.ikokoon.instrumentation.model.Method;
 import com.ikokoon.instrumentation.model.Package;
 import com.ikokoon.instrumentation.model.Project;
 import com.ikokoon.persistence.ADataBase;
-import com.ikokoon.persistence.DataBaseXml;
 import com.ikokoon.persistence.IDataBase;
 import com.ikokoon.target.Target;
 import com.ikokoon.target.one.One;
@@ -70,20 +70,11 @@ public abstract class ATest implements IConstants {
 	@Before
 	public void initilize() {
 		dataBase = (ADataBase) IDataBase.DataBase.getDataBase();
-		delete(Efferent.class);
-		delete(Afferent.class);
-		delete(Line.class);
-		delete(Method.class);
-		delete(Class.class);
-		delete(Package.class);
-	}
-
-	protected <T> void delete(java.lang.Class<T> klass) {
-		if (dataBase instanceof DataBaseXml) {
-			Project project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
-			if (project != null) {
-				project.getChildren().clear();
-			}
+		Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
+		if (project != null) {
+			project.getChildren().clear();
+			project.getIndex().clear();
+			project.getIndex().add(project);
 		}
 	}
 
@@ -91,7 +82,7 @@ public abstract class ATest implements IConstants {
 		Package pakkage = new Package();
 		pakkage.setAbstractness(1d);
 		pakkage.setAfferent(1d);
-		pakkage.setChildren(new TreeSet<Class>());
+		pakkage.setChildren(new ArrayList<IComposite>());
 		pakkage.setComplexity(1d);
 		pakkage.setCoverage(1d);
 		pakkage.setDistance(1d);

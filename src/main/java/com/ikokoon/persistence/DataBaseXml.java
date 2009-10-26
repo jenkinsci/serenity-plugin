@@ -6,14 +6,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
+import com.ikokoon.instrumentation.model.IComposite;
 import com.ikokoon.instrumentation.model.Project;
 import com.ikokoon.toolkit.Toolkit;
 
@@ -24,7 +20,7 @@ import com.ikokoon.toolkit.Toolkit;
  * @since 11.10.09
  * @version 01.00
  */
-public class DataBaseXml extends ADataBase implements IDataBase {
+public class DataBaseXml extends ADataBase {
 
 	private Project project;
 
@@ -59,6 +55,7 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 		}
 		if (project == null) {
 			project = new Project();
+			persist(project);
 		}
 		logger.info("Finished initilizing the database data model in memory");
 	}
@@ -66,151 +63,38 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 	/**
 	 * {@inheritDoc}
 	 */
-	public synchronized final <T> T persist(T t) {
-		List<Object> list = new ArrayList<Object>();
-		setIds(t, t.getClass(), list);
-		logger.debug("Persisted object : " + t);
-		return t;
+	public synchronized final IComposite persist(IComposite composite) {
+		setIds(composite);
+		logger.debug("Persisted object : " + composite);
+		return composite;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
-	public synchronized final <T> T find(Class<T> klass, Long id) {
-		List<Object> index = project.getIndex();
-		return (T) binarySearch(index, id);
-	}
-
-	@SuppressWarnings("unchecked")
-	protected Object binarySearch(List<Object> index, long key) {
-		int low = 0;
-		int high = index.size() - 1;
-		while (low <= high) {
-			int mid = (low + high) >>> 1;
-			Object object = index.get(mid);
-			long midVal = getId(object.getClass(), object);
-			// long midVal = a[mid];
-			int cmp;
-			if (midVal < key) {
-				cmp = -1; // Neither val is NaN, thisVal is smaller
-			} else if (midVal > key) {
-				cmp = 1; // Neither val is NaN, thisVal is larger
-			} else {
-				long midBits = Double.doubleToLongBits(midVal);
-				long keyBits = Double.doubleToLongBits(key);
-				cmp = (midBits == keyBits ? 0 : // Values are equal
-						(midBits < keyBits ? -1 : // (-0.0, 0.0) or (!NaN, NaN)
-								1)); // (0.0, -0.0) or (NaN, !NaN)
-			}
-			if (cmp < 0)
-				low = mid + 1;
-			else if (cmp > 0)
-				high = mid - 1;
-			else {
-				// return mid; // key found
-				return object;
-			}
-		}
-		return null;
-		// return -(low + 1); // key not found.
+	public synchronized final IComposite find(Long id) {
+		List<IComposite> index = project.getIndex();
+		return search(index, id);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
-	public synchronized final <T> T find(final Class<T> klass, final Map<String, Object> parameters) {
-		Long id = Toolkit.hash(parameters.values());
-		List<Object> index = project.getIndex();
-		return (T) binarySearch(index, id);
+	public synchronized final IComposite find(List<Object> parameters) {
+		Long id = Toolkit.hash(parameters.toArray());
+		List<IComposite> index = project.getIndex();
+		return search(index, id);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
-	public synchronized final <T> List<T> find(Class<T> klass, Map<String, Object> parameters, int firstResult, int maxResults) {
-		List<T> results = new ArrayList<T>();
-		// Map<Long, Object> objects = cache.get(klass);
-		// if (objects != null) {
-		// int index = 0;
-		// for (Object object : objects.values()) {
-		// if (isEqual(object, parameters)) {
-		// if (index++ < firstResult) {
-		// continue;
-		// }
-		// if (index > maxResults) {
-		// break;
-		// }
-		// results.add((T) object);
-		// }
-		// }
-		// }
-		return results;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	private synchronized final boolean isEqual(Object object, final Map<String, Object> parameters) {
-		for (String key : parameters.keySet()) {
-			Object value = parameters.get(key);
-			Object fieldValue = Toolkit.getValue(object, key);
-			if (value != null && !value.equals(fieldValue)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public synchronized final <T> T merge(T t) {
-		return t;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public synchronized final <T> T remove(Class<T> klass, Long id) {
-		T t = find(klass, id);
-		// Map<Long, Long> index = indexes.get(klass);
-		// if (index != null && t != null) {
-		// Long hash = getKeyFromValue(index, t);
-		// if (hash != null) {
-		// index.remove(hash);
-		// }
-		// }
-		// Map<Long, Object> objects = cache.get(klass);
-		// if (objects != null) {
-		// objects.remove(id);
-		// }
-		return t;
-	}
-
-	/**
-	 * Returns the key from the map based on the value.
-	 * 
-	 * @param index
-	 *            the map to get the key from
-	 * @param value
-	 *            the value for which we are looking for the key
-	 * @return the key that corresponds to the value in the map, or null if no such value exists in the map
-	 */
-	private synchronized final Long getKeyFromValue(Map<Long, Long> index, Object value) {
-		for (Long o : index.keySet()) {
-			Object indexObject = index.get(o);
-			if (indexObject == null) {
-				continue;
-			}
-			// logger.debug("O : " + o + ", index object : " + indexObject + ", value : " + value);
-			if (indexObject.equals(value)) {
-				return o;
-			}
-		}
-		return null;
+	public synchronized final IComposite remove(Long id) {
+		IComposite composite = find(id);
+		composite.getParent().getChildren().remove(composite);
+		composite.setParent(null);
+		project.getIndex().remove(composite);
+		return composite;
 	}
 
 	/**
@@ -225,10 +109,6 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 	 */
 	public synchronized final void close() {
 		logger.info("Comitting and closing the database");
-		write();
-	}
-
-	private synchronized final void write() {
 		FileOutputStream fileOutputStream = null;
 		try {
 			File file = getFile(null);
@@ -250,27 +130,6 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	public synchronized final <T> T find(String queryName, Map<String, Object> parameters) {
-		throw new RuntimeException("This method is for JPA, not OODB");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public synchronized final <T> List<T> find(Class<T> klass, String queryName, Map<String, Object> parameters, int firstResult, int maxResults) {
-		throw new RuntimeException("This method is for JPA, not OODB");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public synchronized final int execute(String query) {
-		throw new RuntimeException("This method is for JPA, not OODB");
-	}
-
-	/**
 	 * This method sets the ids in a graph of objects. The objects need to be stored, perhaps using the top level object in the heirachy, then the
 	 * database is consulted for it's uid for the object. The uid is set in the field that has the Identifier annotation on the setter method for the
 	 * field.
@@ -279,45 +138,60 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 	 *            the type of object
 	 * @param object
 	 *            the object to set the id for
-	 * @param klass
-	 *            the class of object
 	 * @param list
 	 *            a list of already set id fields
 	 */
-	protected synchronized final <T> void setIds(Object object, Class<? extends Object> klass, List<Object> list) {
-		if (object == null) {
+	protected synchronized final <T> void setIds(IComposite composite) {
+		if (composite == null) {
 			return;
 		}
-		if (getId(klass, object) != null) {
-			return;
+		if (composite.getId() == null) {
+			Object[] uniqueValues = getUniqueValues(composite);
+			Long id = Toolkit.hash(uniqueValues);
+			composite.setId(id);
+			// logger.info("Set id for : " + composite + ", unique values : " + Arrays.asList(uniqueValues) + ", id : " + id);
+			// Insert the object into the index
+			insert(project.getIndex(), composite, id);
 		}
-		list.add(object);
-
-		Object[] uniqueValues = getUniqueValues(object);
-		Long id = Toolkit.hash(uniqueValues);
-		setId(object, object.getClass(), id, true);
-
-		// Insert the object into the index
-
-		Field[] fields = klass.getDeclaredFields();
-		for (Field field : fields) {
-			Object fieldValue = Toolkit.getValue(object, field.getName());
-			if (fieldValue == null) {
-				continue;
-			}
-			if (fieldValue instanceof Collection) {
-				for (Object collectionObject : (Collection<?>) fieldValue) {
-					setIds(collectionObject, collectionObject.getClass(), list);
-				}
-				continue;
-			}
-			setIds(fieldValue, fieldValue.getClass(), list);
+		List<IComposite> children = composite.getChildren();
+		for (IComposite child : children) {
+			setIds(child);
 		}
 	}
 
-	protected void insert(LinkedList<Object> index, Object toInsert, long key) {
+	protected IComposite search(List<IComposite> index, long key) {
+		int low = 0;
+		int high = index.size() - 1;
+		while (low <= high) {
+			int mid = (low + high) >>> 1;
+			IComposite composite = index.get(mid);
+			long midVal = composite.getId();
+			int cmp;
+			if (midVal < key) {
+				cmp = -1; // Neither val is NaN, thisVal is smaller
+			} else if (midVal > key) {
+				cmp = 1; // Neither val is NaN, thisVal is larger
+			} else {
+				long midBits = Double.doubleToLongBits(midVal);
+				long keyBits = Double.doubleToLongBits(key);
+				cmp = (midBits == keyBits ? 0 : // Values are equal
+						(midBits < keyBits ? -1 : // (-0.0, 0.0) or (!NaN, NaN)
+								1)); // (0.0, -0.0) or (NaN, !NaN)
+			}
+			if (cmp < 0)
+				low = mid + 1;
+			else if (cmp > 0)
+				high = mid - 1;
+			else {
+				return composite;
+			}
+		}
+		return null;
+	}
+
+	protected void insert(List<IComposite> index, IComposite toInsert, long key) {
 		if (index.size() == 0) {
-			index.addFirst(toInsert);
+			index.add(toInsert);
 			return;
 		}
 		int low = 0;
@@ -328,14 +202,14 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 				index.add(mid, toInsert);
 				break;
 			}
-			Object object = index.get(mid);
-			long midVal = getId(object.getClass(), object);
+			IComposite composite = index.get(mid);
+			long midVal = composite.getId();
 			// logger.info("Low : " + low + ", high : " + high + ", mid : " + mid + ", mid val : " + midVal);
 			if (midVal < key) {
 				int next = mid + 1;
 				if (index.size() > next) {
-					Object nextObject = index.get(next);
-					long nextVal = getId(nextObject.getClass(), nextObject);
+					IComposite nextComposite = index.get(next);
+					long nextVal = nextComposite.getId();
 					if (nextVal > key) {
 						index.add(next, toInsert);
 						break;
@@ -344,17 +218,22 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 				low = mid + 1;
 			} else if (midVal > key) {
 				int previous = mid - 1;
-				if (previous > 0) {
-					Object previousObject = index.get(previous);
-					long previousVal = getId(previousObject.getClass(), previousObject);
+				if (previous >= 0) {
+					IComposite previousComposite = index.get(previous);
+					long previousVal = previousComposite.getId();
 					if (previousVal < key) {
 						index.add(mid, toInsert);
+						break;
 					}
+				} else {
+					index.add(0, toInsert);
+					break;
 				}
 				high = mid - 1;
 			} else {
 				// Found key? Duplicate?
-				throw new RuntimeException("Duplicate key found : " + toInsert + ", " + key);
+				// throw new RuntimeException("Duplicate key found : " + toInsert + ", " + key);
+				break;
 			}
 		}
 	}

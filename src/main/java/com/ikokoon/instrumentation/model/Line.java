@@ -9,33 +9,13 @@ import java.util.Date;
  * @version 01.00
  */
 @Unique(fields = { "className", "methodName", "number" })
-public class Line extends Base implements Comparable<Line>, Serializable {
+public class Line extends Composite implements Comparable<Line>, Serializable {
 
-	private Long id;
-	private Method parent;
-	private String methodName;
 	private String className;
+	private String methodName;
 	private double number;
 	private double counter;
 	private Date timestamp;
-
-	@Id
-	public Long getId() {
-		return id;
-	}
-
-	@Identifier
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Method getParent() {
-		return parent;
-	}
-
-	public void setParent(Method parent) {
-		this.parent = parent;
-	}
 
 	public String getMethodName() {
 		return methodName;
@@ -82,7 +62,7 @@ public class Line extends Base implements Comparable<Line>, Serializable {
 	}
 
 	public String toString() {
-		return id + ":" + (parent != null ? parent.toString() : "No parent method?!") + " : " + number;
+		return getId() + ":" + className + ":" + methodName + " : " + number;
 	}
 
 	public int compareTo(Line o) {

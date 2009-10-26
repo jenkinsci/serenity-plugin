@@ -8,7 +8,7 @@ import java.net.URLClassLoader;
  * This class is a test to see if the XMLDecoder can be loaded by a custom class loader. The purpose of which is because Hudson delegates to the
  * server classloader to get the basic Java classes but the XMLDecoder classloader does not have access to the classes in the individual plugins, so
  * it is basically useless of course. In any case it is not possible because the classes that start with java.lang are not allowed to be loaded by
- * anything other than the system class loader.
+ * anything other than the system class loader. So to answer my own question this will not work.
  * 
  * @author Michael Couck
  * @since 18.10.09

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Michael Couck
@@ -11,11 +12,9 @@ import java.util.Date;
  * @version 01.00
  */
 @Unique(fields = { "name" })
-public class Class extends Base implements Comparable<Class>, Serializable {
+public class Class extends Composite implements Comparable<Class>, Serializable {
 
-	private Long id;
 	private String name;
-	private Package parent;
 	private double lines;
 	private double complexity;
 	private double coverage;
@@ -24,19 +23,8 @@ public class Class extends Base implements Comparable<Class>, Serializable {
 	private double afferent;
 	private boolean interfaze;
 	private Date timestamp;
-	private Collection<Method> children = new ArrayList<Method>();
-	private Collection<Efferent> efferentPackages = new ArrayList<Efferent>();
-	private Collection<Afferent> afferentPackages = new ArrayList<Afferent>();
-
-	@Id
-	public Long getId() {
-		return id;
-	}
-
-	@Identifier
-	public void setId(Long id) {
-		this.id = id;
-	}
+	private List<Efferent> efferentPackages = new ArrayList<Efferent>();
+	private List<Afferent> afferentPackages = new ArrayList<Afferent>();
 
 	public String getName() {
 		return name;
@@ -44,14 +32,6 @@ public class Class extends Base implements Comparable<Class>, Serializable {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public Package getParent() {
-		return parent;
-	}
-
-	public void setParent(Package parent) {
-		this.parent = parent;
 	}
 
 	public double getLines() {
@@ -128,32 +108,24 @@ public class Class extends Base implements Comparable<Class>, Serializable {
 		this.timestamp = timestamp;
 	}
 
-	public Collection<Method> getChildren() {
-		return children;
-	}
-
-	public void setChildren(Collection<Method> children) {
-		this.children = children;
-	}
-
 	public Collection<Efferent> getEfferentPackages() {
 		return efferentPackages;
 	}
 
-	public void setEfferentPackages(Collection<Efferent> errerent) {
-		this.efferentPackages = errerent;
+	public void setEfferentPackages(List<Efferent> efferent) {
+		this.efferentPackages = efferent;
 	}
 
-	public Collection<Afferent> getAfferentPackages() {
+	public List<Afferent> getAfferentPackages() {
 		return afferentPackages;
 	}
 
-	public void setAfferentPackages(Collection<Afferent> afferent) {
+	public void setAfferentPackages(List<Afferent> afferent) {
 		this.afferentPackages = afferent;
 	}
 
 	public String toString() {
-		return id + ":" + name;
+		return getId() + ":" + name;
 	}
 
 	public int compareTo(Class o) {

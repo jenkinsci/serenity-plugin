@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
@@ -76,6 +78,16 @@ public class ToolkitTest extends ATest {
 		d = pakkage.format(d, precision);
 		assertTrue(123456.875 == d);
 		assertFalse(123456.8755 == d);
+	}
+
+	@Test
+	public void hash() {
+		String string = ToolkitTest.class.getName();
+		Long stringHash = Toolkit.hash(string);
+		List<Object> objects = new ArrayList<Object>();
+		objects.add(string);
+		Long arrayHash = Toolkit.hash(objects.toArray());
+		assertEquals(stringHash, arrayHash);
 	}
 
 }

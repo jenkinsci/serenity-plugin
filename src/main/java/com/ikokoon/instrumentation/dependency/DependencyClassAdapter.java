@@ -1,5 +1,7 @@
 package com.ikokoon.instrumentation.dependency;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.Arrays;
 
 import org.apache.log4j.Logger;
@@ -54,7 +56,7 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void visit(int version, int access, String className, String signature, String superName, final String[] interfaces) {
+	public void visit(int version, int access, String className, String signature, String superName, String[] interfaces) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visit : " + version + ", " + access + ", " + className + ", " + signature + ", " + superName);
 			if (interfaces != null) {
@@ -159,7 +161,9 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitSource : " + source + ", " + debug);
 		}
-		// TODO - can we collect the source here for the reports?
+		InputStream inputStream = this.getClass().getResourceAsStream("/" + className + ".class");
+		ByteArrayOutputStream byteArrayOutputStream = Toolkit.getContents(inputStream);
+		logger.info(byteArrayOutputStream.toString() + ", " + className);
 		super.visitSource(source, debug);
 	}
 

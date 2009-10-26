@@ -4,6 +4,7 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.security.ProtectionDomain;
 import java.util.Date;
@@ -33,7 +34,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 	/** The logger. */
 	private static Logger LOGGER;
 	/** The static instance of this transformer. */
-	public static Transformer INSTANCE;
+	public static final Transformer INSTANCE = new Transformer();
 	/** The aggregated flag. */
 	private static boolean accumulated = false;
 
@@ -68,12 +69,8 @@ public class Transformer implements ClassFileTransformer, IConstants {
 			public void run() {
 				LOGGER.info("Writing and finalizing the persistence");
 				IDataBase dataBase = IDataBase.DataBase.getDataBase();
-				Aggregator aggregator = new Aggregator(null, dataBase);
-				new Cleaner(aggregator);
-				aggregator.execute();
-
-				// Toolkit.dump(dataBase);
-
+				new Cleaner(null).execute();
+				new Aggregator(null, dataBase).execute();
 				dataBase.close();
 				long million = 1000 * 1000;
 				LOGGER.info("Total memory : " + (Runtime.getRuntime().totalMemory() / million) + ", max memory : "
@@ -81,7 +78,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 			}
 		});
 
-		instrumentation.addTransformer(INSTANCE = new Transformer());
+		instrumentation.addTransformer(INSTANCE);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -144,10 +141,20 @@ public class Transformer implements ClassFileTransformer, IConstants {
 			try {
 				constructor = klass.getConstructor(ClassVisitor.class, String.class);
 				visitor = constructor.newInstance(visitor, className);
-				LOGGER.debug("Adding class visitor : " + visitor);
-			} catch (Exception e) {
-				LOGGER.error("Exception initilising the class adapter : " + klass, e);
+			} catch (SecurityException e) {
+				LOGGER.error("Exception instanciating the visitors", e);
+			} catch (NoSuchMethodException e) {
+				LOGGER.error("Exception instanciating the visitors", e);
+			} catch (IllegalArgumentException e) {
+				LOGGER.error("Exception instanciating the visitors", e);
+			} catch (InstantiationException e) {
+				LOGGER.error("Exception instanciating the visitors", e);
+			} catch (IllegalAccessException e) {
+				LOGGER.error("Exception instanciating the visitors", e);
+			} catch (InvocationTargetException e) {
+				LOGGER.error("Exception instanciating the visitors", e);
 			}
+			LOGGER.debug("Adding class visitor : " + visitor);
 		}
 		reader.accept(visitor, 0);
 		// ASMifierClassVisitor classVisitor = new ASMifierClassVisitor(new PrintWriter(System.out));

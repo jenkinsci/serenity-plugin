@@ -1,20 +1,18 @@
 package com.ikokoon.persistence;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Test;
 
 import com.ikokoon.ATest;
 import com.ikokoon.instrumentation.model.Class;
+import com.ikokoon.instrumentation.model.IComposite;
 import com.ikokoon.instrumentation.model.Line;
 import com.ikokoon.instrumentation.model.Method;
 import com.ikokoon.instrumentation.model.Package;
@@ -26,14 +24,13 @@ public class DataBaseXmlTest extends ATest {
 	public void insert() {
 		DataBaseXml dataBase = (DataBaseXml) this.dataBase;
 
-		LinkedList<Object> list = getList();
-		logger.info(list);
+		LinkedList<IComposite> list = getList();
 
 		// Check the performance
 		list.clear();
-		double iterations = 1000;
+		double inserts = 1000;
 		double start = System.currentTimeMillis();
-		for (long i = 0; i < iterations; i++) {
+		for (long i = 0; i < inserts; i++) {
 			Class klass = new Class();
 			klass.setName("" + i);
 			klass.setId(i);
@@ -41,16 +38,14 @@ public class DataBaseXmlTest extends ATest {
 		}
 		double end = System.currentTimeMillis();
 		double duration = end - start;
-		double iterationsPerSecond = iterations / (duration / 60);
-		logger.info("Duration : " + duration + ", iterations per second : " + iterationsPerSecond);
-
-		logger.info(list);
+		double insertsPerSecond = inserts / (duration / 60);
+		logger.info("Duration : " + duration + ", inserts per second : " + insertsPerSecond);
 	}
 
-	private LinkedList<Object> getList() {
+	private LinkedList<IComposite> getList() {
 		DataBaseXml dataBase = (DataBaseXml) this.dataBase;
 
-		LinkedList<Object> list = new LinkedList<Object>();
+		LinkedList<IComposite> list = new LinkedList<IComposite>();
 		Class klass = new Class();
 		klass.setName("a");
 		Long id = Toolkit.hash(klass.getName());
@@ -73,12 +68,12 @@ public class DataBaseXmlTest extends ATest {
 	}
 
 	@Test
-	public void binarySearch() {
+	public void search() {
 		DataBaseXml dataBase = (DataBaseXml) this.dataBase;
-		LinkedList<Object> list = getList();
+		LinkedList<IComposite> list = getList();
 		Long id = Toolkit.hash("b");
-		Object object = dataBase.binarySearch(list, id);
-		logger.info(object);
+		Object object = dataBase.search(list, id);
+		assertNotNull(object);
 	}
 
 	@Test
@@ -86,151 +81,68 @@ public class DataBaseXmlTest extends ATest {
 		// T object
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
-		Toolkit.dump(dataBase);
-		pakkage = dataBase.find(Package.class, pakkage.getId());
+		pakkage = (Package) dataBase.find(pakkage.getId());
 		assertNotNull(pakkage);
+
+		Long classId = pakkage.getChildren().get(0).getId();
+		Class klass = (Class) dataBase.find(classId);
+		assertNotNull(klass);
 	}
 
 	@Test
-	public void findClassId() {
+	public void findId() {
 		// Class<T> klass, Long id
 		Package pakkage = getPackage();
-		Class klass = getClass(pakkage);
-		Method method = getMethod(klass);
-		Line line = getLine(method);
-		dataBase.persist(line);
-		Toolkit.dump(dataBase);
-		line = dataBase.find(Line.class, line.getId());
+		dataBase.persist(pakkage);
+		Line line = (Line) dataBase.find(5286208520220707252l);
 		assertNotNull(line);
 	}
 
 	@Test
-	public void findClassParameters() {
+	public void findParameters() {
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
 
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(NAME, packageName);
-		pakkage = dataBase.find(Package.class, parameters);
+		List<Object> parameters = new ArrayList<Object>();
+		parameters.add(packageName);
+		pakkage = (Package) dataBase.find(parameters);
 		assertNotNull(pakkage);
 
-		parameters.put(NAME, className);
-		Class klass = dataBase.find(Class.class, parameters);
+		parameters.clear();
+		parameters.add(className);
+		Class klass = (Class) dataBase.find(parameters);
 		assertNotNull(klass);
 
-		parameters.put(PARENT, klass);
-		parameters.put(NAME, methodName);
-		parameters.put(DESCRIPTION, methodDescription);
-		Method method = dataBase.find(Method.class, parameters);
+		parameters.clear();
+		parameters.add(klass.getName());
+		parameters.add(methodName);
+		parameters.add(methodDescription);
+		Method method = (Method) dataBase.find(parameters);
 		assertNotNull(method);
 
 		parameters.clear();
-		parameters.put(PARENT, method);
-		parameters.put(NUMBER, lineNumber);
-		Line line = dataBase.find(Line.class, parameters);
+		parameters.add(klass.getName());
+		parameters.add(method.getName());
+		parameters.add(lineNumber);
+		Line line = (Line) dataBase.find(parameters);
 		assertNotNull(line);
 	}
 
 	@Test
-	public void merge() {
-		// T object
-		Package pakkage = getPackage();
-		Class klass = pakkage.getChildren().iterator().next();
-		Method method = klass.getChildren().iterator().next();
-		dataBase.persist(pakkage);
-
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(PARENT, klass);
-		parameters.put(NAME, methodName);
-		parameters.put(DESCRIPTION, methodDescription);
-		method = dataBase.find(Method.class, parameters);
-		assertNotNull(method);
-
-		String anotherName = "another name";
-		method.setName(anotherName);
-		method = dataBase.merge(method);
-
-		parameters.put(METHOD_NAME, anotherName);
-		method = dataBase.find(Method.class, method.getId());
-		assertNotNull(method);
-		assertEquals(anotherName, method.getName());
-	}
-
-	@Test
-	public void findClassParametersFirstMaxResults() {
-		// <T> List<T> - Class<T> klass, String queryName, Map<String, Object> parameters, int firstResult, int maxResults
-		Class klass = new Class();
-		klass.setName(CLASS_NAME);
-		Method method = getMethod(klass);
-		dataBase.persist(method);
-
-		klass = new Class();
-		klass.setName(CLASS_NAME + System.currentTimeMillis());
-		method = getMethod(klass);
-		dataBase.persist(method);
-
-		klass = new Class();
-		klass.setName(CLASS_NAME + System.currentTimeMillis());
-		method = getMethod(klass);
-		dataBase.persist(method);
-
-		klass = new Class();
-		klass.setName(CLASS_NAME + System.currentTimeMillis());
-		method = getMethod(klass);
-		dataBase.persist(method);
-
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(NAME, methodName);
-		List<Method> methods = dataBase.find(Method.class, parameters, 0, 2);
-		assertEquals(2, methods.size());
-
-		parameters.put(PARENT, klass);
-		parameters.put(DESCRIPTION, methodDescription);
-		methods = dataBase.find(Method.class, parameters, 0, Integer.MAX_VALUE);
-		assertEquals(1, methods.size());
-	}
-
-	@Test
-	public void findClassFirstMaxResults() {
-		// <T> List<T> - Class<T> klass, int firstResult, int maxResults
-		// Package pakkage = getPackage();
-		// Class klass = getClass(pakkage);
-		// Method method = getMethod(klass);
-		// method.setName("another name " + System.currentTimeMillis());
-		// dataBase.persist(method);
-		// method = getMethod(klass);
-		// method.setName("another name " + System.currentTimeMillis());
-		// dataBase.persist(method);
-		//
-		// List<Method> methods = dataBase.find(Method.class, 0, 3);
-		// assertEquals(3, methods.size());
-	}
-
-	@Test
-	public void setId() {
-		Package pakkage = getPackage();
-		Long id = new Long(System.currentTimeMillis());
-		dataBase.setId(pakkage, Package.class, id, true);
-		assertEquals(id, pakkage.getId());
-	}
-
-	@Test
-	public void removeClassId() throws Exception {
+	public void removeId() throws Exception {
 		// java.lang.Class<T> klass, Long id
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
 		Class klass = (Class) pakkage.getChildren().iterator().next();
-		klass = dataBase.find(Class.class, klass.getId());
+		klass = (Class) dataBase.find(klass.getId());
 		assertNotNull(klass);
-		Toolkit.dump(dataBase);
-		dataBase.remove(Class.class, klass.getId());
-		Toolkit.dump(dataBase);
-		klass = dataBase.find(Class.class, klass.getId());
+		dataBase.remove(klass.getId());
+		klass = (Class) dataBase.find(klass.getId());
 		assertNull(klass);
 	}
 
 	@Test
-	public void insertPerformance() throws Exception {
+	public void persistPerformance() throws Exception {
 		// Test the insert performance
 		double inserts = 100;
 		double start = System.currentTimeMillis();
@@ -250,83 +162,73 @@ public class DataBaseXmlTest extends ATest {
 	}
 
 	@Test
-	public void selectPerformance() throws Exception {
-		try {
+	public void findPerformance() throws Exception {
+		long size = 10000;
+		for (int i = 0; i < size; i++) {
 			Package pakkage = getPackage();
+			pakkage.setName(packageName + "." + i);
+			Class klass = getClass(pakkage);
+			klass.setName(className + "." + i);
+			Method method = getMethod(klass);
+			method.setName(method.getName() + "." + i);
+			method.setDescription(method.getDescription() + "." + i);
+			method.setClassName(klass.getName());
+			Line line = getLine(method);
+			line.setNumber(i);
+			line.setClassName(klass.getName());
+			line.setMethodName(method.getName());
 			dataBase.persist(pakkage);
-			Class klass = pakkage.getChildren().iterator().next();
-			Method method = klass.getChildren().iterator().next();
-			Line line = method.getChildren().iterator().next();
-			for (int i = 0; i < 100; i++) {
-				pakkage = getPackage();
-				klass = pakkage.getChildren().iterator().next();
-				method = klass.getChildren().iterator().next();
-				line = method.getChildren().iterator().next();
-
-				pakkage.setName(pakkage.getName() + "." + i);
-
-				klass.setName(klass.getName() + "." + i);
-
-				method.setName(method.getName() + "." + i);
-				method.setDescription(method.getDescription() + "." + i);
-				method.setClassName(klass.getName());
-
-				line.setNumber(line.getNumber() + i);
-				line.setClassName(klass.getName());
-				line.setMethodName(method.getName());
-				dataBase.persist(pakkage);
-			}
-
-			// Test the select performance
-			double selects = 1000;
-			double start = System.currentTimeMillis();
-			Map<String, Object> packageParameters = new HashMap<String, Object>();
-			packageParameters.put(NAME, packageName);
-
-			Map<String, Object> lineParameters = new HashMap<String, Object>();
-			lineParameters.put(CLASS_NAME, className);
-			lineParameters.put(METHOD_NAME, methodName);
-			lineParameters.put(NUMBER, lineNumber);
-
-			for (int i = 0; i < selects; i++) {
-				pakkage = dataBase.find(Package.class, pakkage.getId());
-				assertNotNull(pakkage);
-				klass = dataBase.find(Class.class, klass.getId());
-				assertNotNull(klass);
-				method = dataBase.find(Method.class, method.getId());
-				assertNotNull(method);
-				line = dataBase.find(Line.class, line.getId());
-				assertNotNull(line);
-
-				// assertEquals(2, dataBase.find(Package.class, 0, 2).size());
-				assertEquals(1, dataBase.find(Package.class, packageParameters, 0, Integer.MAX_VALUE).size());
-				assertEquals(1, dataBase.find(Line.class, lineParameters, 0, Integer.MAX_VALUE).size());
-				assertNotNull(dataBase.find(Line.class, lineParameters));
-			}
-			double end = System.currentTimeMillis();
-			double duration = (end - start) / 1000d;
-			double selectsPerSecond = (selects * 8 / duration);
-			logger.error("Duration : " + duration + ", selects per second : " + selectsPerSecond);
-			double minimumSelectsPerSecond = 1000;
-			assertTrue(selectsPerSecond > minimumSelectsPerSecond);
-
-			start = System.currentTimeMillis();
-			for (int i = 0; i < selects; i++) {
-				assertNotNull(dataBase.find(Line.class, lineParameters));
-			}
-			end = System.currentTimeMillis();
-			duration = (end - start) / 1000d;
-			selectsPerSecond = (selects * 7 / duration);
-			logger.error("Only line : Duration : " + duration + ", selects per second : " + selectsPerSecond);
-			assertTrue(selectsPerSecond > minimumSelectsPerSecond);
-		} finally {
-			// dumpData(Package.class);
-			// dumpData(Class.class);
-			// dumpData(Method.class);
-			// dumpData(Line.class);
-			// dumpData(Efferent.class);
-			// dumpData(Afferent.class);
 		}
+
+		// Test the select performance
+		double selects = 10000;
+		double start = System.currentTimeMillis();
+		List<Object> packageParameters = new ArrayList<Object>();
+		packageParameters.add(packageName + "." + 13);
+
+		List<Object> lineParameters = new ArrayList<Object>();
+		lineParameters.add(className + "." + 26);
+		lineParameters.add(methodName + "." + 26);
+		lineParameters.add(26d);
+
+		Long packageId = Toolkit.hash(packageName + "." + 233);
+		Long classId = Toolkit.hash(className + "." + 871);
+		Long methodId = Toolkit.hash(className + "." + 441 + methodName + "." + 441 + methodDescription + "." + 441);
+		Long lineId = Toolkit.hash(className + "." + 359 + methodName + "." + 359 + "" + 359d);
+
+		for (int i = 0; i < selects; i++) {
+			dataBase.find(packageId);
+			// assertNotNull(pakkage);
+			dataBase.find(classId);
+			// assertNotNull(klass);
+			dataBase.find(methodId);
+			// assertNotNull(method);
+			dataBase.find(lineId);
+			// assertNotNull(line);
+
+			dataBase.find(packageParameters);
+			// assertNotNull(object);
+			dataBase.find(lineParameters);
+			// assertNotNull(object);
+			dataBase.find(lineParameters);
+			// assertNotNull(object);
+		}
+		double end = System.currentTimeMillis();
+		double duration = (end - start) / 1000d;
+		double selectsPerSecond = (selects * 7 / duration);
+		logger.info("Duration : " + duration + ", selects per second : " + selectsPerSecond);
+		double minimumSelectsPerSecond = 1000;
+		assertTrue(selectsPerSecond > minimumSelectsPerSecond);
+
+		start = System.currentTimeMillis();
+		for (int i = 0; i < selects; i++) {
+			dataBase.find(lineParameters);
+		}
+		end = System.currentTimeMillis();
+		duration = (end - start) / 1000d;
+		selectsPerSecond = (selects * 7 / duration);
+		logger.info("Only line : Duration : " + duration + ", selects per second : " + selectsPerSecond);
+		assertTrue(selectsPerSecond > minimumSelectsPerSecond);
 	}
 
 }

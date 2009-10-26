@@ -1,17 +1,12 @@
 package com.ikokoon.persistence;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import com.ikokoon.IConstants;
-import com.ikokoon.instrumentation.model.Id;
-import com.ikokoon.instrumentation.model.Identifier;
 import com.ikokoon.instrumentation.model.Unique;
 import com.ikokoon.toolkit.Toolkit;
 
@@ -27,10 +22,6 @@ public abstract class ADataBase implements IDataBase {
 
 	/** The logger for all database implementations. */
 	protected Logger logger = Logger.getLogger(this.getClass());
-	/** The setter methods for entities keyed on the class. */
-	protected Map<Class<?>, Method> idSetterMethods = new HashMap<Class<?>, Method>();
-	/** The getter methods for entities keyed on the class. */
-	protected Map<Class<?>, Method> idGetterMethods = new HashMap<Class<?>, Method>();
 
 	/**
 	 * Gets the file for the database. If no such file exists then one is created.
@@ -62,75 +53,6 @@ public abstract class ADataBase implements IDataBase {
 			}
 		}
 		return file;
-	}
-
-	/**
-	 * Accesses the id of an object. The id of an object is the method that has the Id annotation.
-	 * 
-	 * @param klass
-	 *            the class of object
-	 * @param object
-	 *            the object to get the id field from
-	 * @return the id from the object or null if no id field is available or the id is null
-	 */
-	public Long getId(Class<?> klass, Object object) {
-		Method idGetterMethod = idGetterMethods.get(klass);
-		if (idGetterMethod == null) {
-			Method[] methods = klass.getDeclaredMethods();
-			for (Method method : methods) {
-				Id idAnnotation = method.getAnnotation(Id.class);
-				if (idAnnotation != null) {
-					idGetterMethod = method;
-					idGetterMethods.put(klass, idGetterMethod);
-					break;
-				}
-			}
-		}
-		if (idGetterMethod != null) {
-			try {
-				Object value = idGetterMethod.invoke(object, (Object[]) null);
-				if (value != null) {
-					return (Long) value;
-				}
-			} catch (Exception e) {
-				logger.info(e);
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * 
-	 * 
-	 * @param <T>
-	 * @param t
-	 * @param klass
-	 * @param id
-	 * @param addToPersistables
-	 */
-	protected <T> void setId(T t, Class<?> klass, Long id, boolean addToPersistables) {
-		Method idSetterMethod = idSetterMethods.get(klass);
-		if (idSetterMethod == null) {
-			Method[] methods = klass.getDeclaredMethods();
-			for (Method method : methods) {
-				Identifier identifier = method.getAnnotation(Identifier.class);
-				if (identifier != null) {
-					idSetterMethod = method;
-					this.idSetterMethods.put(klass, idSetterMethod);
-					break;
-				}
-			}
-		}
-		if (idSetterMethod != null) {
-			try {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Setting id : " + klass + ", " + id + ", " + t);
-				}
-				idSetterMethod.invoke(t, new Object[] { id });
-			} catch (Exception e) {
-				logger.error("Exception setting the identifier" + id + " on the object " + t + " with method " + idSetterMethod, e);
-			}
-		}
 	}
 
 	/**

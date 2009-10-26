@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ikokoon.IConstants;
 import com.ikokoon.instrumentation.Configuration;
+import com.ikokoon.instrumentation.model.IComposite;
 import com.ikokoon.instrumentation.model.Package;
 import com.ikokoon.instrumentation.model.Project;
 import com.ikokoon.persistence.IDataBase;
@@ -39,17 +40,18 @@ public class Cleaner extends AProcess implements IConstants {
 		// that have been deleted that are still hanging around
 		IDataBase dataBase = IDataBase.DataBase.getDataBase();
 		Long id = Toolkit.hash(Project.class.getName());
-		Project project = dataBase.find(Project.class, id);
-		List<Package> packages = project.getChildren();
-		for (Package pakkage : packages) {
+		Project project = (Project) dataBase.find(id);
+		List<IComposite> packages = project.getChildren();
+		for (IComposite composite : packages.toArray(new IComposite[packages.size()])) {
+			Package pakkage = (Package) composite;
 			// Remove the packages that are not included in the list to process
 			if (!Configuration.getConfiguration().included(pakkage.getName())) {
-				dataBase.remove(Package.class, pakkage.getId());
+				dataBase.remove(pakkage.getId());
 				continue;
 			}
 			// Remove the packages that have no classes, not interesting
 			if (pakkage.getChildren() != null && pakkage.getChildren().size() == 0) {
-				dataBase.remove(Package.class, pakkage.getId());
+				dataBase.remove(pakkage.getId());
 				continue;
 			}
 		}
