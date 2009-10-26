@@ -4,7 +4,6 @@ import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
@@ -20,7 +19,6 @@ import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 
 import com.ikokoon.ATest;
-import com.ikokoon.instrumentation.coverage.CoverageClassAdapter;
 import com.ikokoon.target.Target;
 import com.ikokoon.toolkit.Toolkit;
 
@@ -43,27 +41,18 @@ public class TransformerTest extends ATest {
 	public void setUp() {
 		// Call the premain to load stuff we need
 		Transformer.premain(null, instrumentation);
-		Configuration.getConfiguration().includedPackages.add(Target.class.getPackage().getName());
-		System.setProperty(Transformer.INCLUDED_ADAPTERS_PROPERTY, CoverageClassAdapter.class.getName());
 	}
 
 	@Test
 	public void transform() throws Exception {
-		String classPath = Toolkit.dotToSlash(Target.class.getName()) + ".class";
+		String classPath = Toolkit.dotToSlash(className) + ".class";
 		InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(classPath);
-		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		int read = -1;
-		byte[] bytes = new byte[1024];
-		while ((read = inputStream.read(bytes)) > -1) {
-			byteArrayOutputStream.write(bytes, 0, read);
-		}
-		byte[] classfileBuffer = byteArrayOutputStream.toByteArray();
+		byte[] classfileBuffer = Toolkit.getContents(inputStream).toByteArray();
 		String byteCodes = new String(classfileBuffer);
 		assertTrue(byteCodes.indexOf(Collector.class.getSimpleName()) == -1);
 
 		Transformer coverageTransformer = new Transformer();
-		String className = Target.class.getName();
-		Class<Target> classBeingRedefined = Target.class;
+		Class<?> classBeingRedefined = Class.forName(className);
 		ClassLoader classLoader = TransformerTest.class.getClassLoader();
 		classfileBuffer = coverageTransformer.transform(classLoader, className, classBeingRedefined, protectionDomain, classfileBuffer);
 

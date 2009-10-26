@@ -9,12 +9,12 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
-import com.ikokoon.instrumentation.model.Package;
-import com.ikokoon.toolkit.ObjectFactory;
+import com.ikokoon.instrumentation.model.Project;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -26,39 +26,26 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class DataBaseXml extends ADataBase implements IDataBase {
 
-	/** The cache of objects keyed on the class of the entity. */
-	private Map<Class, Map<Long, Object>> cache = new HashMap<Class, Map<Long, Object>>();
-	/** Indexes of unique combinations for the entities that point to the key for the corresponding entity in the cache map. */
-	private Map<Class, Map<Long, Long>> indexes = new HashMap<Class, Map<Long, Long>>();
+	private Project project;
 
 	/**
 	 * Constructor tries to open the XML data model and load the existing data into memory from the previous run. This assists in the speed of
-	 * execution as the insertion into the data model takes far longer than selection due to the reindexing of the indexes etc.
+	 * execution as the insertion into the data model takes far longer than selection due to the re-indexing of the indexes etc.
 	 */
 	public DataBaseXml(File file) {
 		this(file, null);
 	}
 
 	public DataBaseXml(File file, ClassLoader classLoader) {
-		logger.error("Initilizing the database data model in memory");
+		logger.info("Initilizing the database data model in memory");
 		InputStream inputStream = null;
 		try {
 			file = getFile(file);
 			inputStream = new FileInputStream(file);
-			// ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-			// cache = (Map<Class, Map<Long, Object>>) objectInputStream.readObject();
-			// if (classLoader == null) {
-			// classLoader =Package.class.getClassLoader();
-			// }
-			// classLoader = getClass().getClassLoader();
-			Class<XMLDecoder> klass = (Class<XMLDecoder>) this.getClass().getClassLoader().loadClass(XMLDecoder.class.getName());
-			XMLDecoder decoder = ObjectFactory.getObject(klass, new Object[] { inputStream });
-			// decoder = new XMLDecoder(inputStream);
-			cache = (Map<Class, Map<Long, Object>>) decoder.readObject();
-			// XStream stream = new XStream(new DomDriver());
-			// cache = (Map<Class, Map<Long, Object>>) stream.fromXML(inputStream);
-			// XStream2 stream2 = new XStream2(new DomDriver());
-			// stream2.fromXML(inputStream);
+			XMLDecoder decoder = new XMLDecoder(inputStream);
+			project = (Project) decoder.readObject();
+		} catch (NoSuchElementException e) {
+			logger.info("No data generated for the project yet? First run.");
 		} catch (Exception e) {
 			logger.error("Exception reading the data from the serialized file", e);
 		} finally {
@@ -70,7 +57,10 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 				}
 			}
 		}
-		logger.error("Finished initilizing the database data model in memory");
+		if (project == null) {
+			project = new Project();
+		}
+		logger.info("Finished initilizing the database data model in memory");
 	}
 
 	/**
@@ -86,69 +76,77 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	public synchronized final <T> T find(Class<T> klass, Long id) {
-		T t = null;
-		Map map = cache.get(klass);
-		if (map != null) {
-			t = (T) map.get(id);
-		}
-		return t;
+		List<Object> index = project.getIndex();
+		return (T) binarySearch(index, id);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public synchronized final <T> T find(final Class<T> klass, final Map<String, Object> parameters) {
-		Long hash = Toolkit.hash(parameters.values());
-		Map<Long, Long> index = indexes.get(klass);
-		if (index == null) {
-			index = new HashMap<Long, Long>();
-			indexes.put(klass, index);
-		}
-		Map objects = cache.get(klass);
-		if (objects == null) {
-			objects = new HashMap<Long, Object>();
-			cache.put(klass, objects);
-		}
-		Long id = index.get(hash);
-		if (id != null) {
-			T t = (T) objects.get(id);
-			// logger.info("Index hit : " + hash + ", " + id + ", " + t);
-			if (t != null) {
-				return t;
+	@SuppressWarnings("unchecked")
+	protected Object binarySearch(List<Object> index, long key) {
+		int low = 0;
+		int high = index.size() - 1;
+		while (low <= high) {
+			int mid = (low + high) >>> 1;
+			Object object = index.get(mid);
+			long midVal = getId(object.getClass(), object);
+			// long midVal = a[mid];
+			int cmp;
+			if (midVal < key) {
+				cmp = -1; // Neither val is NaN, thisVal is smaller
+			} else if (midVal > key) {
+				cmp = 1; // Neither val is NaN, thisVal is larger
+			} else {
+				long midBits = Double.doubleToLongBits(midVal);
+				long keyBits = Double.doubleToLongBits(key);
+				cmp = (midBits == keyBits ? 0 : // Values are equal
+						(midBits < keyBits ? -1 : // (-0.0, 0.0) or (!NaN, NaN)
+								1)); // (0.0, -0.0) or (NaN, !NaN)
 			}
-		}
-		for (Object object : objects.values()) {
-			if (isEqual(object, parameters)) {
-				id = getId(klass, object);
-				// logger.info("Parameter search : " + id + ", " + parameters + ", " + object);
-				index.put(hash, id);
-				return (T) object;
+			if (cmp < 0)
+				low = mid + 1;
+			else if (cmp > 0)
+				high = mid - 1;
+			else {
+				// return mid; // key found
+				return object;
 			}
 		}
 		return null;
+		// return -(low + 1); // key not found.
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
+	public synchronized final <T> T find(final Class<T> klass, final Map<String, Object> parameters) {
+		Long id = Toolkit.hash(parameters.values());
+		List<Object> index = project.getIndex();
+		return (T) binarySearch(index, id);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
 	public synchronized final <T> List<T> find(Class<T> klass, Map<String, Object> parameters, int firstResult, int maxResults) {
-		List results = new ArrayList();
-		Map objects = cache.get(klass);
-		if (objects != null) {
-			int index = 0;
-			for (Object object : objects.values()) {
-				if (isEqual(object, parameters)) {
-					if (index++ < firstResult) {
-						continue;
-					}
-					if (index > maxResults) {
-						break;
-					}
-					results.add(object);
-				}
-			}
-		}
+		List<T> results = new ArrayList<T>();
+		// Map<Long, Object> objects = cache.get(klass);
+		// if (objects != null) {
+		// int index = 0;
+		// for (Object object : objects.values()) {
+		// if (isEqual(object, parameters)) {
+		// if (index++ < firstResult) {
+		// continue;
+		// }
+		// if (index > maxResults) {
+		// break;
+		// }
+		// results.add((T) object);
+		// }
+		// }
+		// }
 		return results;
 	}
 
@@ -169,27 +167,6 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 	/**
 	 * {@inheritDoc}
 	 */
-	public synchronized final <T> List<T> find(Class<T> klass, int firstResult, int maxResults) {
-		List results = new ArrayList();
-		Map objects = cache.get(klass);
-		if (objects != null) {
-			int index = 0;
-			for (Object object : objects.values()) {
-				if (index++ < firstResult) {
-					continue;
-				}
-				if (index > maxResults) {
-					break;
-				}
-				results.add(object);
-			}
-		}
-		return results;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public synchronized final <T> T merge(T t) {
 		return t;
 	}
@@ -199,17 +176,17 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 	 */
 	public synchronized final <T> T remove(Class<T> klass, Long id) {
 		T t = find(klass, id);
-		Map index = indexes.get(klass);
-		if (index != null && t != null) {
-			Long hash = getKeyFromValue(index, t);
-			if (hash != null) {
-				index.remove(hash);
-			}
-		}
-		Map objects = cache.get(klass);
-		if (objects != null) {
-			objects.remove(id);
-		}
+		// Map<Long, Long> index = indexes.get(klass);
+		// if (index != null && t != null) {
+		// Long hash = getKeyFromValue(index, t);
+		// if (hash != null) {
+		// index.remove(hash);
+		// }
+		// }
+		// Map<Long, Object> objects = cache.get(klass);
+		// if (objects != null) {
+		// objects.remove(id);
+		// }
 		return t;
 	}
 
@@ -247,7 +224,7 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 	 * {@inheritDoc}
 	 */
 	public synchronized final void close() {
-		logger.warn("Comitting and closing the database");
+		logger.info("Comitting and closing the database");
 		write();
 	}
 
@@ -256,15 +233,9 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 		try {
 			File file = getFile(null);
 			fileOutputStream = new FileOutputStream(file);
-			// ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-			// objectOutputStream.writeObject(cache);
 			XMLEncoder encoder = new XMLEncoder(fileOutputStream);
-			encoder.writeObject(cache);
+			encoder.writeObject(project);
 			encoder.close();
-			// XStream stream = new XStream(new DomDriver());
-			// stream.toXML(cache, fileOutputStream);
-			// XStream2 stream2 = new XStream2(new DomDriver());
-			// stream2.toXML(cache, fileOutputStream);
 		} catch (Exception e) {
 			logger.error("Couldn't find the database file? Permissioning on the OS perhaps?", e);
 		} finally {
@@ -309,18 +280,12 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 	 * @param object
 	 *            the object to set the id for
 	 * @param klass
-	 *            the klass of object
+	 *            the class of object
 	 * @param list
 	 *            a list of already set id fields
 	 */
 	protected synchronized final <T> void setIds(Object object, Class<? extends Object> klass, List<Object> list) {
 		if (object == null) {
-			return;
-		}
-		if (!object.getClass().getPackage().getName().equals(Package.class.getPackage().getName())) {
-			return;
-		}
-		if (list.contains(object)) {
 			return;
 		}
 		if (getId(klass, object) != null) {
@@ -331,17 +296,8 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 		Object[] uniqueValues = getUniqueValues(object);
 		Long id = Toolkit.hash(uniqueValues);
 		setId(object, object.getClass(), id, true);
-		Map objects = cache.get(klass);
-		if (objects == null) {
-			objects = new HashMap<Long, Object>();
-			cache.put(klass, objects);
-		}
-		objects.put(id, object);
-		Map<Long, Long> index = indexes.get(klass);
-		if (index == null) {
-			index = new HashMap<Long, Long>();
-		}
-		index.put(id, id);
+
+		// Insert the object into the index
 
 		Field[] fields = klass.getDeclaredFields();
 		for (Field field : fields) {
@@ -350,12 +306,56 @@ public class DataBaseXml extends ADataBase implements IDataBase {
 				continue;
 			}
 			if (fieldValue instanceof Collection) {
-				for (Object collectionObject : (Collection) fieldValue) {
+				for (Object collectionObject : (Collection<?>) fieldValue) {
 					setIds(collectionObject, collectionObject.getClass(), list);
 				}
 				continue;
 			}
 			setIds(fieldValue, fieldValue.getClass(), list);
+		}
+	}
+
+	protected void insert(LinkedList<Object> index, Object toInsert, long key) {
+		if (index.size() == 0) {
+			index.addFirst(toInsert);
+			return;
+		}
+		int low = 0;
+		int high = index.size();
+		while (low <= high) {
+			int mid = (low + high) >>> 1;
+			if (mid >= index.size()) {
+				index.add(mid, toInsert);
+				break;
+			}
+			Object object = index.get(mid);
+			long midVal = getId(object.getClass(), object);
+			// logger.info("Low : " + low + ", high : " + high + ", mid : " + mid + ", mid val : " + midVal);
+			if (midVal < key) {
+				int next = mid + 1;
+				if (index.size() > next) {
+					Object nextObject = index.get(next);
+					long nextVal = getId(nextObject.getClass(), nextObject);
+					if (nextVal > key) {
+						index.add(next, toInsert);
+						break;
+					}
+				}
+				low = mid + 1;
+			} else if (midVal > key) {
+				int previous = mid - 1;
+				if (previous > 0) {
+					Object previousObject = index.get(previous);
+					long previousVal = getId(previousObject.getClass(), previousObject);
+					if (previousVal < key) {
+						index.add(mid, toInsert);
+					}
+				}
+				high = mid - 1;
+			} else {
+				// Found key? Duplicate?
+				throw new RuntimeException("Duplicate key found : " + toInsert + ", " + key);
+			}
 		}
 	}
 

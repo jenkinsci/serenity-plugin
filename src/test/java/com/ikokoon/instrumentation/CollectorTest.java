@@ -56,7 +56,7 @@ public class CollectorTest extends ATest implements IConstants {
 
 	@Test
 	public void collectCoverageLineCounter() {
-		Collector.collectCoverage(className, methodName, methodDescription, 1000);
+		Collector.collectCoverage(className, methodName, methodDescription);
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put(NAME, className);
 		Class klass = dataBase.find(Class.class, parameters);
@@ -82,9 +82,9 @@ public class CollectorTest extends ATest implements IConstants {
 
 	@Test
 	public void collectComplexity() {
-		dumpData(Method.class);
-		Collector.collectComplexity(className, methodName, methodDescription, complexity);
-		dumpData(Method.class);
+		Toolkit.dump(dataBase);
+		Collector.collectComplexity(className, methodName, methodDescription, complexity, 1000);
+		Toolkit.dump(dataBase);
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put(NAME, methodName);
 		parameters.put(DESCRIPTION, methodDescription);
@@ -132,8 +132,8 @@ public class CollectorTest extends ATest implements IConstants {
 			if (random > 0.9d) {
 				methodName = this.methodName + random;
 			}
-			if (random > 0.5d && random < 0.6d) {
-				lineNumber = Double.toString(this.lineNumber + Math.random());
+			if (random > 0.2d && random < 0.8d) {
+				lineNumber = Double.toString(this.lineNumber + random);
 			}
 			Collector.collectCoverage(className, lineNumber, methodName, methodDescription);
 		}
@@ -162,6 +162,8 @@ public class CollectorTest extends ATest implements IConstants {
 		collectionsPerSecond = iterations / duration;
 		logger.warn("Get line : " + iterations + ", duration : " + duration + ", collections per second : " + collectionsPerSecond);
 		dataBase.close();
+
+		// Toolkit.dump(dataBase);
 	}
 
 }

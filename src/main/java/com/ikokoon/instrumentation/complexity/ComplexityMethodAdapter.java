@@ -27,6 +27,8 @@ public class ComplexityMethodAdapter extends MethodAdapter implements Opcodes {
 	private String desc;
 	/** The complexity counter, start with one and increment for each jump instruction. */
 	private int complexityCounter = 1;
+	/** The total number of lines for the method. */
+	private double lineCounter;
 
 	/**
 	 * The constructor takes all the interesting items for the method that is to be enhanced.
@@ -49,6 +51,14 @@ public class ComplexityMethodAdapter extends MethodAdapter implements Opcodes {
 	/**
 	 * {@inheritDoc}
 	 */
+	public void visitLineNumber(int lineNumber, Label label) {
+		lineCounter++;
+		super.visitLineNumber(lineNumber, label);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public void visitJumpInsn(int opcode, Label paramLabel) {
 		logger.debug("visitJumpInsn - " + opcode);
 		complexityCounter++;
@@ -59,8 +69,8 @@ public class ComplexityMethodAdapter extends MethodAdapter implements Opcodes {
 	 * {@inheritDoc}
 	 */
 	public void visitEnd() {
-		logger.debug("visitEnd - " + name);
-		Collector.collectComplexity(className, name, desc, complexityCounter);
+		logger.debug("visitEnd - " + className + ", " + name + ", " + desc + ", " + lineCounter);
+		Collector.collectComplexity(className, name, desc, complexityCounter, lineCounter);
 		super.visitEnd();
 	}
 

@@ -23,6 +23,10 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 	private Logger logger = Logger.getLogger(DependencyMethodAdapter.class);
 	/** The name of the class that this method adapter is enhancing the methods for. */
 	private String className;
+	/** The name of the method. */
+	private String methodName;
+	/** The byte code description of the method, i.e. the signature. */
+	private String methodDescription;
 
 	/**
 	 * The constructor takes all the interesting items for the method that is to be enhanced.
@@ -43,6 +47,8 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 	public DependencyMethodAdapter(MethodVisitor methodVisitor, String className, String methodName, String methodDescription) {
 		super(methodVisitor);
 		this.className = className;
+		this.methodName = methodName;
+		this.methodDescription = methodDescription;
 		String[] methodClasses = Toolkit.byteCodeSignatureToClassNameArray(methodDescription);
 		Collector.collectMetrics(className, methodClasses);
 		if (logger.isDebugEnabled()) {
@@ -69,6 +75,15 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 		String[] fieldClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
 		Collector.collectMetrics(className, fieldClasses);
 		super.visitFieldInsn(opcode, owner, name, desc);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void visitLineNumber(int lineNumber, Label label) {
+		logger.debug("visitLineNumber : " + lineNumber + ", " + label + ", " + label.getOffset() + ", " + className + ", " + methodName);
+		Collector.collectLines(className, Double.toString(lineNumber), methodName, methodDescription);
+		super.visitLineNumber(lineNumber, label);
 	}
 
 	/**

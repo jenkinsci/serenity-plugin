@@ -4,7 +4,6 @@ import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 
 /**
  * This is the top level class adapter for collecting the complexity for the classes. It just calls the complexity method adapter where the real work
@@ -14,7 +13,7 @@ import org.objectweb.asm.Opcodes;
  * @since 12.07.09
  * @version 01.00
  */
-public class ComplexityClassAdapter extends ClassAdapter implements Opcodes {
+public class ComplexityClassAdapter extends ClassAdapter {
 
 	/** The name of the class that is being instrumented. */
 	private String className;

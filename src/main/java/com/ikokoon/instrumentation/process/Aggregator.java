@@ -15,10 +15,32 @@ import com.ikokoon.instrumentation.model.Efferent;
 import com.ikokoon.instrumentation.model.Line;
 import com.ikokoon.instrumentation.model.Method;
 import com.ikokoon.instrumentation.model.Package;
+import com.ikokoon.instrumentation.model.Project;
 import com.ikokoon.persistence.IDataBase;
+import com.ikokoon.toolkit.Toolkit;
 
 /**
- * TODO - add the project metrics aggregation
+ * TODO:<br>
+ * 
+ * Metrics:<br>
+ * 1) Total lines executed<br>
+ * 2) Total lines of code<br>
+ * 3) Total methods executed<br>
+ * 4) Project abstractness, stability, efference and afference<br>
+ * 5) Lines per method<br>
+ * 6) Lines per class<br>
+ * 7) Lines per package<br>
+ * 8) % code executed per package, class and method<br>
+ * 9) Weighted average of above<br>
+ * 10) Maven support<br>
+ * 
+ * Profiling:<br>
+ * 11) Total time per method<br>
+ * 12) % time per method<br>
+ * 13) Total time per class<br>
+ * 14) % time per class<br>
+ * 15) Total time per package<br>
+ * 16) % time per package<br>
  * 
  * This class aggregates all the totals for the report. For each method there is a total for the number of lines that the method has and a for each
  * line that is executed there is a line element. So the percentage of lines that were executed is covered lines / total lines * 100. The complexity
@@ -38,6 +60,8 @@ public class Aggregator extends AProcess implements IConstants {
 
 	/** The logger for the class. */
 	private Logger logger = Logger.getLogger(Aggregator.class);
+	/** The database to aggregate the data for. */
+	private IDataBase dataBase;
 
 	/**
 	 * Constructor takes the parent process.
@@ -45,8 +69,9 @@ public class Aggregator extends AProcess implements IConstants {
 	 * @param parent
 	 *            the parent process that will call this child. The child process, i.e. this instance, will add it's self to the parent
 	 */
-	public Aggregator(IProcess parent) {
+	public Aggregator(IProcess parent, IDataBase dataBase) {
 		super(parent);
+		this.dataBase = dataBase;
 	}
 
 	/**
@@ -56,139 +81,149 @@ public class Aggregator extends AProcess implements IConstants {
 	 *            the document to aggregate the totals for
 	 */
 	public void execute() {
-		IDataBase dataBase = IDataBase.DataBase.getDataBase();
 		logger.info("Running Aggregator dump: ");
-		List<Package> packages = dataBase.find(Package.class, 0, Integer.MAX_VALUE);
+		Long id = Toolkit.hash(Project.class.getName());
+		Project project = dataBase.find(Project.class, id);
+		List<Package> packages = project.getChildren();
+		aggregatePackages(packages);
+		super.execute();
+	}
+
+	private void aggregatePackages(List<Package> packages) {
 		for (Package pakkage : packages) {
 			// Remove the packages that are not included in the packages that we want coverage on
 			logger.debug("Processing package : " + pakkage.getName());
 			if (!Configuration.getConfiguration().included(pakkage.getName())) {
-				dataBase.remove(Package.class, pakkage.getId());
-				logger.debug("Removed : " + pakkage.getName() + "-" + !Configuration.getConfiguration().included(pakkage.getName()));
 				continue;
 			}
-			try {
-				// Iterate through all the method elements in each class, add them up for the class
-				// then divide them by the number of methods in the class to get the average for method complexity
-				// for the class
-				Collection<Class> classes = pakkage.getChildren();
-				double totalPackageComplexity = 0;
-				double totalPackageLines = 0;
-				double totalPackageCovered = 0;
-				double totalPackageInterfaces = 0;
-				double totalPackageImplementations = 0;
-				double totalLinesExecuted = 0;
-				Set<Efferent> totalPackageEfference = new TreeSet<Efferent>();
-				Set<Afferent> totalPackageAfference = new TreeSet<Afferent>();
+			Collection<Class> classes = pakkage.getChildren();
+			aggregateClasses(classes);
+
+			double interfaces = 0d;
+			double implementations = 0d;
+			double packageLines = 0d;
+			double complexity = 0d;
+			double coverage = 0d;
+
+			Set<Efferent> efference = new TreeSet<Efferent>();
+			Set<Afferent> afference = new TreeSet<Afferent>();
+
+			for (Class klass : classes) {
+				if (klass.getInterfaze()) {
+					interfaces++;
+				} else {
+					implementations++;
+				}
+				for (Efferent efferent : klass.getEfferentPackages()) {
+					efference.add(efferent);
+				}
+				for (Afferent afferent : klass.getAfferentPackages()) {
+					afference.add(afferent);
+				}
+				packageLines += klass.getLines();
+			}
+
+			pakkage.setEfference(efference);
+			pakkage.setAfference(afference);
+
+			pakkage.setLines(packageLines);
+
+			if (packageLines > 0) {
 				for (Class klass : classes) {
-					try {
-						String className = klass.getName();
-						if (Configuration.getConfiguration().excluded(className)) {
-							continue;
-						}
-						if (klass.getInterfaze()) {
-							totalPackageInterfaces++;
-						} else {
-							totalPackageImplementations++;
-						}
-						Collection<Method> methods = klass.getChildren();
-						double totalClassComplexity = 0;
-						double totalClassCoverage = 0;
-						for (Method method : methods) {
-							try {
-								// Add up all the method complexities
-								double methodComplexity = method.getComplexity();
-								// Set the coverage equal to the number of lines covered, by the number of lines in the method
-								double methodLines = method.getLines();
-								// Lines covered include the initilisation lines in the constructors which is more than the actual
-								// lines in the method, which results in a more than 100% coverage of course, wo if this is more
-								// then set it to the lines in the method not the lines covered
-								double linesCovered = method.getChildren().size();
-								linesCovered = linesCovered > methodLines ? methodLines : linesCovered;
-								double coverage = (linesCovered / (methodLines != 0 ? methodLines : 1)) * 100d;
-								if (logger.isDebugEnabled()) {
-									logger.debug("Method : " + method.getName() + ", lines : " + methodLines + ", lines covered : " + linesCovered
-											+ ", coverage : " + coverage);
-								}
-								if (coverage > 0) {
-									method.setCoverage(coverage);
-									totalClassCoverage += coverage;
-								}
+					double classLines = klass.getLines();
+					complexity += (classLines / packageLines) * klass.getComplexity();
+					coverage += (classLines / packageLines) * klass.getCoverage();
+				}
+			}
 
-								// Collect all the lines that were executed
-								Collection<Line> lines = method.getChildren();
-								for (Line line : lines) {
-									totalLinesExecuted += line.getCounter();
-								}
+			double abstractness = interfaces / ((interfaces + implementations) == 0 ? 1 : (interfaces + implementations));
+			pakkage.setAbstractness(abstractness);
 
-								totalClassComplexity += methodComplexity;
-								totalPackageLines += methodLines;
-								totalPackageCovered += linesCovered;
-							} catch (Exception e) {
-								logger.error("Exception peocessing the method element : " + method.getName(), e);
-							}
-						}
-						// Divide the added method complexities by the number of methods in the class to get the class average
-						double averageClassComplexity = totalClassComplexity / methods.size() > 0 ? methods.size() : 1d;
-						klass.setComplexity(averageClassComplexity);
-						double averageClassCoverage = totalClassCoverage / methods.size() > 0 ? methods.size() : 1d;
-						klass.setCoverage(averageClassCoverage);
+			double efferent = efference.size();
+			double afferent = afference.size();
+			pakkage.setEfferent(efferent);
+			pakkage.setAfferent(afferent);
 
-						// The stability I = Ce/(Ce+Ca)
-						double classEfference = klass.getEfferentPackages().size();
-						double classAfference = klass.getAfferentPackages().size();
-						double classStability = classEfference / ((classEfference + classAfference) > 0 ? (classEfference + classAfference) : 1);
-						classStability = classStability > 0 ? classStability : 0;
-						klass.setEfferent(classEfference);
-						klass.setAfferent(classAfference);
-						klass.setStability(classStability);
+			double stability = efferent / ((efferent + afferent) > 0 ? (efferent + afferent) : 1d);
+			pakkage.setStability(stability);
 
-						totalPackageComplexity += averageClassComplexity;
+			// 1) u = (x3 - x1)(x2 - x1) + (y3 - y1)(y2 - y1) / ||p2 - p1||²
+			// 2) y=mx+c, 0=ax+by+c, d=|am+bn+c|/sqrt(a²+b²) : d=|-stability + -abstractness + 1|/sqrt(-1²+-1²)
+			double a = -1, b = -1;
+			double distance = Math.abs(-stability + -abstractness + 1) / Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+			// distance = distance > 0 ? distance : 0; ??
+			pakkage.setDistance(distance);
 
-						totalPackageEfference.addAll(klass.getEfferentPackages());
-						totalPackageAfference.addAll(klass.getAfferentPackages());
-					} catch (Exception e) {
-						logger.error("Exception processing the class element : " + klass, e);
+			pakkage.setComplexity(complexity);
+			pakkage.setCoverage(coverage);
+			pakkage.setDistance(distance);
+			pakkage.setImplementations(implementations);
+			pakkage.setInterfaces(interfaces);
+			pakkage.setStability(stability);
+		}
+	}
+
+	private void aggregateClasses(Collection<Class> classes) {
+		for (Class klass : classes) {
+			Collection<Method> methods = klass.getChildren();
+			aggregateMethods(methods);
+
+			double afferent = klass.getAfferentPackages().size();
+			klass.setAfferent(afferent);
+
+			double classLines = 0d;
+			double complexity = 0d;
+			double coverage = 0d;
+			for (Method method : methods) {
+				classLines += method.getLines();
+			}
+			if (classLines > 0) {
+				for (Method method : methods) {
+					double methodLines = method.getLines();
+					if (methodLines == 0) {
+						continue;
+					}
+					double weightedLines = methodLines / classLines;
+					double methodComplexity = method.getComplexity();
+					double methodCoverage = method.getCoverage();
+					complexity += methodComplexity * weightedLines;
+					coverage += methodCoverage * weightedLines;
+				}
+			}
+			klass.setLines(classLines);
+			klass.setComplexity(complexity);
+			klass.setCoverage(coverage);
+			klass.setEfferent(klass.getEfferentPackages().size());
+
+			double efference = klass.getEfferent();
+			double afference = klass.getAfferent();
+			double stability = efference / ((efference + afference) > 0 ? (efference + afference) : 1);
+
+			klass.setStability(stability);
+		}
+	}
+
+	private void aggregateMethods(Collection<Method> methods) {
+		for (Method method : methods) {
+			try {
+				double linesExecuted = 0d;
+				// Collect all the lines that were executed
+				Collection<Line> lines = method.getChildren();
+				double totalLinesExecuted = 0;
+				for (Line line : lines) {
+					totalLinesExecuted += line.getCounter();
+					if (line.getCounter() > 0) {
+						linesExecuted++;
 					}
 				}
-
-				// Add the package complexity to the package tag
-				double averagePackageComplexity = totalPackageComplexity / classes.size() > 0 ? classes.size() : 1d;
-				pakkage.setComplexity(averagePackageComplexity);
-				// Add the package coverage to the package tag
-				double averagePackageCoverage = (totalPackageCovered / (totalPackageLines > 0 ? totalPackageLines : 1)) * 100d;
-				pakkage.setCoverage(averagePackageCoverage);
-				// How many interfaces in the package for abstractness
-				pakkage.setInterfaces(totalPackageInterfaces);
-				// How many classes in the package for abstractness
-				pakkage.setImplementations(totalPackageImplementations);
-				// The abstractness is the A=AC/(AC+CC)
-				double packageAbstractness = Math.max(1, totalPackageInterfaces / (totalPackageInterfaces + totalPackageImplementations));
-				pakkage.setAbstractness(packageAbstractness);
-
-				// Set the afferent and efferent metrics for the package
-				double packageEfference = totalPackageEfference.size();
-				double packageAfference = totalPackageAfference.size();
-				pakkage.setEfferent(packageEfference);
-				pakkage.setAfferent(packageAfference);
-
-				// Calculate the average stability for the package
-				double packageStability = packageEfference / ((packageEfference + packageAfference) > 0 ? (packageEfference + packageAfference) : 1d);
-				pakkage.setStability(packageStability);
-
-				// The distance to the sequence:
-				// 1) u = (x3 - x1)(x2 - x1) + (y3 - y1)(y2 - y1) / ||p2 - p1||²
-				// 2) y=mx+c, 0=ax+by+c, d=|am+bn+c|/sqrt(a²+b²) : d=|-stability + -abstractness + 1|/sqrt(-1²+-1²)
-				double a = -1, b = -1;
-				double distance = Math.abs(-packageStability + -packageAbstractness + 1) / Math.sqrt(Math.exp(a) + Math.exp(b));
-				// distance = distance > 0 ? distance : 0; ??
-				pakkage.setDistance(distance);
+				double methodLines = method.getLines();
+				double coverage = (linesExecuted / methodLines) * 100d;
+				method.setCoverage(coverage);
+				method.setTotalLinesExecuted(totalLinesExecuted);
 			} catch (Exception e) {
-				logger.error("Exception processing the package element : " + pakkage, e);
+				logger.error("Exception peocessing the method element : " + method.getName(), e);
 			}
-			dataBase.merge(pakkage);
 		}
-		super.execute();
 	}
 
 }

@@ -5,38 +5,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-//import javax.persistence.CascadeType;
-//import javax.persistence.Entity;
-//import javax.persistence.FetchType;
-//import javax.persistence.GeneratedValue;
-//import javax.persistence.GenerationType;
-//import javax.persistence.Id;
-//import javax.persistence.Inheritance;
-//import javax.persistence.InheritanceType;
-//import javax.persistence.NamedQueries;
-//import javax.persistence.NamedQuery;
-//import javax.persistence.OneToMany;
-
 /**
  * @author Michael Couck
  * @since 12.08.09
  * @version 01.00
  */
-// @Entity
-// @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-// @NamedQueries( { @NamedQuery(name = Package.SELECT_PACKAGES, query = Package.SELECT_PACKAGES),
-// @NamedQuery(name = Package.SELECT_PACKAGES_BY_NAME, query = Package.SELECT_PACKAGES_BY_NAME) })
 @Parent(parent = true)
 @Unique(fields = { "name" })
 public class Package extends Base implements Comparable<Package>, Serializable {
 
-	public static final String SELECT_PACKAGES = "select a from Package as a";
-	public static final String SELECT_PACKAGES_BY_NAME = "select a from Package as a where a.name = :name";
-
-	public static final int PRECISION = 2;
-
 	private Long id;
 	private String name;
+	private double lines;
 	private double complexity;
 	private double coverage;
 	private double abstractness;
@@ -48,9 +28,10 @@ public class Package extends Base implements Comparable<Package>, Serializable {
 	private double afferent;
 	private Date timestamp;
 	private Collection<Class> children = new ArrayList<Class>();
+	private Collection<Efferent> efference = new ArrayList<Efferent>();
+	private Collection<Afferent> afference = new ArrayList<Afferent>();
 
 	@Id
-	// @GeneratedValue(strategy = GenerationType.SEQUENCE)
 	public Long getId() {
 		return id;
 	}
@@ -68,6 +49,14 @@ public class Package extends Base implements Comparable<Package>, Serializable {
 		this.name = name;
 	}
 
+	public double getLines() {
+		return lines;
+	}
+
+	public void setLines(double lines) {
+		this.lines = lines;
+	}
+
 	public Date getTimestamp() {
 		return timestamp;
 	}
@@ -76,7 +65,6 @@ public class Package extends Base implements Comparable<Package>, Serializable {
 		this.timestamp = timestamp;
 	}
 
-	// @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.EAGER)
 	public Collection<Class> getChildren() {
 		return children;
 	}
@@ -155,6 +143,22 @@ public class Package extends Base implements Comparable<Package>, Serializable {
 
 	public void setAfferent(double afferent) {
 		this.afferent = afferent;
+	}
+
+	public Collection<Efferent> getEfference() {
+		return efference;
+	}
+
+	public void setEfference(Collection<Efferent> efference) {
+		this.efference = efference;
+	}
+
+	public Collection<Afferent> getAfference() {
+		return afference;
+	}
+
+	public void setAfference(Collection<Afferent> afference) {
+		this.afference = afference;
 	}
 
 	public String toString() {

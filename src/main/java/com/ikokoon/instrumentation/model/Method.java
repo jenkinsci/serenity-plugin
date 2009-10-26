@@ -5,37 +5,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-//import javax.persistence.CascadeType;
-//import javax.persistence.Entity;
-//import javax.persistence.FetchType;
-//import javax.persistence.GeneratedValue;
-//import javax.persistence.GenerationType;
-//import javax.persistence.Id;
-//import javax.persistence.Inheritance;
-//import javax.persistence.InheritanceType;
-//import javax.persistence.ManyToOne;
-//import javax.persistence.NamedQueries;
-//import javax.persistence.NamedQuery;
-//import javax.persistence.OneToMany;
-
 /**
  * @author Michael Couck
  * @since 12.08.09
  * @version 01.00
  */
-// @Entity
-// @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-// @NamedQueries( {
-// @NamedQuery(name = Method.SELECT_METHODS, query = Method.SELECT_METHODS),
-// @NamedQuery(name = Method.SELECT_METHODS_BY_NAME, query = Method.SELECT_METHODS_BY_NAME),
-// @NamedQuery(name = Method.SELECT_METHOD_BY_CLASS_NAME_AND_METHOD_NAME_AND_METHOD_DESCRIPTION, query =
-// Method.SELECT_METHOD_BY_CLASS_NAME_AND_METHOD_NAME_AND_METHOD_DESCRIPTION) })
 @Unique(fields = { "parent", "name", "description" })
 public class Method extends Base implements Comparable<Method>, Serializable {
-
-	public static final String SELECT_METHODS = "select a from Method as a";
-	public static final String SELECT_METHODS_BY_NAME = "select a from Method as a where a.name = :name";
-	public static final String SELECT_METHOD_BY_CLASS_NAME_AND_METHOD_NAME_AND_METHOD_DESCRIPTION = "select a from Method as a where a.parent.name = :className and a.name = :methodName and a.description = :methodDescription";
 
 	private Long id;
 	private String name;
@@ -44,12 +20,12 @@ public class Method extends Base implements Comparable<Method>, Serializable {
 	private String description;
 	private double complexity;
 	private double lines;
+	private double totalLinesExecuted;
 	private double coverage;
 	private Date timestamp;
 	private Collection<Line> children = new ArrayList<Line>();
 
 	@Id
-	// @GeneratedValue(strategy = GenerationType.SEQUENCE)
 	public Long getId() {
 		return id;
 	}
@@ -67,7 +43,6 @@ public class Method extends Base implements Comparable<Method>, Serializable {
 		this.name = name;
 	}
 
-	// @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.EAGER)
 	public Class getParent() {
 		return parent;
 	}
@@ -92,7 +67,6 @@ public class Method extends Base implements Comparable<Method>, Serializable {
 		this.timestamp = timestamp;
 	}
 
-	// @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.EAGER)
 	public Collection<Line> getChildren() {
 		return children;
 	}
@@ -123,6 +97,14 @@ public class Method extends Base implements Comparable<Method>, Serializable {
 
 	public void setLines(double lines) {
 		this.lines = lines;
+	}
+
+	public double getTotalLinesExecuted() {
+		return totalLinesExecuted;
+	}
+
+	public void setTotalLinesExecuted(double totalLinesExecuted) {
+		this.totalLinesExecuted = totalLinesExecuted;
 	}
 
 	public double getCoverage() {

@@ -1,0 +1,49 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<b>Package : ${it.package.name}</b><br></br>
+	<table class="pane" width="100%">
+		<tr>
+			<td class="pane-header" width="30%">Name</td>
+			<td class="pane-header" width="10%">Lines</td>
+			<td class="pane-header" width="10%">Coverage</td>
+			<td class="pane-header" width="10%">Complexity</td>
+			<td class="pane-header" width="10%">Stability</td>
+			<td class="pane-header" width="10%">Interfaces</td>
+			<td class="pane-header" width="10%">Efferent</td>
+			<td class="pane-header" width="10%">Afferent</td>
+		</tr>
+		<j:set var="color" value="#339900" />
+		<j:forEach var="class" items="${it.package.children}">
+		<tr>
+			<td class="pane" valign="top">
+				<b><a href="${it.url}${class.name}?className=${class.name}">${class.nameTrimmed}</a></b>
+			</td>
+			<td class="pane" valign="top">${class.lines}</td>
+			<td class="pane" valign="top">
+				<j:if test="${class.coverage &lt; 50}">
+					<j:set var="color" value="#842424" />
+				</j:if>
+				<font color="${color}">${class.coverage}</font>
+				<j:set var="color" value="#339900" />
+			</td>
+			<td class="pane" valign="top">
+				<j:if test="${class.complexity &gt; 10}">
+					<j:set var="color" value="#842424" />
+				</j:if>
+				<font color="${color}">${class.complexity}</font>
+				<j:set var="color" value="#339900" />
+			</td>
+			<td class="pane" valign="top">
+				<j:if test="${class.stability &lt; 0.2}">
+					<j:set var="color" value="#842424" />
+				</j:if>
+				<font color="${color}">${class.stability}</font>
+				<j:set var="color" value="#339900" />
+			</td>
+			<td class="pane" valign="top">${class.interfaze}</td>
+			<td class="pane" valign="top">${class.efferent}</td>
+			<td class="pane" valign="top">${class.afferent}</td>
+		</tr>
+		</j:forEach>
+		<tr><td></td></tr>
+	</table>
+</j:jelly>

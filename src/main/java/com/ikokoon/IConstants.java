@@ -19,8 +19,6 @@ public interface IConstants {
 	public String EXCLUDED_PACKAGES_PROPERTY = "excluded.packages";
 	/** The system property key for the class adapter classes to exclude. */
 	public String INCLUDED_ADAPTERS_PROPERTY = "included.adapters";
-	/** The system property key for indexing the fields. */
-	public String INDEX_FIELDS = "index.fields";
 
 	public String NAME = "name";
 	public String TYPE = "type";

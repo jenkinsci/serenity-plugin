@@ -1,8 +1,6 @@
 package com.ikokoon.toolkit;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -32,15 +30,14 @@ public abstract class ObjectFactory {
 	 * @return the class that best matches the desired class and the parameters for constructors
 	 */
 	public static <E> E getObject(Class<E> klass, Object[] allParameters) {
-		List<Object> parameters = new ArrayList<Object>();
-		Constructor<E> constructor = getConstructor(klass, allParameters, parameters);
+		Constructor<E> constructor = getConstructor(klass, allParameters);
 		LOGGER.debug("Got constructor : " + constructor);
 		if (constructor != null) {
 			try {
 				if (!constructor.isAccessible()) {
 					constructor.setAccessible(true);
 				}
-				E e = constructor.newInstance(parameters.toArray());
+				E e = constructor.newInstance(allParameters);
 				LOGGER.debug("Instanciated : " + e);
 				return e;
 			} catch (Exception e) {
@@ -64,40 +61,30 @@ public abstract class ObjectFactory {
 	 *            the parameters that were collected for the best match constructor
 	 * @return the constructor that has all the parameters
 	 */
-	@SuppressWarnings("unchecked")
-	private static <E> Constructor<E> getConstructor(Class<E> klass, Object[] allParameters, List<Object> parameters) {
-		List<Object> bestParameters = new ArrayList<Object>();
+	protected static <E> Constructor<E> getConstructor(Class<E> klass, Object[] allParameters) {
 		// Look for a constructor that has a parameter for all the types
 		Constructor<?>[] constructors = klass.getDeclaredConstructors();
-		Constructor<?> bestConstructor = null;
-		double bestMatch = 0;
 		for (Constructor<?> constructor : constructors) {
 			LOGGER.debug("Looking at constructor : " + constructor + " for class " + klass);
 			Class<?>[] parameterTypes = constructor.getParameterTypes();
-			int parameterCounter = 0;
+			if (parameterTypes != null && parameterTypes.length != allParameters.length) {
+				continue;
+			}
+			int index = 0;
+			boolean hasAllParameters = true;
 			for (Class<?> parameterType : parameterTypes) {
-				for (Object parameter : allParameters) {
-					LOGGER.debug("Looking for parameter : " + parameter);
-					if (parameter == null || parameterType.isAssignableFrom(parameter.getClass())
-							|| parameterType.getName().equals(parameter.getClass().getName())) {
-						parameterCounter++;
-						bestParameters.add(parameter);
-					}
+				if (allParameters[index] == null) {
+					continue;
+				}
+				if (!parameterType.isAssignableFrom(allParameters[index++].getClass())) {
+					hasAllParameters = false;
 				}
 			}
-			double match = 0;
-			if (parameterTypes.length > 0) {
-				match = (parameterCounter / parameterTypes.length) * 100;
+			if (hasAllParameters) {
+				return (Constructor<E>) constructor;
 			}
-			if (match >= bestMatch) {
-				bestMatch = match;
-				bestConstructor = constructor;
-				parameters.clear();
-				parameters.addAll(bestParameters);
-			}
-			LOGGER.debug("Constructor : " + constructor + ", parameters : " + parameters + ", for class : " + klass);
 		}
-		return (Constructor<E>) bestConstructor;
+		return null;
 	}
 
 	/**

@@ -7,14 +7,21 @@
 			</j:when>
 			<j:otherwise>
 				<l:main-panel>
+					<b>Project : ${it.name}, Metrics : ${it.metrics} </b><br></br>
 					<j:if test="${!it.packages.isEmpty()}">
-						<st:include page="/com/ikokoon/hudson/SerenityResult/project.jelly" />
+						<j:if test="${it.package == null}">
+							<j:if test="${it.klass == null}">
+								<j:if test="${it.method == null}">
+									<st:include page="/com/ikokoon/hudson/SerenityResult/packages.jelly" />
+								</j:if>
+							</j:if>
+						</j:if>
 					</j:if>
 					<j:if test="${it.package != null}">
-						<st:include page="/com/ikokoon/hudson/SerenityResult/package.jelly" />
+						<st:include page="/com/ikokoon/hudson/SerenityResult/classes.jelly" />
 					</j:if>
 					<j:if test="${it.klass != null}">
-						<st:include page="/com/ikokoon/hudson/SerenityResult/class.jelly" />
+						<st:include page="/com/ikokoon/hudson/SerenityResult/methods.jelly" />
 					</j:if>
 					<j:if test="${it.method != null}">
 						<st:include page="/com/ikokoon/hudson/SerenityResult/method.jelly" />

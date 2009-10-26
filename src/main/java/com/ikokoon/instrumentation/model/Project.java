@@ -2,33 +2,31 @@ package com.ikokoon.instrumentation.model;
 
 import java.io.Serializable;
 import java.util.Date;
-
-//import javax.persistence.Entity;
-//import javax.persistence.GeneratedValue;
-//import javax.persistence.GenerationType;
-//import javax.persistence.Id;
-//import javax.persistence.Inheritance;
-//import javax.persistence.InheritanceType;
-
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Michael Couck
  * @since 12.08.09
  * @version 01.00
  */
-// @Entity
-// @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Parent(parent = true)
 @Unique(fields = { "name" })
 public class Project implements Serializable {
 
 	private Long id;
-	private String name;
 	private Date timestamp;
-	private long linesExecuted;
+
+	private double totalLines;
+	private double totalMethods;
+
+	private double totalLinesExecuted;
+	private double totalMethodsExecuted;
+
+	private List<Package> children = new LinkedList<Package>();
+	private List<Object> index = new LinkedList<Object>();
 
 	@Id
-	// @GeneratedValue(strategy = GenerationType.SEQUENCE)
 	public Long getId() {
 		return id;
 	}
@@ -36,14 +34,6 @@ public class Project implements Serializable {
 	@Identifier
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public Date getTimestamp() {
@@ -54,11 +44,52 @@ public class Project implements Serializable {
 		this.timestamp = timestamp;
 	}
 
-	public long getLinesExecuted() {
-		return linesExecuted;
+	public double getTotalLines() {
+		return totalLines;
 	}
 
-	public void setLinesExecuted(long linesExecuted) {
-		this.linesExecuted = linesExecuted;
+	public void setTotalLines(double totalLines) {
+		this.totalLines = totalLines;
 	}
+
+	public double getTotalMethods() {
+		return totalMethods;
+	}
+
+	public void setTotalMethods(double totalMethods) {
+		this.totalMethods = totalMethods;
+	}
+
+	public double getTotalLinesExecuted() {
+		return totalLinesExecuted;
+	}
+
+	public void setTotalLinesExecuted(double totalLinesExecuted) {
+		this.totalLinesExecuted = totalLinesExecuted;
+	}
+
+	public double getTotalMethodsExecuted() {
+		return totalMethodsExecuted;
+	}
+
+	public void setTotalMethodsExecuted(double totalMethodsExecuted) {
+		this.totalMethodsExecuted = totalMethodsExecuted;
+	}
+
+	public List<Package> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<Package> children) {
+		this.children = children;
+	}
+
+	public List<Object> getIndex() {
+		return index;
+	}
+
+	public void setIndex(List<Object> index) {
+		this.index = index;
+	}
+
 }

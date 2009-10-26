@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-public class PermutationsTest {
+import com.ikokoon.ATest;
+
+public class PermutationsTest extends ATest {
 
 	@Test
 	public void permutations() {
@@ -17,9 +19,8 @@ public class PermutationsTest {
 		// TODO implement the test here
 		for (Object[] stringArray : permutationsList) {
 			for (Object string : stringArray) {
-				System.out.print(string + ":");
+				logger.debug(string + ":");
 			}
-			System.out.println();
 		}
 	}
 

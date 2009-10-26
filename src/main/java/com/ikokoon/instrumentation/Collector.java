@@ -1,11 +1,11 @@
 package com.ikokoon.instrumentation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
@@ -16,6 +16,7 @@ import com.ikokoon.instrumentation.model.Efferent;
 import com.ikokoon.instrumentation.model.Line;
 import com.ikokoon.instrumentation.model.Method;
 import com.ikokoon.instrumentation.model.Package;
+import com.ikokoon.instrumentation.model.Project;
 import com.ikokoon.persistence.IDataBase;
 import com.ikokoon.toolkit.Toolkit;
 
@@ -41,10 +42,15 @@ public class Collector implements IConstants {
 		try {
 			dataBase = IDataBase.DataBase.getDataBase();
 			// Reset the counter for all the lines
-			List<Line> lines = dataBase.find(Line.class, 0, Integer.MAX_VALUE);
-			for (Line line : lines) {
-				line.setCounter(0d);
-				dataBase.merge(line);
+			Project project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
+			for (Package pakkage : project.getChildren()) {
+				for (Class klass : pakkage.getChildren()) {
+					for (Method method : klass.getChildren()) {
+						for (Line line : method.getChildren()) {
+							line.setCounter(0d);
+						}
+					}
+				}
 			}
 		} catch (Exception e) {
 			LOGGER.error("Exception initilizing the database", e);
@@ -70,11 +76,28 @@ public class Collector implements IConstants {
 	}
 
 	/**
+	 * This method just collects all the lines in the project.
+	 * 
+	 * @param className
+	 *            the name of the class that is calling this method
+	 * @param lineNumber
+	 *            the line number of the line that is calling this method
+	 * @param methodName
+	 *            the name of the method that the line is in
+	 * @param methodDescription
+	 *            the description of the method
+	 */
+	public static final void collectLines(String className, String lineNumber, String methodName, String methodDescription) {
+		Line line = getLine(className, methodName, methodDescription, lineNumber);
+		dataBase.merge(line);
+	}
+
+	/**
 	 * This method collects the number of lines in a method. Note that for constructors the instance variables that are instanciated and allocated
 	 * space on the stack are also counted as a line in the constructor.
 	 * 
 	 * @param className
-	 *            the name fo the class
+	 *            the name of the class
 	 * @param methodName
 	 *            the name of the method
 	 * @param methodDescription
@@ -82,9 +105,8 @@ public class Collector implements IConstants {
 	 * @param lineCounter
 	 *            the number of lines in the method
 	 */
-	public static final void collectCoverage(String className, String methodName, String methodDescription, double lineCounter) {
+	public static final void collectCoverage(String className, String methodName, String methodDescription) {
 		Method method = getMethod(className, methodName, methodDescription);
-		method.setLines(lineCounter);
 		dataBase.merge(method);
 	}
 
@@ -99,9 +121,10 @@ public class Collector implements IConstants {
 	 * @param methodDescription
 	 *            the methodDescriptionription of the method
 	 */
-	public static final void collectComplexity(String className, String methodName, String methodDescription, double complexity) {
+	public static final void collectComplexity(String className, String methodName, String methodDescription, double complexity, double lineCounter) {
 		Method method = getMethod(className, methodName, methodDescription);
 		method.setComplexity(complexity);
+		method.setLines(lineCounter);
 		dataBase.merge(method);
 	}
 
@@ -219,17 +242,14 @@ public class Collector implements IConstants {
 	}
 
 	private static final Method getMethod(String className, String methodName, String methodDescription) {
-		Method method = null;
+		className = Toolkit.slashToDot(className);
+		methodName = methodName.replace('<', ' ').replace('>', ' ').trim();
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put(CLASS_NAME, className);
 		parameters.put(NAME, methodName);
 		parameters.put(DESCRIPTION, methodDescription);
-		method = dataBase.find(Method.class, parameters);
-
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Looking for method : " + className + ", " + methodName + ", " + methodDescription + ", " + method);
-		}
+		Method method = dataBase.find(Method.class, parameters);
 
 		if (method == null) {
 			method = new Method();
@@ -238,7 +258,6 @@ public class Collector implements IConstants {
 			method.setClassName(className);
 			method.setDescription(methodDescription);
 			method.setComplexity(0d);
-			method.setChildren(new TreeSet<Line>());
 			method.setCoverage(0d);
 			method.setTimestamp(timestamp);
 
@@ -251,7 +270,6 @@ public class Collector implements IConstants {
 			klass.getChildren().add(method);
 
 			dataBase.persist(method);
-			LOGGER.debug("Added method : " + method);
 		}
 		return method;
 	}
@@ -259,6 +277,7 @@ public class Collector implements IConstants {
 	protected static final Line getLine(String className, String methodName, String methodDescription, String lineNumber) {
 		Line line = null;
 		double lineNumberDouble = Double.parseDouble(lineNumber);
+		className = Toolkit.slashToDot(className);
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put(CLASS_NAME, className);
@@ -276,12 +295,15 @@ public class Collector implements IConstants {
 			line.setMethodName(methodName);
 
 			Method method = getMethod(className, methodName, methodDescription);
+			Collection<Line> lines = method.getChildren();
+			// LOGGER.error("Method lines : 1 : " + method.getName() + ", " + lines.size() + ", " + lines.hashCode());
 			line.setParent(method);
-			method.getChildren().add(line);
+			lines.add(line);
+			// LOGGER.error("Method lines : 2 : " + method.getName() + ", " + lines.size() + ", " + lines.hashCode());
 
 			dataBase.persist(line);
-			LOGGER.debug("Added line : " + line);
 		}
+		// LOGGER.error("Method lines : 3 : " + line.getParent().getName() + ", " + line.getParent().getChildren().size());
 		return line;
 	}
 
@@ -294,7 +316,6 @@ public class Collector implements IConstants {
 			efferent.setName(packageName);
 			efferent.setTimestamp(timestamp);
 
-			efferent.getBases().add(klass);
 			klass.getEfferentPackages().add(efferent);
 
 			dataBase.persist(efferent);
@@ -311,7 +332,6 @@ public class Collector implements IConstants {
 			afferent.setName(packageName);
 			afferent.setTimestamp(timestamp);
 
-			afferent.getBases().add(klass);
 			klass.getAfferentPackages().add(afferent);
 
 			dataBase.persist(afferent);

@@ -3,7 +3,7 @@
     <f:entry title="Serenity report pattern"
          description="
          This is a file name pattern that is used to locate the report files
-         (for example use &lt;b&gt;**/serenity/serenity.db).
+         (for example use &lt;b&gt;serenity/serenity.db).
        The path is relative to &lt;a href='ws/'&gt;the workspace root&lt;/a&gt;
        &lt;br/&gt;
        Serenity must be configured to generate the database file during the JUnit test run.

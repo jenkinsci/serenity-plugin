@@ -23,6 +23,7 @@ import com.ikokoon.instrumentation.AccumulatorTest;
 import com.ikokoon.instrumentation.AggregatorTest;
 import com.ikokoon.instrumentation.CollectorTest;
 import com.ikokoon.instrumentation.TransformerTest;
+import com.ikokoon.persistence.DataBaseXmlTest;
 import com.ikokoon.persistence.PermutationsTest;
 import com.ikokoon.target.TargetTest;
 import com.ikokoon.toolkit.ToolkitTest;
@@ -32,7 +33,7 @@ import com.ikokoon.toolkit.ToolkitTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { AccumulatorTest.class, AggregatorTest.class, CollectorTest.class, TransformerTest.class, PermutationsTest.class,
-		ToolkitTest.class, TargetTest.class })
+		ToolkitTest.class, TargetTest.class, DataBaseXmlTest.class })
 public class CoreTestSuite {
 	// DataBaseDb4oTest.class
 }

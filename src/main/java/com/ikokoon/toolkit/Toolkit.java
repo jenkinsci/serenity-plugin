@@ -14,6 +14,11 @@ import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 
+import com.ikokoon.instrumentation.model.Line;
+import com.ikokoon.instrumentation.model.Method;
+import com.ikokoon.instrumentation.model.Project;
+import com.ikokoon.persistence.IDataBase;
+
 /**
  * This class contains methods for changing a string to the byte code representation and visa versa. Also some other nifty functions like stripping a
  * string of white space etc.
@@ -32,7 +37,7 @@ public class Toolkit {
 	 * 
 	 * @param string
 	 *            the string to generate the hash from
-	 * @return the int representation of the hash of the string characters, typically quite unique for strings less than 10 characters
+	 * @return the integer representation of the hash of the string characters, typically quite unique for strings less than 10 characters
 	 */
 	public static final Long hash(String string) {
 		// Must be prime of course
@@ -166,6 +171,10 @@ public class Toolkit {
 					break;
 				case ']':
 					break;
+				case '+':
+					break;
+				case '-':
+					break;
 				case 'B':
 					if (i <= 4) {
 						break;
@@ -191,6 +200,10 @@ public class Toolkit {
 						break;
 					}
 				case 'L':
+					if (i <= 4) {
+						break;
+					}
+				case 'S':
 					if (i <= 4) {
 						break;
 					}
@@ -482,6 +495,23 @@ public class Toolkit {
 			logger.error("IO exception writing file contents", e);
 		}
 
+	}
+
+	public static void dump(IDataBase dataBase) {
+		Project project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
+		List<com.ikokoon.instrumentation.model.Package> packages = project.getChildren();
+		for (com.ikokoon.instrumentation.model.Package pakkage : packages) {
+			logger.error("Package : " + pakkage + ", " + pakkage.getChildren().size());
+			for (com.ikokoon.instrumentation.model.Class klass : pakkage.getChildren()) {
+				logger.error("Class : " + klass + ", " + klass.getChildren());
+				for (Method method : klass.getChildren()) {
+					logger.error("Method : " + method + ", " + method.getChildren().size());
+					for (Line line : method.getChildren()) {
+						logger.error("Line : " + line);
+					}
+				}
+			}
+		}
 	}
 
 }

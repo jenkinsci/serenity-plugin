@@ -1,0 +1,78 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<b>Packages : </b><br></br>
+	<table class="pane" width="100%">
+		<tr>
+			<td class="pane-header" width="30%">Name</td>
+			<td class="pane-header" width="7%">Lines</td>
+			<td class="pane-header" width="7%">Coverage</td>
+			<td class="pane-header" width="7%">Complexity</td>
+			<td class="pane-header" width="7%">Stability</td>
+			<td class="pane-header" width="7%">Interfaces</td>
+			<td class="pane-header" width="7%">Implementations</td>
+			<td class="pane-header" width="7%">Abstractness</td>
+			<td class="pane-header" width="7%">Distance</td>
+			<td class="pane-header" width="7%">Efferent</td>
+			<td class="pane-header" width="7%">Afferent</td>
+		</tr>
+		<j:set var="color" value="#339900" />
+		<j:forEach var="package" items="${it.packages}">
+		<tr>
+			<td class="pane"><b><a href="${it.url}${package.name}?packageName=${package.name}">${package.name}</a></b></td>
+			<td class="pane">${package.lines}</td>
+			<td class="pane">
+				<j:if test="${package.coverage &lt; 50}">
+					<j:set var="color" value="#842424" />
+				</j:if>
+				<font color="${color}">${package.coverage}</font>
+				<j:set var="color" value="#339900" />
+			</td>
+			<td class="pane">
+				<j:if test="${package.complexity &gt; 10}">
+					<j:set var="color" value="#842424" />
+				</j:if>
+				<font color="${color}">${package.complexity}</font>
+				<j:set var="color" value="#339900" />
+			</td>
+			<td class="pane">
+				<j:if test="${package.stability &lt; 0.2}">
+					<j:set var="color" value="#842424" />
+				</j:if>
+				<font color="${color}">${package.stability}</font>
+				<j:set var="color" value="#339900" />
+			</td>
+			<td class="pane">${package.interfaces}</td>
+			<td class="pane">${package.implementations}</td>
+			<td class="pane">
+				<j:if test="${package.abstractness &lt; 0.2}">
+					<j:set var="color" value="#842424" />
+				</j:if>
+				<font color="${color}">${package.abstractness}</font>
+				<j:set var="color" value="#339900" />
+			</td>
+			<td class="pane">
+				<j:if test="${package.distance &gt; 0.5}">
+					<j:set var="color" value="#842424" />
+				</j:if>
+				<font color="${color}">${package.distance}</font>
+				<j:set var="color" value="#339900" />
+			</td>
+			
+			<td class="pane">
+				<j:if test="${package.efferent &gt; 5}">
+					<j:set var="color" value="#842424" />
+				</j:if>
+				<font color="${color}">${package.efferent}</font>
+				<j:set var="color" value="#339900" />
+			</td>
+			<td class="pane">
+				<j:if test="${package.afferent &gt; 5}">
+					<j:set var="color" value="#842424" />
+				</j:if>
+				<font color="${color}">${package.afferent}</font>
+				<j:set var="color" value="#339900" />
+			</td>
+		</tr>
+		</j:forEach>
+		<tr><td></td></tr>
+	</table>
+</j:jelly>

@@ -2,6 +2,8 @@ package com.ikokoon.hudson;
 
 import hudson.Plugin;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
@@ -28,6 +30,18 @@ public class SerenityPlugin extends Plugin {
 
 	public SerenityPlugin() {
 		URL url = SerenityPlugin.class.getResource(IConstants.LOG_4_J_PROPERTIES);
+		// Check that the log directory exists
+		File file = new File(IConstants.DATABASE_FILE);
+		if (!file.exists()) {
+			if (!file.getParentFile().exists()) {
+				file.getParentFile().mkdirs();
+			}
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		if (url != null) {
 			PropertyConfigurator.configure(url);
 		} else {

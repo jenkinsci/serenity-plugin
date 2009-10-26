@@ -119,15 +119,6 @@ public interface IDataBase {
 	/**
 	 * @param <T>
 	 * @param klass
-	 * @param firstResult
-	 * @param maxResults
-	 * @return
-	 */
-	public <T> List<T> find(Class<T> klass, int firstResult, int maxResults);
-
-	/**
-	 * @param <T>
-	 * @param klass
 	 * @param parameters
 	 * @param firstResult
 	 * @param maxResults

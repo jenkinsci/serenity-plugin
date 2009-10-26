@@ -50,16 +50,12 @@
 				<include name="**/model/**" />
 			</fileset>
 		</jar>
-		<delete file="../Dummy/lib/serenity.jar" failonerror="true" />
-		<copy todir="../Dummy/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" />
-		<delete file="../Search/lib/serenity.jar" failonerror="true" />
-		<copy todir="../Search/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" />
 		<delete file="../Lucene/lib/serenity.jar" failonerror="true" />
 		<copy todir="../Lucene/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" />
 		<delete file="../Findbugs/lib/serenity.jar" failonerror="true" />
 		<copy todir="../Findbugs/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" />
-		<delete file="../log4j/lib/serenity.jar" failonerror="true" />
-		<copy todir="../log4j/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" />
+		<delete file="target/work/webapp/WEB-INF/lib/serenity.jar" failonerror="true" />
+		<copy todir="target/work/webapp/WEB-INF/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" />
 	</target>
 
 	<!-- Clean the output directory -->
@@ -77,11 +73,11 @@
 	<!-- Compile everything -->
 	<target name="compile">
 		<!-- First build the project classes -->
-		<javac debug="true" optimize="false" srcdir="${src}" destdir="${bin}" encoding="UTF8" failonerror="true">
+		<javac debug="true" debuglevel="lines,vars,source" optimize="false" srcdir="${src}" destdir="${bin}" encoding="UTF8" failonerror="true">
 			<classpath refid="build.classpath" />
 		</javac>
 		<!-- Then build the test classes -->
-		<javac debug="true" optimize="false" srcdir="${test}" destdir="${bin}" encoding="UTF8" failonerror="true">
+		<javac debug="true" debuglevel="lines,vars,source" optimize="false" srcdir="${test}" destdir="${bin}" encoding="UTF8" failonerror="true">
 			<classpath refid="build.classpath" />
 		</javac>
 	</target>

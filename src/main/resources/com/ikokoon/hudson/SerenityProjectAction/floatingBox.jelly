@@ -5,7 +5,7 @@
         <h1>Serenity: ${from.lastCoverageTotal}</h1>
       </j:when>
       <j:otherwise>
-        <h1>A Serenity report has not been generated yet</h1>
+        <b>A Serenity report has not been generated yet</b>
       </j:otherwise>
     </j:choose>
 </j:jelly>

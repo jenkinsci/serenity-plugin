@@ -1,7 +1,6 @@
 package com.ikokoon;
 
 import java.net.URL;
-import java.util.List;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
@@ -9,6 +8,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+import com.ikokoon.instrumentation.Configuration;
 import com.ikokoon.instrumentation.complexity.ComplexityClassAdapter;
 import com.ikokoon.instrumentation.coverage.CoverageClassAdapter;
 import com.ikokoon.instrumentation.dependency.DependencyClassAdapter;
@@ -18,10 +18,13 @@ import com.ikokoon.instrumentation.model.Efferent;
 import com.ikokoon.instrumentation.model.Line;
 import com.ikokoon.instrumentation.model.Method;
 import com.ikokoon.instrumentation.model.Package;
+import com.ikokoon.instrumentation.model.Project;
 import com.ikokoon.persistence.ADataBase;
 import com.ikokoon.persistence.DataBaseXml;
 import com.ikokoon.persistence.IDataBase;
+import com.ikokoon.target.Target;
 import com.ikokoon.target.one.One;
+import com.ikokoon.toolkit.Toolkit;
 
 /**
  * Base class for the tests.
@@ -61,6 +64,7 @@ public abstract class ATest implements IConstants {
 		builder.append(";");
 		builder.append(ComplexityClassAdapter.class.getName());
 		System.setProperty(IConstants.INCLUDED_ADAPTERS_PROPERTY, builder.toString());
+		Configuration.getConfiguration().includedPackages.add(Target.class.getPackage().getName());
 	}
 
 	@Before
@@ -76,57 +80,10 @@ public abstract class ATest implements IConstants {
 
 	protected <T> void delete(java.lang.Class<T> klass) {
 		if (dataBase instanceof DataBaseXml) {
-			List<T> objects = dataBase.find(klass, 0, Integer.MAX_VALUE);
-			for (T t : objects) {
-				if (t != null) {
-					Long id = (Long) dataBase.getId(klass, t);
-					if (id != null) {
-						dataBase.remove(klass, id);
-					}
-				}
+			Project project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
+			if (project != null) {
+				project.getChildren().clear();
 			}
-		}
-		// if (dataBase instanceof DataBaseDb4o) {
-		// try {
-		// Query query = ((DataBaseDb4o) dataBase).objectContainer.query();
-		// query.constrain(klass);
-		// List list = query.execute();
-		// for (Object object : list) {
-		// ((DataBaseDb4o) dataBase).objectContainer.delete(object);
-		// }
-		// } catch (Exception e) {
-		// logger.warn("Exception deleting the data", e);
-		// }
-		// }
-		// if (dataBase instanceof DataBaseJpa) {
-		// try {
-		// dataBase.execute("delete from " + klass.getSimpleName() + " a");
-		// } catch (Exception e) {
-		// logger.warn("Exception deleting the data", e);
-		// }
-		// }
-		// if (dataBase instanceof DataBaseNeodatis) {
-		// List<T> objects = dataBase.find(klass, 0, Integer.MAX_VALUE);
-		// for (T t : objects) {
-		// if (t != null) {
-		// Long id = (Long) dataBase.getId(klass, t);
-		// if (id != null) {
-		// dataBase.remove(klass, id);
-		// }
-		// }
-		// }
-		// }
-	}
-
-	protected void dumpData(java.lang.Class klass) {
-		logger.error("Dumping data : ");
-		try {
-			List<Object> objects = dataBase.find(klass, 0, Integer.MAX_VALUE);
-			for (Object object : objects) {
-				logger.error(klass.getSimpleName() + " : " + object);
-			}
-		} catch (Exception e) {
-			logger.error("Exception dumping data", e);
 		}
 	}
 
@@ -160,12 +117,10 @@ public abstract class ATest implements IConstants {
 		Efferent efferent = new Efferent();
 		efferent.setName(efferentName);
 		klass.getEfferentPackages().add(efferent);
-		efferent.getBases().add(klass);
 
 		Afferent afferent = new Afferent();
 		afferent.setName(afferentName);
 		klass.getAfferentPackages().add(afferent);
-		afferent.getBases().add(klass);
 
 		klass.setInterfaze(true);
 		klass.setName(className);

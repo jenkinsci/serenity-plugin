@@ -28,9 +28,9 @@ public abstract class ADataBase implements IDataBase {
 	/** The logger for all database implementations. */
 	protected Logger logger = Logger.getLogger(this.getClass());
 	/** The setter methods for entities keyed on the class. */
-	protected Map<Class, Method> idSetterMethods = new HashMap<Class, Method>();
+	protected Map<Class<?>, Method> idSetterMethods = new HashMap<Class<?>, Method>();
 	/** The getter methods for entities keyed on the class. */
-	protected Map<Class, Method> idGetterMethods = new HashMap<Class, Method>();
+	protected Map<Class<?>, Method> idGetterMethods = new HashMap<Class<?>, Method>();
 
 	/**
 	 * Gets the file for the database. If no such file exists then one is created.
@@ -108,7 +108,7 @@ public abstract class ADataBase implements IDataBase {
 	 * @param id
 	 * @param addToPersistables
 	 */
-	protected <T> void setId(T t, Class klass, Long id, boolean addToPersistables) {
+	protected <T> void setId(T t, Class<?> klass, Long id, boolean addToPersistables) {
 		Method idSetterMethod = idSetterMethods.get(klass);
 		if (idSetterMethod == null) {
 			Method[] methods = klass.getDeclaredMethods();
@@ -161,6 +161,7 @@ public abstract class ADataBase implements IDataBase {
 	 *            the object t inspect for unique field combinations
 	 * @return the array of unique field values for the entity
 	 */
+	@SuppressWarnings("unchecked")
 	protected <T> T[] getUniqueValues(T t) {
 		Unique unique = t.getClass().getAnnotation(Unique.class);
 		if (unique == null) {

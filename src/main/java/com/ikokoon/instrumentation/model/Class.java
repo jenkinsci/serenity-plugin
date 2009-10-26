@@ -10,19 +10,13 @@ import java.util.Date;
  * @since 12.08.09
  * @version 01.00
  */
-// @Entity
-// @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-// @NamedQueries( { @NamedQuery(name = Class.SELECT_CLASSES, query = Class.SELECT_CLASSES),
-// @NamedQuery(name = Class.SELECT_CLASSS_BY_NAME, query = Class.SELECT_CLASSS_BY_NAME) })
 @Unique(fields = { "name" })
 public class Class extends Base implements Comparable<Class>, Serializable {
-
-	public static final String SELECT_CLASSES = "select a from Class as a";
-	public static final String SELECT_CLASSS_BY_NAME = "select a from Class as a where a.name = :className";
 
 	private Long id;
 	private String name;
 	private Package parent;
+	private double lines;
 	private double complexity;
 	private double coverage;
 	private double stability;
@@ -35,7 +29,6 @@ public class Class extends Base implements Comparable<Class>, Serializable {
 	private Collection<Afferent> afferentPackages = new ArrayList<Afferent>();
 
 	@Id
-	// @GeneratedValue(strategy = GenerationType.SEQUENCE)
 	public Long getId() {
 		return id;
 	}
@@ -53,13 +46,20 @@ public class Class extends Base implements Comparable<Class>, Serializable {
 		this.name = name;
 	}
 
-	// @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.EAGER)
 	public Package getParent() {
 		return parent;
 	}
 
 	public void setParent(Package parent) {
 		this.parent = parent;
+	}
+
+	public double getLines() {
+		return lines;
+	}
+
+	public void setLines(double lines) {
+		this.lines = lines;
 	}
 
 	public String getNameTrimmed() {
@@ -128,7 +128,6 @@ public class Class extends Base implements Comparable<Class>, Serializable {
 		this.timestamp = timestamp;
 	}
 
-	// @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.EAGER)
 	public Collection<Method> getChildren() {
 		return children;
 	}
@@ -137,7 +136,6 @@ public class Class extends Base implements Comparable<Class>, Serializable {
 		this.children = children;
 	}
 
-	// @ManyToMany(targetEntity = Efferent.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public Collection<Efferent> getEfferentPackages() {
 		return efferentPackages;
 	}
@@ -146,7 +144,6 @@ public class Class extends Base implements Comparable<Class>, Serializable {
 		this.efferentPackages = errerent;
 	}
 
-	// @ManyToMany(targetEntity = Afferent.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public Collection<Afferent> getAfferentPackages() {
 		return afferentPackages;
 	}
