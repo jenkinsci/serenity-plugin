@@ -161,9 +161,9 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitSource : " + source + ", " + debug);
 		}
-		InputStream inputStream = this.getClass().getResourceAsStream("/" + className + ".class");
-		ByteArrayOutputStream byteArrayOutputStream = Toolkit.getContents(inputStream);
-		logger.info(byteArrayOutputStream.toString() + ", " + className);
+//		InputStream inputStream = this.getClass().getResourceAsStream("/" + className + ".class");
+//		ByteArrayOutputStream byteArrayOutputStream = Toolkit.getContents(inputStream);
+//		logger.info(byteArrayOutputStream.toString() + ", " + className);
 		super.visitSource(source, debug);
 	}
 
