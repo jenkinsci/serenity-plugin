@@ -5,6 +5,7 @@ import hudson.model.AbstractProject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,9 @@ import com.ikokoon.IConstants;
 import com.ikokoon.instrumentation.model.Class;
 import com.ikokoon.instrumentation.model.Method;
 import com.ikokoon.instrumentation.model.Package;
+import com.ikokoon.instrumentation.model.Project;
 import com.ikokoon.persistence.IDataBase;
+import com.ikokoon.toolkit.Toolkit;
 
 /**
  * This is the result that will be used to render the results on the front end.
@@ -30,7 +33,7 @@ public class SerenityResult implements ISerenityResult {
 
 	private Logger logger = Logger.getLogger(SerenityResult.class);
 	/** Owner is necessary to render the sidepanel jelly */
-	private AbstractBuild owner;
+	private AbstractBuild<?, ?> owner;
 	/** The object database with the results from the coverage execution. */
 	private IDataBase dataBase;
 	/** The base url for Stapler. */
@@ -50,18 +53,35 @@ public class SerenityResult implements ISerenityResult {
 	 * @param abstractBuild
 	 *            the build action that generated the build for the project
 	 */
-	public SerenityResult(AbstractBuild abstractBuild) {
+	public SerenityResult(AbstractBuild<?, ?> abstractBuild) {
 		logger.info("SerenityResult:serenityResult");
 		this.owner = abstractBuild;
-		File file = new File(abstractBuild.getRootDir(), IConstants.DATABASE_FILE);
+		initilize();
+	}
+
+	private void initilize() {
+		File file = new File(owner.getRootDir(), IConstants.DATABASE_FILE);
 		dataBase = IDataBase.DataBase.getDataBase(file);
-		metrics = buildMetrics();
+
+		Project project = getProject();
+		StringBuilder builder = new StringBuilder();
+		builder.append("Total lines : ");
+		builder.append(project.getTotalLines());
+		builder.append(", total methods : ");
+		builder.append(project.getTotalMethods());
+		builder.append(", total lines executed : ");
+		builder.append(project.getTotalLinesExecuted());
+		builder.append(", total methods executed : ");
+		builder.append(project.getTotalMethodsExecuted());
+		metrics = builder.toString();
+
+		logger.debug("Metrics : " + metrics);
 	}
 
 	/**
 	 * This method is called from the front end. The result from the call will result in some piece of data being extracted from the database. For
-	 * example if the user clicks on a package the name of the package will be used to get that padkage from the database and will be made available
-	 * to the ui.
+	 * example if the user clicks on a package the name of the package will be used to get that package from the database and will be made available
+	 * to the UI.
 	 * 
 	 * @param token
 	 *            the token from the front end, could be a package name or a class name
@@ -73,34 +93,51 @@ public class SerenityResult implements ISerenityResult {
 	 * @throws IOException
 	 */
 	public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) throws IOException {
-		logger.info("SerenityResult:getDynamic");
+		logger.error("SerenityResult:getDynamic");
+
+		// Null everything
+		this.pakkage = null;
+		this.klass = null;
+		this.method = null;
+
 		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(IConstants.NAME, token);
-		Package pakkage = dataBase.find(Package.class, parameters);
-		if (pakkage != null) {
-			this.pakkage = pakkage;
-			this.klass = null;
-			this.method = null;
-		}
-		parameters.clear();
-		parameters.put(IConstants.NAME, token);
-		Class klass = dataBase.find(Class.class, parameters);
-		if (klass != null) {
-			this.klass = klass;
-			this.method = null;
-		}
-		if (this.klass != null) {
+
+		String packageName = req.getParameter("packageName");
+		String className = req.getParameter("className");
+		String methodName = req.getParameter("methodName");
+		String methodDescription = req.getParameter("methodDescription");
+
+		// StringBuilder builder = new StringBuilder();
+		// builder.append("Parameters : ");
+		// builder.append(req.getParameterMap());
+		// builder.append(", package name : ");
+		// builder.append(packageName);
+		// builder.append(", class name : ");
+		// builder.append(className);
+		// builder.append(", method name : ");
+		// builder.append(methodName);
+		// builder.append(", method description : ");
+		// builder.append(methodDescription);
+		// metrics = builder.toString();
+
+		if (className != null && methodName != null && methodDescription != null) {
 			parameters.clear();
-			parameters.put(IConstants.CLASS_NAME, this.klass.getName());
-			parameters.put(IConstants.NAME, token);
-			// TODO - how to get the method? It is only unique with the description added to the query
-			parameters.put(IConstants.DESCRIPTION, token);
-			Method method = dataBase.find(Method.class, parameters);
-			if (method != null) {
-				this.method = method;
-			}
+			parameters.put(IConstants.CLASS_NAME, className);
+			parameters.put(IConstants.NAME, methodName);
+			parameters.put(IConstants.DESCRIPTION, methodDescription);
+			this.method = dataBase.find(Method.class, parameters);
+		} else if (className != null) {
+			parameters.clear();
+			parameters.put(IConstants.NAME, className);
+			this.klass = dataBase.find(Class.class, parameters);
+		} else if (packageName != null) {
+			parameters.clear();
+			parameters.put(IConstants.NAME, packageName);
+			this.pakkage = dataBase.find(Package.class, parameters);
 		}
+
 		url = req.getOriginalRequestURI().replaceAll(token, "");
+		url = url.replaceAll("///", "/");
 		return this;
 	}
 
@@ -125,7 +162,10 @@ public class SerenityResult implements ISerenityResult {
 	}
 
 	public List<Package> getPackages() {
-		return dataBase.find(Package.class, 0, Integer.MAX_VALUE);
+		String name = Project.class.getName();
+		Long id = Toolkit.hash(name);
+		Project project = dataBase.find(Project.class, id);
+		return project.getChildren();
 	}
 
 	public Package getPackage() {
@@ -146,7 +186,7 @@ public class SerenityResult implements ISerenityResult {
 	public String getName() {
 		logger.info("SerenityResult:getName");
 		if (owner != null) {
-			AbstractProject abstractProject = owner.getProject();
+			AbstractProject<?, ?> abstractProject = owner.getProject();
 			if (abstractProject != null) {
 				return abstractProject.getName();
 			}
@@ -154,45 +194,35 @@ public class SerenityResult implements ISerenityResult {
 		return "No name Project...";
 	}
 
-	/**
-	 * Builds the aggregated data for the metrics for the project.
-	 * 
-	 * @return the aggregated metrics for the project
-	 */
-	private String buildMetrics() {
-		logger.info("SerenityResult:buildMetrics");
-		// Build the averages for the project metrics
-		List<Package> packages = dataBase.find(Package.class, 0, Integer.MAX_VALUE);
-		double coverage = 0;
-		double complexity = 0;
-		double interfaces = 0;
-		double implementations = 0;
-		double stability = 0;
-		double abstractness = 0;
+	private Project getProject() {
+		Project project = new Project();
+
+		double totalLines = 0d;
+		double totalMethods = 0d;
+		double totalLinesExecuted = 0d;
+		double totalMethodsExecuted = 0d;
+
+		List<Package> packages = getPackages();
 		for (Package pakkage : packages) {
-			abstractness += pakkage.getAbstractness() > 0 ? pakkage.getAbstractness() : 0;
-			complexity += pakkage.getComplexity() > 0 ? pakkage.getComplexity() : 0;
-			coverage += pakkage.getCoverage() > 0 ? pakkage.getCoverage() : 0;
-			implementations += pakkage.getImplementations() > 0 ? pakkage.getImplementations() : 0;
-			interfaces += pakkage.getInterfaces() > 0 ? pakkage.getInterfaces() : 0;
-			stability += pakkage.getStability() > 0 ? pakkage.getStability() : 0;
+			for (Class klass : pakkage.getChildren()) {
+				for (Method method : klass.getChildren()) {
+					totalLines += method.getLines();
+					totalMethods++;
+					totalLinesExecuted += method.getTotalLinesExecuted();
+					if (method.getTotalLinesExecuted() > 0) {
+						totalMethodsExecuted++;
+					}
+				}
+			}
 		}
-		StringBuilder builder = new StringBuilder("Dummy metrics");
-		// int precision = 2;
-		// double packageSize = packages.size() > 0 ? packages.size() : 1;
-		// builder.append("Coverage : ");
-		// builder.append(pakkage.format((coverage / packageSize), precision));
-		// builder.append(", complexity : ");
-		// builder.append(pakkage.format((complexity / packageSize), precision));
-		// builder.append(", interfaces : ");
-		// builder.append(pakkage.format(interfaces, precision));
-		// builder.append(", implementations : ");
-		// builder.append(pakkage.format(implementations, precision));
-		// builder.append(", stability : ");
-		// builder.append(pakkage.format(stability / packageSize, precision));
-		// builder.append(", abstractness : ");
-		// builder.append(pakkage.format(abstractness / packageSize, precision));
-		return builder.toString();
+
+		project.setTimestamp(new Date());
+		project.setTotalLines(totalLines);
+		project.setTotalLinesExecuted(totalLinesExecuted);
+		project.setTotalMethods(totalMethods);
+		project.setTotalMethodsExecuted(totalMethodsExecuted);
+
+		return project;
 	}
 
 }
