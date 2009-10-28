@@ -8,7 +8,7 @@ import java.util.Date;
  * @since 12.08.09
  * @version 01.00
  */
-@Unique(fields = { "className", "methodName", "number" })
+@Unique(fields = { Composite.CLASS_NAME, Composite.METHOD_NAME, Composite.NUMBER })
 public class Line extends Composite implements Comparable<Line>, Serializable {
 
 	private String className;

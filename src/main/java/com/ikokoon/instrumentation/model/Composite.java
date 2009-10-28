@@ -3,13 +3,18 @@ package com.ikokoon.instrumentation.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Composite implements IComposite {
+public class Composite<E> implements IComposite<E> {
 
 	public static final int PRECISION = 2;
+	public static final String NAME = "name";
+	public static final String CLASS_NAME = "className";
+	public static final String METHOD_NAME = "methodName";
+	public static final String NUMBER = "number";
+	public static final String DESCRIPTION = "description";
 
 	private Long id;
 	private IComposite parent;
-	private List<IComposite> children = new ArrayList<IComposite>();
+	private List<E> children = new ArrayList<E>();
 
 	public Long getId() {
 		return id;
@@ -27,11 +32,11 @@ public class Composite implements IComposite {
 		this.parent = parent;
 	}
 
-	public List<IComposite> getChildren() {
+	public List<E> getChildren() {
 		return children;
 	}
 
-	public void setChildren(List<IComposite> children) {
+	public void setChildren(List<E> children) {
 		this.children = children;
 	}
 

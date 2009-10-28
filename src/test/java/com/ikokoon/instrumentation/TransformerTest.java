@@ -1,6 +1,5 @@
 package com.ikokoon.instrumentation;
 
-import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -11,12 +10,6 @@ import java.security.ProtectionDomain;
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
-import org.objectweb.asm.ClassAdapter;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodAdapter;
-import org.objectweb.asm.MethodVisitor;
 
 import com.ikokoon.ATest;
 import com.ikokoon.target.Target;
@@ -34,7 +27,7 @@ public class TransformerTest extends ATest {
 	/** The logger for the class. */
 	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(TransformerTest.class);
-	private Instrumentation instrumentation = createMock(Instrumentation.class);
+	private Instrumentation instrumentation = null; // createMock(Instrumentation.class);
 	private ProtectionDomain protectionDomain; // = createMock(ProtectionDomain.class);
 
 	@Before
@@ -59,31 +52,6 @@ public class TransformerTest extends ATest {
 		// We need to verify that the collector instructions have been added
 		byteCodes = new String(classfileBuffer);
 		assertTrue(byteCodes.indexOf(Collector.class.getSimpleName()) > -1);
-
-		ClassVisitor classVisitor = null; // new ClassAdapter();
-
-	}
-
-	private ClassVisitor getVerifier(byte[] classfileBuffer) {
-		ClassReader reader = new ClassReader(classfileBuffer);
-		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-		ClassVisitor classVisitor = new ClassAdapter(classWriter) {
-
-		};
-		reader.accept(classVisitor, 0);
-		return classVisitor;
-	}
-
-	public class VerifierClassAdapter extends ClassAdapter {
-		public VerifierClassAdapter(ClassVisitor visitor) {
-			super(visitor);
-		}
-	}
-
-	public class VerifierMethodAdapter extends MethodAdapter {
-		public VerifierMethodAdapter(MethodVisitor visitor) {
-			super(visitor);
-		}
 	}
 
 	@Test

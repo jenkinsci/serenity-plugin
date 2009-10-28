@@ -1,5 +1,5 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-	<b>Packages : </b><br></br>
+	<b>Metrics : Classes : ${it.project.totalClasses}, Methods : ${it.project.totalMethods}, Lines : ${it.project.totalLines}, Executed : ${it.project.totalLinesExecuted}</b><br></br>
 	<table class="pane" width="100%">
 		<tr>
 			<td class="pane-header" width="30%">Name</td>

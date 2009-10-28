@@ -84,7 +84,7 @@ public class DataBaseXmlTest extends ATest {
 		pakkage = (Package) dataBase.find(pakkage.getId());
 		assertNotNull(pakkage);
 
-		Long classId = pakkage.getChildren().get(0).getId();
+		Long classId = ((Class) pakkage.getChildren().get(0)).getId();
 		Class klass = (Class) dataBase.find(classId);
 		assertNotNull(klass);
 	}

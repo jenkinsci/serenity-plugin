@@ -3,8 +3,6 @@ package com.ikokoon.instrumentation;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.security.ProtectionDomain;
 import java.util.Date;
@@ -20,6 +18,7 @@ import com.ikokoon.instrumentation.process.Accumulator;
 import com.ikokoon.instrumentation.process.Aggregator;
 import com.ikokoon.instrumentation.process.Cleaner;
 import com.ikokoon.persistence.IDataBase;
+import com.ikokoon.toolkit.ObjectFactory;
 
 /**
  * This class is the entry point for the Serenity code coverage/complexity/dependency/profiling functionality. This class is called by the JVM on
@@ -77,8 +76,9 @@ public class Transformer implements ClassFileTransformer, IConstants {
 						+ (Runtime.getRuntime().maxMemory() / million) + ", free memory : " + (Runtime.getRuntime().freeMemory() / million));
 			}
 		});
-
-		instrumentation.addTransformer(INSTANCE);
+		if (instrumentation != null) {
+			instrumentation.addTransformer(INSTANCE);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -137,23 +137,8 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
 		ClassVisitor visitor = writer;
 		for (Class<ClassVisitor> klass : classAdapterClasses) {
-			Constructor<ClassVisitor> constructor;
-			try {
-				constructor = klass.getConstructor(ClassVisitor.class, String.class);
-				visitor = constructor.newInstance(visitor, className);
-			} catch (SecurityException e) {
-				LOGGER.error("Exception instanciating the visitors", e);
-			} catch (NoSuchMethodException e) {
-				LOGGER.error("Exception instanciating the visitors", e);
-			} catch (IllegalArgumentException e) {
-				LOGGER.error("Exception instanciating the visitors", e);
-			} catch (InstantiationException e) {
-				LOGGER.error("Exception instanciating the visitors", e);
-			} catch (IllegalAccessException e) {
-				LOGGER.error("Exception instanciating the visitors", e);
-			} catch (InvocationTargetException e) {
-				LOGGER.error("Exception instanciating the visitors", e);
-			}
+			Object[] parameters = new Object[] { visitor, className, classfileBuffer };
+			visitor = ObjectFactory.getObject(klass, parameters);
 			LOGGER.debug("Adding class visitor : " + visitor);
 		}
 		reader.accept(visitor, 0);

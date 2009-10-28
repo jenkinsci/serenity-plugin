@@ -3,6 +3,7 @@ package com.ikokoon.instrumentation;
 import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.junit.Test;
@@ -13,7 +14,6 @@ import com.ikokoon.IConstants;
 import com.ikokoon.instrumentation.model.Afferent;
 import com.ikokoon.instrumentation.model.Class;
 import com.ikokoon.instrumentation.model.Efferent;
-import com.ikokoon.instrumentation.model.IComposite;
 import com.ikokoon.instrumentation.model.Line;
 import com.ikokoon.instrumentation.model.Method;
 import com.ikokoon.instrumentation.model.Package;
@@ -193,15 +193,15 @@ public class AggregatorTest extends ATest implements IConstants {
 		logger.info("PRINTING MODEL");
 		printEntity(pakkage);
 		logger.info("Classes : " + pakkage.getChildren().size());
-		for (IComposite klass : pakkage.getChildren()) {
+		for (Class klass : ((List<Class>) pakkage.getChildren())) {
 			logger.info("");
 			printEntity(klass);
 			logger.info("Methods : " + klass.getChildren().size());
-			for (IComposite method : klass.getChildren()) {
+			for (Method method : ((List<Method>) klass.getChildren())) {
 				logger.info("");
 				printEntity(method);
 				logger.info("Lines : " + method.getChildren().size());
-				for (IComposite line : method.getChildren()) {
+				for (Line line : ((List<Line>) method.getChildren())) {
 					logger.info("");
 					printEntity(line);
 				}

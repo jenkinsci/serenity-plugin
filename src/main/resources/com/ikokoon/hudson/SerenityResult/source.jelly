@@ -1,0 +1,4 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<b>Source : ${it.klass.name}</b><br></br>
+	And the source here eventually
+</j:jelly>

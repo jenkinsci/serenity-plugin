@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.neodatis.odb.OdbConfiguration;
 
 import com.ikokoon.instrumentation.Configuration;
 import com.ikokoon.instrumentation.complexity.ComplexityClassAdapter;
@@ -69,6 +70,9 @@ public abstract class ATest implements IConstants {
 
 	@Before
 	public void initilize() {
+//		OdbConfiguration.setDebugEnabled(true);
+//		OdbConfiguration.setAutomaticCloseFileOnExit(true);
+//		OdbConfiguration.setDisplayWarnings(true);
 		dataBase = (ADataBase) IDataBase.DataBase.getDataBase();
 		Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
 		if (project != null) {

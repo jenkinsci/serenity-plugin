@@ -10,11 +10,12 @@ import java.util.TreeSet;
  * @since 12.08.09
  * @version 01.00
  */
-@Unique(fields = { "name" })
+@Unique(fields = { Composite.NAME })
 public class Package extends Composite implements Comparable<Package>, Serializable {
 
 	private String name;
 	private double lines;
+	private double totalLinesExecuted;
 	private double complexity;
 	private double coverage;
 	private double abstractness;
@@ -42,6 +43,14 @@ public class Package extends Composite implements Comparable<Package>, Serializa
 
 	public void setLines(double lines) {
 		this.lines = lines;
+	}
+
+	public double getTotalLinesExecuted() {
+		return totalLinesExecuted;
+	}
+
+	public void setTotalLinesExecuted(double totalLinesExecuted) {
+		this.totalLinesExecuted = totalLinesExecuted;
 	}
 
 	public Date getTimestamp() {

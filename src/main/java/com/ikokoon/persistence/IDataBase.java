@@ -1,8 +1,8 @@
 package com.ikokoon.persistence;
 
-import java.io.File;
 import java.util.List;
 
+import com.ikokoon.IConstants;
 import com.ikokoon.instrumentation.model.IComposite;
 
 /**
@@ -31,18 +31,15 @@ public interface IDataBase {
 
 		public static synchronized IDataBase getDataBase() {
 			if (dataBase == null || dataBase.isClosed()) {
-				dataBase = getDataBase(null);
+				dataBase = getDataBase(IConstants.DATABASE_FILE);
 			}
 			return dataBase;
 		}
 
-		public static IDataBase getDataBase(File file) {
-			return getDataBase(file, null);
+		public static IDataBase getDataBase(String dataBaseFile) {
+			return new DataBaseXml(dataBaseFile);
 		}
 
-		public static IDataBase getDataBase(File file, ClassLoader classLoader) {
-			return new DataBaseXml(file, classLoader);
-		}
 	}
 
 	/**

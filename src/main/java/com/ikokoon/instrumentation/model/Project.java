@@ -10,19 +10,25 @@ import java.util.List;
  * @since 12.08.09
  * @version 01.00
  */
-@Unique(fields = { "name" })
-public class Project extends Composite implements Serializable {
+@Unique(fields = { Composite.NAME })
+public class Project<T> extends Composite implements Serializable {
 
 	private String name = this.getClass().getName();
 	private Date timestamp;
 
 	private double totalLines;
-	private double totalMethods;
-
 	private double totalLinesExecuted;
+
+	private double totalMethods;
 	private double totalMethodsExecuted;
 
-	private List<IComposite> index = new ArrayList<IComposite>();
+	private double totalClasses;
+	private double totalClassesExecuted;
+
+	private double totalPackages;
+	private double totalPackagesExecuted;
+
+	private List<T> index = new ArrayList<T>();
 
 	public String getName() {
 		return name;
@@ -72,11 +78,43 @@ public class Project extends Composite implements Serializable {
 		this.totalMethodsExecuted = totalMethodsExecuted;
 	}
 
-	public List<IComposite> getIndex() {
+	public double getTotalClasses() {
+		return totalClasses;
+	}
+
+	public void setTotalClasses(double totalClasses) {
+		this.totalClasses = totalClasses;
+	}
+
+	public double getTotalClassesExecuted() {
+		return totalClassesExecuted;
+	}
+
+	public void setTotalClassesExecuted(double totalClassesExecuted) {
+		this.totalClassesExecuted = totalClassesExecuted;
+	}
+
+	public double getTotalPackages() {
+		return totalPackages;
+	}
+
+	public void setTotalPackages(double totalPackages) {
+		this.totalPackages = totalPackages;
+	}
+
+	public double getTotalPackagesExecuted() {
+		return totalPackagesExecuted;
+	}
+
+	public void setTotalPackagesExecuted(double totalPackagesExecuted) {
+		this.totalPackagesExecuted = totalPackagesExecuted;
+	}
+
+	public List<T> getIndex() {
 		return index;
 	}
 
-	public void setIndex(List<IComposite> index) {
+	public void setIndex(List<T> index) {
 		this.index = index;
 	}
 

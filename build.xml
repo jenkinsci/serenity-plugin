@@ -2,14 +2,13 @@
 <project name="Serenity" default="clean.compile.build.test" basedir=".">
 
 	<!-- Some properties -->
-	<property name="lib" value="lib" />
-	<property name="src" value="src/main/java" />
-	<property name="bin" value="target/Serenity/WEB-INF/classes" />
-	<property name="test" value="src/test/java" />
-	<property name="test.resources" value="src/test/resources" />
-	<property name="test.classes" value="bin" />
 	<property name="serenity" value="serenity" />
-	<property name="serenity.jar" value="lib/serenity.jar" />
+
+	<property name="src" value="src/main/java" />
+	<property name="test" value="src/test/java" />
+	<property name="bin" value="target/Serenity/WEB-INF/classes" />
+	<property name="test.resources" value="src/test/resources" />
+	<property name="serenity.jar" value="target/serenity.jar" />
 
 	<!-- Set the classpath -->
 	<path id="build.classpath">
@@ -19,7 +18,6 @@
 		</fileset>
 		<pathelement path="${bin}" />
 		<pathelement location="${bin}" />
-		<pathelement location="${test.classes}" />
 		<pathelement location="${test.resources}" />
 	</path>
 
@@ -33,7 +31,7 @@
 
 	<target name="build">
 		<delete file="${serenity.jar}" failonerror="false" />
-		<jar jarfile="${serenity.jar}" update="no" manifest="${src}/META-INF/MANIFEST.MF">
+		<jar jarfile="${serenity.jar}" update="false" manifest="${src}/META-INF/MANIFEST.MF">
 			<fileset dir="${bin}">
 				<include name="**" />
 			</fileset>
@@ -41,12 +39,14 @@
 				<include name="**" />
 			</fileset>
 		</jar>
-		<delete file="../Lucene/lib/serenity.jar" failonerror="true" />
-		<copy todir="../Lucene/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" />
+		<antcall target="copy" />
+	</target>
+
+	<target name="copy">
+		<delete file="../Dummy/lib/serenity.jar" failonerror="true" />
+		<copy todir="../Dummy/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" />
 		<delete file="../Findbugs/lib/serenity.jar" failonerror="true" />
 		<copy todir="../Findbugs/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" />
-		<delete file="target/work/webapp/WEB-INF/lib/serenity.jar" failonerror="true" />
-		<copy todir="target/work/webapp/WEB-INF/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" />
 	</target>
 
 	<!-- Clean the output directory -->
@@ -82,7 +82,7 @@
 										com.ikokoon.instrumentation.coverage.CoverageClassAdapter;
 										com.ikokoon.instrumentation.dependency.DependencyClassAdapter;
 										com.ikokoon.instrumentation.complexity.ComplexityClassAdapter;" />
-			<jvmarg line="-javaagent:lib/serenity.jar" />
+			<jvmarg line="-javaagent:target/serenity.jar" />
 			<batchtest todir="${serenity}" haltonerror="false" haltonfailure="false">
 				<formatter type="xml" />
 				<fileset dir="${test}">

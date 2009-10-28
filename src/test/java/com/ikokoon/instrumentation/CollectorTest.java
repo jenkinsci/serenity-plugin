@@ -14,7 +14,6 @@ import com.ikokoon.ATest;
 import com.ikokoon.IConstants;
 import com.ikokoon.instrumentation.model.Afferent;
 import com.ikokoon.instrumentation.model.Class;
-import com.ikokoon.instrumentation.model.IComposite;
 import com.ikokoon.instrumentation.model.Method;
 import com.ikokoon.instrumentation.model.Package;
 import com.ikokoon.toolkit.Toolkit;
@@ -98,8 +97,7 @@ public class CollectorTest extends ATest implements IConstants {
 		Package pakkage = (Package) dataBase.find(parameters);
 		assertNotNull(pakkage);
 		boolean containsLogger = false;
-		outer: for (IComposite baseKlass : pakkage.getChildren()) {
-			Class klass = (Class) baseKlass;
+		outer: for (Class klass : ((List<Class>) pakkage.getChildren())) {
 			for (Afferent afferent : klass.getAfferentPackages()) {
 				if (afferent.getName().indexOf(Logger.class.getPackage().getName()) > -1) {
 					containsLogger = true;

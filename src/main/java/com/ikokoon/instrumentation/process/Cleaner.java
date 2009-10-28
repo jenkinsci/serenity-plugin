@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.ikokoon.IConstants;
 import com.ikokoon.instrumentation.Configuration;
-import com.ikokoon.instrumentation.model.IComposite;
 import com.ikokoon.instrumentation.model.Package;
 import com.ikokoon.instrumentation.model.Project;
 import com.ikokoon.persistence.IDataBase;
@@ -41,9 +40,8 @@ public class Cleaner extends AProcess implements IConstants {
 		IDataBase dataBase = IDataBase.DataBase.getDataBase();
 		Long id = Toolkit.hash(Project.class.getName());
 		Project project = (Project) dataBase.find(id);
-		List<IComposite> packages = project.getChildren();
-		for (IComposite composite : packages.toArray(new IComposite[packages.size()])) {
-			Package pakkage = (Package) composite;
+		List<Package> packages = project.getChildren();
+		for (Package pakkage : packages.toArray(new Package[packages.size()])) {
 			// Remove the packages that are not included in the list to process
 			if (!Configuration.getConfiguration().included(pakkage.getName())) {
 				dataBase.remove(pakkage.getId());

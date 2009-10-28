@@ -1,33 +1,8 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 	<l:layout css="/plugin/ikokoon/css/style.css">
 		<st:include it="${it.owner}" page="sidepanel.jelly"/>
-		<j:choose>
-			<j:when test="!it.hasReport()">
-				<b>Serenity reports were not generated for this build</b>
-			</j:when>
-			<j:otherwise>
-				<l:main-panel>
-					<b>Project : ${it.name}, Metrics : ${it.metrics} </b><br></br>
-					<j:if test="${!it.packages.isEmpty()}">
-						<j:if test="${it.package == null}">
-							<j:if test="${it.klass == null}">
-								<j:if test="${it.method == null}">
-									<st:include page="/com/ikokoon/hudson/SerenityResult/packages.jelly" />
-								</j:if>
-							</j:if>
-						</j:if>
-					</j:if>
-					<j:if test="${it.package != null}">
-						<st:include page="/com/ikokoon/hudson/SerenityResult/classes.jelly" />
-					</j:if>
-					<j:if test="${it.klass != null}">
-						<st:include page="/com/ikokoon/hudson/SerenityResult/methods.jelly" />
-					</j:if>
-					<j:if test="${it.method != null}">
-						<st:include page="/com/ikokoon/hudson/SerenityResult/method.jelly" />
-					</j:if>
-				</l:main-panel>
-			</j:otherwise>
-		</j:choose>
+		<l:main-panel>
+			<st:include page="/com/ikokoon/hudson/tabview/main.jelly" />
+		</l:main-panel>
 	</l:layout>
 </j:jelly>

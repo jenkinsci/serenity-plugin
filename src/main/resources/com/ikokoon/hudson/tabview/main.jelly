@@ -1,0 +1,55 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+  xmlns:i="jelly:fmt" xmlns:local="local">
+    <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+    <script type="text/javascript" src="${rootURL}/plugin/serenity/yui/utilities.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/serenity/yui/tabview-min.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/serenity/yui/dispatcher-min.js"></script>
+
+    <script type="text/javascript">
+      var myTabs = new YAHOO.widget.TabView("serenity");
+
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: 'Packages',
+            dataSrc: 'packages?tab=packages',
+            cacheData: false,
+            active: ${it.tab == 'packages'}
+        }), myTabs);
+
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: 'Classes',
+            dataSrc: 'classes?tab=classes',
+            cacheData: false,
+            active: ${it.tab == 'classes'}
+        }), myTabs);
+
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: 'Methods',
+            dataSrc: 'methods?tab=methods',
+            cacheData: false,
+            active: ${it.tab == 'methods'}
+        }), myTabs);
+        
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: 'Method',
+            dataSrc: 'method?tab=method',
+            cacheData: false,
+            active: ${it.tab == 'method'}
+        }), myTabs);
+        
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: 'Source',
+            dataSrc: 'source?tab=source',
+            cacheData: false,
+            active: ${it.tab == 'source'}
+        }), myTabs);
+
+      myTabs.set('activeIndex', 0);
+
+    </script>
+
+    <st:include page="/com/ikokoon/hudson/tabview/css.jelly" />
+
+    <div id="serenity" class="yui-navset">
+    </div>
+</j:jelly>

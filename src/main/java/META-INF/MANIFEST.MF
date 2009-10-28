@@ -1,2 +1,14 @@
 Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: Michael
+Build-Jdk: 1.6.0_14
+Extension-Name: serenity
+Implementation-Title: serenity
+Implementation-Version: 1.0
+Short-Name: serenity
+Long-Name: Hudson Serenity plugin
+Url: http://wiki.hudson-ci.org/display/HUDSON/Serenity+Plugin
+Plugin-Version: 1.0
+Hudson-Version: 1.323
 Premain-Class: com.ikokoon.instrumentation.Transformer

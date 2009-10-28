@@ -21,20 +21,16 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>copy.hpi.task</id>
+						<id>ant.task</id>
 						<phase>package</phase>
 						<configuration>
 							<tasks verbose="true">
-								<echo message="Copying HPI and serenity.jar file to the project directory" />
-								<!--
-									delete file="lib/serenity.hpi" failonerror="false" /> <copy todir="lib" file="target/serenity.hpi" overwrite="true" failonerror="false" />
-									<delete file="lib/serenity.jar" failonerror="true" /> <copy todir="lib" file="target/serenity.jar" overwrite="true" failonerror="false" />
-									<delete file="C:/.hudson/plugins/serenity.hpi" failonerror="false" /> <copy todir="C:/.hudson/plugins" file="target/serenity.hpi"
-									overwrite="true" failonerror="false" /> <delete file="C:/Users/Michael/.hudson/plugins/serenity.hpi" failonerror="true" /> <copy
-									todir="C:/Users/Michael/.hudson/plugins" file="target/serenity.hpi" overwrite="true" failonerror="false" /> <delete file="C:/Program
-									Files/Apache Software Foundation/Tomcat 5.5/common/lib/serenity-model.jar" failonerror="false" /> <copy todir="C:/Program Files/Apache
-									Software Foundation/Tomcat 5.5/common/lib/" file="lib/serenity-model.jar" overwrite="true" failonerror="false" /
-								-->
+								<!-- And do some ant stuff here -->
+								<echo message="Unpacking and repacking serenity.jar with the agent manifest" />
+								<unjar src="target/serenity.jar" dest="target/temp" overwrite="true" taskname="repack.serenity.with.manifest" />
+								<jar destfile="target/serenity.jar" basedir="target/temp" manifest="src/main/java/META-INF/MANIFEST.MF"></jar>
+
+								<!-- echo file="some.file"><module>${some.property}</module></echo -->
 							</tasks>
 						</configuration>
 						<goals>
@@ -61,6 +57,14 @@
 			<artifactId>asm</artifactId>
 			<version>3.1</version>
 			<type>jar</type>
+			<scope>import</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.neodatis</groupId>
+			<artifactId>neodatis</artifactId>
+			<version>1.9</version>
+			<type>jar</type>
+			<scope>import</scope>
 		</dependency>
 	</dependencies>
 	<profiles>

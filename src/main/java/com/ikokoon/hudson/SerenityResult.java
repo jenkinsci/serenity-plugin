@@ -30,6 +30,12 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class SerenityResult implements ISerenityResult {
 
+	private static final String TAB = "tab";
+	private static final String PACKAGE_NAME = "packageName";
+	private static final String CLASS_NAME = "className";
+	private static final String METHOD_NAME = "methodName";
+	private static final String METHOD_DESCRIPTION = "methodDescription";
+
 	private Logger logger = Logger.getLogger(SerenityResult.class);
 	/** Owner is necessary to render the sidepanel jelly */
 	private AbstractBuild<?, ?> owner;
@@ -37,6 +43,8 @@ public class SerenityResult implements ISerenityResult {
 	private IDataBase dataBase;
 	/** The base url for Stapler. */
 	private String url = "";
+	/** The project for the build. */
+	private Project project;
 	/** The package that the user specified from the front end. */
 	private Package pakkage;
 	/** The class that the user specified from the front end. */
@@ -45,6 +53,8 @@ public class SerenityResult implements ISerenityResult {
 	private Method method;
 	/** The string containing the aggregated metrics for the build. */
 	private String metrics;
+	/** The active tab in the ui. */
+	private String tab;
 
 	/**
 	 * Constructor takes the real action that generated the build for the project.
@@ -59,18 +69,18 @@ public class SerenityResult implements ISerenityResult {
 	}
 
 	private void initilize() {
-		File file = new File(owner.getRootDir(), IConstants.DATABASE_FILE);
-		dataBase = IDataBase.DataBase.getDataBase(file);
-		Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
+		String dataBaseFile = owner.getRootDir().getAbsolutePath() + File.separator + IConstants.DATABASE_FILE;
+		dataBase = IDataBase.DataBase.getDataBase(dataBaseFile);
+		project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
 		StringBuilder builder = new StringBuilder();
-		builder.append("Total lines : ");
-		builder.append(project.getTotalLines());
-		builder.append(", total methods : ");
+		builder.append("Classes : ");
+		builder.append(project.getTotalClasses());
+		builder.append(", methods : ");
 		builder.append(project.getTotalMethods());
-		builder.append(", total lines executed : ");
+		builder.append(", lines : ");
+		builder.append(project.getTotalLines());
+		builder.append(", lines executed : ");
 		builder.append(project.getTotalLinesExecuted());
-		builder.append(", total methods executed : ");
-		builder.append(project.getTotalMethodsExecuted());
 		metrics = builder.toString();
 		logger.debug("Metrics : " + metrics);
 	}
@@ -92,17 +102,16 @@ public class SerenityResult implements ISerenityResult {
 	public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) throws IOException {
 		logger.error("SerenityResult:getDynamic");
 
-		// Null everything
-		this.pakkage = null;
-		this.klass = null;
-		this.method = null;
-
 		List<Object> parameters = new ArrayList<Object>();
 
-		String packageName = req.getParameter("packageName");
-		String className = req.getParameter("className");
-		String methodName = req.getParameter("methodName");
-		String methodDescription = req.getParameter("methodDescription");
+		String packageName = req.getParameter(PACKAGE_NAME);
+		String className = req.getParameter(CLASS_NAME);
+		String methodName = req.getParameter(METHOD_NAME);
+		String methodDescription = req.getParameter(METHOD_DESCRIPTION);
+		this.tab = req.getParameter(TAB);
+
+		logger.error("Package name : " + packageName + ", class name : " + className + ", method name : " + methodName + ", method description : "
+				+ methodDescription);
 
 		if (className != null && methodName != null && methodDescription != null) {
 			parameters.clear();
@@ -120,14 +129,19 @@ public class SerenityResult implements ISerenityResult {
 			this.pakkage = (Package) dataBase.find(parameters);
 		}
 
+		logger.error("Package : " + pakkage + ", class : " + klass + ", method : " + method);
+
 		url = req.getOriginalRequestURI().replaceAll(token, "");
 		url = url.replaceAll("///", "/");
 		return this;
 	}
 
 	public String getUrl() {
-		logger.info("SerenityResult:getUrl");
 		return url;
+	}
+
+	public String getTab() {
+		return this.tab;
 	}
 
 	public Object getOwner() {
@@ -145,9 +159,12 @@ public class SerenityResult implements ISerenityResult {
 		return metrics;
 	}
 
+	public Project getProject() {
+		return this.project;
+	}
+
 	public List<IComposite> getPackages() {
-		Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
-		return project.getChildren();
+		return getProject().getChildren();
 	}
 
 	public Package getPackage() {

@@ -16,7 +16,6 @@ public class PermutationsTest extends ATest {
 		String[] strings = new String[] { "one", "two", "three" };
 		List<Object[]> permutationsList = new ArrayList<Object[]>();
 		permutations.getPermutations(strings, permutationsList, strings.length);
-		// TODO implement the test here
 		for (Object[] stringArray : permutationsList) {
 			for (Object string : stringArray) {
 				logger.debug(string + ":");

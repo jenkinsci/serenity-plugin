@@ -42,11 +42,11 @@ public class Collector implements IConstants {
 			dataBase = IDataBase.DataBase.getDataBase();
 			// Reset the counter for all the lines
 			Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
-			for (IComposite pakkage : project.getChildren()) {
-				for (IComposite klass : pakkage.getChildren()) {
-					for (IComposite method : klass.getChildren()) {
-						for (IComposite line : method.getChildren()) {
-							((Line) line).setCounter(0d);
+			for (Package pakkage : ((List<Package>) project.getChildren())) {
+				for (Class klass : ((List<Class>) pakkage.getChildren())) {
+					for (Method method : ((List<Method>) klass.getChildren())) {
+						for (Line line : ((List<Line>) method.getChildren())) {
+							line.setCounter(0d);
 						}
 					}
 				}

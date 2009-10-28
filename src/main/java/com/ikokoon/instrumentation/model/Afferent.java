@@ -3,7 +3,7 @@ package com.ikokoon.instrumentation.model;
 import java.io.Serializable;
 import java.util.Date;
 
-@Unique(fields = { "name" }, discriminator = "com.ikokoon.instrumentation.model.Afferent")
+@Unique(fields = { Afferent.NAME })
 public class Afferent extends Composite implements Comparable<Afferent>, Serializable {
 
 	private String name;

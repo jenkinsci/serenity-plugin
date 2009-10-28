@@ -11,11 +11,12 @@ import java.util.List;
  * @since 12.08.09
  * @version 01.00
  */
-@Unique(fields = { "name" })
+@Unique(fields = { Composite.NAME })
 public class Class extends Composite implements Comparable<Class>, Serializable {
 
 	private String name;
 	private double lines;
+	private double totalLinesExecuted;
 	private double complexity;
 	private double coverage;
 	private double stability;
@@ -40,6 +41,14 @@ public class Class extends Composite implements Comparable<Class>, Serializable 
 
 	public void setLines(double lines) {
 		this.lines = lines;
+	}
+
+	public double getTotalLinesExecuted() {
+		return totalLinesExecuted;
+	}
+
+	public void setTotalLinesExecuted(double totalLinesExecuted) {
+		this.totalLinesExecuted = totalLinesExecuted;
 	}
 
 	public String getNameTrimmed() {

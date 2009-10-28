@@ -1,5 +1,6 @@
 package com.ikokoon.instrumentation.process;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -10,7 +11,6 @@ import com.ikokoon.IConstants;
 import com.ikokoon.instrumentation.model.Afferent;
 import com.ikokoon.instrumentation.model.Class;
 import com.ikokoon.instrumentation.model.Efferent;
-import com.ikokoon.instrumentation.model.IComposite;
 import com.ikokoon.instrumentation.model.Line;
 import com.ikokoon.instrumentation.model.Method;
 import com.ikokoon.instrumentation.model.Package;
@@ -83,16 +83,59 @@ public class Aggregator extends AProcess implements IConstants {
 		logger.info("Running Aggregator dump: ");
 		Long id = Toolkit.hash(Project.class.getName());
 		Project project = (Project) dataBase.find(id);
-		List<IComposite> packages = project.getChildren();
-		aggregatePackages(packages);
+		aggregateProject(project);
 		super.execute();
 	}
 
-	private void aggregatePackages(List<IComposite> packages) {
-		for (IComposite composite : packages) {
-			Package pakkage = (Package) composite;
+	private void aggregateProject(Project project) {
+		List<Package> packages = project.getChildren();
+		aggregatePackages(packages);
+		project.setTimestamp(new Date());
+
+		double totalLines = 0d;
+		double totalLinesExecuted = 0d;
+		double totalMethods = 0d;
+		double totalMethodsExecuted = 0d;
+		double totalClasses = 0d;
+		double totalClassesExecuted = 0d;
+		double totalPackages = 0d;
+		double totalPackagesExecuted = 0d;
+
+		for (Package pakkage : packages) {
+			totalPackages++;
+			if (pakkage.getTotalLinesExecuted() > 0) {
+				totalPackagesExecuted++;
+			}
+			for (Class klass : ((List<Class>) pakkage.getChildren())) {
+				totalLines += klass.getLines();
+				totalClasses++;
+				if (klass.getTotalLinesExecuted() > 0) {
+					totalClassesExecuted++;
+				}
+				for (Method method : ((List<Method>) klass.getChildren())) {
+					totalMethods++;
+					totalLinesExecuted += method.getTotalLinesExecuted();
+					if (method.getTotalLinesExecuted() > 0) {
+						totalMethodsExecuted++;
+					}
+				}
+			}
+		}
+
+		project.setTotalLines(totalLines);
+		project.setTotalLinesExecuted(totalLinesExecuted);
+		project.setTotalMethods(totalMethods);
+		project.setTotalMethodsExecuted(totalMethodsExecuted);
+		project.setTotalClasses(totalClasses);
+		project.setTotalClassesExecuted(totalClassesExecuted);
+		project.setTotalPackages(totalPackages);
+		project.setTotalPackagesExecuted(totalPackagesExecuted);
+	}
+
+	private void aggregatePackages(List<Package> packages) {
+		for (Package pakkage : packages) {
 			logger.debug("Processing package : " + pakkage.getName());
-			List<IComposite> classes = pakkage.getChildren();
+			List<Class> classes = pakkage.getChildren();
 			aggregateClasses(classes);
 
 			double interfaces = 0d;
@@ -100,12 +143,12 @@ public class Aggregator extends AProcess implements IConstants {
 			double packageLines = 0d;
 			double complexity = 0d;
 			double coverage = 0d;
+			double totalLinesExecuted = 0d;
 
 			Set<Efferent> efference = new TreeSet<Efferent>();
 			Set<Afferent> afference = new TreeSet<Afferent>();
 
-			for (IComposite child : classes) {
-				Class klass = (Class) child;
+			for (Class klass : classes) {
 				if (klass.getInterfaze()) {
 					interfaces++;
 				} else {
@@ -118,16 +161,17 @@ public class Aggregator extends AProcess implements IConstants {
 					afference.add(afferent);
 				}
 				packageLines += klass.getLines();
+				totalLinesExecuted += klass.getTotalLinesExecuted();
 			}
 
 			pakkage.setEfference(efference);
 			pakkage.setAfference(afference);
 
 			pakkage.setLines(packageLines);
+			pakkage.setTotalLinesExecuted(totalLinesExecuted);
 
 			if (packageLines > 0) {
-				for (IComposite child : classes) {
-					Class klass = (Class) child;
+				for (Class klass : classes) {
 					double classLines = klass.getLines();
 					complexity += (classLines / packageLines) * klass.getComplexity();
 					coverage += (classLines / packageLines) * klass.getCoverage();
@@ -161,10 +205,9 @@ public class Aggregator extends AProcess implements IConstants {
 		}
 	}
 
-	private void aggregateClasses(List<IComposite> classes) {
-		for (IComposite composite : classes) {
-			Class klass = (Class) composite;
-			List<IComposite> methods = klass.getChildren();
+	private void aggregateClasses(List<Class> classes) {
+		for (Class klass : classes) {
+			List<Method> methods = klass.getChildren();
 			aggregateMethods(methods);
 
 			double afferent = klass.getAfferentPackages().size();
@@ -173,13 +216,12 @@ public class Aggregator extends AProcess implements IConstants {
 			double classLines = 0d;
 			double complexity = 0d;
 			double coverage = 0d;
-			for (IComposite child : methods) {
-				Method method = (Method) child;
+			double totalLinesExecuted = 0d;
+			for (Method method : methods) {
 				classLines += method.getLines();
 			}
 			if (classLines > 0) {
-				for (IComposite child : methods) {
-					Method method = (Method) child;
+				for (Method method : methods) {
 					double methodLines = method.getLines();
 					if (methodLines == 0) {
 						continue;
@@ -189,11 +231,13 @@ public class Aggregator extends AProcess implements IConstants {
 					double methodCoverage = method.getCoverage();
 					complexity += methodComplexity * weightedLines;
 					coverage += methodCoverage * weightedLines;
+					totalLinesExecuted += method.getTotalLinesExecuted();
 				}
 			}
 			klass.setLines(classLines);
 			klass.setComplexity(complexity);
 			klass.setCoverage(coverage);
+			klass.setTotalLinesExecuted(totalLinesExecuted);
 			klass.setEfferent(klass.getEfferentPackages().size());
 
 			double efference = klass.getEfferent();
@@ -204,16 +248,14 @@ public class Aggregator extends AProcess implements IConstants {
 		}
 	}
 
-	private void aggregateMethods(List<IComposite> methods) {
-		for (IComposite composite : methods) {
-			Method method = (Method) composite;
+	private void aggregateMethods(List<Method> methods) {
+		for (Method method : methods) {
 			try {
 				double linesExecuted = 0d;
 				// Collect all the lines that were executed
-				List<IComposite> lines = method.getChildren();
+				List<Line> lines = method.getChildren();
 				double totalLinesExecuted = 0;
-				for (IComposite child : lines) {
-					Line line = (Line) child;
+				for (Line line : lines) {
 					totalLinesExecuted += line.getCounter();
 					if (line.getCounter() > 0) {
 						linesExecuted++;
