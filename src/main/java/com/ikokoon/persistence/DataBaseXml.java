@@ -28,11 +28,11 @@ public class DataBaseXml extends ADataBase {
 	/** The closed flag. */
 	private boolean closed = true;
 
-	public DataBaseXml(String dataBaseFile, boolean fresh) {
+	public DataBaseXml(String dataBaseFile, boolean create) {
 		this.dataBaseFile = dataBaseFile;
 		logger.info("Opening database on file : " + dataBaseFile);
 		try {
-			if (fresh) {
+			if (create) {
 				File file = new File(this.dataBaseFile);
 				if (!file.delete()) {
 					logger.warn("Couldn't delete old database file");
@@ -45,6 +45,12 @@ public class DataBaseXml extends ADataBase {
 			}
 		} catch (Exception e) {
 			logger.error("", e);
+		} finally {
+			try {
+				odb.close();
+			} catch (Exception e) {
+				logger.error("", e);
+			}
 		}
 
 		// try {
@@ -132,6 +138,7 @@ public class DataBaseXml extends ADataBase {
 
 		try {
 			project.getIndex().clear();
+			odb = ODBFactory.open(this.dataBaseFile);
 			odb.store(project);
 			odb.commit();
 			odb.close();
