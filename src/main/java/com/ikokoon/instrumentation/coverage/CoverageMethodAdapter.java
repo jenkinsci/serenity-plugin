@@ -24,6 +24,8 @@ public class CoverageMethodAdapter extends MethodAdapter {
 	private String profileClassName = Toolkit.dotToSlash(Collector.class.getName());
 	/** The method that is called by the added instructions. */
 	private String profileMethodName = "collectCoverage";
+	/** The byte code signature of the coverage method in the Collector. */
+	private String invocation = Toolkit.classesToByteCodeSignature(null, String.class, String.class, String.class, String.class);
 	/** The name of the class that this method adapter is enhancing the methods for. */
 	private String className;
 	/** The name of the method that is being enhanced. */
@@ -66,7 +68,6 @@ public class CoverageMethodAdapter extends MethodAdapter {
 		this.visitLdcInsn(Integer.toString(lineNumber));
 		this.visitLdcInsn(methodName);
 		this.visitLdcInsn(methodDescription);
-		String invocation = Toolkit.classesToByteCodeSignature(null, String.class, String.class, String.class, String.class);
 		this.visitMethodInsn(Opcodes.INVOKESTATIC, profileClassName, profileMethodName, invocation);
 		super.visitLineNumber(lineNumber, label);
 	}
