@@ -72,7 +72,7 @@ public abstract class ATest implements IConstants {
 		// OdbConfiguration.setDebugEnabled(true);
 		// OdbConfiguration.setAutomaticCloseFileOnExit(true);
 		// OdbConfiguration.setDisplayWarnings(true);
-		dataBase = (ADataBase) IDataBase.DataBase.getDataBase();
+		dataBase = (ADataBase) IDataBase.DataBase.getDataBase(true);
 		Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
 		if (project != null) {
 			project.getChildren().clear();

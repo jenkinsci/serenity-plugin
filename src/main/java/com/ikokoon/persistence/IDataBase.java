@@ -29,15 +29,15 @@ public interface IDataBase {
 
 		private static IDataBase dataBase;
 
-		public static synchronized IDataBase getDataBase() {
+		public static synchronized IDataBase getDataBase(boolean fresh) {
 			if (dataBase == null || dataBase.isClosed()) {
-				dataBase = getDataBase(IConstants.DATABASE_FILE);
+				dataBase = getDataBase(IConstants.DATABASE_FILE, fresh);
 			}
 			return dataBase;
 		}
 
-		public static IDataBase getDataBase(String dataBaseFile) {
-			return new DataBaseXml(dataBaseFile);
+		public static IDataBase getDataBase(String dataBaseFile, boolean fresh) {
+			return new DataBaseXml(dataBaseFile, fresh);
 		}
 
 	}

@@ -70,7 +70,7 @@ public class SerenityResult implements ISerenityResult {
 
 	private void initilize() {
 		String dataBaseFile = owner.getRootDir().getAbsolutePath() + File.separator + IConstants.DATABASE_FILE;
-		dataBase = IDataBase.DataBase.getDataBase(dataBaseFile);
+		dataBase = IDataBase.DataBase.getDataBase(dataBaseFile, false);
 		project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
 		StringBuilder builder = new StringBuilder();
 		builder.append("Classes : ");

@@ -59,13 +59,14 @@
 			<artifactId>asm</artifactId>
 			<version>3.1</version>
 			<type>jar</type>
-			<scope>import</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.neodatis</groupId>
 			<artifactId>neodatis-odb</artifactId>
 			<version>1.9-beta-1</version>
-			<scope>import</scope>
+			<type>jar</type>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 

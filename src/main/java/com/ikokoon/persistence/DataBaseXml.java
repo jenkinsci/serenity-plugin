@@ -1,5 +1,6 @@
 package com.ikokoon.persistence;
 
+import java.io.File;
 import java.util.List;
 
 import org.neodatis.odb.ODB;
@@ -27,10 +28,16 @@ public class DataBaseXml extends ADataBase {
 	/** The closed flag. */
 	private boolean closed = true;
 
-	public DataBaseXml(String dataBaseFile) {
+	public DataBaseXml(String dataBaseFile, boolean fresh) {
 		this.dataBaseFile = dataBaseFile;
 		logger.info("Opening database on file : " + dataBaseFile);
 		try {
+			if (fresh) {
+				File file = new File(this.dataBaseFile);
+				if (!file.delete()) {
+					logger.warn("Couldn't delete old database file");
+				}
+			}
 			odb = ODBFactory.open(this.dataBaseFile);
 			Objects objects = odb.getObjects(Project.class);
 			if (objects.hasNext()) {

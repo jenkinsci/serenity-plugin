@@ -39,7 +39,7 @@ public class Collector implements IConstants {
 	private static IDataBase dataBase;
 	static {
 		try {
-			dataBase = IDataBase.DataBase.getDataBase();
+			dataBase = IDataBase.DataBase.getDataBase(true);
 			// Reset the counter for all the lines
 			Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
 			for (Package pakkage : ((List<Package>) project.getChildren())) {
