@@ -1,11 +1,12 @@
 package com.ikokoon.persistence;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.List;
-
-import org.neodatis.odb.ODB;
-import org.neodatis.odb.ODBFactory;
-import org.neodatis.odb.Objects;
-import org.neodatis.odb.OdbConfiguration;
 
 import com.ikokoon.instrumentation.model.IComposite;
 import com.ikokoon.instrumentation.model.Project;
@@ -21,24 +22,43 @@ import com.ikokoon.toolkit.Toolkit;
 public class DataBaseXml extends ADataBase {
 
 	/** The object database from Neodatis. */
-	private ODB odb;
+	// private ODB odb= ODBFactory.open(IConstants.DATABASE_FILE);
 	/** The project for the build. */
 	private Project project;
+	/** The data file. */
+	private String dataBaseFile;
 	/** The closed flag. */
 	private boolean closed = true;
 
 	public DataBaseXml(String dataBaseFile) {
-		OdbConfiguration.setDisplayWarnings(true);
+		this.dataBaseFile = dataBaseFile;
 		logger.info("Opening database on file : " + dataBaseFile);
-		odb = ODBFactory.open(dataBaseFile);
-		Objects<Project> objects = odb.getObjects(Project.class);
-		if (objects.hasNext()) {
-			project = objects.getFirst();
+		// try {
+		// odb = ODBFactory.open(dataBaseFile);
+		// Objects objects = odb.getObjects(Project.class);
+		// if (objects.hasNext()) {
+		// project = (Project) objects.getFirst();
+		// }
+		// } catch (Exception e) {
+		// logger.error("", e);
+		// }
+
+		try {
+			InputStream is = new FileInputStream(dataBaseFile);
+			ObjectInputStream ois = new ObjectInputStream(is);
+			Object object = ois.readObject();
+			logger.error(object);
+			project = (Project) object;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+
 		if (project == null) {
 			project = new Project();
-			persist(project);
 		}
+
+		project.getIndex().clear();
+		persist(project);
 		closed = false;
 		logger.info("Finished initilizing the database data model in memory");
 	}
@@ -96,9 +116,23 @@ public class DataBaseXml extends ADataBase {
 			return;
 		}
 		logger.info("Comitting and closing the database");
-		odb.store(project);
-		odb.commit();
-		odb.close();
+
+		try {
+			OutputStream os = new FileOutputStream(dataBaseFile);
+			ObjectOutputStream ois = new ObjectOutputStream(os);
+			// project.getIndex().clear();
+			ois.writeObject(project);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// try {
+		// odb.store(project);
+		// odb.commit();
+		// odb.close();
+		// } catch (Exception e) {
+		// logger.error("", e);
+		// }
 		closed = true;
 	}
 
@@ -122,10 +156,10 @@ public class DataBaseXml extends ADataBase {
 			Object[] uniqueValues = getUniqueValues(composite);
 			Long id = Toolkit.hash(uniqueValues);
 			composite.setId(id);
-			// logger.info("Set id for : " + composite + ", unique values : " + Arrays.asList(uniqueValues) + ", id : " + id);
-			// Insert the object into the index
-			insert(project.getIndex(), composite, id);
 		}
+		// logger.info("Set id for : " + composite + ", unique values : " + Arrays.asList(uniqueValues) + ", id : " + id);
+		// Insert the object into the index
+		insert(project.getIndex(), composite, composite.getId());
 		List<IComposite> children = composite.getChildren();
 		for (IComposite child : children) {
 			setIds(child);

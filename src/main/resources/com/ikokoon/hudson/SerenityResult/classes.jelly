@@ -4,8 +4,8 @@
 		<tr>
 			<td class="pane-header" width="30%">Name</td>
 			<td class="pane-header" width="10%">Lines</td>
-			<td class="pane-header" width="10%">Coverage</td>
-			<td class="pane-header" width="10%">Complexity</td>
+			<td class="pane-header" width="10%">Cover</td>
+			<td class="pane-header" width="10%">Complex</td>
 			<td class="pane-header" width="10%">Stability</td>
 			<td class="pane-header" width="10%">Interfaces</td>
 			<td class="pane-header" width="10%">Efferent</td>

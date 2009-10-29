@@ -4,12 +4,12 @@
 		<tr>
 			<td class="pane-header" width="30%">Name</td>
 			<td class="pane-header" width="7%">Lines</td>
-			<td class="pane-header" width="7%">Coverage</td>
-			<td class="pane-header" width="7%">Complexity</td>
+			<td class="pane-header" width="7%">Cover</td>
+			<td class="pane-header" width="7%">Complex</td>
 			<td class="pane-header" width="7%">Stability</td>
 			<td class="pane-header" width="7%">Interfaces</td>
-			<td class="pane-header" width="7%">Implementations</td>
-			<td class="pane-header" width="7%">Abstractness</td>
+			<td class="pane-header" width="7%">Implement</td>
+			<td class="pane-header" width="7%">Abstract</td>
 			<td class="pane-header" width="7%">Distance</td>
 			<td class="pane-header" width="7%">Efferent</td>
 			<td class="pane-header" width="7%">Afferent</td>

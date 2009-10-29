@@ -21,16 +21,18 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>ant.task</id>
+						<id>copy.hpi.task</id>
 						<phase>package</phase>
 						<configuration>
 							<tasks verbose="true">
 								<!-- And do some ant stuff here -->
 								<echo message="Unpacking and repacking serenity.jar with the agent manifest" />
 								<unjar src="target/serenity.jar" dest="target/temp" overwrite="true" taskname="repack.serenity.with.manifest" />
-								<jar destfile="target/serenity.jar" basedir="target/temp" manifest="src/main/java/META-INF/MANIFEST.MF"></jar>
-
-								<!-- echo file="some.file"><module>${some.property}</module></echo -->
+								<jar destfile="target/serenity.jar" basedir="target/temp" manifest="src/main/java/META-INF/MANIFEST.MF">
+									<fileset dir="src/main/java">
+										<include name="**" />
+									</fileset>
+								</jar>
 							</tasks>
 						</configuration>
 						<goals>
@@ -57,14 +59,6 @@
 			<artifactId>asm</artifactId>
 			<version>3.1</version>
 			<type>jar</type>
-			<scope>import</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.neodatis</groupId>
-			<artifactId>neodatis</artifactId>
-			<version>1.9</version>
-			<type>jar</type>
-			<scope>import</scope>
 		</dependency>
 	</dependencies>
 	<profiles>
