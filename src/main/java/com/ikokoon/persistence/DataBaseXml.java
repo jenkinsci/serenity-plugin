@@ -20,14 +20,20 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class DataBaseXml extends ADataBase {
 
-	/** The object database from Neodatis. */
-	private ODB odb = null; // ODBFactory.open(IConstants.DATABASE_FILE);
 	/** The project for the build. */
 	private Project project;
+	/** The object database from Neodatis. */
+	/** The Neodatis object database for persistence. */
+	private ODB odb = null;
+	/** The database file for Neodatis. */
 	private String dataBaseFile;
 	/** The closed flag. */
 	private boolean closed = true;
 
+	/**
+	 * @param dataBaseFile
+	 * @param create
+	 */
 	public DataBaseXml(String dataBaseFile, boolean create) {
 		this.dataBaseFile = dataBaseFile;
 		logger.info("Opening database on file : " + dataBaseFile);
@@ -52,16 +58,6 @@ public class DataBaseXml extends ADataBase {
 				logger.error("", e);
 			}
 		}
-
-		// try {
-		// InputStream is = new FileInputStream(dataBaseFile);
-		// ObjectInputStream ois = new ObjectInputStream(is);
-		// Object object = ois.readObject();
-		// logger.error(object);
-		// project = (Project) object;
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
 
 		if (project == null) {
 			project = new Project();
@@ -128,15 +124,6 @@ public class DataBaseXml extends ADataBase {
 		logger.info("Comitting and closing the database");
 
 		try {
-			// OutputStream os = new FileOutputStream(dataBaseFile);
-			// ObjectOutputStream ois = new ObjectOutputStream(os);
-			// project.getIndex().clear();
-			// ois.writeObject(project);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		try {
 			project.getIndex().clear();
 			odb = ODBFactory.open(this.dataBaseFile);
 			odb.store(project);
@@ -169,25 +156,31 @@ public class DataBaseXml extends ADataBase {
 			Long id = Toolkit.hash(uniqueValues);
 			composite.setId(id);
 		}
-		// logger.info("Set id for : " + composite + ", unique values : " + Arrays.asList(uniqueValues) + ", id : " + id);
 		// Insert the object into the index
-		insert(project.getIndex(), composite, composite.getId());
+		insert(project.getIndex(), composite);
 		List<IComposite> children = composite.getChildren();
 		for (IComposite child : children) {
 			setIds(child);
 		}
 	}
 
-	protected IComposite search(List<IComposite> index, long key) {
+	/**
+	 * Binday search through the index of composite objects.
+	 * 
+	 * @param index
+	 * @param id
+	 * @return
+	 */
+	protected IComposite search(List<IComposite> index, long id) {
 		int low = 0;
 		int high = index.size() - 1;
 		while (low <= high) {
 			int mid = (low + high) >>> 1;
 			IComposite composite = index.get(mid);
 			long midVal = composite.getId();
-			if (midVal < key) {
+			if (midVal < id) {
 				low = mid + 1;
-			} else if (midVal > key) {
+			} else if (midVal > id) {
 				high = mid - 1;
 			} else {
 				return composite;
@@ -196,11 +189,19 @@ public class DataBaseXml extends ADataBase {
 		return null;
 	}
 
-	protected void insert(List<IComposite> index, IComposite toInsert, long key) {
+	/**
+	 * Insert the composite into the index at the correct index.
+	 * 
+	 * @param index
+	 * @param toInsert
+	 * @param key
+	 */
+	protected void insert(List<IComposite> index, IComposite toInsert) {
 		if (index.size() == 0) {
 			index.add(toInsert);
 			return;
 		}
+		long key = toInsert.getId();
 		int low = 0;
 		int high = index.size();
 		while (low <= high) {
@@ -211,7 +212,6 @@ public class DataBaseXml extends ADataBase {
 			}
 			IComposite composite = index.get(mid);
 			long midVal = composite.getId();
-			// logger.info("Low : " + low + ", high : " + high + ", mid : " + mid + ", mid val : " + midVal);
 			if (midVal < key) {
 				int next = mid + 1;
 				if (index.size() > next) {

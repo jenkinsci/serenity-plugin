@@ -6,9 +6,7 @@ import com.ikokoon.IConstants;
 import com.ikokoon.instrumentation.model.IComposite;
 
 /**
- * This is the persistence interface for the Serenity code coverage and dependency functionality. This database implementations are implemented as
- * decorated classes. The can be chained to add functionality. Jpa is not fast enough so a database object for the cache needs to be added to the
- * front end to use as much as possible the in memory access to the data model.
+ * This is the persistence interface for the Serenity code coverage and dependency functionality.
  * 
  * @author Michael Couck
  * @since 12.08.09
@@ -43,28 +41,24 @@ public interface IDataBase {
 	}
 
 	/**
-	 * @param <T>
-	 * @param t
+	 * @param composite
 	 * @return
 	 */
 	public IComposite persist(IComposite composite);
 
 	/**
-	 * @param <T>
 	 * @param id
 	 * @return
 	 */
 	public IComposite find(Long id);
 
 	/**
-	 * @param <T>
 	 * @param parameters
 	 * @return
 	 */
 	public IComposite find(List<Object> parameters);
 
 	/**
-	 * @param <T>
 	 * @param id
 	 * @return
 	 */
@@ -76,7 +70,7 @@ public interface IDataBase {
 	public boolean isClosed();
 
 	/**
-	 * Closes the database flushing any resources and releasing resources where necessary.
+	 * 
 	 */
 	public void close();
 

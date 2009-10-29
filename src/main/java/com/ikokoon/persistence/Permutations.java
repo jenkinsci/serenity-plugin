@@ -49,17 +49,4 @@ public class Permutations {
 		return objects;
 	}
 
-	public static void main(String[] arg) {
-		Object[] objects = new Object[] { "t", "r", "u", "e" };
-		List<Object[]> permutations = new ArrayList<Object[]>();
-		new Permutations().getPermutations(objects, permutations, objects.length);
-		for (Object[] objectArray : permutations) {
-			for (Object o : objectArray) {
-				System.out.print(o);
-			}
-			System.out.println();
-		}
-
-	}
-
 }

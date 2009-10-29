@@ -10,7 +10,7 @@ import com.ikokoon.instrumentation.Collector;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
- * This class actually enhances the lines to call the collector class. Please see the JavaDoc in the class for method details.
+ * This class actually enhances the lines to call the collector class. Please see the JavaDoc in the CoverageClassAdapter for method details.
  * 
  * @author Michael Couck
  * @since 12.07.09
@@ -22,6 +22,8 @@ public class CoverageMethodAdapter extends MethodAdapter {
 	private Logger logger = Logger.getLogger(CoverageMethodAdapter.class);
 	/** The name of the class that will be the collector for the method adapter. */
 	private String profileClassName = Toolkit.dotToSlash(Collector.class.getName());
+	/** The method that is called by the added instructions. */
+	private String profileMethodName = "collectCoverage";
 	/** The name of the class that this method adapter is enhancing the methods for. */
 	private String className;
 	/** The name of the method that is being enhanced. */
@@ -65,7 +67,7 @@ public class CoverageMethodAdapter extends MethodAdapter {
 		this.visitLdcInsn(methodName);
 		this.visitLdcInsn(methodDescription);
 		String invocation = Toolkit.classesToByteCodeSignature(null, String.class, String.class, String.class, String.class);
-		this.visitMethodInsn(Opcodes.INVOKESTATIC, profileClassName, "collectCoverage", invocation);
+		this.visitMethodInsn(Opcodes.INVOKESTATIC, profileClassName, profileMethodName, invocation);
 		super.visitLineNumber(lineNumber, label);
 	}
 

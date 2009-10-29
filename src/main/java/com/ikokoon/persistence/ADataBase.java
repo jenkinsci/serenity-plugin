@@ -1,12 +1,10 @@
 package com.ikokoon.persistence;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.ikokoon.IConstants;
 import com.ikokoon.instrumentation.model.Unique;
 import com.ikokoon.toolkit.Toolkit;
 
@@ -22,38 +20,6 @@ public abstract class ADataBase implements IDataBase {
 
 	/** The logger for all database implementations. */
 	protected Logger logger = Logger.getLogger(this.getClass());
-
-	/**
-	 * Gets the file for the database. If no such file exists then one is created.
-	 * 
-	 * @param file
-	 *            the file for the database
-	 * @return the file for the database
-	 */
-	protected File getFile(File file) {
-		if (file == null) {
-			file = new File(IConstants.DATABASE_FILE);
-		}
-		if (!file.exists()) {
-			if (!file.getParentFile().exists()) {
-				if (!file.getParentFile().mkdirs()) {
-					logger.error("Didn't create parent directory for the database file " + file.getParent());
-				} else {
-					logger.warn("Created parent directory for the database file " + file.getParent());
-				}
-			}
-			try {
-				if (!file.createNewFile()) {
-					logger.warn("Didn't create a new database file " + file.getAbsolutePath());
-				} else {
-					logger.warn("Created a new database file " + file.getAbsolutePath());
-				}
-			} catch (Exception e) {
-				logger.error("Exception trying to create a new database file " + file.getAbsolutePath(), e);
-			}
-		}
-		return file;
-	}
 
 	/**
 	 * Creates an id based on the field combination that is unique for the object. Unique fields are declared with the Unique annotation for the
