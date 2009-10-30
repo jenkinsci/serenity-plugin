@@ -24,7 +24,7 @@ public class DataBaseXmlTest extends ATest {
 	public void insert() {
 		DataBaseXml dataBase = (DataBaseXml) this.dataBase;
 
-		LinkedList<IComposite> list = getList();
+		List<IComposite> list = getList();
 
 		// Check the performance
 		list.clear();
@@ -34,7 +34,7 @@ public class DataBaseXmlTest extends ATest {
 			Class klass = new Class();
 			klass.setName("" + i);
 			klass.setId(i);
-			dataBase.insert(list, klass, i);
+			dataBase.insert(list, klass);
 		}
 		double end = System.currentTimeMillis();
 		double duration = end - start;
@@ -50,19 +50,19 @@ public class DataBaseXmlTest extends ATest {
 		klass.setName("a");
 		Long id = Toolkit.hash(klass.getName());
 		klass.setId(id);
-		dataBase.insert(list, klass, id);
+		dataBase.insert(list, klass);
 
 		klass = new Class();
 		klass.setName("c");
 		id = Toolkit.hash(klass.getName());
 		klass.setId(id);
-		dataBase.insert(list, klass, id);
+		dataBase.insert(list, klass);
 
 		klass = new Class();
 		klass.setName("b");
 		id = Toolkit.hash(klass.getName());
 		klass.setId(id);
-		dataBase.insert(list, klass, id);
+		dataBase.insert(list, klass);
 
 		return list;
 	}
