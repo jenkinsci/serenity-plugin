@@ -67,7 +67,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				LOGGER.info("Writing and finalizing the persistence");
-				IDataBase dataBase = IDataBase.DataBase.getDataBase(false);
+				IDataBase dataBase = IDataBase.DataBase.getDataBase(IConstants.DATABASE_FILE, false);
 				new Cleaner(null).execute();
 				new Aggregator(null, dataBase).execute();
 				dataBase.close();
@@ -105,7 +105,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		// Check for packages that we need to enhance
 		if (Configuration.getConfiguration().included(className)) {
 			LOGGER.debug("Enhancing class : " + className);
-			ClassWriter writer = getVisitorChain(classfileBuffer, classAdapterClasses, className);
+			ClassWriter writer = getVisitorChain(classfileBuffer, new byte[0], classAdapterClasses, className);
 			byte[] result = writer.toByteArray();
 			return result;
 		}
@@ -132,12 +132,12 @@ public class Transformer implements ClassFileTransformer, IConstants {
 	 *            the constructor parameter for the visitor
 	 * @return the bottom visitor in the chain of visitors
 	 */
-	public ClassWriter getVisitorChain(byte[] classfileBuffer, Class<ClassVisitor>[] classAdapterClasses, String className) {
+	public ClassWriter getVisitorChain(byte[] classfileBuffer, byte[] sourcefileBuffer, Class<ClassVisitor>[] classAdapterClasses, String className) {
 		ClassReader reader = new ClassReader(classfileBuffer);
 		ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
 		ClassVisitor visitor = writer;
 		for (Class<ClassVisitor> klass : classAdapterClasses) {
-			Object[] parameters = new Object[] { visitor, className, classfileBuffer };
+			Object[] parameters = new Object[] { visitor, className, classfileBuffer, sourcefileBuffer };
 			visitor = ObjectFactory.getObject(klass, parameters);
 			LOGGER.debug("Adding class visitor : " + visitor);
 		}

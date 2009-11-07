@@ -45,6 +45,7 @@ public class Accumulator extends AProcess {
 	 * {@inheritDoc}
 	 */
 	public void execute() {
+		super.execute();
 		String classpath = System.getProperty("java.class.path");
 		String surefireClasspath = System.getProperty("surefire.test.class.path");
 		if (surefireClasspath != null) {
@@ -68,7 +69,6 @@ public class Accumulator extends AProcess {
 				processDir(file);
 			}
 		}
-		super.execute();
 	}
 
 	/**
@@ -127,11 +127,13 @@ public class Accumulator extends AProcess {
 		}
 		logger.debug("Accumulating class : " + entryName);
 		byte[] classfileBuffer = loadBytes(entryName);
-		entryName = entryName.replaceAll(".class", "");
+		entryName = entryName.replaceAll(".class", ".java");
+		byte[] sourcefileBuffer = loadBytes(entryName);
+		entryName = entryName.replaceAll(".java", "");
 		logger.debug("Class name : " + entryName + ", length : " + classfileBuffer.length);
 		try {
 			Class<ClassVisitor>[] classAdapterClasses = new Class[] { DependencyClassAdapter.class, ComplexityClassAdapter.class };
-			Transformer.INSTANCE.getVisitorChain(classfileBuffer, classAdapterClasses, entryName);
+			Transformer.INSTANCE.getVisitorChain(classfileBuffer, sourcefileBuffer, classAdapterClasses, entryName);
 		} catch (Exception e) {
 			logger.error("Exception generating complexity and dependency statistics on class " + entryName, e);
 		}

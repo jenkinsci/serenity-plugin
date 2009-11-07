@@ -2,18 +2,18 @@ package com.ikokoon.instrumentation.model;
 
 import java.util.List;
 
-public interface IComposite<E> {
+public interface IComposite<E, F> {
 
 	public Long getId();
 
 	public void setId(Long id);
 
-	public IComposite getParent();
+	public IComposite<E, F> getParent();
 
-	public void setParent(IComposite parent);
+	public void setParent(IComposite<E, F> parent);
 
-	public List<E> getChildren();
+	public List<F> getChildren();
 
-	public void setChildren(List<E> children);
+	public void setChildren(List<F> children);
 
 }

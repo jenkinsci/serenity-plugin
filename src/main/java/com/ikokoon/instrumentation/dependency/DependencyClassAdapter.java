@@ -1,7 +1,6 @@
 package com.ikokoon.instrumentation.dependency;
 
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.util.Arrays;
 
 import org.apache.log4j.Logger;
@@ -40,7 +39,10 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	/** The name of the class that is being instrumented. */
 	private String className;
 	/** The byte array of the byte code for the class being parsed.. */
+	@SuppressWarnings("unused")
 	private byte[] classfileBuffer;
+	/** The source for the class if available. */
+	private byte[] sourcefileBuffer;
 
 	/**
 	 * Constructor takes the parent visitor and the name of the class that will be analysed for dependency.
@@ -50,10 +52,11 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	 * @param className
 	 *            the name of the class to be analysed
 	 */
-	public DependencyClassAdapter(ClassVisitor visitor, String className, byte[] classfileBuffer) {
+	public DependencyClassAdapter(ClassVisitor visitor, String className, byte[] classfileBuffer, byte[] sourcefileBuffer) {
 		super(visitor);
 		this.className = className;
 		this.classfileBuffer = classfileBuffer;
+		this.sourcefileBuffer = sourcefileBuffer;
 	}
 
 	/**
@@ -164,9 +167,10 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitSource : " + source + ", " + debug);
 		}
-		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(classfileBuffer);
-		@SuppressWarnings("unused")
-		DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
+		// ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(classfileBuffer);
+		// DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(sourcefileBuffer);
+		Collector.collectSource(className, byteArrayInputStream.toString());
 		super.visitSource(source, debug);
 	}
 

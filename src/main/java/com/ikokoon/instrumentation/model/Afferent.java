@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Unique(fields = { Afferent.NAME })
-public class Afferent extends Composite implements Comparable<Afferent>, Serializable {
+public class Afferent extends Composite<Object, Object> implements Comparable<Afferent>, Serializable {
 
 	private String name;
 	private Date timestamp;

@@ -1,8 +1,9 @@
 package com.ikokoon.persistence;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import com.ikokoon.IConstants;
 import com.ikokoon.instrumentation.model.IComposite;
 
 /**
@@ -25,17 +26,15 @@ public interface IDataBase {
 	 */
 	public static class DataBase {
 
-		private static IDataBase dataBase;
+		private static Map<String, IDataBase> dataBases = new HashMap<String, IDataBase>();
 
-		public static synchronized IDataBase getDataBase(boolean fresh) {
-			if (dataBase == null || dataBase.isClosed()) {
-				dataBase = getDataBase(IConstants.DATABASE_FILE, fresh);
+		public static IDataBase getDataBase(String dataBaseFile, boolean create) {
+			IDataBase dataBase = dataBases.get(dataBaseFile);
+			if (dataBase == null) {
+				dataBase = new DataBaseXml(dataBaseFile, create);
+				dataBases.put(dataBaseFile, dataBase);
 			}
 			return dataBase;
-		}
-
-		public static IDataBase getDataBase(String dataBaseFile, boolean fresh) {
-			return new DataBaseXml(dataBaseFile, fresh);
 		}
 
 	}
@@ -44,25 +43,25 @@ public interface IDataBase {
 	 * @param composite
 	 * @return
 	 */
-	public IComposite persist(IComposite composite);
+	public IComposite<?, ?> persist(IComposite<?, ?> composite);
 
 	/**
 	 * @param id
 	 * @return
 	 */
-	public IComposite find(Long id);
+	public IComposite<?, ?> find(Long id);
 
 	/**
 	 * @param parameters
 	 * @return
 	 */
-	public IComposite find(List<Object> parameters);
+	public IComposite<?, ?> find(List<Object> parameters);
 
 	/**
 	 * @param id
 	 * @return
 	 */
-	public IComposite remove(Long id);
+	public IComposite<?, ?> remove(Long id);
 
 	/**
 	 * @return

@@ -3,7 +3,7 @@ package com.ikokoon.instrumentation.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Composite<E> implements IComposite<E> {
+public class Composite<E, F> implements IComposite<E, F> {
 
 	public static final int PRECISION = 2;
 	public static final String NAME = "name";
@@ -13,8 +13,8 @@ public class Composite<E> implements IComposite<E> {
 	public static final String DESCRIPTION = "description";
 
 	private Long id;
-	private IComposite parent;
-	private List<E> children = new ArrayList<E>();
+	private IComposite<E, F> parent;
+	private List<F> children = new ArrayList<F>();
 
 	public Long getId() {
 		return id;
@@ -24,19 +24,19 @@ public class Composite<E> implements IComposite<E> {
 		this.id = id;
 	}
 
-	public IComposite getParent() {
+	public IComposite<E, F> getParent() {
 		return parent;
 	}
 
-	public void setParent(IComposite parent) {
+	public void setParent(IComposite<E, F> parent) {
 		this.parent = parent;
 	}
 
-	public List<E> getChildren() {
+	public List<F> getChildren() {
 		return children;
 	}
 
-	public void setChildren(List<E> children) {
+	public void setChildren(List<F> children) {
 		this.children = children;
 	}
 

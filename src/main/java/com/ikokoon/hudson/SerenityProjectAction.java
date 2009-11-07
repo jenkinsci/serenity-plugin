@@ -72,16 +72,16 @@ public class SerenityProjectAction extends Actionable implements ProminentProjec
 		}
 	}
 
-	public String getMetrics() {
-		logger.info("SerenityProjectAction:getMetrics");
-		Run build = owner.getLastStableBuild();
-		if (build != null) {
-			SerenityBuildAction action = build.getAction(SerenityBuildAction.class);
-			return action.getMetrics();
-		} else {
-			return null;
-		}
-	}
+	// public String getMetrics() {
+	// logger.info("SerenityProjectAction:getMetrics");
+	// Run build = owner.getLastStableBuild();
+	// if (build != null) {
+	// SerenityBuildAction action = build.getAction(SerenityBuildAction.class);
+	// return action.getMetrics();
+	// } else {
+	// return null;
+	// }
+	// }
 
 	public void doIndex(StaplerRequest req, StaplerResponse rsp) throws IOException {
 		logger.info("SerenityProjectAction:doIndex");
@@ -96,6 +96,6 @@ public class SerenityProjectAction extends Actionable implements ProminentProjec
 
 	public boolean hasResult() {
 		logger.info("SerenityProjectAction:hasResult");
-		return getMetrics() != null;
+		return true;
 	}
 }

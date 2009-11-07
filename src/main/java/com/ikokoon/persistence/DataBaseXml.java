@@ -21,7 +21,7 @@ import com.ikokoon.toolkit.Toolkit;
 public class DataBaseXml extends ADataBase {
 
 	/** The project for the build. */
-	private Project project;
+	private Project<Object, Package> project;
 	/** The object database from Neodatis. */
 	/** The Neodatis object database for persistence. */
 	private ODB odb = null;
@@ -34,6 +34,7 @@ public class DataBaseXml extends ADataBase {
 	 * @param dataBaseFile
 	 * @param create
 	 */
+	@SuppressWarnings("unchecked")
 	public DataBaseXml(String dataBaseFile, boolean create) {
 		this.dataBaseFile = dataBaseFile;
 		logger.info("Opening database on file : " + dataBaseFile);
@@ -47,7 +48,7 @@ public class DataBaseXml extends ADataBase {
 			odb = ODBFactory.open(this.dataBaseFile);
 			Objects objects = odb.getObjects(Project.class);
 			if (objects.hasNext()) {
-				project = (Project) objects.getFirst();
+				project = (Project<Object, Package>) objects.getFirst();
 			}
 		} catch (Exception e) {
 			logger.error("", e);
@@ -60,7 +61,7 @@ public class DataBaseXml extends ADataBase {
 		}
 
 		if (project == null) {
-			project = new Project();
+			project = new Project<Object, Package>();
 		}
 
 		project.getIndex().clear();
@@ -72,7 +73,7 @@ public class DataBaseXml extends ADataBase {
 	/**
 	 * {@inheritDoc}
 	 */
-	public synchronized final IComposite persist(IComposite composite) {
+	public synchronized final IComposite<?, ?> persist(IComposite<?, ?> composite) {
 		setIds(composite);
 		logger.debug("Persisted object : " + composite);
 		return composite;
@@ -81,25 +82,25 @@ public class DataBaseXml extends ADataBase {
 	/**
 	 * {@inheritDoc}
 	 */
-	public synchronized final IComposite find(Long id) {
-		List<IComposite> index = project.getIndex();
+	public synchronized final IComposite<?, ?> find(Long id) {
+		List<IComposite<?, ?>> index = project.getIndex();
 		return search(index, id);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public synchronized final IComposite find(List<Object> parameters) {
+	public synchronized final IComposite<?, ?> find(List<Object> parameters) {
 		Long id = Toolkit.hash(parameters.toArray());
-		List<IComposite> index = project.getIndex();
+		List<IComposite<?, ?>> index = project.getIndex();
 		return search(index, id);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public synchronized final IComposite remove(Long id) {
-		IComposite composite = find(id);
+	public synchronized final IComposite<?, ?> remove(Long id) {
+		IComposite<?, ?> composite = find(id);
 		composite.getParent().getChildren().remove(composite);
 		composite.setParent(null);
 		project.getIndex().remove(composite);
@@ -147,7 +148,8 @@ public class DataBaseXml extends ADataBase {
 	 * @param list
 	 *            a list of already set id fields
 	 */
-	protected synchronized final <T> void setIds(IComposite composite) {
+	@SuppressWarnings("unchecked")
+	protected synchronized final <T> void setIds(IComposite<?, ?> composite) {
 		if (composite == null) {
 			return;
 		}
@@ -158,8 +160,8 @@ public class DataBaseXml extends ADataBase {
 		}
 		// Insert the object into the index
 		insert(project.getIndex(), composite);
-		List<IComposite> children = composite.getChildren();
-		for (IComposite child : children) {
+		List<IComposite<?, ?>> children = (List<IComposite<?, ?>>) composite.getChildren();
+		for (IComposite<?, ?> child : children) {
 			setIds(child);
 		}
 	}
@@ -171,12 +173,12 @@ public class DataBaseXml extends ADataBase {
 	 * @param id
 	 * @return
 	 */
-	protected IComposite search(List<IComposite> index, long id) {
+	protected IComposite<?, ?> search(List<IComposite<?, ?>> index, long id) {
 		int low = 0;
 		int high = index.size() - 1;
 		while (low <= high) {
 			int mid = (low + high) >>> 1;
-			IComposite composite = index.get(mid);
+			IComposite<?, ?> composite = index.get(mid);
 			long midVal = composite.getId();
 			if (midVal < id) {
 				low = mid + 1;
@@ -196,7 +198,7 @@ public class DataBaseXml extends ADataBase {
 	 * @param toInsert
 	 * @param key
 	 */
-	protected void insert(List<IComposite> index, IComposite toInsert) {
+	protected void insert(List<IComposite<?, ?>> index, IComposite<?, ?> toInsert) {
 		if (index.size() == 0) {
 			index.add(toInsert);
 			return;
@@ -210,12 +212,12 @@ public class DataBaseXml extends ADataBase {
 				index.add(mid, toInsert);
 				break;
 			}
-			IComposite composite = index.get(mid);
+			IComposite<?, ?> composite = index.get(mid);
 			long midVal = composite.getId();
 			if (midVal < key) {
 				int next = mid + 1;
 				if (index.size() > next) {
-					IComposite nextComposite = index.get(next);
+					IComposite<?, ?> nextComposite = index.get(next);
 					long nextVal = nextComposite.getId();
 					if (nextVal > key) {
 						index.add(next, toInsert);
@@ -226,7 +228,7 @@ public class DataBaseXml extends ADataBase {
 			} else if (midVal > key) {
 				int previous = mid - 1;
 				if (previous >= 0) {
-					IComposite previousComposite = index.get(previous);
+					IComposite<?, ?> previousComposite = index.get(previous);
 					long previousVal = previousComposite.getId();
 					if (previousVal < key) {
 						index.add(mid, toInsert);

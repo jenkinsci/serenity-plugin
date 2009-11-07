@@ -11,7 +11,7 @@ import java.util.TreeSet;
  * @version 01.00
  */
 @Unique(fields = { Composite.NAME })
-public class Package extends Composite implements Comparable<Package>, Serializable {
+public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> implements Comparable<Package<?, ?>>, Serializable {
 
 	private String name;
 	private double lines;
@@ -153,7 +153,7 @@ public class Package extends Composite implements Comparable<Package>, Serializa
 		return getId() + ":" + name;
 	}
 
-	public int compareTo(Package o) {
+	public int compareTo(Package<?, ?> o) {
 		int comparison = 0;
 		if (this.getId() != null && o.getId() != null) {
 			comparison = this.getId().compareTo(o.getId());

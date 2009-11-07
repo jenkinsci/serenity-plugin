@@ -72,20 +72,18 @@ public abstract class ATest implements IConstants {
 		// OdbConfiguration.setDebugEnabled(true);
 		// OdbConfiguration.setAutomaticCloseFileOnExit(true);
 		// OdbConfiguration.setDisplayWarnings(true);
-		dataBase = (ADataBase) IDataBase.DataBase.getDataBase(true);
+		dataBase = (ADataBase) IDataBase.DataBase.getDataBase(IConstants.DATABASE_FILE, true);
 		Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
-		if (project != null) {
-			project.getChildren().clear();
-			project.getIndex().clear();
-			project.getIndex().add(project);
-		}
+		project.getChildren().clear();
+		project.getIndex().clear();
+		project.getIndex().add(project);
 	}
 
 	protected Package getPackage() {
 		Package pakkage = new Package();
 		pakkage.setAbstractness(1d);
 		pakkage.setAfferent(1d);
-		pakkage.setChildren(new ArrayList<IComposite>());
+		pakkage.setChildren(new ArrayList<Class>());
 		pakkage.setComplexity(1d);
 		pakkage.setCoverage(1d);
 		pakkage.setDistance(1d);

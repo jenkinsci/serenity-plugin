@@ -14,7 +14,6 @@ import org.kohsuke.stapler.StaplerResponse;
 
 import com.ikokoon.IConstants;
 import com.ikokoon.instrumentation.model.Class;
-import com.ikokoon.instrumentation.model.IComposite;
 import com.ikokoon.instrumentation.model.Method;
 import com.ikokoon.instrumentation.model.Package;
 import com.ikokoon.instrumentation.model.Project;
@@ -44,15 +43,13 @@ public class SerenityResult implements ISerenityResult {
 	/** The base url for Stapler. */
 	private String url = "";
 	/** The project for the build. */
-	private Project project;
+	private Project<?, ?> project;
 	/** The package that the user specified from the front end. */
-	private Package pakkage;
+	private Package<?, ?> pakkage;
 	/** The class that the user specified from the front end. */
-	private Class klass;
+	private Class<?, ?> klass;
 	/** The method that the user specified from the front end. */
-	private Method method;
-	/** The string containing the aggregated metrics for the build. */
-	private String metrics;
+	private Method<?, ?> method;
 	/** The active tab in the ui. */
 	private String tab;
 
@@ -65,24 +62,9 @@ public class SerenityResult implements ISerenityResult {
 	public SerenityResult(AbstractBuild<?, ?> abstractBuild) {
 		logger.info("SerenityResult:serenityResult");
 		this.owner = abstractBuild;
-		initilize();
-	}
-
-	private void initilize() {
 		String dataBaseFile = owner.getRootDir().getAbsolutePath() + File.separator + IConstants.DATABASE_FILE;
 		dataBase = IDataBase.DataBase.getDataBase(dataBaseFile, false);
-		project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
-		StringBuilder builder = new StringBuilder();
-		builder.append("Classes : ");
-		builder.append(project.getTotalClasses());
-		builder.append(", methods : ");
-		builder.append(project.getTotalMethods());
-		builder.append(", lines : ");
-		builder.append(project.getTotalLines());
-		builder.append(", lines executed : ");
-		builder.append(project.getTotalLinesExecuted());
-		metrics = builder.toString();
-		logger.debug("Metrics : " + metrics);
+		project = (Project<?, ?>) dataBase.find(Toolkit.hash(Project.class.getName()));
 	}
 
 	/**
@@ -118,21 +100,27 @@ public class SerenityResult implements ISerenityResult {
 			parameters.add(className);
 			parameters.add(methodName);
 			parameters.add(methodDescription);
-			this.method = (Method) dataBase.find(parameters);
+			this.method = (Method<?, ?>) dataBase.find(parameters);
 		} else if (className != null) {
 			parameters.clear();
 			parameters.add(className);
-			this.klass = (Class) dataBase.find(parameters);
+			this.klass = (Class<?, ?>) dataBase.find(parameters);
 		} else if (packageName != null) {
 			parameters.clear();
 			parameters.add(packageName);
-			this.pakkage = (Package) dataBase.find(parameters);
+			this.pakkage = (Package<?, ?>) dataBase.find(parameters);
 		}
 
 		logger.error("Package : " + pakkage + ", class : " + klass + ", method : " + method);
+		logger.error("Url : 1 : " + url);
 
-		url = req.getOriginalRequestURI().replaceAll(token, "");
-		url = url.replaceAll("///", "/");
+		url = req.getOriginalRequestURI();
+		int endIndex = url.indexOf(this.getClass().getSimpleName());
+		if (endIndex > -1) {
+			url = url.substring(0, endIndex);
+		}
+
+		logger.error("Url : 2 : " + url);
 		return this;
 	}
 
@@ -154,30 +142,28 @@ public class SerenityResult implements ISerenityResult {
 		return dataBase != null;
 	}
 
-	public String getMetrics() {
-		logger.info("SerenityResult:metrics");
-		return metrics;
-	}
-
-	public Project getProject() {
+	public Project<?, ?> getProject() {
 		return this.project;
 	}
 
-	public List<IComposite> getPackages() {
-		return getProject().getChildren();
+	@SuppressWarnings("unchecked")
+	public List<Package> getPackages() {
+		Project project = getProject().getClass().cast(getProject());
+		List<Package> packages = project.getChildren().getClass().cast(project.getChildren());
+		return packages;
 	}
 
-	public Package getPackage() {
+	public Package<?, ?> getPackage() {
 		logger.info("SerenityResult:getPackage");
 		return pakkage;
 	}
 
-	public Class getKlass() {
+	public Class<?, ?> getKlass() {
 		logger.info("SerenityResult:getKlass");
 		return klass;
 	}
 
-	public Method getMethod() {
+	public Method<?, ?> getMethod() {
 		logger.info("SerenityResult:getMethod");
 		return method;
 	}

@@ -39,13 +39,13 @@ public class Collector implements IConstants {
 	private static IDataBase dataBase;
 	static {
 		try {
-			dataBase = IDataBase.DataBase.getDataBase(true);
+			dataBase = IDataBase.DataBase.getDataBase(IConstants.DATABASE_FILE, true);
 			// Reset the counter for all the lines
-			Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
-			for (Package pakkage : ((List<Package>) project.getChildren())) {
-				for (Class klass : ((List<Class>) pakkage.getChildren())) {
-					for (Method method : ((List<Method>) klass.getChildren())) {
-						for (Line line : ((List<Line>) method.getChildren())) {
+			Project<?, ?> project = (Project<?, ?>) dataBase.find(Toolkit.hash(Project.class.getName()));
+			for (Package<?, ?> pakkage : ((List<Package<?, ?>>) project.getChildren())) {
+				for (Class<?, ?> klass : ((List<Class<?, ?>>) pakkage.getChildren())) {
+					for (Method<?, ?> method : ((List<Method<?, ?>>) klass.getChildren())) {
+						for (Line<?, ?> line : ((List<Line<?, ?>>) method.getChildren())) {
 							line.setCounter(0d);
 						}
 					}
@@ -69,7 +69,7 @@ public class Collector implements IConstants {
 	 *            the description of the method
 	 */
 	public static final void collectCoverage(String className, String lineNumber, String methodName, String methodDescription) {
-		Line line = getLine(className, methodName, methodDescription, lineNumber);
+		Line<?, ?> line = getLine(className, methodName, methodDescription, lineNumber);
 		line.increment();
 	}
 
@@ -106,6 +106,11 @@ public class Collector implements IConstants {
 		getMethod(className, methodName, methodDescription);
 	}
 
+	public static final void collectSource(String className, String source) {
+		Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
+		klass.setSource(source);
+	}
+
 	/**
 	 * This method is called after each jumps in the method graph. Every time there is a jump the complexity goes up one point. Jumps include if else
 	 * statements, or just if, throws statements, switch and so on.
@@ -118,7 +123,7 @@ public class Collector implements IConstants {
 	 *            the methodDescriptionription of the method
 	 */
 	public static final void collectComplexity(String className, String methodName, String methodDescription, double complexity, double lineCounter) {
-		Method method = getMethod(className, methodName, methodDescription);
+		Method<?, ?> method = getMethod(className, methodName, methodDescription);
 		method.setComplexity(complexity);
 		method.setLines(lineCounter);
 	}
@@ -148,13 +153,13 @@ public class Collector implements IConstants {
 				continue;
 			}
 			// Add the target package name to the afferent packages for this package
-			Class klass = getClass(className);
+			Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
 			Afferent afferent = getAfferent(klass, targetPackageName);
 			if (!klass.getAfferentPackages().contains(afferent)) {
 				klass.getAfferentPackages().add(afferent);
 			}
-			// Add this package to the eferent packages of the target
-			Class targetClass = getClass(targetClassName);
+			// Add this package to the efferent packages of the target
+			Class<Package<?, ?>, Method<?, ?>> targetClass = getClass(targetClassName);
 			Efferent efferent = getEfferent(targetClass, packageName);
 			if (!targetClass.getEfferentPackages().contains(efferent)) {
 				targetClass.getEfferentPackages().add(efferent);
@@ -172,23 +177,23 @@ public class Collector implements IConstants {
 	 */
 	public static final void collectMetrics(String className, Integer access) {
 		if (access.intValue() == 1537) {
-			Class klass = getClass(className);
+			Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
 			if (!klass.getInterfaze()) {
 				klass.setInterfaze(true);
 			}
 		}
 	}
 
-	private static final Package getPackage(String className) {
+	private static final Package<Project<?, ?>, Class<?, ?>> getPackage(String className) {
 		className = Toolkit.slashToDot(className);
 		String packageName = Toolkit.classNameToPackageName(className);
 
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(packageName);
-		Package pakkage = (Package) dataBase.find(parameters);
+		Package<Project<?, ?>, Class<?, ?>> pakkage = (Package<Project<?, ?>, Class<?, ?>>) dataBase.find(parameters);
 
 		if (pakkage == null) {
-			pakkage = new Package();
+			pakkage = new Package<Project<?, ?>, Class<?, ?>>();
 			pakkage.setName(packageName);
 			pakkage.setComplexity(1d);
 			pakkage.setCoverage(0d);
@@ -198,9 +203,9 @@ public class Collector implements IConstants {
 			pakkage.setInterfaces(0d);
 			pakkage.setImplementations(0d);
 			pakkage.setTimestamp(timestamp);
-			pakkage = (Package) dataBase.persist(pakkage);
+			pakkage = (Package<Project<?, ?>, Class<?, ?>>) dataBase.persist(pakkage);
 
-			Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
+			Project project = (Project<Object, Package<?, ?>>) dataBase.find(Toolkit.hash(Project.class.getName()));
 			project.getChildren().add(pakkage);
 			pakkage.setParent(project);
 
@@ -209,7 +214,7 @@ public class Collector implements IConstants {
 		return pakkage;
 	}
 
-	private static final Class getClass(String className) {
+	private static final Class<Package<?, ?>, Method<?, ?>> getClass(String className) {
 		className = Toolkit.slashToDot(className);
 
 		List<Object> parameters = new ArrayList<Object>();
@@ -228,7 +233,7 @@ public class Collector implements IConstants {
 			klass.setInterfaze(false);
 			klass.setTimestamp(timestamp);
 
-			Package pakkage = getPackage(className);
+			Package<Project<?, ?>, Class<?, ?>> pakkage = getPackage(className);
 			pakkage.getChildren().add(klass);
 			klass.setParent(pakkage);
 
@@ -261,7 +266,7 @@ public class Collector implements IConstants {
 			Class klass = getClass(className);
 			method.setParent(klass);
 			if (klass.getChildren() == null) {
-				List<IComposite> children = new ArrayList<IComposite>();
+				List<Method> children = new ArrayList<Method>();
 				klass.setChildren(children);
 			}
 			klass.getChildren().add(method);

@@ -9,7 +9,7 @@ import java.util.Date;
  * @version 01.00
  */
 @Unique(fields = { Composite.CLASS_NAME, Composite.NAME, Composite.DESCRIPTION })
-public class Method extends Composite implements Comparable<Method>, Serializable {
+public class Method<E, F> extends Composite<Class<?, ?>, Line<?, ?>> implements Comparable<Method<?, ?>>, Serializable {
 
 	private String name;
 	private String className;
@@ -88,7 +88,7 @@ public class Method extends Composite implements Comparable<Method>, Serializabl
 		return getId() + ":" + name;
 	}
 
-	public int compareTo(Method o) {
+	public int compareTo(Method<?, ?> o) {
 		int comparison = 0;
 		if (this.getId() != null && o.getId() != null) {
 			comparison = this.getId().compareTo(o.getId());

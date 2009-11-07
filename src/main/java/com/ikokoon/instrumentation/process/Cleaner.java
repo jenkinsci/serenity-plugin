@@ -34,23 +34,25 @@ public class Cleaner extends AProcess implements IConstants {
 	 * {@inheritDoc}
 	 */
 	public void execute() {
+		super.execute();
 		// Clean all the packages that got in the database along the processing
 		// that were not included in the packages required and all the packages and classes
 		// that have been deleted that are still hanging around
-		IDataBase dataBase = IDataBase.DataBase.getDataBase(false);
-		Long id = Toolkit.hash(Project.class.getName());
-		Project project = (Project) dataBase.find(id);
-		List<Package> packages = project.getChildren();
-		for (Package pakkage : packages.toArray(new Package[packages.size()])) {
-			// Remove the packages that are not included in the list to process
-			if (!Configuration.getConfiguration().included(pakkage.getName())) {
-				dataBase.remove(pakkage.getId());
-				continue;
-			}
-			// Remove the packages that have no classes, not interesting
-			if (pakkage.getChildren() != null && pakkage.getChildren().size() == 0) {
-				dataBase.remove(pakkage.getId());
-				continue;
+		IDataBase dataBase = IDataBase.DataBase.getDataBase(IConstants.DATABASE_FILE, false);
+		Project<?, ?> project = (Project<?, ?>) dataBase.find(Toolkit.hash(Project.class.getName()));
+		if (project != null) {
+			List<Package<?, ?>> packages = project.getChildren();
+			for (Package<?, ?> pakkage : packages.toArray(new Package[packages.size()])) {
+				// Remove the packages that are not included in the list to process
+				if (!Configuration.getConfiguration().included(pakkage.getName())) {
+					dataBase.remove(pakkage.getId());
+					continue;
+				}
+				// Remove the packages that have no classes, not interesting
+				if (pakkage.getChildren() != null && pakkage.getChildren().size() == 0) {
+					dataBase.remove(pakkage.getId());
+					continue;
+				}
 			}
 		}
 	}

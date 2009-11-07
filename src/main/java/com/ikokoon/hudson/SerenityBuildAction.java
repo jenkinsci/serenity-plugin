@@ -5,7 +5,6 @@ import hudson.model.Action;
 
 import java.lang.ref.WeakReference;
 
-import org.apache.log4j.Logger;
 import org.kohsuke.stapler.StaplerProxy;
 
 /**
@@ -18,13 +17,10 @@ import org.kohsuke.stapler.StaplerProxy;
 @SuppressWarnings("unchecked")
 public class SerenityBuildAction implements StaplerProxy, Action {
 
-	private Logger logger = Logger.getLogger(SerenityBuildAction.class);
 	/** The Hudson build owner, i.e. the action that really did the build. */
 	private final AbstractBuild owner;
 	/** The result from the build for Serenity. */
 	private transient WeakReference<ISerenityResult> result;
-	/** Just a string that has the total aggregated metrics for the build. */
-	private String metrics;
 
 	/**
 	 * Constructor takes the Hudson build owner and the result that will be presented to the front end for displaying the data from teh build and
@@ -36,7 +32,7 @@ public class SerenityBuildAction implements StaplerProxy, Action {
 	 *            the result from Serenity that will be presented to the front end
 	 */
 	public SerenityBuildAction(AbstractBuild owner, ISerenityResult result) {
-		logger.info("SerenityBuildAction:");
+		System.out.println("SerenityBuildAction:");
 		if (owner == null) {
 			throw new RuntimeException("owner cannot be null");
 		}
@@ -48,7 +44,7 @@ public class SerenityBuildAction implements StaplerProxy, Action {
 	 * {@inheritDoc}
 	 */
 	public String getDisplayName() {
-		logger.info("SerenityBuildAction:getDisplayName");
+		System.out.println("SerenityBuildAction:getDisplayName");
 		return "Serenity Report";
 	}
 
@@ -56,7 +52,7 @@ public class SerenityBuildAction implements StaplerProxy, Action {
 	 * {@inheritDoc}
 	 */
 	public String getIconFileName() {
-		logger.info("SerenityBuildAction:getIconFile");
+		System.out.println("SerenityBuildAction:getIconFile");
 		return "graph.gif";
 	}
 
@@ -64,7 +60,7 @@ public class SerenityBuildAction implements StaplerProxy, Action {
 	 * {@inheritDoc}
 	 */
 	public String getUrlName() {
-		logger.info("SerenityBuildAction:getUrlName");
+		System.out.println("SerenityBuildAction:getUrlName");
 		return "serenity";
 	}
 
@@ -72,18 +68,17 @@ public class SerenityBuildAction implements StaplerProxy, Action {
 	 * {@inheritDoc}
 	 */
 	public Object getTarget() {
-		logger.info("SerenityBuildAction:getTarget");
+		System.out.println("SerenityBuildAction:getTarget");
 		return getResult();
 	}
 
 	private void setResult(ISerenityResult result) {
-		logger.info("SerenityBuildAction:setResult");
+		System.out.println("SerenityBuildAction:setResult");
 		this.result = new WeakReference(result);
-		this.metrics = result.getMetrics();
 	}
 
 	public ISerenityResult getResult() {
-		logger.info("SerenityBuildAction:getResult");
+		System.out.println("SerenityBuildAction:getResult");
 		if (!hasResult()) {
 			// try to reload from file
 			reloadReport();
@@ -96,18 +91,14 @@ public class SerenityBuildAction implements StaplerProxy, Action {
 	}
 
 	private boolean hasResult() {
-		logger.info("SerenityBuildAction:hasResult");
+		System.out.println("SerenityBuildAction:hasResult");
 		return result != null && result.get() != null;
 	}
 
 	private void reloadReport() {
-		logger.info("SerenityBuildAction:reloadReport");
+		System.out.println("SerenityBuildAction:reloadReport");
 		ISerenityResult result = new SerenityResult(owner);
 		setResult(result);
 	}
 
-	public String getMetrics() {
-		logger.info("SerenityBuildAction:getMetrics");
-		return metrics;
-	}
 }

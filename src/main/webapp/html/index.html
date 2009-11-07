@@ -1,24 +1,18 @@
-<j:jelly trim="false" xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
-	xmlns:f="/lib/form">
-	<l:layout xmlns:serenity="/hudson/plugins/serenity/tags">
-		<st:include it="${it.owner}" page="sidepanel.jelly" />
-		<l:main-panel>
+<html>
+<head>
+</head>
+
+<body>
 			<table border="0" width="100%">
 				<tr>
 					<td colspan="2">
-						<table>
-							<tr>
-								<td>
-									<b>Metrics : Classes : ${it.project.totalClasses}, Methods : ${it.project.totalMethods}, Lines : ${it.project.totalLines}, Executed :
-										${it.project.totalLinesExecuted}</b>
-								</td>
-							</tr>
-						</table>
+						<b>Metrics : Classes : ${it.project.totalClasses}, Methods : ${it.project.totalMethods}, Lines : ${it.project.totalLines}, Executed :
+							${it.project.totalLinesExecuted}</b>
 					</td>
 				</tr>
 				<tr>
-					<td width="30%" height="600">
-						<table width="100%" height="100%" border="0">
+					<td width="30%" height="100%">
+						<table width="100%" height="100%">
 							<tr>
 								<td>
 									<iframe src="packages" width="100%" height="100%" id="packages" name="packages" frameborder="0">
@@ -39,7 +33,7 @@
 						<table width="100%" height="100%" border="0">
 							<tr>
 								<td>
-									<applet code="com.ikokoon.applet.TrendApplet.class" width="600" height="100" name="trend" id="trend" />
+									<p>The trend applet here</p>
 								</td>
 							</tr>
 							<tr>
@@ -53,6 +47,5 @@
 					</td>
 				</tr>
 			</table>
-		</l:main-panel>
-	</l:layout>
-</j:jelly>
+</body>
+</html>

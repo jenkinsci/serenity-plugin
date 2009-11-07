@@ -8,7 +8,6 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
-import hudson.model.Project;
 import hudson.model.Result;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
@@ -39,7 +38,7 @@ public class SerenityPublisher extends Recorder {
 
 	protected static final Logger logger = Logger.getLogger(SerenityPublisher.class);
 	/** The description for Hudson. */
-        @Extension
+	@Extension
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 	/** The pattern for the object database file. */
 	private String coverageReportPattern;
@@ -104,7 +103,7 @@ public class SerenityPublisher extends Recorder {
 		}
 
 		buildListener.getLogger().println("Accessing Serenity results...");
-		ISerenityResult coverageResult = new com.ikokoon.hudson.SerenityResult(build);
+		ISerenityResult coverageResult = new SerenityResult(build);
 		SerenityBuildAction buildAction = new SerenityBuildAction(build, coverageResult);
 		build.getActions().add(buildAction);
 
@@ -114,7 +113,7 @@ public class SerenityPublisher extends Recorder {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Action getProjectAction(Project project) {
+	public Action getProjectAction(hudson.model.Project project) {
 		logger.info("SerenityPublisher:getProjectAction");
 		return new SerenityProjectAction(project);
 	}

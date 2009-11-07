@@ -11,7 +11,7 @@ import java.util.List;
  * @version 01.00
  */
 @Unique(fields = { Composite.NAME })
-public class Project<T> extends Composite implements Serializable {
+public class Project<E, F> extends Composite<Object, Package<?, ?>> implements Serializable {
 
 	private String name = this.getClass().getName();
 	private Date timestamp;
@@ -28,7 +28,7 @@ public class Project<T> extends Composite implements Serializable {
 	private double totalPackages;
 	private double totalPackagesExecuted;
 
-	private List<T> index = new ArrayList<T>();
+	private List<IComposite<?, ?>> index = new ArrayList<IComposite<?, ?>>();
 
 	public String getName() {
 		return name;
@@ -110,11 +110,11 @@ public class Project<T> extends Composite implements Serializable {
 		this.totalPackagesExecuted = totalPackagesExecuted;
 	}
 
-	public List<T> getIndex() {
+	public List<IComposite<?, ?>> getIndex() {
 		return index;
 	}
 
-	public void setIndex(List<T> index) {
+	public void setIndex(List<IComposite<?, ?>> index) {
 		this.index = index;
 	}
 

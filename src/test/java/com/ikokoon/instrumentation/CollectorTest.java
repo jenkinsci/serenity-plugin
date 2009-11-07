@@ -94,10 +94,10 @@ public class CollectorTest extends ATest implements IConstants {
 		Collector.collectMetrics(className, Logger.class.getName());
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(packageName);
-		Package pakkage = (Package) dataBase.find(parameters);
+		Package<?, ?> pakkage = (Package) dataBase.find(parameters);
 		assertNotNull(pakkage);
 		boolean containsLogger = false;
-		outer: for (Class klass : ((List<Class>) pakkage.getChildren())) {
+		outer: for (Class<?, ?> klass : ((List<Class<?, ?>>) pakkage.getChildren())) {
 			for (Afferent afferent : klass.getAfferentPackages()) {
 				if (afferent.getName().indexOf(Logger.class.getPackage().getName()) > -1) {
 					containsLogger = true;
@@ -149,8 +149,6 @@ public class CollectorTest extends ATest implements IConstants {
 		duration = (end - start) / 1000d;
 		collectionsPerSecond = iterations / duration;
 		logger.warn("Get line : " + iterations + ", duration : " + duration + ", collections per second : " + collectionsPerSecond);
-		dataBase.close();
-
 		// Toolkit.dump(dataBase);
 	}
 

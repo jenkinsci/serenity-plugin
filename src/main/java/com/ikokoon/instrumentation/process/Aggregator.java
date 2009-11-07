@@ -80,15 +80,16 @@ public class Aggregator extends AProcess implements IConstants {
 	 *            the document to aggregate the totals for
 	 */
 	public void execute() {
-		logger.info("Running Aggregator dump: ");
-		Long id = Toolkit.hash(Project.class.getName());
-		Project project = (Project) dataBase.find(id);
-		aggregateProject(project);
 		super.execute();
+		logger.info("Running Aggregator dump: ");
+		Project<?, ?> project = (Project<?, ?>) dataBase.find(Toolkit.hash(Project.class.getName()));
+		if (project != null) {
+			aggregateProject(project);
+		}
 	}
 
-	private void aggregateProject(Project project) {
-		List<Package> packages = project.getChildren();
+	private void aggregateProject(Project<?, ?> project) {
+		List<Package<?, ?>> packages = project.getChildren();
 		aggregatePackages(packages);
 		project.setTimestamp(new Date());
 
@@ -101,18 +102,18 @@ public class Aggregator extends AProcess implements IConstants {
 		double totalPackages = 0d;
 		double totalPackagesExecuted = 0d;
 
-		for (Package pakkage : packages) {
+		for (Package<?, ?> pakkage : packages) {
 			totalPackages++;
 			if (pakkage.getTotalLinesExecuted() > 0) {
 				totalPackagesExecuted++;
 			}
-			for (Class klass : ((List<Class>) pakkage.getChildren())) {
+			for (Class<?, ?> klass : ((List<Class<?, ?>>) pakkage.getChildren())) {
 				totalLines += klass.getLines();
 				totalClasses++;
 				if (klass.getTotalLinesExecuted() > 0) {
 					totalClassesExecuted++;
 				}
-				for (Method method : ((List<Method>) klass.getChildren())) {
+				for (Method<?, ?> method : ((List<Method<?, ?>>) klass.getChildren())) {
 					totalMethods++;
 					totalLinesExecuted += method.getTotalLinesExecuted();
 					if (method.getTotalLinesExecuted() > 0) {
@@ -132,10 +133,10 @@ public class Aggregator extends AProcess implements IConstants {
 		project.setTotalPackagesExecuted(totalPackagesExecuted);
 	}
 
-	private void aggregatePackages(List<Package> packages) {
-		for (Package pakkage : packages) {
+	private void aggregatePackages(List<Package<?, ?>> packages) {
+		for (Package<?, ?> pakkage : packages) {
 			logger.debug("Processing package : " + pakkage.getName());
-			List<Class> classes = pakkage.getChildren();
+			List<Class<?, ?>> classes = pakkage.getChildren();
 			aggregateClasses(classes);
 
 			double interfaces = 0d;
@@ -148,7 +149,7 @@ public class Aggregator extends AProcess implements IConstants {
 			Set<Efferent> efference = new TreeSet<Efferent>();
 			Set<Afferent> afference = new TreeSet<Afferent>();
 
-			for (Class klass : classes) {
+			for (Class<?, ?> klass : classes) {
 				if (klass.getInterfaze()) {
 					interfaces++;
 				} else {
@@ -171,7 +172,7 @@ public class Aggregator extends AProcess implements IConstants {
 			pakkage.setTotalLinesExecuted(totalLinesExecuted);
 
 			if (packageLines > 0) {
-				for (Class klass : classes) {
+				for (Class<?, ?> klass : classes) {
 					double classLines = klass.getLines();
 					complexity += (classLines / packageLines) * klass.getComplexity();
 					coverage += (classLines / packageLines) * klass.getCoverage();
@@ -205,9 +206,9 @@ public class Aggregator extends AProcess implements IConstants {
 		}
 	}
 
-	private void aggregateClasses(List<Class> classes) {
-		for (Class klass : classes) {
-			List<Method> methods = klass.getChildren();
+	private void aggregateClasses(List<Class<?, ?>> classes) {
+		for (Class<?, ?> klass : classes) {
+			List<Method<?, ?>> methods = klass.getChildren();
 			aggregateMethods(methods);
 
 			double afferent = klass.getAfferentPackages().size();
@@ -217,11 +218,11 @@ public class Aggregator extends AProcess implements IConstants {
 			double complexity = 0d;
 			double coverage = 0d;
 			double totalLinesExecuted = 0d;
-			for (Method method : methods) {
+			for (Method<?, ?> method : methods) {
 				classLines += method.getLines();
 			}
 			if (classLines > 0) {
-				for (Method method : methods) {
+				for (Method<?, ?> method : methods) {
 					double methodLines = method.getLines();
 					if (methodLines == 0) {
 						continue;
@@ -248,14 +249,14 @@ public class Aggregator extends AProcess implements IConstants {
 		}
 	}
 
-	private void aggregateMethods(List<Method> methods) {
-		for (Method method : methods) {
+	private void aggregateMethods(List<Method<?, ?>> methods) {
+		for (Method<?, ?> method : methods) {
 			try {
 				double linesExecuted = 0d;
 				// Collect all the lines that were executed
-				List<Line> lines = method.getChildren();
+				List<Line<?, ?>> lines = method.getChildren();
 				double totalLinesExecuted = 0;
-				for (Line line : lines) {
+				for (Line<?, ?> line : lines) {
 					totalLinesExecuted += line.getCounter();
 					if (line.getCounter() > 0) {
 						linesExecuted++;

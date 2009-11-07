@@ -12,9 +12,11 @@ import java.util.List;
  * @version 01.00
  */
 @Unique(fields = { Composite.NAME })
-public class Class extends Composite implements Comparable<Class>, Serializable {
+public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implements Comparable<Class<?, ?>>, Serializable {
 
 	private String name;
+	private String source;
+
 	private double lines;
 	private double totalLinesExecuted;
 	private double complexity;
@@ -33,6 +35,14 @@ public class Class extends Composite implements Comparable<Class>, Serializable 
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
 	}
 
 	public double getLines() {
@@ -137,7 +147,7 @@ public class Class extends Composite implements Comparable<Class>, Serializable 
 		return getId() + ":" + name;
 	}
 
-	public int compareTo(Class o) {
+	public int compareTo(Class<?, ?> o) {
 		int comparison = 0;
 		if (this.getId() != null && o.getId() != null) {
 			comparison = this.getId().compareTo(o.getId());

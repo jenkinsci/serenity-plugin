@@ -24,14 +24,14 @@ public class DataBaseXmlTest extends ATest {
 	public void insert() {
 		DataBaseXml dataBase = (DataBaseXml) this.dataBase;
 
-		List<IComposite> list = getList();
+		List<IComposite<?, ?>> list = getList();
 
 		// Check the performance
 		list.clear();
 		double inserts = 1000;
 		double start = System.currentTimeMillis();
 		for (long i = 0; i < inserts; i++) {
-			Class klass = new Class();
+			Class<?, ?> klass = new Class();
 			klass.setName("" + i);
 			klass.setId(i);
 			dataBase.insert(list, klass);
@@ -42,17 +42,17 @@ public class DataBaseXmlTest extends ATest {
 		logger.info("Duration : " + duration + ", inserts per second : " + insertsPerSecond);
 	}
 
-	private LinkedList<IComposite> getList() {
+	private LinkedList<IComposite<?, ?>> getList() {
 		DataBaseXml dataBase = (DataBaseXml) this.dataBase;
 
-		LinkedList<IComposite> list = new LinkedList<IComposite>();
-		Class klass = new Class();
+		LinkedList<IComposite<?, ?>> list = new LinkedList<IComposite<?, ?>>();
+		Class<?, ?> klass = new Class<Package<?, ?>, Method<?, ?>>();
 		klass.setName("a");
 		Long id = Toolkit.hash(klass.getName());
 		klass.setId(id);
 		dataBase.insert(list, klass);
 
-		klass = new Class();
+		klass = new Class<Package, Method>();
 		klass.setName("c");
 		id = Toolkit.hash(klass.getName());
 		klass.setId(id);
@@ -70,7 +70,7 @@ public class DataBaseXmlTest extends ATest {
 	@Test
 	public void search() {
 		DataBaseXml dataBase = (DataBaseXml) this.dataBase;
-		LinkedList<IComposite> list = getList();
+		LinkedList<IComposite<?, ?>> list = getList();
 		Long id = Toolkit.hash("b");
 		Object object = dataBase.search(list, id);
 		assertNotNull(object);
