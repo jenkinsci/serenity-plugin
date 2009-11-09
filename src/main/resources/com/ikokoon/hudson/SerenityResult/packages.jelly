@@ -6,7 +6,10 @@
 		<body>
 			<div style="line-height: 8px">
 				<j:forEach var="package" items="${it.packages}">
-					<a href="${it.url}${'SerenityResult/classes'}?packageName=${package.name}" target="classes">${package.name}</a>
+					<a href="${it.url}${'SerenityResult/classes'}?packageName=${package.name}" target="classes"
+						onclick="JavaScript:window.parent.document.applet.setMatrix('${package.name}');">
+						${package.name}
+					</a>
 					<br />
 				</j:forEach>
 			</div>

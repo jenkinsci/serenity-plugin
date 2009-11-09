@@ -1,0 +1,14 @@
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+	xmlns:f="/lib/form">
+	<html>
+		<head>
+		</head>
+		<body>
+			<!-- com.ikokoon.applet.TrendApplet, archive="serenity.jar" -->
+			<!-- ${it.url}${'SerenityResult/applet'}?appletName=${'com.ikokoon.applet.TrendApplet'} -->
+			<!-- codebase="${it.url}/applet"  -->
+			<!-- ${it.url}${'SerenityApplet/applet'} -->
+			<applet code="com.ikokoon.applet.TrendApplet" archive="http://www.ikokoon.com/ikokoon/serenity.jar" width="600" height="95" name="applet" />
+		</body>
+	</html>
+</j:jelly>
