@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.ikokoon.persistence.Permutations;
+import com.ikokoon.serenity.persistence.Permutations;
 
 /**
  * This is an abstract factory. Classes are selected for construction according to the best match between the parameters and the solid implementation
@@ -99,7 +99,8 @@ public abstract class ObjectFactory {
 		return null;
 	}
 
-	private static Constructor getConstructor(Class klass, Object[] permutationParameters) {
+	@SuppressWarnings("unchecked")
+	private static <E> Constructor<E> getConstructor(Class<E> klass, Object[] permutationParameters) {
 		LOGGER.debug("Stripped permutations : " + Arrays.asList(permutationParameters));
 		Constructor<?>[] constructors = klass.getDeclaredConstructors();
 		outer: for (Constructor<?> constructor : constructors) {
@@ -118,7 +119,7 @@ public abstract class ObjectFactory {
 					continue outer;
 				}
 			}
-			return constructor;
+			return (Constructor<E>) constructor;
 		}
 		return null;
 	}

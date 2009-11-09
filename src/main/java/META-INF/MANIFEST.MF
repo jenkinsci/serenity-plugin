@@ -11,4 +11,4 @@ Long-Name: Hudson Serenity plugin
 Url: http://wiki.hudson-ci.org/display/HUDSON/Serenity+Plugin
 Plugin-Version: 1.0
 Hudson-Version: 1.323
-Premain-Class: com.ikokoon.instrumentation.Transformer
+Premain-Class: com.ikokoon.serenity.Transformer

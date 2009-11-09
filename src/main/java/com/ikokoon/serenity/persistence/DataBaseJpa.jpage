@@ -1,0 +1,288 @@
+package com.ikokoon.persistence;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
+import javax.persistence.Query;
+
+import org.apache.log4j.Logger;
+
+import com.ikokoon.IConstants;
+
+/**
+ * @author Michael Couck
+ * @since 12.08.09
+ * @version 01.00
+ */
+public class DataBaseJpa extends ADataBase {
+
+	/** The logger. */
+	private static Logger LOGGER = Logger.getLogger(DataBaseJpa.class);
+	@PersistenceContext(type = PersistenceContextType.TRANSACTION, unitName = IConstants.SERENITY_PERSISTENCE_UNIT)
+	private EntityManager entityManager;
+
+	public DataBaseJpa(IDataBase dataBase) {
+		entityManager = getEntityManager();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public synchronized int execute(String query) {
+		boolean commit = begin();
+		try {
+			int result = entityManager.createQuery(query).executeUpdate();
+			LOGGER.debug("execute(query) : " + result);
+			return result;
+		} catch (Exception e) {
+			LOGGER.error("Exception executing : " + query, e);
+		} finally {
+			commit(commit);
+		}
+		return 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public synchronized <T> T remove(Class<T> klass, Long id) {
+		boolean commit = begin();
+		try {
+			T t = entityManager.find(klass, id);
+			if (t != null) {
+				entityManager.remove(t);
+			}
+			return t;
+		} catch (Exception e) {
+			LOGGER.error("Exception removing : " + klass + ", " + id, e);
+		} finally {
+			commit(commit);
+		}
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public synchronized <T> T persist(T t) {
+		boolean commit = begin();
+		try {
+			if (t != null) {
+				LOGGER.debug("persist(t) : " + t);
+				entityManager.persist(t);
+			}
+			return t;
+		} catch (Exception e) {
+			LOGGER.error("Exception persisting : " + t, e);
+		} finally {
+			commit(commit);
+		}
+		return t;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public synchronized <T> T merge(T t) {
+		boolean commit = begin();
+		try {
+			if (t != null) {
+				LOGGER.debug("merge(t) : " + t);
+				t = entityManager.merge(t);
+			}
+			return t;
+		} catch (Exception e) {
+			LOGGER.error("Exception merging : " + t, e);
+		} finally {
+			commit(commit);
+		}
+		return t;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public synchronized <T> T find(Class<T> klass, Long id) {
+		boolean commit = begin();
+		try {
+			T t = entityManager.find(klass, id);
+			LOGGER.debug("find(klass, id) : " + t);
+			return t;
+		} catch (Exception e) {
+			LOGGER.error("Exception finding : " + klass + ", " + id, e);
+		} finally {
+			commit(commit);
+		}
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public synchronized <T> T find(String queryName, Map<String, Object> parameters) {
+		boolean commit = begin();
+		try {
+			Query query = entityManager.createNamedQuery(queryName);
+			query.setFirstResult(0);
+			query.setMaxResults(1);
+			setParameters(query, parameters);
+			T t = null;
+			try {
+				t = (T) query.getSingleResult();
+				LOGGER.debug("find(queryName, parameters) : " + t);
+			} catch (NoResultException e) {
+				LOGGER.info("No result found " + queryName + ", " + parameters);
+			}
+			return t;
+		} catch (Exception e) {
+			LOGGER.error("Exception finding : " + queryName + ", " + parameters, e);
+		} finally {
+			commit(commit);
+		}
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public synchronized <T> List<T> find(Class<T> klass, String queryName, Map<String, Object> parameters, int firstResult, int maxResults) {
+		boolean commit = begin();
+		try {
+			Query query = entityManager.createNamedQuery(queryName);
+			query.setFirstResult(firstResult);
+			query.setMaxResults(maxResults);
+			setParameters(query, parameters);
+			List<T> results = query.getResultList();
+			LOGGER.debug("find(klass, queryName, parameters, firstResult, maxResults) : " + results);
+			return results;
+		} catch (Exception e) {
+			LOGGER.error("Exception finding : " + klass + ", " + queryName + ", " + parameters + ", " + firstResult + ", " + maxResults, e);
+		} finally {
+			commit(commit);
+		}
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public synchronized <T> List<T> find(Class<T> klass, int firstResult, int maxResults) {
+		boolean commit = begin();
+		try {
+			String name = klass.getSimpleName();
+			StringBuilder builder = new StringBuilder("select ");
+			builder.append(name);
+			builder.append(" from ");
+			builder.append(name);
+			builder.append(" as ");
+			builder.append(name);
+			Query query = entityManager.createQuery(builder.toString());
+			query.setFirstResult(firstResult);
+			query.setMaxResults(maxResults);
+			List<T> results = query.getResultList();
+			LOGGER.debug("find(klass, queryName, parameters, firstResult, maxResults) : " + results);
+			return results;
+		} catch (Exception e) {
+			LOGGER.error("Exception finding : " + klass + ", " + firstResult + ", " + maxResults, e);
+		} finally {
+			commit(commit);
+		}
+		return null;
+	}
+
+	public <T> T find(Class<T> klass, Map<String, Object> parameters) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T> List<T> find(Class<T> klass, Map<String, Object> parameters, int firstResult, int maxResults) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public synchronized void close() {
+		if (entityManager.isOpen()) {
+			boolean commit = begin();
+			try {
+				entityManager.flush();
+			} finally {
+				commit(commit);
+			}
+			entityManager.close();
+		}
+	}
+
+	/**
+	 * This method starts a transaction for the entity manager.
+	 */
+	private synchronized boolean begin() {
+		EntityTransaction transaction = entityManager.getTransaction();
+		if (!transaction.isActive()) {
+			entityManager.getTransaction().begin();
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * This method commits the transaction for he entity manager.
+	 */
+	private synchronized void commit(boolean commit) {
+		if (commit) {
+			EntityTransaction transaction = entityManager.getTransaction();
+			if (transaction.isActive()) {
+				if (!transaction.getRollbackOnly()) {
+					transaction.commit();
+				} else {
+					transaction.rollback();
+				}
+			}
+		}
+	}
+
+	/**
+	 * Sets the parameters in the query on the database.
+	 * 
+	 * @param query
+	 *            the query to set the parameters for
+	 * @param parameters
+	 *            the parameters for the query
+	 */
+	private synchronized void setParameters(Query query, Map<String, Object> parameters) {
+		Iterator<String> keys = parameters.keySet().iterator();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			Object parameter = parameters.get(key);
+			query.setParameter(key, parameter);
+		}
+	}
+
+	/**
+	 * Instanciates the entity manager.
+	 */
+	private synchronized EntityManager getEntityManager() {
+		if (entityManager == null) {
+			try {
+				EntityManagerFactory factory = Persistence.createEntityManagerFactory(IConstants.SERENITY_PERSISTENCE_UNIT);
+				entityManager = factory.createEntityManager();
+			} catch (Exception e) {
+				LOGGER.error("Error setting up the entity manager in stand alone.", e);
+			}
+		}
+		return entityManager;
+	}
+
+	public boolean isClosed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}
