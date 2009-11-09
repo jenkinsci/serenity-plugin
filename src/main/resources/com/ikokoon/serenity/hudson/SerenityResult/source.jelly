@@ -1,0 +1,10 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<html>
+		<head>
+			<link rel="stylesheet" href="/css/style.css" />
+		</head>
+		<body>
+			<p>The coloured source here</p>
+		</body>
+	</html>
+</j:jelly>

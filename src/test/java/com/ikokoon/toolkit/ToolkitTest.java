@@ -11,8 +11,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
-import com.ikokoon.ATest;
+import com.ikokoon.serenity.ATest;
 import com.ikokoon.target.Target;
+import com.ikokoon.serenity.model.Package;
 
 /**
  * This is the test for the utility class.
@@ -63,7 +64,7 @@ public class ToolkitTest extends ATest {
 	@Test
 	public void formatString() {
 		int precision = 3;
-		com.ikokoon.instrumentation.model.Package pakkage = new com.ikokoon.instrumentation.model.Package();
+		Package pakkage = new Package();
 		String string = pakkage.format("123456789,123456789", precision);
 		assertEquals(precision, string.substring(string.indexOf(',') + 1, string.length()).length());
 		string = pakkage.format("123456789.123456789", precision);
@@ -74,7 +75,7 @@ public class ToolkitTest extends ATest {
 	public void formatDouble() {
 		int precision = 3;
 		double d = 123456.8755135d;
-		com.ikokoon.instrumentation.model.Package pakkage = new com.ikokoon.instrumentation.model.Package();
+		Package pakkage = new Package();
 		d = pakkage.format(d, precision);
 		assertTrue(123456.875 == d);
 		assertFalse(123456.8755 == d);

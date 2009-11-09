@@ -79,15 +79,13 @@
 			<classpath refid="build.classpath" />
 			<sysproperty key="included.packages" value="com.ikokoon.target" />
 			<sysproperty key="included.adapters" value="
-										com.ikokoon.instrumentation.coverage.CoverageClassAdapter;
-										com.ikokoon.instrumentation.dependency.DependencyClassAdapter;
-										com.ikokoon.instrumentation.complexity.ComplexityClassAdapter;" />
+										com.ikokoon.serenity.instrumentation.coverage.CoverageClassAdapter;
+										com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapter;
+										com.ikokoon.serenity.instrumentation.complexity.ComplexityClassAdapter;" />
 			<jvmarg line="-javaagent:target/serenity.jar" />
 			<batchtest todir="${serenity}" haltonerror="false" haltonfailure="false">
 				<formatter type="xml" />
 				<fileset dir="${test}">
-					<!-- include name="**/DataBaseNeodatisTest.java" />
-					<include name="**/ToolkitTest.java" / -->
 					<include name="**/TargetTest.java" />
 				</fileset>
 			</batchtest>

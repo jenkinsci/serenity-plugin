@@ -1,6 +1,6 @@
 package com.ikokoon.toolkit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import java.beans.XMLDecoder;
 import java.io.File;
@@ -11,7 +11,7 @@ import java.util.StringTokenizer;
 
 import org.junit.Test;
 
-import com.ikokoon.ATest;
+import com.ikokoon.serenity.ATest;
 
 public class ClassLoaderTest extends ATest {
 

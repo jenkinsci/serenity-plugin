@@ -8,7 +8,7 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
-import com.ikokoon.ATest;
+import com.ikokoon.serenity.ATest;
 
 public class ObjectFactoryTest extends ATest {
 
