@@ -351,7 +351,8 @@ public class Toolkit {
 	 *            the name of the field in the object
 	 * @return the value of the field if there is such a field or null if there isn't ir if anything goes wrong
 	 */
-	public static Object getValue(Object object, String name) {
+	@SuppressWarnings("unchecked")
+	public static <E> E getValue(Class<E> klass, Object object, String name) {
 		if (object == null) {
 			return null;
 		}
@@ -359,7 +360,7 @@ public class Toolkit {
 		if (field != null) {
 			try {
 				field.setAccessible(true);
-				return field.get(object);
+				return (E) field.get(object);
 			} catch (Exception e) {
 				logger.error("Exception accessing the field's value", e);
 			}

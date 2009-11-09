@@ -1,51 +1,55 @@
 <html>
-<head>
-</head>
-
-<body>
-			<table border="0" width="100%">
-				<tr>
-					<td colspan="2">
-						<b>Metrics : Classes : ${it.project.totalClasses}, Methods : ${it.project.totalMethods}, Lines : ${it.project.totalLines}, Executed :
-							${it.project.totalLinesExecuted}</b>
-					</td>
-				</tr>
-				<tr>
-					<td width="30%" height="100%">
-						<table width="100%" height="100%">
-							<tr>
-								<td>
-									<iframe src="packages" width="100%" height="100%" id="packages" name="packages" frameborder="0">
-										<p>Your browser does not support internal frames.</p>
-									</iframe>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<iframe src="classes" width="100%" height="100%" id="classes" name="classes" frameborder="0">
-										<p>Your browser does not support internal frames.</p>
-									</iframe>
-								</td>
-							</tr>
-						</table>
-					</td>
-					<td width="70%" height="600">
-						<table width="100%" height="100%" border="0">
-							<tr>
-								<td>
-									<p>The trend applet here</p>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<iframe src="source" width="100%" height="100%" id="source" name="source" frameborder="0">
-										<p>Your browser does not support internal frames.</p>
-									</iframe>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-			</table>
-</body>
+	<head>
+	</head>
+	<body>
+		<table border="0" width="100%">
+			<tr>
+				<td colspan="2">
+					<table>
+						<tr>
+							<td>
+								<b>The Metrics for the project</b>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td width="30%" height="600">
+					<table width="100%" height="100%" border="0">
+						<tr>
+							<td>
+								<iframe src="packages.html" width="100%" height="100%" id="packages" name="packages" frameborder="0">
+									<p>Your browser does not support internal frames.</p>
+								</iframe>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<iframe src="classes.html" width="100%" height="100%" id="classes" name="classes" frameborder="0">
+									<p>Your browser does not support internal frames.</p>
+								</iframe>
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td width="70%" height="600">
+					<table width="100%" height="100%" border="0">
+						<tr>
+							<td height="210px">
+								<applet code="com.ikokoon.applet.TrendApplet" archive="serenity.jar" width="750" height="210" name="applet" id="applet" />
+							</td>
+						</tr>
+						<tr>
+							<td height="480px">
+								<iframe src="source.html" width="100%" height="100%" id="source" name="source" frameborder="0">
+									<p>Your browser does not support internal frames.</p>
+								</iframe>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</body>
 </html>

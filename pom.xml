@@ -25,14 +25,16 @@
 						<phase>package</phase>
 						<configuration>
 							<tasks verbose="true">
-								<!-- And do some ant stuff here -->
 								<echo message="Unpacking and repacking serenity.jar with the agent manifest" />
 								<unjar src="target/serenity.jar" dest="target/temp" overwrite="true" taskname="repack.serenity.with.manifest" />
 								<jar destfile="target/serenity.jar" basedir="target/temp" manifest="src/main/java/META-INF/MANIFEST.MF">
+									<!-- Include the source -->
 									<fileset dir="src/main/java">
 										<include name="**" />
 									</fileset>
 								</jar>
+								<echo message="Copying the trend applet to the SerenityResult folder" />
+								<!-- copy todir="../Findbugs/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" / -->
 							</tasks>
 						</configuration>
 						<goals>

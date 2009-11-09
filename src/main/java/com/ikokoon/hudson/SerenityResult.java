@@ -14,6 +14,7 @@ import org.kohsuke.stapler.StaplerResponse;
 
 import com.ikokoon.IConstants;
 import com.ikokoon.instrumentation.model.Class;
+import com.ikokoon.instrumentation.model.IComposite;
 import com.ikokoon.instrumentation.model.Method;
 import com.ikokoon.instrumentation.model.Package;
 import com.ikokoon.instrumentation.model.Project;
@@ -82,7 +83,7 @@ public class SerenityResult implements ISerenityResult {
 	 * @throws IOException
 	 */
 	public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) throws IOException {
-		logger.error("SerenityResult:getDynamic");
+		logger.error("SerenityResult:getDynamic:" + token);
 
 		List<Object> parameters = new ArrayList<Object>();
 
@@ -129,6 +130,7 @@ public class SerenityResult implements ISerenityResult {
 	}
 
 	public String getTab() {
+		logger.error("SerenityResult:getTab : " + tab);
 		return this.tab;
 	}
 
@@ -166,6 +168,10 @@ public class SerenityResult implements ISerenityResult {
 	public Method<?, ?> getMethod() {
 		logger.info("SerenityResult:getMethod");
 		return method;
+	}
+	
+	public String getModel(IComposite<?, ?> composite) {
+		return null;
 	}
 
 	public String getName() {

@@ -213,7 +213,7 @@ public class AggregatorTest extends ATest implements IConstants {
 		logger.info("Printing object : " + object + ", class : " + object.getClass());
 		Field[] fields = object.getClass().getDeclaredFields();
 		for (Field field : fields) {
-			Object value = Toolkit.getValue(object, field.getName());
+			Object value = Toolkit.getValue(Object.class, object, field.getName());
 			logger.info(field.getName() + " : " + value);
 		}
 	}

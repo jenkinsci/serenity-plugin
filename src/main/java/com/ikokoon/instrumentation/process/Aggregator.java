@@ -75,9 +75,6 @@ public class Aggregator extends AProcess implements IConstants {
 
 	/**
 	 * Please refer to the class JavaDoc for more information.
-	 * 
-	 * @param document
-	 *            the document to aggregate the totals for
 	 */
 	public void execute() {
 		super.execute();

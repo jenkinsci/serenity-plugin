@@ -58,7 +58,7 @@ public abstract class ADataBase implements IDataBase {
 		String[] fields = unique.fields();
 		List<T> values = new ArrayList<T>();
 		for (String field : fields) {
-			Object value = Toolkit.getValue(t, field);
+			Object value = Toolkit.getValue(Object.class, t, field);
 			T[] uniqueValues = (T[]) getUniqueValues(value);
 			for (T uniqueValue : uniqueValues) {
 				values.add(uniqueValue);
