@@ -46,6 +46,7 @@ public final class DataBaseXml implements IDataBase {
 				if (!file.delete()) {
 					logger.warn("Couldn't delete old database file");
 				}
+				logger.info("Database file : " + file.getAbsolutePath());
 			}
 			odb = ODBFactory.open(this.dataBaseFile);
 			Objects objects = odb.getObjects(Project.class);

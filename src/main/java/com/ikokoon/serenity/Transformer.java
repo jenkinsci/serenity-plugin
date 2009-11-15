@@ -36,6 +36,8 @@ public class Transformer implements ClassFileTransformer, IConstants {
 	public static final Transformer INSTANCE = new Transformer();
 	/** The aggregated flag. */
 	private static boolean accumulated = false;
+	/** During tests there can be more than one shutdown hook added. */
+	private static boolean shutdownHookAdded = false;
 
 	/** The chain of adapters for analysing the classes. */
 	private Class<ClassVisitor>[] classAdapterClasses;
@@ -64,18 +66,22 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		LOGGER = Logger.getLogger(Transformer.class);
 		LOGGER.error("Loaded logging properties from : " + url);
 
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			public void run() {
-				LOGGER.info("Writing and finalizing the persistence");
-				IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(IConstants.DATABASE_FILE, false);
-				new Cleaner(null).execute();
-				new Aggregator(null, dataBase).execute();
-				dataBase.close();
-				long million = 1000 * 1000;
-				LOGGER.info("Total memory : " + (Runtime.getRuntime().totalMemory() / million) + ", max memory : "
-						+ (Runtime.getRuntime().maxMemory() / million) + ", free memory : " + (Runtime.getRuntime().freeMemory() / million));
-			}
-		});
+		if (!shutdownHookAdded) {
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				public void run() {
+					LOGGER.info("Writing and finalizing the persistence");
+					IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(IConstants.DATABASE_FILE, false);
+					new Cleaner(null).execute();
+					new Aggregator(null, dataBase).execute();
+					dataBase.close();
+					long million = 1000 * 1000;
+					LOGGER.info("Total memory : " + (Runtime.getRuntime().totalMemory() / million) + ", max memory : "
+							+ (Runtime.getRuntime().maxMemory() / million) + ", free memory : " + (Runtime.getRuntime().freeMemory() / million));
+				}
+			});
+			shutdownHookAdded = true;
+		}
+
 		if (instrumentation != null) {
 			instrumentation.addTransformer(INSTANCE);
 		}

@@ -58,14 +58,21 @@
 				<version>2.4.2</version>
 				<configuration>
 					<systemProperties>
-						<forkMode>once</forkMode>
+						<forkMode>always</forkMode>
 						<property>
 							<name>java.class.path</name>
 							<value>${java.class.path}</value>
 						</property>
-						<argLine>-javaagent:target/serenity.jar -Xms512m -Xmx1024m -Dcoverage.packages=com.ikokoon.serenity</argLine>
+						<property>
+							<name>included.packages</name>
+							<value>com.ikokoon.serenity</value>
+						</property>
+						<argLine>-javaagent:target/serenity.jar -Xms512m -Xmx1024m</argLine>
 						<additionalClasspathElements>${surefire.test.class.path}</additionalClasspathElements>
 					</systemProperties>
+					<!-- includes>
+						<include>**/DataBaseXmlTest.java</include>
+					</includes -->
 				</configuration>
 			</plugin>
 			<plugin>
