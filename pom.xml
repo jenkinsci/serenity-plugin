@@ -58,7 +58,7 @@
 				<version>2.4.2</version>
 				<configuration>
 					<systemProperties>
-						<forkMode>always</forkMode>
+						<forkMode>once</forkMode>
 						<property>
 							<name>java.class.path</name>
 							<value>${java.class.path}</value>
