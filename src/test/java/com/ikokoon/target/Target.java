@@ -1,5 +1,7 @@
 package com.ikokoon.target;
 
+import java.io.Serializable;
+
 import org.apache.log4j.Logger;
 
 import com.ikokoon.target.one.One;
@@ -14,10 +16,10 @@ import com.ikokoon.target.two.Two;
  * @since 12.07.09
  * @version 01.00
  */
-public class Target implements ITarget {
+public class Target implements ITarget, Serializable {
 
 	/** The logger for the class. */
-	private Logger logger = Logger.getLogger(Target.class);
+	private transient Logger logger = Logger.getLogger(Target.class);
 
 	@SuppressWarnings("unused")
 	private String name;

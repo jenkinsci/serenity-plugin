@@ -2,6 +2,18 @@
 	<head>
 	</head>
 	<body>
+		<div style="max-height: 8px;" ></div>
+		<script type="text/javascript">
+			var project = "project";
+			document.applet.setModel(project);
+		</script>
+		<h1 >
+			<img src="${rootURL}/images/24x24/graph.gif" alt="The Serenity Report Icon" title="Serenity Graph" />
+				Project : ${it.name} &nbsp;
+			<b style="font-size: medium">Packages : ${it.project.packages}, Classes : ${it.project.classes}, Methods : ${it.project.methods}, Lines : ${it.project.lines}
+			</b>	
+		</h1>
+		<a href="#" title=""></a>	
 		<table border="0" width="100%">
 			<tr>
 				<td colspan="2">
@@ -37,7 +49,7 @@
 					<table width="100%" height="100%" border="0">
 						<tr>
 							<td height="210px">
-								<applet code="com.ikokoon.applet.TrendApplet" archive="serenity.jar" width="750" height="210" name="applet" id="applet" />
+								<applet code="com.ikokoon.serenity.applet.TrendApplet" codebase="../../../../target" archive="serenity.jar" width="750" height="210" name="applet" id="applet" />
 							</td>
 						</tr>
 						<tr>

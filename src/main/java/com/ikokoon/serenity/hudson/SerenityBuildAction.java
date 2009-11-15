@@ -32,7 +32,6 @@ public class SerenityBuildAction implements StaplerProxy, Action {
 	 *            the result from Serenity that will be presented to the front end
 	 */
 	public SerenityBuildAction(AbstractBuild owner, ISerenityResult result) {
-		System.out.println("SerenityBuildAction:");
 		if (owner == null) {
 			throw new RuntimeException("owner cannot be null");
 		}
@@ -44,7 +43,6 @@ public class SerenityBuildAction implements StaplerProxy, Action {
 	 * {@inheritDoc}
 	 */
 	public String getDisplayName() {
-		System.out.println("SerenityBuildAction:getDisplayName");
 		return "Serenity Report";
 	}
 
@@ -52,7 +50,6 @@ public class SerenityBuildAction implements StaplerProxy, Action {
 	 * {@inheritDoc}
 	 */
 	public String getIconFileName() {
-		System.out.println("SerenityBuildAction:getIconFile");
 		return "graph.gif";
 	}
 
@@ -60,7 +57,6 @@ public class SerenityBuildAction implements StaplerProxy, Action {
 	 * {@inheritDoc}
 	 */
 	public String getUrlName() {
-		System.out.println("SerenityBuildAction:getUrlName");
 		return "serenity";
 	}
 
@@ -68,17 +64,14 @@ public class SerenityBuildAction implements StaplerProxy, Action {
 	 * {@inheritDoc}
 	 */
 	public Object getTarget() {
-		System.out.println("SerenityBuildAction:getTarget");
 		return getResult();
 	}
 
 	private void setResult(ISerenityResult result) {
-		System.out.println("SerenityBuildAction:setResult");
 		this.result = new WeakReference(result);
 	}
 
 	public ISerenityResult getResult() {
-		System.out.println("SerenityBuildAction:getResult");
 		if (!hasResult()) {
 			// try to reload from file
 			reloadReport();
@@ -91,12 +84,10 @@ public class SerenityBuildAction implements StaplerProxy, Action {
 	}
 
 	private boolean hasResult() {
-		System.out.println("SerenityBuildAction:hasResult");
 		return result != null && result.get() != null;
 	}
 
 	private void reloadReport() {
-		System.out.println("SerenityBuildAction:reloadReport");
 		ISerenityResult result = new SerenityResult(owner);
 		setResult(result);
 	}

@@ -4,10 +4,58 @@
 			<link rel="stylesheet" href="/css/style.css" />
 		</head>
 		<body>
-			<div style="line-height: 8px">
+			<div style="line-height: 8px;">
 				<j:forEach var="package" items="${it.packages}">
-					<a href="${it.url}${'SerenityResult/classes'}?packageName=${package.name}" target="classes"
-						onclick="JavaScript:window.parent.document.applet.setMatrix('${package.name}');">
+					<a href="${it.url}${'SerenityResult/classes'}?packageName=${package.name}" onclick="JavaScript:window.parent.document.applet.setModel('model');"
+						title="Efferent: ${package.efferent}, Afferent: ${package.afferent}" target="classes">
+						<j:choose>
+							<j:when test="${package.coverage > package.COVERAGE_GOOD}">
+								<img src="${rootURL}/images/16x16/blue.gif" alt="Coverage good" title="Coverage for package good" height="8" width="8" />
+							</j:when>
+							<j:otherwise>
+								<j:choose>
+									<j:when test="${package.coverage > package.COVERAGE_OK}">
+										<img src="${rootURL}/images/16x16/yellow.gif" alt="Some coverage" title="Need more coverage, more unit tests" height="8" width="8" />
+									</j:when>
+									<j:otherwise>
+										<img src="${rootURL}/images/16x16/red.gif" alt="Very little coverage" title="No unit tests, only interfaces in package?" height="8"
+											width="8" />
+									</j:otherwise>
+								</j:choose>
+							</j:otherwise>
+						</j:choose>
+						<j:choose>
+							<j:when test="${package.complexity > package.COMPLEXITY_BAD}">
+								<img src="${rootURL}/images/16x16/red.gif" alt="Much too complex" title="Package much too complex, please refactor immediately" height="8"
+									width="8" />
+							</j:when>
+							<j:otherwise>
+								<j:choose>
+									<j:when test="${package.complexity > package.COMPLEXITY_OK}">
+										<img src="${rootURL}/images/16x16/yellow.gif" alt="Too complex" title="Package too complex, please refactor" height="8" width="8" />
+									</j:when>
+									<j:otherwise>
+										<img src="${rootURL}/images/16x16/blue.gif" alt="Good" title="Package complexity fine" height="8" width="8" />
+									</j:otherwise>
+								</j:choose>
+							</j:otherwise>
+						</j:choose>
+						<j:choose>
+							<j:when test="${package.stability > package.STABILITY_GOOD}">
+								<img src="${rootURL}/images/16x16/blue.gif" alt="Stability fine" title="Package stable" height="8" width="8" />
+							</j:when>
+							<j:otherwise>
+								<j:choose>
+									<j:when test="${package.stability > package.STABILITY_OK}">
+										<img src="${rootURL}/images/16x16/yellow.gif" alt="Stability not perfect" title="Package a little unstable, could be refactored" height="8"
+											width="8" />
+									</j:when>
+									<j:otherwise>
+										<img src="${rootURL}/images/16x16/blue.gif" alt="Unstable" title="Package unstable, needs refactoring" height="8" width="8" />
+									</j:otherwise>
+								</j:choose>
+							</j:otherwise>
+						</j:choose>
 						${package.name}
 					</a>
 					<br />

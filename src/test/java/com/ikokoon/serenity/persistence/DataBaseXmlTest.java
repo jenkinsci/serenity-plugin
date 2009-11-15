@@ -11,16 +11,17 @@ import java.util.List;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
+import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.IComposite;
 import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
-import com.ikokoon.serenity.model.Class;
 import com.ikokoon.toolkit.Toolkit;
 
 public class DataBaseXmlTest extends ATest {
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void insert() {
 		DataBaseXml dataBase = (DataBaseXml) this.dataBase;
 
@@ -42,6 +43,7 @@ public class DataBaseXmlTest extends ATest {
 		logger.info("Duration : " + duration + ", inserts per second : " + insertsPerSecond);
 	}
 
+	@SuppressWarnings("unchecked")
 	private LinkedList<IComposite<?, ?>> getList() {
 		DataBaseXml dataBase = (DataBaseXml) this.dataBase;
 
@@ -77,6 +79,7 @@ public class DataBaseXmlTest extends ATest {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void persist() {
 		// T object
 		Package pakkage = getPackage();
@@ -90,8 +93,9 @@ public class DataBaseXmlTest extends ATest {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void findId() {
-		// Class<T> klass, Long id
+		// Class<T> class, Long id
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
 		Line line = (Line) dataBase.find(5286208520220707252l);
@@ -99,6 +103,7 @@ public class DataBaseXmlTest extends ATest {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void findParameters() {
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
@@ -129,6 +134,7 @@ public class DataBaseXmlTest extends ATest {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void removeId() throws Exception {
 		// java.lang.Class<T> klass, Long id
 		Package pakkage = getPackage();
@@ -142,6 +148,7 @@ public class DataBaseXmlTest extends ATest {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void persistPerformance() throws Exception {
 		// Test the insert performance
 		double inserts = 100;
@@ -162,6 +169,7 @@ public class DataBaseXmlTest extends ATest {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void findPerformance() throws Exception {
 		long size = 10000;
 		for (int i = 0; i < size; i++) {

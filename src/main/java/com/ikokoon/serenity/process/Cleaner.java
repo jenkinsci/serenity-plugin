@@ -38,7 +38,7 @@ public class Cleaner extends AProcess implements IConstants {
 		// Clean all the packages that got in the database along the processing
 		// that were not included in the packages required and all the packages and classes
 		// that have been deleted that are still hanging around
-		IDataBase dataBase = IDataBase.DataBase.getDataBase(IConstants.DATABASE_FILE, false);
+		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(IConstants.DATABASE_FILE, false);
 		Project<?, ?> project = (Project<?, ?>) dataBase.find(Toolkit.hash(Project.class.getName()));
 		if (project != null) {
 			List<Package<?, ?>> packages = project.getChildren();

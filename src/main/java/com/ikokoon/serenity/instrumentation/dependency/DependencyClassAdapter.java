@@ -69,9 +69,9 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 				logger.debug(Arrays.asList(interfaces).toString());
 			}
 		}
-		Collector.collectMetrics(className, superName);
-		Collector.collectMetrics(className, interfaces);
-		Collector.collectMetrics(className, access);
+		Collector.collectEfferentAndAfferent(className, superName);
+		Collector.collectEfferentAndAfferent(className, interfaces);
+		Collector.collectInterface(className, access);
 		super.visit(version, access, className, signature, superName, interfaces);
 	}
 
@@ -83,7 +83,7 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 			logger.debug("visitAnnotation : " + desc + ", " + visible);
 		}
 		String[] annotationClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectMetrics(className, annotationClasses);
+		Collector.collectEfferentAndAfferent(className, annotationClasses);
 		return super.visitAnnotation(desc, visible);
 	}
 
@@ -114,9 +114,9 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 			logger.debug("visitField : " + access + ", " + fieldName + ", " + desc + ", " + signature + ", " + value);
 		}
 		String[] fieldClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectMetrics(className, fieldClasses);
+		Collector.collectEfferentAndAfferent(className, fieldClasses);
 		fieldClasses = Toolkit.byteCodeSignatureToClassNameArray(signature);
-		Collector.collectMetrics(className, fieldClasses);
+		Collector.collectEfferentAndAfferent(className, fieldClasses);
 		return super.visitField(access, fieldName, desc, signature, value);
 	}
 
@@ -153,9 +153,9 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 			logger.debug("visitOuterClass : " + owner + ", " + methodName + ", " + desc);
 		}
 		String[] outerClassClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectMetrics(owner, outerClassClasses);
+		Collector.collectEfferentAndAfferent(owner, outerClassClasses);
 		if (methodName != null) {
-			Collector.collectMetrics(methodName, outerClassClasses);
+			Collector.collectEfferentAndAfferent(methodName, outerClassClasses);
 		}
 		super.visitOuterClass(owner, methodName, desc);
 	}

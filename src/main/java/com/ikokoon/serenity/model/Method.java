@@ -3,6 +3,8 @@ package com.ikokoon.serenity.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.ikokoon.toolkit.Toolkit;
+
 /**
  * @author Michael Couck
  * @since 12.08.09
@@ -16,7 +18,7 @@ public class Method<E, F> extends Composite<Class<?, ?>, Line<?, ?>> implements 
 	private String description;
 	private double complexity;
 	private double lines;
-	private double totalLinesExecuted;
+	private double executed;
 	private double coverage;
 	private Date timestamp;
 
@@ -53,7 +55,7 @@ public class Method<E, F> extends Composite<Class<?, ?>, Line<?, ?>> implements 
 	}
 
 	public double getComplexity() {
-		return format(complexity, PRECISION);
+		return Toolkit.format(complexity, PRECISION);
 	}
 
 	public void setComplexity(double complexity) {
@@ -61,23 +63,23 @@ public class Method<E, F> extends Composite<Class<?, ?>, Line<?, ?>> implements 
 	}
 
 	public double getLines() {
-		return format(lines, PRECISION);
+		return Toolkit.format(lines, PRECISION);
 	}
 
 	public void setLines(double lines) {
 		this.lines = lines;
 	}
 
-	public double getTotalLinesExecuted() {
-		return totalLinesExecuted;
+	public double getExecuted() {
+		return executed;
 	}
 
-	public void setTotalLinesExecuted(double totalLinesExecuted) {
-		this.totalLinesExecuted = totalLinesExecuted;
+	public void setExecuted(double totalLinesExecuted) {
+		this.executed = totalLinesExecuted;
 	}
 
 	public double getCoverage() {
-		return format(coverage, PRECISION);
+		return Toolkit.format(coverage, PRECISION);
 	}
 
 	public void setCoverage(double coverage) {

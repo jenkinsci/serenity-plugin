@@ -39,7 +39,7 @@ public class Collector implements IConstants {
 	private static IDataBase dataBase;
 	static {
 		try {
-			dataBase = IDataBase.DataBase.getDataBase(IConstants.DATABASE_FILE, true);
+			dataBase = IDataBase.DataBaseManager.getDataBase(IConstants.DATABASE_FILE, true);
 			// Reset the counter for all the lines
 			Project<?, ?> project = (Project<?, ?>) dataBase.find(Toolkit.hash(Project.class.getName()));
 			for (Package<?, ?> pakkage : ((List<Package<?, ?>>) project.getChildren())) {
@@ -89,23 +89,6 @@ public class Collector implements IConstants {
 		getLine(className, methodName, methodDescription, lineNumber);
 	}
 
-	/**
-	 * This method collects the number of lines in a method. Note that for constructors the instance variables that are instanciated and allocated
-	 * space on the stack are also counted as a line in the constructor.
-	 * 
-	 * @param className
-	 *            the name of the class
-	 * @param methodName
-	 *            the name of the method
-	 * @param methodDescription
-	 *            the description or signature of the method
-	 * @param lineCounter
-	 *            the number of lines in the method
-	 */
-	public static final void collectCoverage(String className, String methodName, String methodDescription) {
-		getMethod(className, methodName, methodDescription);
-	}
-
 	public static final void collectSource(String className, String source) {
 		Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
 		klass.setSource(source);
@@ -136,7 +119,7 @@ public class Collector implements IConstants {
 	 * @param targetClassNames
 	 *            the referenced class names
 	 */
-	public static final void collectMetrics(String className, String... targetClassNames) {
+	public static final void collectEfferentAndAfferent(String className, String... targetClassNames) {
 		String packageName = Toolkit.classNameToPackageName(className);
 		for (String targetClassName : targetClassNames) {
 			// Is the target name outside the package for this class
@@ -175,7 +158,7 @@ public class Collector implements IConstants {
 	 * @param access
 	 *            the access opcode associated to the class
 	 */
-	public static final void collectMetrics(String className, Integer access) {
+	public static final void collectInterface(String className, Integer access) {
 		if (access.intValue() == 1537) {
 			Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
 			if (!klass.getInterfaze()) {
@@ -184,6 +167,7 @@ public class Collector implements IConstants {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private static final Package<Project<?, ?>, Class<?, ?>> getPackage(String className) {
 		className = Toolkit.slashToDot(className);
 		String packageName = Toolkit.classNameToPackageName(className);
@@ -201,7 +185,7 @@ public class Collector implements IConstants {
 			pakkage.setStability(0d);
 			pakkage.setDistance(0d);
 			pakkage.setInterfaces(0d);
-			pakkage.setImplementations(0d);
+			pakkage.setImplement(0d);
 			pakkage.setTimestamp(timestamp);
 			pakkage = (Package<Project<?, ?>, Class<?, ?>>) dataBase.persist(pakkage);
 
@@ -214,6 +198,7 @@ public class Collector implements IConstants {
 		return pakkage;
 	}
 
+	@SuppressWarnings("unchecked")
 	private static final Class<Package<?, ?>, Method<?, ?>> getClass(String className) {
 		className = Toolkit.slashToDot(className);
 
@@ -237,13 +222,14 @@ public class Collector implements IConstants {
 			pakkage.getChildren().add(klass);
 			klass.setParent(pakkage);
 
-			klass = (Class) dataBase.persist(klass);
+			klass = (Class<?, ?>) dataBase.persist(klass);
 			LOGGER.debug("Added class  : " + klass);
 		}
 		return klass;
 	}
 
-	private static final Method getMethod(String className, String methodName, String methodDescription) {
+	@SuppressWarnings("unchecked")
+	private static final Method<?, ?> getMethod(String className, String methodName, String methodDescription) {
 		className = Toolkit.slashToDot(className);
 		methodName = methodName.replace('<', ' ').replace('>', ' ').trim();
 
@@ -276,7 +262,8 @@ public class Collector implements IConstants {
 		return method;
 	}
 
-	protected static final Line getLine(String className, String methodName, String methodDescription, String lineNumber) {
+	@SuppressWarnings("unchecked")
+	protected static final Line<?, ?> getLine(String className, String methodName, String methodDescription, String lineNumber) {
 		Line line = null;
 		double lineNumberDouble = Double.parseDouble(lineNumber);
 		className = Toolkit.slashToDot(className);
@@ -306,7 +293,7 @@ public class Collector implements IConstants {
 		return line;
 	}
 
-	private static final Efferent getEfferent(Class klass, String packageName) {
+	private static final Efferent getEfferent(Class<?, ?> klass, String packageName) {
 		List<Object> parameters = new ArrayList<Object>();
 
 		StringBuilder builder = new StringBuilder("<");
@@ -329,7 +316,7 @@ public class Collector implements IConstants {
 		return efferent;
 	}
 
-	private static final Afferent getAfferent(Class klass, String packageName) {
+	private static final Afferent getAfferent(Class<?, ?> klass, String packageName) {
 		List<Object> parameters = new ArrayList<Object>();
 
 		StringBuilder builder = new StringBuilder("<");

@@ -3,6 +3,7 @@ package com.ikokoon.serenity.persistence;
 import java.io.File;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.neodatis.odb.ODB;
 import org.neodatis.odb.ODBFactory;
 import org.neodatis.odb.Objects;
@@ -18,8 +19,9 @@ import com.ikokoon.toolkit.Toolkit;
  * @since 11.10.09
  * @version 01.00
  */
-public class DataBaseXml extends ADataBase {
+public final class DataBaseXml implements IDataBase {
 
+	private Logger logger = Logger.getLogger(this.getClass());
 	/** The project for the build. */
 	private Project<Object, Package> project;
 	/** The object database from Neodatis. */
@@ -35,7 +37,7 @@ public class DataBaseXml extends ADataBase {
 	 * @param create
 	 */
 	@SuppressWarnings("unchecked")
-	public DataBaseXml(String dataBaseFile, boolean create) {
+	DataBaseXml(String dataBaseFile, boolean create) {
 		this.dataBaseFile = dataBaseFile;
 		logger.info("Opening database on file : " + dataBaseFile);
 		try {
@@ -149,12 +151,12 @@ public class DataBaseXml extends ADataBase {
 	 *            a list of already set id fields
 	 */
 	@SuppressWarnings("unchecked")
-	protected synchronized final <T> void setIds(IComposite<?, ?> composite) {
+	synchronized final <T> void setIds(IComposite<?, ?> composite) {
 		if (composite == null) {
 			return;
 		}
 		if (composite.getId() == null) {
-			Object[] uniqueValues = getUniqueValues(composite);
+			Object[] uniqueValues = Toolkit.getUniqueValues(composite);
 			Long id = Toolkit.hash(uniqueValues);
 			composite.setId(id);
 		}
@@ -173,7 +175,7 @@ public class DataBaseXml extends ADataBase {
 	 * @param id
 	 * @return
 	 */
-	protected IComposite<?, ?> search(List<IComposite<?, ?>> index, long id) {
+	final IComposite<?, ?> search(List<IComposite<?, ?>> index, long id) {
 		int low = 0;
 		int high = index.size() - 1;
 		while (low <= high) {
@@ -198,7 +200,7 @@ public class DataBaseXml extends ADataBase {
 	 * @param toInsert
 	 * @param key
 	 */
-	protected void insert(List<IComposite<?, ?>> index, IComposite<?, ?> toInsert) {
+	final void insert(List<IComposite<?, ?>> index, IComposite<?, ?> toInsert) {
 		if (index.size() == 0) {
 			index.add(toInsert);
 			return;

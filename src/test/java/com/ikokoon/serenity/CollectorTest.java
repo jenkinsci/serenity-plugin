@@ -1,6 +1,5 @@
 package com.ikokoon.serenity;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -11,12 +10,10 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import com.ikokoon.IConstants;
-import com.ikokoon.serenity.Collector;
-import com.ikokoon.serenity.Configuration;
 import com.ikokoon.serenity.model.Afferent;
+import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
-import com.ikokoon.serenity.model.Class;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -30,6 +27,7 @@ import com.ikokoon.toolkit.Toolkit;
 public class CollectorTest extends ATest implements IConstants {
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void collectCoverageLineExecutor() {
 		Configuration.getConfiguration().includedPackages.add(packageName);
 		Configuration.getConfiguration().includedPackages.add(Toolkit.dotToSlash(packageName));
@@ -53,24 +51,9 @@ public class CollectorTest extends ATest implements IConstants {
 	}
 
 	@Test
-	public void collectCoverageLineCounter() {
-		Collector.collectCoverage(className, methodName, methodDescription);
-		List<Object> parameters = new ArrayList<Object>();
-		parameters.add(className);
-		Class klass = (Class) dataBase.find(parameters);
-
-		parameters.clear();
-		parameters.add(klass.getName());
-		parameters.add(methodName);
-		parameters.add(methodDescription);
-		Method method = (Method) dataBase.find(parameters);
-		assertNotNull(method);
-		assertEquals(methodName, method.getName());
-	}
-
-	@Test
+	@SuppressWarnings("unchecked")
 	public void collectMetricsInterface() {
-		Collector.collectMetrics(className, access);
+		Collector.collectInterface(className, access);
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(className);
 		Class klass = (Class) dataBase.find(parameters);
@@ -79,6 +62,7 @@ public class CollectorTest extends ATest implements IConstants {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void collectComplexity() {
 		Collector.collectComplexity(className, methodName, methodDescription, complexity, 1000);
 		List<Object> parameters = new ArrayList<Object>();
@@ -91,8 +75,9 @@ public class CollectorTest extends ATest implements IConstants {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void collectMetricsAfferentEfferent() {
-		Collector.collectMetrics(className, Logger.class.getName());
+		Collector.collectEfferentAndAfferent(className, Logger.class.getName());
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(packageName);
 		Package<?, ?> pakkage = (Package) dataBase.find(parameters);

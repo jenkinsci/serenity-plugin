@@ -13,6 +13,7 @@ import com.ikokoon.serenity.ATest;
 public class ObjectFactoryTest extends ATest {
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void getObject() throws Exception {
 		InputStream inputStream = new ByteArrayInputStream(new byte[0]);
 		Object[] parameters = new Object[] { inputStream, new String("Dummy") };

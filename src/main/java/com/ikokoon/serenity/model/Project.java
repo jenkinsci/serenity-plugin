@@ -16,17 +16,29 @@ public class Project<E, F> extends Composite<Object, Package<?, ?>> implements S
 	private String name = this.getClass().getName();
 	private Date timestamp;
 
-	private double totalLines;
-	private double totalLinesExecuted;
+	@Legend(name = COVERAGE, limits = { COVERAGE_GOOD, COVERAGE_OK, COVERAGE_BAD }, positive = 1.0)
+	private double coverage;
+	@Legend(name = COMPLEXITY, limits = { COMPLEXITY_GOOD, COMPLEXITY_OK, COMPLEXITY_BAD })
+	private double complexity;
+	@Legend(name = ABSTRACTNESS, limits = { ABSTRACTNESS_GOOD, ABSTRACTNESS_OK, ABSTRACTNESS_BAD }, positive = 1.0)
+	private double abstractness;
+	@Legend(name = STABILITY, limits = { STABILITY_GOOD, STABILITY_OK, STABILITY_BAD }, positive = 1.0)
+	private double stability;
+	@Legend(name = DISTANCE, limits = { DISTANCE_GOOD, DISTANCE_OK, DISTANCE_BAD }, positive = 1.0)
+	private double distance;
+	@Legend(name = LINES, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
+	private double lines;
+	@Legend(name = METHODS, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
+	private double methods;
+	@Legend(name = CLASSES, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
+	private double classes;
+	@Legend(name = PACKAGES, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
+	private double packages;
 
-	private double totalMethods;
-	private double totalMethodsExecuted;
-
-	private double totalClasses;
-	private double totalClassesExecuted;
-
-	private double totalPackages;
-	private double totalPackagesExecuted;
+	private double linesExecuted;
+	private double methodsExecuted;
+	private double classesExecuted;
+	private double packagesExecuted;
 
 	private List<IComposite<?, ?>> index = new ArrayList<IComposite<?, ?>>();
 
@@ -38,6 +50,46 @@ public class Project<E, F> extends Composite<Object, Package<?, ?>> implements S
 		this.name = name;
 	}
 
+	public double getComplexity() {
+		return complexity;
+	}
+
+	public void setComplexity(double complex) {
+		this.complexity = complex;
+	}
+
+	public double getCoverage() {
+		return coverage;
+	}
+
+	public void setCoverage(double coverage) {
+		this.coverage = coverage;
+	}
+
+	public double getAbstractness() {
+		return abstractness;
+	}
+
+	public void setAbstractness(double abstrakt) {
+		this.abstractness = abstrakt;
+	}
+
+	public double getStability() {
+		return stability;
+	}
+
+	public void setStability(double stability) {
+		this.stability = stability;
+	}
+
+	public double getDistance() {
+		return distance;
+	}
+
+	public void setDistance(double distance) {
+		this.distance = distance;
+	}
+
 	public Date getTimestamp() {
 		return timestamp;
 	}
@@ -46,68 +98,68 @@ public class Project<E, F> extends Composite<Object, Package<?, ?>> implements S
 		this.timestamp = timestamp;
 	}
 
-	public double getTotalLines() {
-		return totalLines;
+	public double getLines() {
+		return lines;
 	}
 
-	public void setTotalLines(double totalLines) {
-		this.totalLines = totalLines;
+	public void setLines(double totalLines) {
+		this.lines = totalLines;
 	}
 
-	public double getTotalMethods() {
-		return totalMethods;
+	public double getMethods() {
+		return methods;
 	}
 
-	public void setTotalMethods(double totalMethods) {
-		this.totalMethods = totalMethods;
+	public void setMethods(double totalMethods) {
+		this.methods = totalMethods;
 	}
 
-	public double getTotalLinesExecuted() {
-		return totalLinesExecuted;
+	public double getLinesExecuted() {
+		return linesExecuted;
 	}
 
-	public void setTotalLinesExecuted(double totalLinesExecuted) {
-		this.totalLinesExecuted = totalLinesExecuted;
+	public void setLinesExecuted(double totalLinesExecuted) {
+		this.linesExecuted = totalLinesExecuted;
 	}
 
-	public double getTotalMethodsExecuted() {
-		return totalMethodsExecuted;
+	public double getMethodsExecuted() {
+		return methodsExecuted;
 	}
 
-	public void setTotalMethodsExecuted(double totalMethodsExecuted) {
-		this.totalMethodsExecuted = totalMethodsExecuted;
+	public void setMethodsExecuted(double totalMethodsExecuted) {
+		this.methodsExecuted = totalMethodsExecuted;
 	}
 
-	public double getTotalClasses() {
-		return totalClasses;
+	public double getClasses() {
+		return classes;
 	}
 
-	public void setTotalClasses(double totalClasses) {
-		this.totalClasses = totalClasses;
+	public void setClasses(double totalClasses) {
+		this.classes = totalClasses;
 	}
 
-	public double getTotalClassesExecuted() {
-		return totalClassesExecuted;
+	public double getClassesExecuted() {
+		return classesExecuted;
 	}
 
-	public void setTotalClassesExecuted(double totalClassesExecuted) {
-		this.totalClassesExecuted = totalClassesExecuted;
+	public void setClassesExecuted(double totalClassesExecuted) {
+		this.classesExecuted = totalClassesExecuted;
 	}
 
-	public double getTotalPackages() {
-		return totalPackages;
+	public double getPackages() {
+		return packages;
 	}
 
-	public void setTotalPackages(double totalPackages) {
-		this.totalPackages = totalPackages;
+	public void setPackages(double totalPackages) {
+		this.packages = totalPackages;
 	}
 
-	public double getTotalPackagesExecuted() {
-		return totalPackagesExecuted;
+	public double getPackagesExecuted() {
+		return packagesExecuted;
 	}
 
-	public void setTotalPackagesExecuted(double totalPackagesExecuted) {
-		this.totalPackagesExecuted = totalPackagesExecuted;
+	public void setPackagesExecuted(double totalPackagesExecuted) {
+		this.packagesExecuted = totalPackagesExecuted;
 	}
 
 	public List<IComposite<?, ?>> getIndex() {

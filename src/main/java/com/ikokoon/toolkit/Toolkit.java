@@ -1,5 +1,6 @@
 package com.ikokoon.toolkit;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,12 +8,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
+
+import com.ikokoon.serenity.model.Unique;
 
 /**
  * This class contains methods for changing a string to the byte code representation and visa versa. Also some other nifty functions like stripping a
@@ -498,6 +503,134 @@ public class Toolkit {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Formats a double to the required precision.
+	 * 
+	 * @param d
+	 *            the double to format
+	 * @param precision
+	 *            the precision for the result
+	 * @return the double formatted to the required precision
+	 */
+	public static double format(double d, int precision) {
+		String doubleString = Double.toString(d);
+		doubleString = format(doubleString, precision);
+		try {
+			d = Double.parseDouble(doubleString);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return d;
+	}
+
+	/**
+	 * Formats a string to the desired precision.
+	 * 
+	 * @param string
+	 *            the string to format to a precision
+	 * @param precision
+	 *            the precision of the result
+	 * @return the string formatted to the required precision
+	 */
+	public static String format(String string, int precision) {
+		if (string == null) {
+			return string;
+		}
+		char[] chars = string.trim().toCharArray();
+		StringBuilder builder = new StringBuilder();
+		int decimal = 1;
+		int state = 0;
+		int decimals = 0;
+		for (char c : chars) {
+			switch (c) {
+			case '.':
+			case ',':
+				state = decimal;
+				builder.append(c);
+				break;
+			default:
+				if (state == decimal) {
+					if (decimals++ >= precision) {
+						break;
+					}
+				}
+				builder.append(c);
+				break;
+			}
+		}
+		return builder.toString();
+	}
+
+	/**
+	 * Serializes an object to a byte array then to a base 64 string of the byte array.
+	 * 
+	 * @param object
+	 *            the object to serialise to base 64
+	 * @return the string representation of the object in serialised base 64
+	 */
+	public static String serializeToBase64(Object object) {
+		String base64 = null;
+		try {
+			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+			objectOutputStream.writeObject(object);
+			byte[] bytes = byteArrayOutputStream.toByteArray();
+			base64 = Base64.encode(bytes);
+			base64 = base64.replaceAll("\n", "");
+			base64 = base64.replaceAll("\r", "");
+			base64 = base64.replaceAll("\t", "");
+		} catch (Exception e) {
+			logger.error("Exception serializing the object : " + object, e);
+		}
+		return base64;
+	}
+
+	/**
+	 * De-serializes an object from a base 64 string to an object.
+	 * 
+	 * @param base64
+	 *            the base 64 string representation of the object
+	 * @return the object de-serialised from the string or null if an exception is thrown
+	 */
+	public static Object deserializeFromBase64(String base64) {
+		byte[] bytes = Base64.decode(base64);
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+		try {
+			ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
+			return objectInputStream.readObject();
+		} catch (Exception e) {
+			logger.error("Exception deserializing the object from the base 64 string : " + base64, e);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns an array of values that are defined as being a unique combination for the entity by using the Unique annotation for the class.
+	 * 
+	 * @param <T>
+	 *            the type of object to be inspected for unique fields
+	 * @param t
+	 *            the object t inspect for unique field combinations
+	 * @return the array of unique field values for the entity
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T[] getUniqueValues(T t) {
+		Unique unique = t.getClass().getAnnotation(Unique.class);
+		if (unique == null) {
+			return (T[]) new Object[] { t };
+		}
+		String[] fields = unique.fields();
+		List<T> values = new ArrayList<T>();
+		for (String field : fields) {
+			Object value = Toolkit.getValue(Object.class, t, field);
+			T[] uniqueValues = (T[]) getUniqueValues(value);
+			for (T uniqueValue : uniqueValues) {
+				values.add(uniqueValue);
+			}
+		}
+		return (T[]) values.toArray(new Object[values.size()]);
 	}
 
 }

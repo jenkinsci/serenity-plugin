@@ -11,13 +11,6 @@ import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassVisitor;
 
 import com.ikokoon.IConstants;
-import com.ikokoon.serenity.instrumentation.complexity.ComplexityClassAdapter;
-import com.ikokoon.serenity.instrumentation.coverage.CoverageClassAdapter;
-import com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapter;
-import com.ikokoon.serenity.instrumentation.profiling.ProfilingClassAdapter;
-import com.ikokoon.serenity.persistence.IDataBase;
-import com.ikokoon.serenity.process.Accumulator;
-import com.ikokoon.serenity.process.Aggregator;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -108,15 +101,15 @@ public class Configuration {
 		excludedPackages.add(Object.class.getPackage().getName());
 		excludedPackages.add(Collection.class.getPackage().getName());
 
-		excludedPackages.add(Accumulator.class.getSimpleName());
-		excludedPackages.add(Aggregator.class.getSimpleName());
+		// excludedPackages.add(Accumulator.class.getSimpleName());
+		// excludedPackages.add(Aggregator.class.getSimpleName());
 		excludedPackages.add(Collector.class.getSimpleName());
 		excludedPackages.add(Transformer.class.getSimpleName());
-		excludedPackages.add(CoverageClassAdapter.class.getPackage().getName());
-		excludedPackages.add(ComplexityClassAdapter.class.getPackage().getName());
-		excludedPackages.add(DependencyClassAdapter.class.getPackage().getName());
-		excludedPackages.add(ProfilingClassAdapter.class.getPackage().getName());
-		excludedPackages.add(IDataBase.class.getPackage().getName());
+		// excludedPackages.add(CoverageClassAdapter.class.getPackage().getName());
+		// excludedPackages.add(ComplexityClassAdapter.class.getPackage().getName());
+		// excludedPackages.add(DependencyClassAdapter.class.getPackage().getName());
+		// excludedPackages.add(ProfilingClassAdapter.class.getPackage().getName());
+		// excludedPackages.add(IDataBase.class.getPackage().getName());
 	}
 
 	/**

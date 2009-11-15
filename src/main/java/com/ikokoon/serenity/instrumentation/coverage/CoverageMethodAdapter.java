@@ -72,14 +72,4 @@ public class CoverageMethodAdapter extends MethodAdapter {
 		super.visitLineNumber(lineNumber, label);
 	}
 
-	/**
-	 * Visits the end of the method, at which point we know how many lines were called by threads.
-	 */
-	@Override
-	public void visitEnd() {
-		logger.debug("visitEnd : " + className + ", method name : " + methodName);
-		Collector.collectCoverage(className, methodName, methodDescription);
-		super.visitEnd();
-	}
-
 }

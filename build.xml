@@ -44,9 +44,11 @@
 
 	<target name="copy">
 		<delete file="../Dummy/lib/serenity.jar" failonerror="true" />
-		<copy todir="../Dummy/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" />
+		<copy todir="../Dummy/lib/" file="${serenity.jar}" overwrite="true" failonerror="true" />
 		<delete file="../Findbugs/lib/serenity.jar" failonerror="true" />
-		<copy todir="../Findbugs/lib/" file="${serenity.jar}" overwrite="false" failonerror="true" />
+		<copy todir="../Findbugs/lib/" file="${serenity.jar}" overwrite="true" failonerror="true" />
+		<delete file="target/work/webapp/serenity.jar" failonerror="true" />
+		<copy todir="target/work/webapp/hudson" file="${serenity.jar}" overwrite="true" failonerror="true" />
 	</target>
 
 	<!-- Clean the output directory -->

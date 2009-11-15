@@ -9,8 +9,15 @@
 						<table>
 							<tr>
 								<td>
-									<b>Metrics : Classes : ${it.project.totalClasses}, Methods : ${it.project.totalMethods}, Lines : ${it.project.totalLines}, Executed :
-										${it.project.totalLinesExecuted}</b>
+									<h1>
+										<a href="#" onclick="JavaScript:document.applet.setModel('project');">
+											<img src="${rootURL}/images/24x24/graph.gif" alt="The Serenity Report Icon" title="Serenity Graph" />
+											Project : ${it.name}
+										</a>
+										<b style="font-size: 12px;">(packages : ${it.project.packages}, classes : ${it.project.classes}, methods :
+											${it.project.methods}, lines :
+											${it.project.lines})</b>
+									</h1>
 								</td>
 							</tr>
 						</table>
@@ -35,15 +42,16 @@
 							</tr>
 						</table>
 					</td>
-					<td width="70%" height="600">
+					<td width="70%" height="800">
 						<table width="100%" height="100%" border="0">
 							<tr>
-								<td height="100px">
-									<applet code="com.ikokoon.applet.TrendApplet" archive="http://www.ikokoon.com/ikokoon/serenity.jar" width="600" height="95" name="applet" />
+								<td height="180">
+									<!-- http://localhost:8080 -->
+									<applet code="com.ikokoon.serenity.applet.TrendApplet" archive="/hudson/serenity.jar" width="750" height="180" name="applet" id="applet" />
 								</td>
 							</tr>
 							<tr>
-								<td height="500px">
+								<td height="620px">
 									<iframe src="source" width="100%" height="100%" id="source" name="source" frameborder="0">
 										<p>Your browser does not support internal frames.</p>
 									</iframe>

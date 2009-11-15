@@ -7,10 +7,10 @@ public class DataBaseDump {
 	@Test
 	public void dump() {
 		// File file = new File("C:/Eclipse/workspace/serenity/serenity/serenity.db");
-		// IDataBase dataBase = IDataBase.DataBase.getDataBase(file.getAbsolutePath());
+		// IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(file.getAbsolutePath());
 		// Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
 		// logger.info(project);
-		// dataBase = (ADataBase) IDataBase.DataBase.getDataBase();
+		// dataBase = (ADataBase) IDataBase.DataBaseManager.getDataBase();
 
 		// OdbConfiguration.setDebugEnabled(true);
 		// OdbConfiguration.setAutomaticCloseFileOnExit(true);

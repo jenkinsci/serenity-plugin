@@ -67,7 +67,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				LOGGER.info("Writing and finalizing the persistence");
-				IDataBase dataBase = IDataBase.DataBase.getDataBase(IConstants.DATABASE_FILE, false);
+				IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(IConstants.DATABASE_FILE, false);
 				new Cleaner(null).execute();
 				new Aggregator(null, dataBase).execute();
 				dataBase.close();

@@ -19,7 +19,6 @@ import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.model.Project;
-import com.ikokoon.serenity.persistence.ADataBase;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.target.Target;
 import com.ikokoon.target.one.One;
@@ -36,7 +35,7 @@ public abstract class ATest implements IConstants {
 
 	protected static Logger logger;
 
-	protected ADataBase dataBase;
+	protected IDataBase dataBase;
 
 	protected String packageName = One.class.getPackage().getName();
 	protected String className = One.class.getName();
@@ -71,14 +70,15 @@ public abstract class ATest implements IConstants {
 		// OdbConfiguration.setDebugEnabled(true);
 		// OdbConfiguration.setAutomaticCloseFileOnExit(true);
 		// OdbConfiguration.setDisplayWarnings(true);
-		dataBase = (ADataBase) IDataBase.DataBase.getDataBase(IConstants.DATABASE_FILE, true);
-		Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
+		dataBase = IDataBase.DataBaseManager.getDataBase(IConstants.DATABASE_FILE, true);
+		Project<?, ?> project = (Project<?, ?>) dataBase.find(Toolkit.hash(Project.class.getName()));
 		project.getChildren().clear();
 		project.getIndex().clear();
 		project.getIndex().add(project);
 	}
 
-	protected Package getPackage() {
+	@SuppressWarnings("unchecked")
+	protected Package<?, ?> getPackage() {
 		Package pakkage = new Package();
 		pakkage.setAbstractness(1d);
 		pakkage.setAfferent(1d);
@@ -87,7 +87,7 @@ public abstract class ATest implements IConstants {
 		pakkage.setCoverage(1d);
 		pakkage.setDistance(1d);
 		pakkage.setEfferent(1d);
-		pakkage.setImplementations(1d);
+		pakkage.setImplement(1d);
 		pakkage.setInterfaces(1d);
 		pakkage.setName(packageName);
 		pakkage.setStability(1d);
@@ -95,7 +95,8 @@ public abstract class ATest implements IConstants {
 		return pakkage;
 	}
 
-	protected Class getClass(Package pakkage) {
+	@SuppressWarnings("unchecked")
+	protected Class<?, ?> getClass(Package<?, ?> pakkage) {
 		Class klass = new Class();
 		klass.setParent(pakkage);
 		pakkage.getChildren().add(klass);
@@ -120,7 +121,8 @@ public abstract class ATest implements IConstants {
 		return klass;
 	}
 
-	protected Method getMethod(Class klass) {
+	@SuppressWarnings("unchecked")
+	protected Method<?, ?> getMethod(Class<?, ?> klass) {
 		Method method = new Method();
 		method.setParent(klass);
 		method.setClassName(klass.getName());
@@ -134,7 +136,8 @@ public abstract class ATest implements IConstants {
 		return method;
 	}
 
-	protected Line getLine(Method method) {
+	@SuppressWarnings("unchecked")
+	protected Line<?, ?> getLine(Method<?, ?> method) {
 		Line line = new Line();
 		line.setCounter(1d);
 		line.setNumber(lineNumber);

@@ -13,11 +13,13 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import com.ikokoon.IConstants;
+import com.ikokoon.serenity.hudson.modeller.IModeller;
+import com.ikokoon.serenity.hudson.modeller.Modeller;
+import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.IComposite;
 import com.ikokoon.serenity.model.Method;
-import com.ikokoon.serenity.model.Project;
 import com.ikokoon.serenity.model.Package;
-import com.ikokoon.serenity.model.Class;
+import com.ikokoon.serenity.model.Project;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.toolkit.Toolkit;
 
@@ -29,12 +31,6 @@ import com.ikokoon.toolkit.Toolkit;
  * @version 01.00
  */
 public class SerenityResult implements ISerenityResult {
-
-	private static final String TAB = "tab";
-	private static final String PACKAGE_NAME = "packageName";
-	private static final String CLASS_NAME = "className";
-	private static final String METHOD_NAME = "methodName";
-	private static final String METHOD_DESCRIPTION = "methodDescription";
 
 	private Logger logger = Logger.getLogger(SerenityResult.class);
 	/** Owner is necessary to render the sidepanel jelly */
@@ -51,8 +47,10 @@ public class SerenityResult implements ISerenityResult {
 	private Class<?, ?> klass;
 	/** The method that the user specified from the front end. */
 	private Method<?, ?> method;
-	/** The active tab in the ui. */
-	private String tab;
+	/** The model for the currently selected composite. */
+	private String model;
+	/** The project model string in base 64. */
+	private String projectModel;
 
 	/**
 	 * Constructor takes the real action that generated the build for the project.
@@ -61,11 +59,13 @@ public class SerenityResult implements ISerenityResult {
 	 *            the build action that generated the build for the project
 	 */
 	public SerenityResult(AbstractBuild<?, ?> abstractBuild) {
-		logger.info("SerenityResult:serenityResult");
+		logger.debug("SerenityResult");
 		this.owner = abstractBuild;
 		String dataBaseFile = owner.getRootDir().getAbsolutePath() + File.separator + IConstants.DATABASE_FILE;
-		dataBase = IDataBase.DataBase.getDataBase(dataBaseFile, false);
+		logger.debug("Opening database on file : " + dataBaseFile);
+		dataBase = IDataBase.DataBaseManager.getDataBase(dataBaseFile, false);
 		project = (Project<?, ?>) dataBase.find(Toolkit.hash(Project.class.getName()));
+		this.projectModel = getModel(project);
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class SerenityResult implements ISerenityResult {
 	 * @throws IOException
 	 */
 	public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) throws IOException {
-		logger.error("SerenityResult:getDynamic:" + token);
+		logger.error("getDynamic:" + token);
 
 		List<Object> parameters = new ArrayList<Object>();
 
@@ -91,9 +91,10 @@ public class SerenityResult implements ISerenityResult {
 		String className = req.getParameter(CLASS_NAME);
 		String methodName = req.getParameter(METHOD_NAME);
 		String methodDescription = req.getParameter(METHOD_DESCRIPTION);
-		this.tab = req.getParameter(TAB);
 
-		logger.error("Package name : " + packageName + ", class name : " + className + ", method name : " + methodName + ", method description : "
+		logger.info("Parameter map : " + req.getParameterMap());
+
+		logger.debug("Package name : " + packageName + ", class name : " + className + ", method name : " + methodName + ", method description : "
 				+ methodDescription);
 
 		if (className != null && methodName != null && methodDescription != null) {
@@ -106,14 +107,15 @@ public class SerenityResult implements ISerenityResult {
 			parameters.clear();
 			parameters.add(className);
 			this.klass = (Class<?, ?>) dataBase.find(parameters);
+			this.model = getModel(this.klass);
 		} else if (packageName != null) {
 			parameters.clear();
 			parameters.add(packageName);
 			this.pakkage = (Package<?, ?>) dataBase.find(parameters);
+			this.model = getModel(this.pakkage);
 		}
 
-		logger.error("Package : " + pakkage + ", class : " + klass + ", method : " + method);
-		logger.error("Url : 1 : " + url);
+		logger.debug("Package : " + pakkage + ", class : " + klass + ", method : " + method);
 
 		url = req.getOriginalRequestURI();
 		int endIndex = url.indexOf(this.getClass().getSimpleName());
@@ -121,7 +123,7 @@ public class SerenityResult implements ISerenityResult {
 			url = url.substring(0, endIndex);
 		}
 
-		logger.error("Url : 2 : " + url);
+		logger.debug("Url : 2 : " + url);
 		return this;
 	}
 
@@ -129,19 +131,14 @@ public class SerenityResult implements ISerenityResult {
 		return url;
 	}
 
-	public String getTab() {
-		logger.error("SerenityResult:getTab : " + tab);
-		return this.tab;
-	}
-
 	public Object getOwner() {
-		logger.info("SerenityResult:getOwner");
+		logger.debug("getOwner");
 		return this.owner;
 	}
 
 	public boolean hasReport() {
-		logger.info("SerenityResult:hasReport");
-		return dataBase != null;
+		logger.debug("hasReport");
+		return project != null;
 	}
 
 	public Project<?, ?> getProject() {
@@ -150,32 +147,72 @@ public class SerenityResult implements ISerenityResult {
 
 	@SuppressWarnings("unchecked")
 	public List<Package> getPackages() {
-		Project project = getProject().getClass().cast(getProject());
+		Project project = this.project.getClass().cast(this.project);
 		List<Package> packages = project.getChildren().getClass().cast(project.getChildren());
 		return packages;
 	}
 
 	public Package<?, ?> getPackage() {
-		logger.info("SerenityResult:getPackage");
+		logger.debug("getPackage");
 		return pakkage;
 	}
 
 	public Class<?, ?> getKlass() {
-		logger.info("SerenityResult:getKlass");
+		logger.debug("getKlass");
 		return klass;
 	}
 
 	public Method<?, ?> getMethod() {
-		logger.info("SerenityResult:getMethod");
+		logger.debug("getMethod");
 		return method;
 	}
 
+	public String getProjectModel() {
+		return this.projectModel;
+	}
+
+	public String getModel() {
+		return this.model;
+	}
+
+	public String getModel(String parameter) {
+		logger.info("getModel(parameter):" + parameter);
+		return this.model;
+	}
+
 	public String getModel(IComposite<?, ?> composite) {
-		return null;
+		logger.debug("Composite : " + composite);
+		ArrayList<IComposite<?, ?>> composites = new ArrayList<IComposite<?, ?>>();
+		composites.add(composite);
+		Object[] uniqueValues = Toolkit.getUniqueValues(composite);
+		Long id = Toolkit.hash(uniqueValues);
+		composites = getPreviousComposites(owner, id, composites, 1);
+		IModeller modeller = new Modeller();
+		modeller.visit(composite.getClass(), composites.toArray(new IComposite[composites.size()]));
+		return modeller.getModel();
+	}
+
+	private ArrayList<IComposite<?, ?>> getPreviousComposites(AbstractBuild<?, ?> abstractBuild, Long id, ArrayList<IComposite<?, ?>> composites,
+			int history) {
+		if (history >= HISTORY) {
+			return composites;
+		}
+		logger.debug("Abstract build : " + abstractBuild);
+		AbstractBuild<?, ?> previousBuild = abstractBuild.getPreviousBuild();
+		if (previousBuild == null) {
+			return composites;
+		}
+		String dataBaseFile = previousBuild.getRootDir().getAbsolutePath() + File.separator + IConstants.DATABASE_FILE;
+		logger.debug("Previous database file : " + dataBaseFile);
+		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(dataBaseFile, false);
+		IComposite<?, ?> composite = dataBase.find(id);
+		logger.debug("Looking for composite : " + id + ", " + composite);
+		composites.add(composite);
+		return getPreviousComposites(previousBuild, id, composites, ++history);
 	}
 
 	public String getName() {
-		logger.info("SerenityResult:getName");
+		logger.debug("getName");
 		if (owner != null) {
 			AbstractProject<?, ?> abstractProject = owner.getProject();
 			if (abstractProject != null) {

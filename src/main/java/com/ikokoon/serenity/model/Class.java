@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import com.ikokoon.toolkit.Toolkit;
+
 /**
  * @author Michael Couck
  * @since 12.08.09
@@ -17,13 +19,21 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 	private String name;
 	private String source;
 
-	private double lines;
-	private double totalLinesExecuted;
-	private double complexity;
+	@Legend(name = COVERAGE, limits = { COVERAGE_GOOD, COVERAGE_OK, COVERAGE_BAD }, positive = 1.0)
 	private double coverage;
+	@Legend(name = COMPLEXITY, limits = { COMPLEXITY_GOOD, COMPLEXITY_OK, COMPLEXITY_BAD })
+	private double complexity;
+	@Legend(name = STABILITY, limits = { STABILITY_GOOD, STABILITY_OK, STABILITY_BAD }, positive = 1.0)
 	private double stability;
+	@Legend(name = LINES, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
+	private double lines;
+	@Legend(name = EXECUTED, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
+	private double executed;
+	@Legend(name = EFFERENCE, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
 	private double efferent;
+	@Legend(name = AFFERENCE, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
 	private double afferent;
+
 	private boolean interfaze;
 	private Date timestamp;
 	private List<Efferent> efferentPackages = new ArrayList<Efferent>();
@@ -53,12 +63,12 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 		this.lines = lines;
 	}
 
-	public double getTotalLinesExecuted() {
-		return totalLinesExecuted;
+	public double getExecuted() {
+		return executed;
 	}
 
-	public void setTotalLinesExecuted(double totalLinesExecuted) {
-		this.totalLinesExecuted = totalLinesExecuted;
+	public void setExecuted(double totalLinesExecuted) {
+		this.executed = totalLinesExecuted;
 	}
 
 	public String getNameTrimmed() {
@@ -72,7 +82,7 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 	}
 
 	public double getComplexity() {
-		return format(complexity, PRECISION);
+		return Toolkit.format(complexity, PRECISION);
 	}
 
 	public void setComplexity(double complexity) {
@@ -80,7 +90,7 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 	}
 
 	public double getCoverage() {
-		return format(coverage, PRECISION);
+		return Toolkit.format(coverage, PRECISION);
 	}
 
 	public void setCoverage(double coverage) {
@@ -88,7 +98,7 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 	}
 
 	public double getStability() {
-		return format(stability, PRECISION);
+		return Toolkit.format(stability, PRECISION);
 	}
 
 	public void setStability(double stability) {
@@ -96,7 +106,7 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 	}
 
 	public double getEfferent() {
-		return format(efferent, PRECISION);
+		return Toolkit.format(efferent, PRECISION);
 	}
 
 	public void setEfferent(double efferent) {
@@ -104,7 +114,7 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 	}
 
 	public double getAfferent() {
-		return format(afferent, PRECISION);
+		return Toolkit.format(afferent, PRECISION);
 	}
 
 	public void setAfferent(double afferent) {

@@ -86,48 +86,80 @@ public class Aggregator extends AProcess implements IConstants {
 	}
 
 	private void aggregateProject(Project<?, ?> project) {
-		List<Package<?, ?>> packages = project.getChildren();
-		aggregatePackages(packages);
+		List<Package<?, ?>> children = project.getChildren();
+		aggregatePackages(children);
 		project.setTimestamp(new Date());
 
-		double totalLines = 0d;
-		double totalLinesExecuted = 0d;
-		double totalMethods = 0d;
-		double totalMethodsExecuted = 0d;
-		double totalClasses = 0d;
-		double totalClassesExecuted = 0d;
-		double totalPackages = 0d;
-		double totalPackagesExecuted = 0d;
+		double lines = 0d;
+		double linesExecuted = 0d;
+		double methods = 0d;
+		double methodsExecuted = 0d;
+		double classes = 0d;
+		double classesExecuted = 0d;
+		double packages = 0d;
+		double packagesExecuted = 0d;
 
-		for (Package<?, ?> pakkage : packages) {
-			totalPackages++;
-			if (pakkage.getTotalLinesExecuted() > 0) {
-				totalPackagesExecuted++;
+		double complexity = 0;
+		double coverage = 0;
+		double interfaces = 0;
+		double implementations = 0;
+		Set<Efferent> efference = new TreeSet<Efferent>();
+		Set<Afferent> afference = new TreeSet<Afferent>();
+
+		for (Package<?, ?> pakkage : children) {
+			packages++;
+			if (pakkage.getExecuted() > 0) {
+				packagesExecuted++;
 			}
 			for (Class<?, ?> klass : ((List<Class<?, ?>>) pakkage.getChildren())) {
-				totalLines += klass.getLines();
-				totalClasses++;
-				if (klass.getTotalLinesExecuted() > 0) {
-					totalClassesExecuted++;
+				lines += klass.getLines();
+				classes++;
+				if (klass.getExecuted() > 0) {
+					classesExecuted++;
 				}
 				for (Method<?, ?> method : ((List<Method<?, ?>>) klass.getChildren())) {
-					totalMethods++;
-					totalLinesExecuted += method.getTotalLinesExecuted();
-					if (method.getTotalLinesExecuted() > 0) {
-						totalMethodsExecuted++;
+					methods++;
+					linesExecuted += method.getExecuted();
+					if (method.getExecuted() > 0) {
+						methodsExecuted++;
 					}
 				}
 			}
 		}
 
-		project.setTotalLines(totalLines);
-		project.setTotalLinesExecuted(totalLinesExecuted);
-		project.setTotalMethods(totalMethods);
-		project.setTotalMethodsExecuted(totalMethodsExecuted);
-		project.setTotalClasses(totalClasses);
-		project.setTotalClassesExecuted(totalClassesExecuted);
-		project.setTotalPackages(totalPackages);
-		project.setTotalPackagesExecuted(totalPackagesExecuted);
+		if (lines > 0) {
+			for (Package<?, ?> pakkage : children) {
+				double packageLines = pakkage.getLines();
+				complexity += (packageLines / lines) * pakkage.getComplexity();
+				coverage += (packageLines / lines) * pakkage.getCoverage();
+				interfaces += pakkage.getInterfaces();
+				implementations += pakkage.getImplement();
+				efference.addAll(pakkage.getEfference());
+				afference.addAll(pakkage.getAfference());
+			}
+		}
+
+		double abstractness = interfaces / ((interfaces + implementations) == 0 ? 1 : (interfaces + implementations));
+		double efferent = efference.size();
+		double afferent = afference.size();
+		double stability = efferent / ((efferent + afferent) > 0 ? (efferent + afferent) : 1d);
+		double a = -1, b = -1;
+		double distance = Math.abs(-stability + -abstractness + 1) / Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+
+		project.setComplexity(complexity);
+		project.setCoverage(coverage);
+		project.setAbstractness(abstractness);
+		project.setStability(stability);
+		project.setDistance(distance);
+
+		project.setLines(lines);
+		project.setLinesExecuted(linesExecuted);
+		project.setMethods(methods);
+		project.setMethodsExecuted(methodsExecuted);
+		project.setClasses(classes);
+		project.setClassesExecuted(classesExecuted);
+		project.setPackages(packages);
+		project.setPackagesExecuted(packagesExecuted);
 	}
 
 	private void aggregatePackages(List<Package<?, ?>> packages) {
@@ -159,17 +191,20 @@ public class Aggregator extends AProcess implements IConstants {
 					afference.add(afferent);
 				}
 				packageLines += klass.getLines();
-				totalLinesExecuted += klass.getTotalLinesExecuted();
+				totalLinesExecuted += klass.getExecuted();
 			}
 
 			pakkage.setEfference(efference);
 			pakkage.setAfference(afference);
 
 			pakkage.setLines(packageLines);
-			pakkage.setTotalLinesExecuted(totalLinesExecuted);
+			pakkage.setExecuted(totalLinesExecuted);
 
 			if (packageLines > 0) {
 				for (Class<?, ?> klass : classes) {
+					if (klass.getInterfaze()) {
+						continue;
+					}
 					double classLines = klass.getLines();
 					complexity += (classLines / packageLines) * klass.getComplexity();
 					coverage += (classLines / packageLines) * klass.getCoverage();
@@ -197,7 +232,7 @@ public class Aggregator extends AProcess implements IConstants {
 			pakkage.setComplexity(complexity);
 			pakkage.setCoverage(coverage);
 			pakkage.setDistance(distance);
-			pakkage.setImplementations(implementations);
+			pakkage.setImplement(implementations);
 			pakkage.setInterfaces(interfaces);
 			pakkage.setStability(stability);
 		}
@@ -229,13 +264,13 @@ public class Aggregator extends AProcess implements IConstants {
 					double methodCoverage = method.getCoverage();
 					complexity += methodComplexity * weightedLines;
 					coverage += methodCoverage * weightedLines;
-					totalLinesExecuted += method.getTotalLinesExecuted();
+					totalLinesExecuted += method.getExecuted();
 				}
 			}
 			klass.setLines(classLines);
 			klass.setComplexity(complexity);
 			klass.setCoverage(coverage);
-			klass.setTotalLinesExecuted(totalLinesExecuted);
+			klass.setExecuted(totalLinesExecuted);
 			klass.setEfferent(klass.getEfferentPackages().size());
 
 			double efference = klass.getEfferent();
@@ -262,7 +297,7 @@ public class Aggregator extends AProcess implements IConstants {
 				double methodLines = method.getLines();
 				double coverage = (linesExecuted / methodLines) * 100d;
 				method.setCoverage(coverage);
-				method.setTotalLinesExecuted(totalLinesExecuted);
+				method.setExecuted(totalLinesExecuted);
 			} catch (Exception e) {
 				logger.error("Exception peocessing the method element : " + method.getName(), e);
 			}

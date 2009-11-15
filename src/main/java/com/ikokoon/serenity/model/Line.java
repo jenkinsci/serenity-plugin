@@ -3,6 +3,8 @@ package com.ikokoon.serenity.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.ikokoon.toolkit.Toolkit;
+
 /**
  * @author Michael Couck
  * @since 12.08.09
@@ -42,7 +44,7 @@ public class Line<E, F> extends Composite<Class<?, ?>, Object> implements Compar
 	}
 
 	public double getNumber() {
-		return format(number, PRECISION);
+		return Toolkit.format(number, PRECISION);
 	}
 
 	public void setNumber(double number) {
@@ -50,7 +52,7 @@ public class Line<E, F> extends Composite<Class<?, ?>, Object> implements Compar
 	}
 
 	public double getCounter() {
-		return format(counter, PRECISION);
+		return Toolkit.format(counter, PRECISION);
 	}
 
 	public void setCounter(double counter) {

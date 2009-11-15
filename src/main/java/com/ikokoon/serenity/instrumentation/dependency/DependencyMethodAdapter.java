@@ -50,7 +50,7 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 		this.methodName = methodName;
 		this.methodDescription = methodDescription;
 		String[] methodClasses = Toolkit.byteCodeSignatureToClassNameArray(methodDescription);
-		Collector.collectMetrics(className, methodClasses);
+		Collector.collectEfferentAndAfferent(className, methodClasses);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Class name : " + className + ", name : " + methodName + ", desc : " + methodDescription);
 		}
@@ -61,7 +61,7 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 	 */
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 		String[] annotationClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectMetrics(className, annotationClasses);
+		Collector.collectEfferentAndAfferent(className, annotationClasses);
 		return super.visitAnnotation(desc, visible);
 	}
 
@@ -73,7 +73,7 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 			logger.debug("visitFieldInst - " + owner + ", " + name + ", " + desc);
 		}
 		String[] fieldClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectMetrics(className, fieldClasses);
+		Collector.collectEfferentAndAfferent(className, fieldClasses);
 		super.visitFieldInsn(opcode, owner, name, desc);
 	}
 
@@ -94,9 +94,9 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 			logger.debug("visitLocalVariable - " + name + ", " + desc + ", " + signature + ", " + start + ", " + end + ", " + index);
 		}
 		String[] variableClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectMetrics(className, variableClasses);
+		Collector.collectEfferentAndAfferent(className, variableClasses);
 		variableClasses = Toolkit.byteCodeSignatureToClassNameArray(signature);
-		Collector.collectMetrics(className, variableClasses);
+		Collector.collectEfferentAndAfferent(className, variableClasses);
 		super.visitLocalVariable(name, desc, signature, start, end, index);
 	}
 
@@ -108,7 +108,7 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 			logger.debug("visitMethodInst - " + opcode + ", " + owner + ", " + name + ", " + desc);
 		}
 		String[] methodClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectMetrics(className, methodClasses);
+		Collector.collectEfferentAndAfferent(className, methodClasses);
 		super.visitMethodInsn(opcode, owner, name, desc);
 	}
 
@@ -120,7 +120,7 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 			logger.debug("visitMultiANewArrayInst - " + desc + ", " + dims);
 		}
 		String[] arrayClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectMetrics(className, arrayClasses);
+		Collector.collectEfferentAndAfferent(className, arrayClasses);
 		super.visitMultiANewArrayInsn(desc, dims);
 	}
 
@@ -132,7 +132,7 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 			logger.debug("visitParameterAnnotation - " + parameter + ", " + desc + ", " + visible);
 		}
 		String[] parameterAnnotationClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectMetrics(className, parameterAnnotationClasses);
+		Collector.collectEfferentAndAfferent(className, parameterAnnotationClasses);
 		return super.visitParameterAnnotation(parameter, desc, visible);
 	}
 

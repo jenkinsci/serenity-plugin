@@ -41,23 +41,23 @@ public class SerenityPublisher extends Recorder {
 	@Extension
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 	/** The pattern for the object database file. */
-	private String coverageReportPattern;
+	private String serenityDatabase;
 
 	@DataBoundConstructor
-	public SerenityPublisher(String coverageReportPattern) {
-		logger.info("SerenityPublisher:" + coverageReportPattern);
-		this.coverageReportPattern = coverageReportPattern;
+	public SerenityPublisher(String serenityDatabase) {
+		logger.info("SerenityPublisher:" + serenityDatabase);
+		this.serenityDatabase = serenityDatabase;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener buildListener) throws InterruptedException, IOException {
-		logger.info("SerenityPublisher:perform");
+		logger.info("perform");
 		PrintStream consolePrintStream = buildListener.getLogger();
-		consolePrintStream.println("Looking for database file : " + coverageReportPattern);
-		if (coverageReportPattern == null) {
-			consolePrintStream.println("Skipping coverage reports as coverageReportPattern is null");
+		consolePrintStream.println("Looking for database file : " + serenityDatabase);
+		if (serenityDatabase == null) {
+			consolePrintStream.println("Skipping coverage reports as serenityDatabase is null");
 			return false;
 		}
 		if (!Result.SUCCESS.equals(build.getResult())) {
@@ -70,15 +70,16 @@ public class SerenityPublisher extends Recorder {
 		FilePath[] reports = new FilePath[0];
 		final FilePath moduleRoot = build.getWorkspace();
 		try {
-			reports = moduleRoot.list(coverageReportPattern);
+			reports = moduleRoot.list(serenityDatabase);
 		} catch (IOException e) {
 			Util.displayIOException(e, buildListener);
 			e.printStackTrace(buildListener.fatalError("Unable to find Serenity results"));
 			build.setResult(Result.FAILURE);
+			return false;
 		}
 
 		if (reports.length == 0) {
-			buildListener.getLogger().println("No coverage results were found using the pattern '" + coverageReportPattern + "'.");
+			buildListener.getLogger().println("No coverage results were found using the pattern '" + serenityDatabase + "'.");
 			build.setResult(Result.FAILURE);
 			return true;
 		}
@@ -103,8 +104,8 @@ public class SerenityPublisher extends Recorder {
 		}
 
 		buildListener.getLogger().println("Accessing Serenity results...");
-		ISerenityResult coverageResult = new SerenityResult(build);
-		SerenityBuildAction buildAction = new SerenityBuildAction(build, coverageResult);
+		ISerenityResult result = new SerenityResult(build);
+		SerenityBuildAction buildAction = new SerenityBuildAction(build, result);
 		build.getActions().add(buildAction);
 
 		return true;
@@ -114,18 +115,18 @@ public class SerenityPublisher extends Recorder {
 	 * {@inheritDoc}
 	 */
 	public Action getProjectAction(hudson.model.Project project) {
-		logger.info("SerenityPublisher:getProjectAction");
+		logger.info("getProjectAction");
 		return new SerenityProjectAction(project);
 	}
 
-	public void setCoverageReportPattern(String coverageReportPattern) {
-		logger.info("SerenityPublisher:setCoverageReportPattern");
-		this.coverageReportPattern = coverageReportPattern;
+	public void setSerenityDatabase(String serenityDatabase) {
+		logger.info("setSerenityDatabase");
+		this.serenityDatabase = serenityDatabase;
 	}
 
-	public String getCoverageReportPattern() {
-		logger.info("SerenityPublisher:getCoverageReportPattern");
-		return coverageReportPattern;
+	public String getSerenityDatabase() {
+		logger.info("getSerenityDatabase");
+		return serenityDatabase;
 	}
 
 	/**
@@ -140,14 +141,14 @@ public class SerenityPublisher extends Recorder {
 		 */
 		DescriptorImpl() {
 			super(SerenityPublisher.class);
-			logger.info("SerenityPublisher:DescriptorImpl");
+			logger.info("DescriptorImpl");
 		}
 
 		/**
 		 * This human readable name is used in the configuration screen.
 		 */
 		public String getDisplayName() {
-			logger.info("SerenityPublisher:getDisplayName");
+			logger.info("getDisplayName");
 			return "Publish Serenity Report";
 		}
 
@@ -161,7 +162,7 @@ public class SerenityPublisher extends Recorder {
 		 */
 		@Override
 		public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
-			logger.info("SerenityPublisher:configure");
+			logger.info("configure");
 			req.bindParameters(this, "serenity.");
 			save();
 			return super.configure(req, json);
@@ -172,14 +173,14 @@ public class SerenityPublisher extends Recorder {
 		 */
 		@Override
 		public SerenityPublisher newInstance(StaplerRequest req, JSONObject json) throws FormException {
-			logger.info("SerenityPublisher:newInstance");
+			logger.info("newInstance");
 			SerenityPublisher instance = req.bindParameters(SerenityPublisher.class, "serenity.");
 			return instance;
 		}
 	}
 
 	public BuildStepMonitor getRequiredMonitorService() {
-		logger.info("SerenityPublisher:getRequiredMonitorService");
+		logger.info("getRequiredMonitorService");
 		return BuildStepMonitor.STEP;
 	}
 }

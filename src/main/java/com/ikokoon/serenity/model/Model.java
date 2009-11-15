@@ -1,32 +1,35 @@
 package com.ikokoon.serenity.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Model implements IModel {
 
 	private String name;
-	private String[] legend;
-	private double[][] limits;
-	private double[][] metrics;
+	private List<String> legend;
+	private List<ArrayList<Double>> limits;
+	private List<ArrayList<Double>> metrics;
 
-	public Model(String name, String[] legend, double[][] limits, double[][] metrics) {
+	public Model(String name, List<String> legend, List<ArrayList<Double>> limits, List<ArrayList<Double>> metrics) {
 		this.name = name;
 		this.legend = legend;
 		this.limits = limits;
 		this.metrics = metrics;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
 
-	public String[] getLegend() {
+	public List<String> getLegend() {
 		return legend;
 	}
 
-	public double[][] getLimits() {
+	public List<ArrayList<Double>> getLimits() {
 		return limits;
 	}
 
-	public double[][] getMetrics() {
+	public List<ArrayList<Double>> getMetrics() {
 		return metrics;
 	}
 

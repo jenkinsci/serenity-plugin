@@ -3,6 +3,7 @@ package com.ikokoon.toolkit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -13,7 +14,6 @@ import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
 import com.ikokoon.target.Target;
-import com.ikokoon.serenity.model.Package;
 
 /**
  * This is the test for the utility class.
@@ -64,10 +64,9 @@ public class ToolkitTest extends ATest {
 	@Test
 	public void formatString() {
 		int precision = 3;
-		Package pakkage = new Package();
-		String string = pakkage.format("123456789,123456789", precision);
+		String string = Toolkit.format("123456789,123456789", precision);
 		assertEquals(precision, string.substring(string.indexOf(',') + 1, string.length()).length());
-		string = pakkage.format("123456789.123456789", precision);
+		string = Toolkit.format("123456789.123456789", precision);
 		assertEquals(precision, string.substring(string.indexOf('.') + 1, string.length()).length());
 	}
 
@@ -75,8 +74,7 @@ public class ToolkitTest extends ATest {
 	public void formatDouble() {
 		int precision = 3;
 		double d = 123456.8755135d;
-		Package pakkage = new Package();
-		d = pakkage.format(d, precision);
+		d = Toolkit.format(d, precision);
 		assertTrue(123456.875 == d);
 		assertFalse(123456.8755 == d);
 	}
@@ -89,6 +87,15 @@ public class ToolkitTest extends ATest {
 		objects.add(string);
 		Long arrayHash = Toolkit.hash(objects.toArray());
 		assertEquals(stringHash, arrayHash);
+	}
+
+	@Test
+	public void serializeAndDeserializeToAndFrom64() {
+		Target target = new Target();
+		String string = Toolkit.serializeToBase64(target);
+		assertNotNull(string);
+		target = (Target) Toolkit.deserializeFromBase64(string);
+		assertNotNull(target);
 	}
 
 }

@@ -1,14 +1,17 @@
 package com.ikokoon.serenity.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public interface IModel extends Serializable {
-	
+
 	public String getName();
 
-	public String[] getLegend();
+	public List<String> getLegend();
 
-	public double[][] getLimits();
+	public List<ArrayList<Double>> getLimits();
 
-	public double[][] getMetrics();
+	public List<ArrayList<Double>> getMetrics();
+
 }

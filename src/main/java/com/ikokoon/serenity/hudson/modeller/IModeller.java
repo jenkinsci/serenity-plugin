@@ -6,6 +6,6 @@ public interface IModeller {
 
 	public String getModel();
 
-	public void visit(IComposite<?, ?> composite);
+	public void visit(Class<?> klass, IComposite<?, ?>... composites);
 
 }

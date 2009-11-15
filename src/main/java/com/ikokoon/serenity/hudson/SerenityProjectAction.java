@@ -33,7 +33,7 @@ public class SerenityProjectAction extends Actionable implements ProminentProjec
 	 * {@inheritDoc}
 	 */
 	public String getDisplayName() {
-		logger.info("SerenityProjectAction:getDisplayName");
+		logger.info("getDisplayName");
 		return "Serenity report";
 	}
 
@@ -41,7 +41,7 @@ public class SerenityProjectAction extends Actionable implements ProminentProjec
 	 * {@inheritDoc}
 	 */
 	public String getIconFileName() {
-		logger.info("SerenityProjectAction:getIconFileName");
+		logger.info("getIconFileName");
 		return "graph.gif";
 	}
 
@@ -49,7 +49,7 @@ public class SerenityProjectAction extends Actionable implements ProminentProjec
 	 * {@inheritDoc}
 	 */
 	public String getUrlName() {
-		logger.info("SerenityProjectAction:getUrlName");
+		logger.info("getUrlName");
 		return "serenity";
 	}
 
@@ -57,12 +57,12 @@ public class SerenityProjectAction extends Actionable implements ProminentProjec
 	 * {@inheritDoc}
 	 */
 	public String getSearchUrl() {
-		logger.info("SerenityProjectAction:getSearchUrl");
+		logger.info("getSearchUrl");
 		return getUrlName();
 	}
 
 	public ISerenityResult getLastResult() {
-		logger.info("SerenityProjectAction:getLastBuild");
+		logger.info("getLastBuild");
 		Run build = owner.getLastStableBuild();
 		if (build != null) {
 			SerenityBuildAction action = build.getAction(SerenityBuildAction.class);
@@ -72,30 +72,17 @@ public class SerenityProjectAction extends Actionable implements ProminentProjec
 		}
 	}
 
-	// public String getMetrics() {
-	// logger.info("SerenityProjectAction:getMetrics");
-	// Run build = owner.getLastStableBuild();
-	// if (build != null) {
-	// SerenityBuildAction action = build.getAction(SerenityBuildAction.class);
-	// return action.getMetrics();
-	// } else {
-	// return null;
-	// }
-	// }
-
 	public void doIndex(StaplerRequest req, StaplerResponse rsp) throws IOException {
-		logger.info("SerenityProjectAction:doIndex");
+		logger.info("doIndex");
 		if (hasResult()) {
-			// "../lastStableBuild/coverage"
 			rsp.sendRedirect2("../lastStableBuild/serenity");
 		} else {
 			rsp.sendRedirect2("nocoverage");
 		}
-		// We might redirect to some nodata document, but let's assume there's always last build with coverage stuff...
 	}
 
 	public boolean hasResult() {
-		logger.info("SerenityProjectAction:hasResult");
+		logger.info("hasResult");
 		return true;
 	}
 }

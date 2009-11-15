@@ -24,11 +24,11 @@ public interface IDataBase {
 	 * 
 	 * @author Michael Couck
 	 */
-	public static class DataBase {
+	public static class DataBaseManager {
 
 		private static Map<String, IDataBase> dataBases = new HashMap<String, IDataBase>();
 
-		public static IDataBase getDataBase(String dataBaseFile, boolean create) {
+		public static synchronized final IDataBase getDataBase(String dataBaseFile, boolean create) {
 			IDataBase dataBase = dataBases.get(dataBaseFile);
 			if (dataBase == null) {
 				dataBase = new DataBaseXml(dataBaseFile, create);
