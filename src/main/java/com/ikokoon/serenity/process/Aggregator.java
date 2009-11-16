@@ -78,7 +78,7 @@ public class Aggregator extends AProcess implements IConstants {
 	 */
 	public void execute() {
 		super.execute();
-		logger.info("Running Aggregator dump: ");
+		logger.info("Running Aggregator: ");
 		Project<?, ?> project = (Project<?, ?>) dataBase.find(Toolkit.hash(Project.class.getName()));
 		if (project != null) {
 			aggregateProject(project);

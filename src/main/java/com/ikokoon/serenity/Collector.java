@@ -202,6 +202,8 @@ public class Collector implements IConstants {
 	private static final Class<Package<?, ?>, Method<?, ?>> getClass(String className) {
 		className = Toolkit.slashToDot(className);
 
+		// LOGGER.info("Class name : " + className);
+
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(className);
 		Class klass = (Class) dataBase.find(parameters);

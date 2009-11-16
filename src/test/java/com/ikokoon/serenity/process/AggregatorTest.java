@@ -21,7 +21,6 @@ import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.model.Project;
 import com.ikokoon.target.ITarget;
 import com.ikokoon.target.Target;
-import com.ikokoon.target.one.One;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -36,7 +35,7 @@ public class AggregatorTest extends ATest implements IConstants {
 
 	static {
 		Configuration.getConfiguration().includedPackages.add(Target.class.getPackage().getName());
-		Configuration.getConfiguration().includedPackages.add(One.class.getPackage().getName());
+		Configuration.getConfiguration().includedPackages.add(ITarget.class.getPackage().getName());
 		Configuration.getConfiguration().includedPackages.add("edu.umd.cs.findbugs");
 	}
 
@@ -56,7 +55,7 @@ public class AggregatorTest extends ATest implements IConstants {
 		Aggregator aggregator = new Aggregator(null, dataBase);
 		aggregator.execute();
 
-		printModel(pakkage);
+		// printModel(pakkage);
 
 		assertEquals(10, pakkage.getLines());
 		assertEquals(10, pakkage.getComplexity());
@@ -115,7 +114,7 @@ public class AggregatorTest extends ATest implements IConstants {
 		getline(methodTwo, 1, 15);
 		getline(methodTwo, 2, 20);
 
-		Class classOne = getClass(pakkage, One.class.getName());
+		Class classOne = getClass(pakkage, ITarget.class.getName());
 		Method methodThree = getMethod(classOne, "method name three", "method description three", 15, 30);
 		getline(methodThree, 1, 25);
 		getline(methodThree, 2, 30);
@@ -129,7 +128,7 @@ public class AggregatorTest extends ATest implements IConstants {
 		Aggregator aggregator = new Aggregator(null, dataBase);
 		aggregator.execute();
 
-		printModel(pakkage);
+		// printModel(pakkage);
 
 		assertEquals(65, pakkage.getLines());
 		// Sigma : (class lines / package lines) * class complexity
@@ -195,7 +194,7 @@ public class AggregatorTest extends ATest implements IConstants {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void printModel(Package pakkage) {
+	protected void printModel(Package pakkage) {
 		logger.info("PRINTING MODEL");
 		printEntity(pakkage);
 		logger.info("Classes : " + pakkage.getChildren().size());
@@ -216,7 +215,7 @@ public class AggregatorTest extends ATest implements IConstants {
 	}
 
 	private void printEntity(Object object) {
-		logger.info("Printing object : " + object + ", class : " + object.getClass());
+		logger.info("Printing object : " + object + ", class : " + object.getClass().getSimpleName());
 		Field[] fields = object.getClass().getDeclaredFields();
 		for (Field field : fields) {
 			Object value = Toolkit.getValue(Object.class, object, field.getName());

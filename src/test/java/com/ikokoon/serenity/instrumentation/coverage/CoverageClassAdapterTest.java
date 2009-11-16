@@ -1,5 +1,7 @@
 package com.ikokoon.serenity.instrumentation.coverage;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.InputStream;
 
 import org.junit.Test;
@@ -8,6 +10,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 
 import com.ikokoon.serenity.ATest;
+import com.ikokoon.serenity.Collector;
 import com.ikokoon.toolkit.Toolkit;
 
 public class CoverageClassAdapterTest extends ATest {
@@ -23,7 +26,8 @@ public class CoverageClassAdapterTest extends ATest {
 		reader.accept(visitor, 0);
 		classfileBuffer = writer.toByteArray();
 		String string = new String(classfileBuffer);
-		logger.error(string);
+		logger.debug(string);
+		assertTrue(string.indexOf(Collector.class.getSimpleName()) > -1);
 	}
 
 }

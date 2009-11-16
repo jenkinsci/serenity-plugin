@@ -45,7 +45,7 @@ public class ModellerTest extends ATest {
 		modeller.visit(Project.class, projectOne, projectTwo);
 
 		String string = modeller.getModel();
-		logger.info(string);
+		logger.debug(string);
 		assertNotNull(string);
 
 		// This is what we expect from the model

@@ -65,11 +65,14 @@
 						</property>
 						<property>
 							<name>included.packages</name>
-							<value>com.ikokoon.serenity</value>
+							<value>com.ikokoon.target;com.ikokoon.serenity</value>
 						</property>
 						<argLine>-javaagent:target/serenity.jar -Xms512m -Xmx1024m</argLine>
 						<additionalClasspathElements>${surefire.test.class.path}</additionalClasspathElements>
 					</systemProperties>
+					<excludes>
+						<exclude>**/DataBaseXmlTest.java</exclude>
+					</excludes>
 					<!-- includes>
 						<include>**/DataBaseXmlTest.java</include>
 					</includes -->

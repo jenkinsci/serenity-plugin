@@ -3,12 +3,10 @@ package com.ikokoon.serenity;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
-import java.net.URL;
 import java.security.ProtectionDomain;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -59,14 +57,10 @@ public class Transformer implements ClassFileTransformer, IConstants {
 	 *            the instrumentation implementation of the JVM
 	 */
 	public static void premain(String args, Instrumentation instrumentation) {
-		URL url = Transformer.class.getResource(LOG_4_J_PROPERTIES);
-		if (url != null) {
-			PropertyConfigurator.configure(url);
-		}
+		LoggingConfigurator.configure();
 		LOGGER = Logger.getLogger(Transformer.class);
-		LOGGER.error("Loaded logging properties from : " + url);
-
 		if (!shutdownHookAdded) {
+			shutdownHookAdded = true;
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 				public void run() {
 					LOGGER.info("Writing and finalizing the persistence");
@@ -79,7 +73,6 @@ public class Transformer implements ClassFileTransformer, IConstants {
 							+ (Runtime.getRuntime().maxMemory() / million) + ", free memory : " + (Runtime.getRuntime().freeMemory() / million));
 				}
 			});
-			shutdownHookAdded = true;
 		}
 
 		if (instrumentation != null) {

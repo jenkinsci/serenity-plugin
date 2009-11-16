@@ -31,7 +31,7 @@ public interface IDataBase {
 		public static synchronized final IDataBase getDataBase(String dataBaseFile, boolean create) {
 			IDataBase dataBase = dataBases.get(dataBaseFile);
 			if (dataBase == null) {
-				dataBase = new DataBaseXml(dataBaseFile, create);
+				dataBase = new DataBaseRam(dataBaseFile, create);
 				dataBases.put(dataBaseFile, dataBase);
 			}
 			return dataBase;

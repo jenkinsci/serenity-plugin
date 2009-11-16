@@ -19,7 +19,7 @@ import com.ikokoon.toolkit.Toolkit;
  * @since 11.10.09
  * @version 01.00
  */
-public final class DataBaseXml implements IDataBase {
+public final class DataBaseRam implements IDataBase {
 
 	private Logger logger = Logger.getLogger(this.getClass());
 	/** The project for the build. */
@@ -37,7 +37,7 @@ public final class DataBaseXml implements IDataBase {
 	 * @param create
 	 */
 	@SuppressWarnings("unchecked")
-	DataBaseXml(String dataBaseFile, boolean create) {
+	DataBaseRam(String dataBaseFile, boolean create) {
 		this.dataBaseFile = dataBaseFile;
 		logger.info("Opening database on file : " + dataBaseFile);
 		try {

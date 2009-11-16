@@ -7,13 +7,9 @@ import java.io.InputStream;
 import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
 
-import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.ikokoon.serenity.Collector;
-import com.ikokoon.serenity.Configuration;
-import com.ikokoon.serenity.Transformer;
 import com.ikokoon.target.Target;
 import com.ikokoon.toolkit.Toolkit;
 
@@ -27,8 +23,6 @@ import com.ikokoon.toolkit.Toolkit;
 public class TransformerTest extends ATest {
 
 	/** The logger for the class. */
-	@SuppressWarnings("unused")
-	private Logger logger = Logger.getLogger(TransformerTest.class);
 	private Instrumentation instrumentation = null; // createMock(Instrumentation.class);
 	private ProtectionDomain protectionDomain; // = createMock(ProtectionDomain.class);
 
@@ -46,19 +40,20 @@ public class TransformerTest extends ATest {
 		String byteCodes = new String(classfileBuffer);
 		assertTrue(byteCodes.indexOf(Collector.class.getSimpleName()) == -1);
 
-		Transformer coverageTransformer = new Transformer();
+		Transformer transformer = new Transformer();
 		Class<?> classBeingRedefined = Class.forName(className);
 		ClassLoader classLoader = TransformerTest.class.getClassLoader();
-		classfileBuffer = coverageTransformer.transform(classLoader, className, classBeingRedefined, protectionDomain, classfileBuffer);
+		classfileBuffer = transformer.transform(classLoader, className, classBeingRedefined, protectionDomain, classfileBuffer);
 
 		// We need to verify that the collector instructions have been added
 		byteCodes = new String(classfileBuffer);
+		logger.debug("Byte codes : " + byteCodes);
 		assertTrue(byteCodes.indexOf(Collector.class.getSimpleName()) > -1);
 	}
 
 	@Test
 	public void excluded() {
-		assertFalse(Configuration.getConfiguration().excluded(Target.class.getName()));
+		assertFalse(Configuration.getConfiguration().excluded(InputStream.class.getName()));
 		assertTrue(Configuration.getConfiguration().excluded(Object.class.getName()));
 	}
 

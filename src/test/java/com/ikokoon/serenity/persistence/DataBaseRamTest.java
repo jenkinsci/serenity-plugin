@@ -18,12 +18,12 @@ import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.toolkit.Toolkit;
 
-public class DataBaseXmlTest extends ATest {
+public class DataBaseRamTest extends ATest {
 
 	@Test
 	@SuppressWarnings("unchecked")
 	public void insert() {
-		DataBaseXml dataBase = (DataBaseXml) this.dataBase;
+		DataBaseRam dataBase = (DataBaseRam) this.dataBase;
 
 		List<IComposite<?, ?>> list = getList();
 
@@ -45,7 +45,7 @@ public class DataBaseXmlTest extends ATest {
 
 	@SuppressWarnings("unchecked")
 	private LinkedList<IComposite<?, ?>> getList() {
-		DataBaseXml dataBase = (DataBaseXml) this.dataBase;
+		DataBaseRam dataBase = (DataBaseRam) this.dataBase;
 
 		LinkedList<IComposite<?, ?>> list = new LinkedList<IComposite<?, ?>>();
 		Class<?, ?> klass = new Class<Package<?, ?>, Method<?, ?>>();
@@ -71,7 +71,7 @@ public class DataBaseXmlTest extends ATest {
 
 	@Test
 	public void search() {
-		DataBaseXml dataBase = (DataBaseXml) this.dataBase;
+		DataBaseRam dataBase = (DataBaseRam) this.dataBase;
 		LinkedList<IComposite<?, ?>> list = getList();
 		Long id = Toolkit.hash("b");
 		Object object = dataBase.search(list, id);
@@ -98,7 +98,7 @@ public class DataBaseXmlTest extends ATest {
 		// Class<T> class, Long id
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
-		Line line = (Line) dataBase.find(5286208520220707252l);
+		Line line = (Line) dataBase.find(437917821655607927l);
 		assertNotNull(line);
 	}
 
@@ -225,7 +225,7 @@ public class DataBaseXmlTest extends ATest {
 		double duration = (end - start) / 1000d;
 		double selectsPerSecond = (selects * 7 / duration);
 		logger.info("Duration : " + duration + ", selects per second : " + selectsPerSecond);
-		double minimumSelectsPerSecond = 1000;
+		double minimumSelectsPerSecond = 100000;
 		assertTrue(selectsPerSecond > minimumSelectsPerSecond);
 
 		start = System.currentTimeMillis();
