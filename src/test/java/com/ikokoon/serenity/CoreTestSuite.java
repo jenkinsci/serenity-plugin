@@ -19,6 +19,7 @@ package com.ikokoon.serenity;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+import com.ikokoon.serenity.applet.MatrixTest;
 import com.ikokoon.serenity.hudson.modeller.ModellerTest;
 import com.ikokoon.serenity.persistence.DataBaseRamTest;
 import com.ikokoon.serenity.persistence.PermutationsTest;
@@ -31,7 +32,7 @@ import com.ikokoon.toolkit.ToolkitTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { ModellerTest.class, AccumulatorTest.class, AggregatorTest.class, CollectorTest.class, TransformerTest.class,
-		PermutationsTest.class, ToolkitTest.class, DataBaseRamTest.class })
+		PermutationsTest.class, ToolkitTest.class, DataBaseRamTest.class, MatrixTest.class })
 public class CoreTestSuite {
 	// DataBaseDb4oTest.class
 }

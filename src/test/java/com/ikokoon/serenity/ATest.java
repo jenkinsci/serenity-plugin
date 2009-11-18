@@ -6,7 +6,6 @@ import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import com.ikokoon.IConstants;
 import com.ikokoon.serenity.instrumentation.complexity.ComplexityClassAdapter;
 import com.ikokoon.serenity.instrumentation.coverage.CoverageClassAdapter;
 import com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapter;
@@ -66,7 +65,7 @@ public abstract class ATest implements IConstants {
 		// OdbConfiguration.setAutomaticCloseFileOnExit(true);
 		// OdbConfiguration.setDisplayWarnings(true);
 		if (dataBase == null) {
-			dataBase = IDataBase.DataBaseManager.getDataBase(IConstants.DATABASE_FILE, false);
+			dataBase = IDataBase.DataBaseManager.getDataBase(IConstants.DATABASE_FILE, true);
 		}
 		// Project<?, ?> project = (Project<?, ?>) dataBase.find(Toolkit.hash(Project.class.getName()));
 		// project.getChildren().clear();

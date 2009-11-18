@@ -5,8 +5,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -59,6 +61,9 @@ public class ToolkitTest extends ATest {
 
 		classes = Toolkit.byteCodeSignatureToClassNameArray("Lorg/apache/log4j/Logger;");
 		assertEquals(Logger.class.getName(), classes[0]);
+		
+		classes = Toolkit.byteCodeSignatureToClassNameArray("Ledu/umd/cs/findbugs/graph/AbstractGraph.1;");
+		logger.debug(Arrays.asList(classes));
 	}
 
 	@Test
@@ -96,6 +101,22 @@ public class ToolkitTest extends ATest {
 		assertNotNull(string);
 		target = (Target) Toolkit.deserializeFromBase64(string);
 		assertNotNull(target);
+	}
+
+	@Test
+	public void copyFiles() {
+		File source = new File(".", "target/classes");
+		File destination = new File(".", "target/classesCopy");
+		if (destination.exists()) {
+			Toolkit.deleteFile(destination);
+		}
+		assertFalse(destination.exists());
+		destination.mkdirs();
+		assertTrue(destination.exists());
+
+		Toolkit.copyFile(source, destination);
+
+		assertTrue(new File(destination, "com").exists());
 	}
 
 }

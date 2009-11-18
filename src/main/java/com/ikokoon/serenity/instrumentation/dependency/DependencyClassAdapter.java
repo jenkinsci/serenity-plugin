@@ -1,6 +1,5 @@
 package com.ikokoon.serenity.instrumentation.dependency;
 
-import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 
 import org.apache.log4j.Logger;
@@ -150,13 +149,10 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	 */
 	public void visitOuterClass(String owner, String methodName, String desc) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("visitOuterClass : " + owner + ", " + methodName + ", " + desc);
+			logger.info("visitOuterClass : " + owner + ", " + methodName + ", " + desc);
 		}
 		String[] outerClassClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
 		Collector.collectEfferentAndAfferent(owner, outerClassClasses);
-		if (methodName != null) {
-			Collector.collectEfferentAndAfferent(methodName, outerClassClasses);
-		}
 		super.visitOuterClass(owner, methodName, desc);
 	}
 
@@ -167,10 +163,10 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitSource : " + source + ", " + debug);
 		}
-		// ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(classfileBuffer);
-		// DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
-		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(sourcefileBuffer);
-		Collector.collectSource(className, byteArrayInputStream.toString());
+		if (sourcefileBuffer != null && sourcefileBuffer.length > 0) {
+			String code = new String(sourcefileBuffer);
+			Collector.collectSource(className, code);
+		}
 		super.visitSource(source, debug);
 	}
 

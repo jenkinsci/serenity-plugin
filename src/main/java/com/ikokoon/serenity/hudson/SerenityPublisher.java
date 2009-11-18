@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
-import com.ikokoon.IConstants;
+import com.ikokoon.serenity.IConstants;
 
 /**
  * This class runs at the end of the build, called by Hudson. The purpose is to copy the database file from the output directory for the reports

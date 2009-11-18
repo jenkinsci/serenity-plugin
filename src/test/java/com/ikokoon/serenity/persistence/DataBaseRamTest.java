@@ -95,10 +95,12 @@ public class DataBaseRamTest extends ATest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void findId() {
-		// Class<T> class, Long id
+		DataBaseToolkitTest.clear(dataBase);
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
-		Line line = (Line) dataBase.find(437917821655607927l);
+		DataBaseToolkitTest.dump(dataBase);
+		// 7873017250689681547, 437917821655607927
+		Line line = (Line) dataBase.find(7873017250689681547l);
 		assertNotNull(line);
 	}
 

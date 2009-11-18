@@ -25,25 +25,22 @@
 						<phase>package</phase>
 						<configuration>
 							<tasks verbose="true">
+								<property name="src" value="src/main/java" />
+								<property name="temp" value="target/temp" />
 								<property name="serenity.jar" value="target/serenity.jar" />
 								<property name="serenity.hpi" value="target/serenity.hpi" />
+								<property name="manifest" value="${src}/META-INF/MANIFEST.MF" />
 
 								<echo message="Unpacking and repacking serenity.jar with the agent manifest and log4j  propeties file" />
-								<unjar src="target/serenity.jar" dest="target/temp" overwrite="true" taskname="repack.serenity.with.manifest" />
-								<jar destfile="target/serenity.jar" basedir="target/temp" manifest="src/main/java/META-INF/MANIFEST.MF">
+								<unjar src="${serenity.jar}" dest="${temp}" overwrite="true" taskname="repack.serenity.with.manifest" />
+								<jar destfile="${serenity.jar}" basedir="${temp}" manifest="${manifest}">
 									<!-- Include the source -->
-									<fileset dir="src/main/java">
+									<fileset dir="${src}">
 										<include name="**" />
 									</fileset>
 								</jar>
-								<echo message="Copying the trend applet to the Hudson web folder" />
-								<!--
-									copy todir="C:/Eclipse/workspace/serenity/target/work/webapp" file="${serenity.jar}" overwrite="true" failonerror="true" /> <copy
-									todir="C:/Program Files/Apache Software Foundation/Tomcat 5.5/webapps/hudson" file="${serenity.jar}" overwrite="true" failonerror="true" />
-
-									<echo message="Copying the plugin to the Hudson plugin folder" /> <copy todir="C:/.hudson/plugins" file="${serenity.hpi}" overwrite="true"
-									failonerror="true" /> <copy todir="C:/Users/Michael/.hudson/plugins" file="${serenity.hpi}" overwrite="true" failonerror="true" /
-								-->
+								<echo message="Copying the serrenity jar to the test project (Findbugs)" />
+								<copy todir="../Findbugs/lib" file="${serenity.jar}" overwrite="true" failonerror="false" />
 							</tasks>
 						</configuration>
 						<goals>
@@ -70,9 +67,9 @@
 						<argLine>-javaagent:target/serenity.jar -Xms512m -Xmx1024m</argLine>
 						<additionalClasspathElements>${surefire.test.class.path}</additionalClasspathElements>
 					</systemProperties>
-					<excludes>
+					<!-- excludes>
 						<exclude>**/DataBaseXmlTest.java</exclude>
-					</excludes>
+					</excludes -->
 					<!-- includes>
 						<include>**/DataBaseXmlTest.java</include>
 					</includes -->

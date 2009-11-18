@@ -11,7 +11,6 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 
-import com.ikokoon.IConstants;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.serenity.process.Accumulator;
 import com.ikokoon.serenity.process.Aggregator;
@@ -104,7 +103,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		// Check for packages that we need to enhance
 		if (Configuration.getConfiguration().included(className)) {
 			LOGGER.debug("Enhancing class : " + className);
-			ClassWriter writer = getVisitorChain(classfileBuffer, new byte[0], classAdapterClasses, className);
+			ClassWriter writer = getVisitorChain(classAdapterClasses, className, classfileBuffer, new byte[0]);
 			byte[] result = writer.toByteArray();
 			return result;
 		}
@@ -131,12 +130,12 @@ public class Transformer implements ClassFileTransformer, IConstants {
 	 *            the constructor parameter for the visitor
 	 * @return the bottom visitor in the chain of visitors
 	 */
-	public ClassWriter getVisitorChain(byte[] classfileBuffer, byte[] sourcefileBuffer, Class<ClassVisitor>[] classAdapterClasses, String className) {
-		ClassReader reader = new ClassReader(classfileBuffer);
+	public ClassWriter getVisitorChain(Class<ClassVisitor>[] classAdapterClasses, String className, byte[] classBytes, byte[] sourceBytes) {
+		ClassReader reader = new ClassReader(classBytes);
 		ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
 		ClassVisitor visitor = writer;
 		for (Class<ClassVisitor> klass : classAdapterClasses) {
-			Object[] parameters = new Object[] { visitor, className, classfileBuffer, sourcefileBuffer };
+			Object[] parameters = new Object[] { visitor, className, classBytes, sourceBytes };
 			visitor = ObjectFactory.getObject(klass, parameters);
 			LOGGER.debug("Adding class visitor : " + visitor);
 		}

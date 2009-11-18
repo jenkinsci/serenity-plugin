@@ -105,13 +105,23 @@ public class Toolkit {
 	 */
 	public static String classNameToPackageName(String className) {
 		className = slashToDot(className);
-		if (className.endsWith(".class")) {
-			className = className.substring(0, className.lastIndexOf('.'));
+		// First try the Class package name if it is in the path, which it should be of course
+		if (className.indexOf('$') > -1) {
+			if (className.endsWith(".class")) {
+				className = className.substring(0, className.lastIndexOf('.'));
+			}
+			if (className.indexOf('.') > -1) {
+				return className.substring(0, className.lastIndexOf('.'));
+			}
 		}
-		if (className.indexOf('.') > -1) {
-			return className.substring(0, className.lastIndexOf('.'));
+		try {
+			Class<?> klass = Class.forName(className);
+			String packageName = klass.getPackage().getName();
+			return packageName;
+		} catch (ClassNotFoundException e) {
+			logger.error("Class not found : " + className, e);
 		}
-		// Default package
+		// Default package or class not found
 		return "";
 	}
 
@@ -154,69 +164,49 @@ public class Toolkit {
 		if (signature == null) {
 			return classNames.toArray(new String[classNames.size()]);
 		}
-		StringTokenizer tokenizer = new StringTokenizer(signature, ";<>*");
+		StringTokenizer tokenizer = new StringTokenizer(signature, ";<>*()[]+-");
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken().trim();
-			logger.debug(token);
-			StringBuilder builder = new StringBuilder();
-			char[] chars = token.toCharArray();
-			for (int i = 0; i < chars.length; i++) {
-				char c = chars[i];
-				switch (c) {
-				case '(':
-				case ')':
-				case '[':
-				case ']':
-				case '+':
-				case '-':
-					break;
-				case 'B':
-					if (i <= 4) {
-						break;
-					}
-				case 'C':
-					if (i <= 4) {
-						break;
-					}
-				case 'D':
-					if (i <= 4) {
-						break;
-					}
-				case 'F':
-					if (i <= 4) {
-						break;
-					}
-				case 'I':
-					if (i <= 4) {
-						break;
-					}
-				case 'J':
-					if (i <= 4) {
-						break;
-					}
-				case 'L':
-					if (i <= 4) {
-						break;
-					}
-				case 'S':
-					if (i <= 4) {
-						break;
-					}
-				case 'Z':
-					if (i <= 4) {
-						break;
-					}
-				default:
-					builder.append(c);
-					break;
-				}
-			}
-			token = builder.toString();
-			logger.debug(token);
 			String className = Toolkit.slashToDot(token);
+			className = stripByteCodeCharacters(className);
+			if (className.trim().equals("")) {
+				continue;
+			}
 			classNames.add(className);
 		}
 		return classNames.toArray(new String[classNames.size()]);
+	}
+
+	private static final String stripByteCodeCharacters(String string) {
+		StringBuilder builder = new StringBuilder();
+		char[] chars = string.toCharArray();
+		for (int i = 0; i < chars.length; i++) {
+			char c = chars[i];
+			switch (c) {
+			case 'B':
+			case 'C':
+			case 'D':
+			case 'F':
+			case 'I':
+			case 'J':
+			case 'L':
+			case 'S':
+			case 'T':
+			case 'V':
+			case 'Z':
+				if (i <= 4) {
+					break;
+				}
+			default:
+				builder.append(c);
+				break;
+			}
+		}
+		string = builder.toString();
+		if (string.startsWith("I") || string.startsWith("L") || string.startsWith("V") || string.startsWith("D") || string.startsWith("Z")) {
+			return stripByteCodeCharacters(string);
+		}
+		return string;
 	}
 
 	/**
@@ -421,7 +411,7 @@ public class Toolkit {
 		if (file.delete()) {
 			logger.debug("Deleted file : " + file);
 		} else {
-			logger.debug("Couldn't delete file : " + file);
+			logger.warn("Couldn't delete file : " + file);
 		}
 	}
 
@@ -631,6 +621,110 @@ public class Toolkit {
 			}
 		}
 		return (T[]) values.toArray(new Object[values.size()]);
+	}
+
+	/**
+	 * This function will copy files or directories from one location to another. note that the source and the destination must be mutually exclusive.
+	 * This function can not be used to copy a directory to a sub directory of itself. The function will also have problems if the destination files
+	 * already exist.
+	 * 
+	 * @param src
+	 *            A File object that represents the source for the copy
+	 * @param dest
+	 *            A File object that represents the destination for the copy.
+	 */
+	public static void copyFile(File src, File dest) {
+		// Check to ensure that the source is valid...
+		if (!src.exists()) {
+			logger.warn("Source file/directory does not exist : " + src);
+			return;
+		} else if (!src.canRead()) { // check to ensure we have rights to the source...
+			logger.warn("Source file/directory not readable : " + src);
+			return;
+		}
+		// is this a directory copy?
+		if (src.isDirectory()) {
+			if (!dest.exists()) { // does the destination already exist?
+				// if not we need to make it exist if possible (note this is mkdirs not mkdir)
+				if (!dest.mkdirs()) {
+					logger.warn("Could not create the new destination directory : " + dest);
+				}
+			}
+			// get a listing of files...
+			String list[] = src.list();
+			// copy all the files in the list.
+			for (int i = 0; i < list.length; i++) {
+				File dest1 = new File(dest, list[i]);
+				File src1 = new File(src, list[i]);
+				copyFile(src1, dest1);
+			}
+		} else {
+			// This was not a directory, so lets just copy the file
+			FileInputStream fin = null;
+			FileOutputStream fout = null;
+			byte[] buffer = new byte[4096]; // Buffer 4K at a time (you can change this).
+			int bytesRead;
+			try {
+				// open the files for input and output
+				fin = new FileInputStream(src);
+				fout = new FileOutputStream(dest);
+				// while bytesRead indicates a successful read, lets write...
+				while ((bytesRead = fin.read(buffer)) >= 0) {
+					fout.write(buffer, 0, bytesRead);
+				}
+			} catch (IOException e) { // Error copying file...
+				logger.error("Exception copying the source " + src + ", to destination : " + dest, e);
+			} finally { // Ensure that the files are closed (if they were open).
+				if (fin != null) {
+					try {
+						fin.close();
+					} catch (Exception e) {
+						logger.error("Exception closing the source input stream : " + fin, e);
+					}
+				}
+				if (fout != null) {
+					try {
+						fout.close();
+					} catch (Exception e) {
+						logger.error("Exception closing the destination output stream : " + fout, e);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * If Java 1.4 is unavailable, the following technique may be used.
+	 * 
+	 * @param aInput
+	 *            is the original String which may contain substring aOldPattern
+	 * @param aOldPattern
+	 *            is the non-empty substring which is to be replaced
+	 * @param aNewPattern
+	 *            is the replacement for aOldPattern
+	 */
+	public static String replaceOld(final String aInput, final String aOldPattern, final String aNewPattern) {
+		if (aOldPattern.equals("")) {
+			throw new IllegalArgumentException("Old pattern must have content.");
+		}
+		final StringBuffer result = new StringBuffer();
+		// startIdx and idxOld delimit various chunks of aInput; these
+		// chunks always end where aOldPattern begins
+		int startIdx = 0;
+		int idxOld = 0;
+		while ((idxOld = aInput.indexOf(aOldPattern, startIdx)) >= 0) {
+			// grab a part of aInput which does not include aOldPattern
+			result.append(aInput.substring(startIdx, idxOld));
+			// add aNewPattern to take place of aOldPattern
+			result.append(aNewPattern);
+
+			// reset the startIdx to just after the current match, to see
+			// if there are any further matches
+			startIdx = idxOld + aOldPattern.length();
+		}
+		// the final chunk will go to the end of aInput
+		result.append(aInput.substring(startIdx));
+		return result.toString();
 	}
 
 }

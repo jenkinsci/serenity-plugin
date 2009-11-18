@@ -6,13 +6,15 @@ import hudson.model.AbstractProject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import com.ikokoon.IConstants;
+import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.hudson.modeller.IModeller;
 import com.ikokoon.serenity.hudson.modeller.Modeller;
 import com.ikokoon.serenity.model.Class;
@@ -58,6 +60,7 @@ public class SerenityResult implements ISerenityResult {
 	 * @param abstractBuild
 	 *            the build action that generated the build for the project
 	 */
+	@SuppressWarnings("unchecked")
 	public SerenityResult(AbstractBuild<?, ?> abstractBuild) {
 		logger.debug("SerenityResult");
 		this.owner = abstractBuild;
@@ -65,6 +68,14 @@ public class SerenityResult implements ISerenityResult {
 		logger.debug("Opening database on file : " + dataBaseFile);
 		dataBase = IDataBase.DataBaseManager.getDataBase(dataBaseFile, false);
 		project = (Project<?, ?>) dataBase.find(Toolkit.hash(Project.class.getName()));
+		List<Package<?, ?>> packages = this.project.getChildren().getClass().cast(project.getChildren());
+		if (packages != null) {
+			Collections.sort(packages, new Comparator<Package<?, ?>>() {
+				public int compare(Package<?, ?> o1, Package<?, ?> o2) {
+					return o1.getName().compareTo(o2.getName());
+				}
+			});
+		}
 		this.projectModel = getModel(project);
 	}
 
@@ -108,11 +119,25 @@ public class SerenityResult implements ISerenityResult {
 			parameters.add(className);
 			this.klass = (Class<?, ?>) dataBase.find(parameters);
 			this.model = getModel(this.klass);
+			if (this.klass != null) {
+				Collections.sort(this.klass.getChildren(), new Comparator<Method<?, ?>>() {
+					public int compare(Method<?, ?> o1, Method<?, ?> o2) {
+						return o1.getName().compareTo(o2.getName());
+					}
+				});
+			}
 		} else if (packageName != null) {
 			parameters.clear();
 			parameters.add(packageName);
 			this.pakkage = (Package<?, ?>) dataBase.find(parameters);
 			this.model = getModel(this.pakkage);
+			if (this.pakkage != null) {
+				Collections.sort(this.pakkage.getChildren(), new Comparator<Class<?, ?>>() {
+					public int compare(Class<?, ?> o1, Class<?, ?> o2) {
+						return o1.getName().compareTo(o2.getName());
+					}
+				});
+			}
 		}
 
 		logger.debug("Package : " + pakkage + ", class : " + klass + ", method : " + method);
@@ -147,8 +172,7 @@ public class SerenityResult implements ISerenityResult {
 
 	@SuppressWarnings("unchecked")
 	public List<Package> getPackages() {
-		Project project = this.project.getClass().cast(this.project);
-		List<Package> packages = project.getChildren().getClass().cast(project.getChildren());
+		List<Package> packages = this.project.getChildren().getClass().cast(project.getChildren());
 		return packages;
 	}
 

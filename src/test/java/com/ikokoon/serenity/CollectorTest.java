@@ -1,7 +1,6 @@
 package com.ikokoon.serenity;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
-import com.ikokoon.IConstants;
 import com.ikokoon.serenity.model.Afferent;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Method;
@@ -77,6 +75,11 @@ public class CollectorTest extends ATest implements IConstants {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void collectMetricsAfferentEfferent() {
+		Class toDelete = (Class) dataBase.find(Toolkit.hash(className));
+		dataBase.remove(toDelete.getId());
+		toDelete = (Class) dataBase.find(Toolkit.hash(className));
+		assertNull(toDelete);
+
 		Collector.collectEfferentAndAfferent(className, Logger.class.getName());
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(packageName);
@@ -97,7 +100,7 @@ public class CollectorTest extends ATest implements IConstants {
 	@Test
 	public void collectLinePerformance() {
 		int iterations = 1000;
-		String className = this.className;
+		// String className = this.className;
 		String lineNumber = Double.toString(this.lineNumber);
 		String methodName = this.methodName;
 		String methodDescription = this.methodDescription;
@@ -106,10 +109,10 @@ public class CollectorTest extends ATest implements IConstants {
 			if (i % 1000 == 0) {
 				logger.info("Iteration : " + i);
 			}
-			className = this.className + i;
+			// className = this.className + i;
 			methodName = this.methodName + i;
 			lineNumber = Double.toString(this.lineNumber + i);
-			Collector.collectCoverage(className, lineNumber, methodName, methodDescription);
+			Collector.collectCoverage(this.className, lineNumber, methodName, methodDescription);
 		}
 		double end = System.currentTimeMillis();
 		double duration = (end - start) / 1000d;

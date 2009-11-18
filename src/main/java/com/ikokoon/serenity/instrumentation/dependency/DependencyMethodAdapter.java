@@ -11,7 +11,7 @@ import com.ikokoon.serenity.Collector;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
- * Please @see DependencyClassAdapter for more on dependency.
+ * Please @see SourceClassAdapter for more on dependency.
  * 
  * @author Michael Couck
  * @since 18.07.09

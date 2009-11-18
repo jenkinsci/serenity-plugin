@@ -10,7 +10,6 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassVisitor;
 
-import com.ikokoon.IConstants;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -29,7 +28,7 @@ public class Configuration {
 	/** The logger for the class. */
 	public Logger logger = Logger.getLogger(this.getClass());
 	/** Packages that are included in the enhancement. */
-	public List<String> includedPackages = new ArrayList<String>();
+	public Set<String> includedPackages = new TreeSet<String>();
 	/** Patterns in class names that are excluded from enhancement. */
 	public Set<String> excludedPackages = new TreeSet<String>();
 	/** The class adapters that the system will chain. */
@@ -107,7 +106,7 @@ public class Configuration {
 		excludedPackages.add(Transformer.class.getSimpleName());
 		// excludedPackages.add(CoverageClassAdapter.class.getPackage().getName());
 		// excludedPackages.add(ComplexityClassAdapter.class.getPackage().getName());
-		// excludedPackages.add(DependencyClassAdapter.class.getPackage().getName());
+		// excludedPackages.add(SourceClassAdapter.class.getPackage().getName());
 		// excludedPackages.add(ProfilingClassAdapter.class.getPackage().getName());
 		// excludedPackages.add(IDataBase.class.getPackage().getName());
 	}

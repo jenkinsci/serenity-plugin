@@ -1,0 +1,262 @@
+package com.ikokoon.serenity.applet;
+
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Label;
+import java.awt.Scrollbar;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+
+import com.jinsight.jetchart.BarSerie;
+import com.jinsight.jetchart.Graph;
+import com.jinsight.jetchart.Java2Adapter;
+import com.jinsight.jetchart.Legend;
+
+/**
+ * This demo displays a chart with three bar series.
+ * 
+ * @author Andre de Lima Soares - alsoares@jinsight.com
+ */
+public class Main extends JFrame implements ItemListener, AdjustmentListener {
+
+	BarSerie bs1, bs2, bs3;
+
+	JCheckBox is3D, isInLine, isHorizontal, isInside;
+
+	JScrollBar depth;
+
+	Graph graph;
+
+	public Main() {
+
+		// A title for the frame
+		setTitle("The JetChart Library - Bars Chart Demo");
+
+		// Values for the series
+		double[] values1 = { 100000, 200000, 1500000 };
+		double[] values2 = { 300000, -150000, 900000 };
+		double[] values3 = { 1400000, 1350000, 2500000 };
+
+		// Creates three bar series
+		bs1 = new BarSerie(values1, "Bar Series 1");
+		bs2 = new BarSerie(values2, "Bar Series 2");
+		bs3 = new BarSerie(values3, "Bar Series 3");
+
+		// Sets bar series properties
+		setBarSeriesProperties();
+
+		// Labels for chart
+		String[] labels = { "label1", "label2", "label3" };
+
+		// Creates graphic context, passing labels
+		graph = new Graph(labels);
+
+		// Enables antialiasing. These lines are optional, but they require that
+		// the file Java2.jar, found in the JetChart/lib, be added to the classpath.
+		Java2Adapter ja = new Java2Adapter(graph);
+		ja.setAntiAliasEnabled(true);
+
+		// Sets chart optional properties
+		setChartProperties();
+
+		// Adds the three bar series to the graphic context
+		graph.addSerie(bs1);
+		graph.addSerie(bs2);
+		graph.addSerie(bs3);
+
+		Container ct = getContentPane();
+		ct.add("Center", graph);
+
+		// Creates a top panel to layout components
+		createTopPanel();
+
+		// Adds window adapter
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent evt) {
+				System.exit(0);
+			}
+		});
+
+		setSize(650, 430);
+
+		// Centers frame on the screen
+		Dimension d = getToolkit().getScreenSize();
+		setLocation((d.width - getSize().width) / 2, (d.height - getSize().height) / 2);
+
+		setVisible(true);
+
+	}
+
+	// Event handler for 3D state and chart orientation
+	public void itemStateChanged(ItemEvent evt) {
+		if (evt.getSource() == is3D) {
+			graph.set3DEnabled(is3D.isSelected());
+			depth.setEnabled(is3D.isSelected());
+			isInLine.setEnabled(is3D.isSelected());
+		} else if (evt.getSource() == isHorizontal) {
+			boolean hor = isHorizontal.isSelected();
+			graph.setHorizontalGraphEnabled(hor);
+			if (!hor) {
+				graph.getLeftTitle().setText("Values Title");
+				graph.getBottomTitle().setText("Labels Title");
+			} else {
+				graph.getLeftTitle().setText("Labels Title");
+				graph.getBottomTitle().setText("Values Title");
+			}
+			graph.setHorizontalGraphEnabled(isHorizontal.isSelected());
+		}
+
+		else if (evt.getSource() == isInLine)
+			graph.set3DSeriesInLineEnabled(isInLine.isSelected());
+
+		else if (evt.getSource() == isInside) {
+			if (isInside.isSelected())
+				bs3.setMarkLegendPosition(BarSerie.INSIDE_VERTICAL);
+			else
+				bs3.setMarkLegendPosition(BarSerie.TOP);
+		}
+
+		graph.refresh();
+	}
+
+	// Event handler for chart depth adjustment
+	public void adjustmentValueChanged(AdjustmentEvent evt) {
+		if (evt.getSource() == depth) {
+			graph.setVDepth(depth.getValue());
+			graph.setHDepth(depth.getValue());
+			graph.repaint();
+		}
+	}
+
+	// Creates top panel
+	private void createTopPanel() {
+
+		// Creates top panel with a border around
+		JPanel topPanel = new JPanel();
+
+		topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+		// Checkbox for 3D property.
+		is3D = new JCheckBox("3D");
+		is3D.setFont(new Font("Arial", Font.PLAIN, 10));
+		is3D.addItemListener(this);
+
+		// Checkbox for chart orientation property
+		isHorizontal = new JCheckBox("Horizontal");
+		isHorizontal.setFont(new Font("Arial", Font.PLAIN, 10));
+		isHorizontal.addItemListener(this);
+
+		// Checkbox for inline property
+		isInLine = new JCheckBox("3D series inline");
+		isInLine.addItemListener(this);
+		isInLine.setFont(new Font("Arial", Font.PLAIN, 10));
+		isInLine.setEnabled(false);
+
+		// Checkbox for bar legend orientation
+		isInside = new JCheckBox("Vertical bar legend");
+		isInside.addItemListener(this);
+		isInside.setFont(new Font("Arial", Font.PLAIN, 10));
+
+		// Scrollbar for chart depth adjustment
+		depth = new JScrollBar(Scrollbar.HORIZONTAL, 5, 1, 0, 30);
+		depth.setPreferredSize(new Dimension(150, depth.getPreferredSize().height));
+
+		depth.setEnabled(false);
+		depth.addAdjustmentListener(this);
+
+		topPanel.add(is3D);
+		topPanel.add(isHorizontal);
+		topPanel.add(isInLine);
+		topPanel.add(isInside);
+		topPanel.add(new Label("3D depth:"));
+		topPanel.add(depth);
+
+		Container ct = getContentPane();
+		ct.add("North", topPanel);
+
+	}
+
+	private void setBarSeriesProperties() {
+		// Sets color
+		bs1.setColor(Color.red);
+		bs2.setColor(Color.green);
+		bs3.setColor(Color.pink);
+
+		// Sets width
+		bs1.setWidth(15);
+		bs2.setWidth(15);
+		bs3.setWidth(15);
+
+		// Enables values on marks of BarSerie bs1
+		bs3.setMarkLegendEnabled(true);
+
+		// Sets mark legend foreground color of BarSerie bs1
+		bs3.setMarkLegendForeground(Color.blue);
+
+		// Sets values font of BarSerie bs1
+		bs3.setFont(new Font("Arial", Font.PLAIN, 8));
+
+	}
+
+	@SuppressWarnings("deprecation")
+	private void setChartProperties() {
+
+		// Enables tooltip
+		graph.getToolTip().setEnabled(true);
+
+		// Sets chart title
+		String[] title = { "The JetChart Library", "Demo with three bar series" };
+		graph.setTitle(title);
+
+		// Sets labels title
+		graph.getBottomTitle().setText("Labels Title");
+
+		// Sets values title
+		graph.getLeftTitle().setText("Values Title");
+
+		// Applies gradient colors to graphic context
+		graph.setGradientColors(Color.yellow, new Color(51, 102, 255));
+
+		// Enables chart and legend dragging. A double-click over chart alternates
+		// between moving chart and scale adjustment.
+		graph.setDraggingEnabled(true);
+
+		// Enables grid and sets grid color
+		graph.getGraphSet(0).getGrid().setEnabled(true);
+
+		// Sets legend orientation and position. Legend can be dinamically
+		// dragged, if the Graph draggable property is set to true.
+		graph.getLegend().setOrientation(Legend.HORIZONTAL);
+		// graph.getLegend().setPosition(Legend.RIGHT);
+		// graph.getLegend().setPosition(Legend.LEFT);
+
+		// Sets format for values.
+		graph.setValueFormat("###,###0.00");
+
+		// Sets depth for vertical graph.
+		graph.setVDepth(5);
+
+		// Sets depth for horizontal graph.
+		graph.setHDepth(5);
+
+		// Disables inline painting of 3D series, drawing bar series side by side.
+		graph.set3DSeriesInLineEnabled(false);
+
+	}
+
+	public static void main(String[] args) {
+		new Main();
+	}
+}

@@ -6,5 +6,13 @@
 	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Downloads/Software/JetChart/lib/Swing/sEncoders.jar"/>
+	<classpathentry kind="lib" path="C:/Downloads/Software/JetChart/lib/Swing/sGaugeChart.jar"/>
+	<classpathentry kind="lib" path="C:/Downloads/Software/JetChart/lib/Swing/sGraphChart.jar"/>
+	<classpathentry kind="lib" path="C:/Downloads/Software/JetChart/lib/Swing/sPieChart.jar"/>
+	<classpathentry kind="lib" path="C:/Downloads/Software/JetChart/lib/Swing/sPolarChart.jar"/>
+	<classpathentry kind="lib" path="C:/Downloads/Software/JetChart/lib/Swing/sRadarChart.jar"/>
+	<classpathentry kind="lib" path="C:/Downloads/Software/JetChart/lib/Swing/sScatterChart.jar"/>
+	<classpathentry kind="lib" path="C:/Downloads/Software/JetChart/lib/Java2.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

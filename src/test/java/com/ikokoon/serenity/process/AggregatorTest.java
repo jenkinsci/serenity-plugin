@@ -9,9 +9,9 @@ import java.util.logging.Logger;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 
-import com.ikokoon.IConstants;
 import com.ikokoon.serenity.ATest;
 import com.ikokoon.serenity.Configuration;
+import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.model.Afferent;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Efferent;

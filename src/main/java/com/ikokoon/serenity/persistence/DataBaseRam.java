@@ -104,9 +104,19 @@ public final class DataBaseRam implements IDataBase {
 	 */
 	public synchronized final IComposite<?, ?> remove(Long id) {
 		IComposite<?, ?> composite = find(id);
-		composite.getParent().getChildren().remove(composite);
-		composite.setParent(null);
-		project.getIndex().remove(composite);
+		if (composite != null) {
+			IComposite<?, ?> parent = composite.getParent();
+			if (parent != null) {
+				List<?> children = parent.getChildren();
+				if (children != null) {
+					children.remove(composite);
+				}
+			}
+			composite.setParent(null);
+			if (!project.getIndex().remove(composite)) {
+				logger.warn("Didn't remove composite with id : " + id + ", because it wasn't in the index.");
+			}
+		}
 		return composite;
 	}
 

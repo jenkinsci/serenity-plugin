@@ -12,6 +12,13 @@ import com.ikokoon.serenity.model.Project;
 import com.ikokoon.target.Target;
 import com.ikokoon.toolkit.Toolkit;
 
+/**
+ * Tests the modeller that takes a composite and builds a model for it that can be displayed in the graph applet.
+ * 
+ * @author Michael Couck
+ * @since 17.11.09
+ * @version 01.00
+ */
 public class ModellerTest extends ATest {
 
 	@Test
