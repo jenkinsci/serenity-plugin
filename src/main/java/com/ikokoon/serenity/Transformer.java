@@ -7,15 +7,14 @@ import java.security.ProtectionDomain;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 
+import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.serenity.process.Accumulator;
 import com.ikokoon.serenity.process.Aggregator;
 import com.ikokoon.serenity.process.Cleaner;
-import com.ikokoon.toolkit.ObjectFactory;
 
 /**
  * This class is the entry point for the Serenity code coverage/complexity/dependency/profiling functionality. This class is called by the JVM on
@@ -31,10 +30,10 @@ public class Transformer implements ClassFileTransformer, IConstants {
 	private static Logger LOGGER;
 	/** The static instance of this transformer. */
 	public static final Transformer INSTANCE = new Transformer();
-	/** The aggregated flag. */
-	private static boolean accumulated = false;
 	/** During tests there can be more than one shutdown hook added. */
 	private static boolean shutdownHookAdded = false;
+
+	private static boolean accumulated = false;
 
 	/** The chain of adapters for analysing the classes. */
 	private Class<ClassVisitor>[] classAdapterClasses;
@@ -46,7 +45,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 	 * 
 	 * Manifest-Version: 1.0 <br>
 	 * Boot-Class-Path: asm-3.1.jar and so on...<br>
-	 * Premain-Class: com.ikokoon.instrumentation.CoverageTransformer
+	 * Premain-Class: com.ikokoon.serenity.instrumentation.Transformer
 	 * 
 	 * These instructions tell the JVM to call this method when loading class files.
 	 * 
@@ -62,18 +61,25 @@ public class Transformer implements ClassFileTransformer, IConstants {
 			shutdownHookAdded = true;
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 				public void run() {
-					LOGGER.info("Writing and finalizing the persistence");
+					Date start = new Date();
+					LOGGER.info("Starting accumulation : " + start);
 					IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(IConstants.DATABASE_FILE, false);
+
+					// Accumulator accumulator = new Accumulator(null);
 					new Cleaner(null).execute();
 					new Aggregator(null, dataBase).execute();
+
 					dataBase.close();
+
+					Date end = new Date();
 					long million = 1000 * 1000;
+					long duration = end.getTime() - start.getTime();
+					LOGGER.info("Finished accumulation : " + end + ", duration : " + duration + " millis");
 					LOGGER.info("Total memory : " + (Runtime.getRuntime().totalMemory() / million) + ", max memory : "
 							+ (Runtime.getRuntime().maxMemory() / million) + ", free memory : " + (Runtime.getRuntime().freeMemory() / million));
 				}
 			});
 		}
-
 		if (instrumentation != null) {
 			instrumentation.addTransformer(INSTANCE);
 		}
@@ -90,59 +96,36 @@ public class Transformer implements ClassFileTransformer, IConstants {
 	 */
 	public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
 			byte[] classfileBuffer) throws IllegalClassFormatException {
-		// Only classes from the system classloader
+		// Can we implement a classloader here? Would it make things simpler/more robust/faster?
+		// Thread.currentThread().setContextClassLoader(and the custom classloader);
+
+		// JUnit4TestAdapterCache.getDefault().getNotifier(null, null).addListener(new RunListener() {
+		// @Override
+		// public void testRunStarted(Description description) throws Exception {
+		// super.testRunStarted(description);
+		// }
+		// });
+
 		if (loader != ClassLoader.getSystemClassLoader()) {
-			LOGGER.debug("No system classloader : " + className);
+			LOGGER.info("No system classloader : " + className);
 			return classfileBuffer;
 		}
-		// Can't enhance yourself or native etc. classes
 		if (Configuration.getConfiguration().excluded(className)) {
-			LOGGER.debug("Excluded class : " + className);
+			LOGGER.info("Excluded class : " + className);
 			return classfileBuffer;
 		}
-		// Check for packages that we need to enhance
 		if (Configuration.getConfiguration().included(className)) {
-			LOGGER.debug("Enhancing class : " + className);
-			ClassWriter writer = getVisitorChain(classAdapterClasses, className, classfileBuffer, new byte[0]);
+			LOGGER.info("Enhancing class : " + className);
+			ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(classAdapterClasses, className, classfileBuffer, new byte[0]);
 			byte[] result = writer.toByteArray();
 			return result;
 		}
 		if (!accumulated) {
 			accumulated = true;
-			Date start = new Date();
-			LOGGER.info("Starting accumulation : " + start);
-			new Accumulator(null).execute();
-			Date end = new Date();
-			long duration = end.getTime() - start.getTime();
-			LOGGER.info("Finished accumulation : " + end + ", duration : " + duration + " millis");
+			new Accumulator(null); // .execute();
 		}
+		LOGGER.info("Class : " + className);
 		return classfileBuffer;
-	}
-
-	/**
-	 * Builds the visitor chain that will gather the code metrics while visiting the byte code for the class.
-	 * 
-	 * @param classVisitor
-	 *            the top level visitor, typically this is a ClassWriter instance
-	 * @param classAdapterClasses
-	 *            the class adapters that will be chained to the writer
-	 * @param className
-	 *            the constructor parameter for the visitor
-	 * @return the bottom visitor in the chain of visitors
-	 */
-	public ClassWriter getVisitorChain(Class<ClassVisitor>[] classAdapterClasses, String className, byte[] classBytes, byte[] sourceBytes) {
-		ClassReader reader = new ClassReader(classBytes);
-		ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
-		ClassVisitor visitor = writer;
-		for (Class<ClassVisitor> klass : classAdapterClasses) {
-			Object[] parameters = new Object[] { visitor, className, classBytes, sourceBytes };
-			visitor = ObjectFactory.getObject(klass, parameters);
-			LOGGER.debug("Adding class visitor : " + visitor);
-		}
-		reader.accept(visitor, 0);
-		// ASMifierClassVisitor classVisitor = new ASMifierClassVisitor(new PrintWriter(System.out));
-		// CheckClassAdapter checkClassAdapter = new CheckClassAdapter(classAdapter);
-		return writer;
 	}
 
 }

@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 
+import com.ikokoon.serenity.model.Unique;
+import com.ikokoon.target.consumer.Annotation;
+
 /**
  * This is the test class for the coverage functionality.
  * 
@@ -11,18 +14,24 @@ import org.apache.log4j.Logger;
  * @since 12.07.09
  * @version 01.00
  */
-public class Target implements ITarget, Serializable {
+@Unique(fields = { Target.NAME })
+@Annotation(fields = { Target.NAME })
+public class Target<E, F> implements ITarget<E, F>, Serializable {
 
 	/** The logger for the class. */
 	private transient Logger logger = Logger.getLogger(Target.class);
+	protected static final String NAME = "name";
 
 	@SuppressWarnings("unused")
 	private String name;
 
+	private E e = null;
+
 	/**
 	 * Constructor.
 	 */
-	public Target() {
+	public Target(E e) {
+		this.e = e;
 	}
 
 	/**
@@ -33,6 +42,15 @@ public class Target implements ITarget, Serializable {
 	public Target(String name) {
 		this.name = name;
 		logger.debug(name);
+	}
+
+	/**
+	 * Return a generic type.
+	 * 
+	 * @return
+	 */
+	public E getE() {
+		return this.e;
 	}
 
 	/**
@@ -125,6 +143,25 @@ public class Target implements ITarget, Serializable {
 
 	public String methodName(String s1, String s2) {
 		return s1;
+	}
+
+	@SuppressWarnings("unused")
+	private int f;
+
+	public void checkAndSetF(int f) {
+		if (f >= 0) {
+			this.f = f;
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+
+	public static void sleep(long d) {
+		try {
+			Thread.sleep(d);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

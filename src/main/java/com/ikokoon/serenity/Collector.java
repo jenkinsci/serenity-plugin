@@ -15,11 +15,15 @@ import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.model.Project;
+import com.ikokoon.serenity.persistence.DataBaseToolkit;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
- * TODO - make this class non static
+ * TODO - make this class non static? Is this a better option? More OO? Better performance? Will it be easier to understand? In the case of
+ * distributing the collector class by putting it in the constant pool of the classes and then calling the instance variable from inside the classes,
+ * will this be more difficult to understand? In this static class all the real collection logic is in one place and is called statically. The
+ * generation of the instructions to call this class is simple and seemingly not much less performant than an instance variable.
  * 
  * This class collects the data from the processing. It adds the metrics to the packages, classes, methods and lines and persists the data in the
  * database. This is the central collection class for the coverage and dependency functionality.
@@ -39,17 +43,7 @@ public class Collector implements IConstants {
 	static {
 		try {
 			dataBase = IDataBase.DataBaseManager.getDataBase(IConstants.DATABASE_FILE, true);
-			// Reset the counter for all the lines
-			Project<?, ?> project = (Project<?, ?>) dataBase.find(Toolkit.hash(Project.class.getName()));
-			for (Package<?, ?> pakkage : ((List<Package<?, ?>>) project.getChildren())) {
-				for (Class<?, ?> klass : ((List<Class<?, ?>>) pakkage.getChildren())) {
-					for (Method<?, ?> method : ((List<Method<?, ?>>) klass.getChildren())) {
-						for (Line<?, ?> line : ((List<Line<?, ?>>) method.getChildren())) {
-							line.setCounter(0d);
-						}
-					}
-				}
-			}
+			DataBaseToolkit.clear(dataBase);
 		} catch (Exception e) {
 			LOGGER.error("Exception initilizing the database", e);
 		}
@@ -119,6 +113,7 @@ public class Collector implements IConstants {
 	 *            the referenced class names
 	 */
 	public static final void collectEfferentAndAfferent(String className, String... targetClassNames) {
+		// String packageName = Toolkit.classNameToPackageName(className);
 		String packageName = Toolkit.classNameToPackageName(className);
 		for (String targetClassName : targetClassNames) {
 			// Is the target name outside the package for this class
@@ -137,14 +132,14 @@ public class Collector implements IConstants {
 			// Add the target package name to the afferent packages for this package
 			Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
 			Afferent afferent = getAfferent(klass, targetPackageName);
-			if (!klass.getAfferentPackages().contains(afferent)) {
-				klass.getAfferentPackages().add(afferent);
+			if (!klass.getAfferent().contains(afferent)) {
+				klass.getAfferent().add(afferent);
 			}
 			// Add this package to the efferent packages of the target
 			Class<Package<?, ?>, Method<?, ?>> targetClass = getClass(targetClassName);
 			Efferent efferent = getEfferent(targetClass, packageName);
-			if (!targetClass.getEfferentPackages().contains(efferent)) {
-				targetClass.getEfferentPackages().add(efferent);
+			if (!targetClass.getEfferent().contains(efferent)) {
+				targetClass.getEfferent().add(efferent);
 			}
 		}
 	}
@@ -201,8 +196,6 @@ public class Collector implements IConstants {
 	private static final Class<Package<?, ?>, Method<?, ?>> getClass(String className) {
 		className = Toolkit.slashToDot(className);
 
-		// LOGGER.info("Class name : " + className);
-
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(className);
 		Class klass = (Class) dataBase.find(parameters);
@@ -214,8 +207,8 @@ public class Collector implements IConstants {
 			klass.setComplexity(1d);
 			klass.setCoverage(0d);
 			klass.setStability(0d);
-			klass.setEfferent(0d);
-			klass.setAfferent(0d);
+			klass.setEfference(0d);
+			klass.setAfference(0d);
 			klass.setInterfaze(false);
 			klass.setTimestamp(timestamp);
 
@@ -310,7 +303,7 @@ public class Collector implements IConstants {
 			efferent.setName(packageName);
 			efferent.setTimestamp(timestamp);
 
-			klass.getEfferentPackages().add(efferent);
+			klass.getEfferent().add(efferent);
 
 			dataBase.persist(efferent);
 		}
@@ -333,7 +326,7 @@ public class Collector implements IConstants {
 			afferent.setName(packageName);
 			afferent.setTimestamp(timestamp);
 
-			klass.getAfferentPackages().add(afferent);
+			klass.getAfferent().add(afferent);
 
 			dataBase.persist(afferent);
 		}

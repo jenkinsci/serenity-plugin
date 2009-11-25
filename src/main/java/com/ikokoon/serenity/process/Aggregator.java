@@ -83,6 +83,7 @@ public class Aggregator extends AProcess implements IConstants {
 		if (project != null) {
 			aggregateProject(project);
 		}
+		// DataBaseToolkit.dump(dataBase);
 	}
 
 	private void aggregateProject(Project<?, ?> project) {
@@ -134,8 +135,8 @@ public class Aggregator extends AProcess implements IConstants {
 				coverage += (packageLines / lines) * pakkage.getCoverage();
 				interfaces += pakkage.getInterfaces();
 				implementations += pakkage.getImplement();
-				efference.addAll(pakkage.getEfference());
-				afference.addAll(pakkage.getAfference());
+				efference.addAll(pakkage.getEfferent());
+				afference.addAll(pakkage.getAfferent());
 			}
 		}
 
@@ -164,16 +165,15 @@ public class Aggregator extends AProcess implements IConstants {
 
 	private void aggregatePackages(List<Package<?, ?>> packages) {
 		for (Package<?, ?> pakkage : packages) {
-			logger.debug("Processing package : " + pakkage.getName());
 			List<Class<?, ?>> classes = pakkage.getChildren();
 			aggregateClasses(classes);
 
 			double interfaces = 0d;
 			double implementations = 0d;
-			double packageLines = 0d;
+			double lines = 0d;
 			double complexity = 0d;
 			double coverage = 0d;
-			double totalLinesExecuted = 0d;
+			double linesExecuted = 0d;
 
 			Set<Efferent> efference = new TreeSet<Efferent>();
 			Set<Afferent> afference = new TreeSet<Afferent>();
@@ -184,30 +184,30 @@ public class Aggregator extends AProcess implements IConstants {
 				} else {
 					implementations++;
 				}
-				for (Efferent efferent : klass.getEfferentPackages()) {
+				for (Efferent efferent : klass.getEfferent()) {
 					efference.add(efferent);
 				}
-				for (Afferent afferent : klass.getAfferentPackages()) {
+				for (Afferent afferent : klass.getAfferent()) {
 					afference.add(afferent);
 				}
-				packageLines += klass.getLines();
-				totalLinesExecuted += klass.getExecuted();
+				lines += klass.getLines();
+				linesExecuted += klass.getExecuted();
 			}
 
-			pakkage.setEfference(efference);
-			pakkage.setAfference(afference);
+			pakkage.setEfferent(efference);
+			pakkage.setAfferent(afference);
 
-			pakkage.setLines(packageLines);
-			pakkage.setExecuted(totalLinesExecuted);
+			pakkage.setLines(lines);
+			pakkage.setExecuted(linesExecuted);
 
-			if (packageLines > 0) {
+			if (lines > 0) {
 				for (Class<?, ?> klass : classes) {
 					if (klass.getInterfaze()) {
 						continue;
 					}
 					double classLines = klass.getLines();
-					complexity += (classLines / packageLines) * klass.getComplexity();
-					coverage += (classLines / packageLines) * klass.getCoverage();
+					complexity += (classLines / lines) * klass.getComplexity();
+					coverage += (classLines / lines) * klass.getCoverage();
 				}
 			}
 
@@ -216,8 +216,8 @@ public class Aggregator extends AProcess implements IConstants {
 
 			double efferent = efference.size();
 			double afferent = afference.size();
-			pakkage.setEfferent(efferent);
-			pakkage.setAfferent(afferent);
+			pakkage.setEfference(efferent);
+			pakkage.setAfference(afferent);
 
 			double stability = efferent / ((efferent + afferent) > 0 ? (efferent + afferent) : 1d);
 			pakkage.setStability(stability);
@@ -243,38 +243,38 @@ public class Aggregator extends AProcess implements IConstants {
 			List<Method<?, ?>> methods = klass.getChildren();
 			aggregateMethods(methods);
 
-			double afferent = klass.getAfferentPackages().size();
-			klass.setAfferent(afferent);
+			double afferent = klass.getAfferent().size();
+			klass.setAfference(afferent);
 
-			double classLines = 0d;
+			double lines = 0d;
 			double complexity = 0d;
 			double coverage = 0d;
-			double totalLinesExecuted = 0d;
+			double linesExecuted = 0d;
 			for (Method<?, ?> method : methods) {
-				classLines += method.getLines();
+				lines += method.getLines();
+				linesExecuted += method.getExecuted();
 			}
-			if (classLines > 0) {
+			if (lines > 0) {
 				for (Method<?, ?> method : methods) {
 					double methodLines = method.getLines();
 					if (methodLines == 0) {
 						continue;
 					}
-					double weightedLines = methodLines / classLines;
+					double weightedLines = methodLines / lines;
 					double methodComplexity = method.getComplexity();
 					double methodCoverage = method.getCoverage();
 					complexity += methodComplexity * weightedLines;
 					coverage += methodCoverage * weightedLines;
-					totalLinesExecuted += method.getExecuted();
 				}
 			}
-			klass.setLines(classLines);
+			klass.setLines(lines);
 			klass.setComplexity(complexity);
 			klass.setCoverage(coverage);
-			klass.setExecuted(totalLinesExecuted);
-			klass.setEfferent(klass.getEfferentPackages().size());
+			klass.setExecuted(linesExecuted);
+			klass.setEfference(klass.getEfferent().size());
 
-			double efference = klass.getEfferent();
-			double afference = klass.getAfferent();
+			double efference = klass.getEfference();
+			double afference = klass.getAfference();
 			double stability = efference / ((efference + afference) > 0 ? (efference + afference) : 1);
 
 			klass.setStability(stability);
@@ -287,16 +287,22 @@ public class Aggregator extends AProcess implements IConstants {
 				double linesExecuted = 0d;
 				// Collect all the lines that were executed
 				List<Line<?, ?>> lines = method.getChildren();
+
 				double totalLinesExecuted = 0;
 				for (Line<?, ?> line : lines) {
 					totalLinesExecuted += line.getCounter();
+					if (logger.isDebugEnabled()) {
+						logger.debug("Line covered : " + line + ", " + line.getCounter());
+					}
 					if (line.getCounter() > 0) {
 						linesExecuted++;
 					}
 				}
 				double methodLines = method.getLines();
-				double coverage = (linesExecuted / methodLines) * 100d;
-				method.setCoverage(coverage);
+				if (methodLines > 0) {
+					double coverage = (linesExecuted / methodLines) * 100d;
+					method.setCoverage(coverage);
+				}
 				method.setExecuted(totalLinesExecuted);
 			} catch (Exception e) {
 				logger.error("Exception peocessing the method element : " + method.getName(), e);

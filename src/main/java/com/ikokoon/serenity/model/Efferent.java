@@ -3,9 +3,15 @@ package com.ikokoon.serenity.model;
 import java.io.Serializable;
 import java.util.Date;
 
-@SuppressWarnings("unchecked")
+/**
+ * This class represents a package that the owner effects.
+ * 
+ * @author Michael Couck
+ * @since 17.07.09
+ * @version 01.00
+ */
 @Unique(fields = { Composite.NAME })
-public class Efferent extends Composite implements Comparable<Efferent>, Serializable {
+public class Efferent extends Composite<Object, Object> implements Comparable<Efferent>, Serializable {
 
 	private String name;
 	private Date timestamp;

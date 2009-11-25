@@ -3,9 +3,8 @@ package com.ikokoon.serenity.persistence;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.apache.log4j.Logger;
 
-import com.ikokoon.serenity.ATest;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
@@ -13,11 +12,9 @@ import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.model.Project;
 import com.ikokoon.toolkit.Toolkit;
 
-public class DataBaseToolkitTest extends ATest {
+public class DataBaseToolkit {
 
-	@Test
-	public void test() {
-	}
+	private static Logger logger = Logger.getLogger(DataBaseToolkit.class);
 
 	public static void clear(IDataBase dataBase) {
 		List<Long> ids = new ArrayList<Long>();
@@ -46,14 +43,13 @@ public class DataBaseToolkitTest extends ATest {
 		Project<?, ?> project = (Project<?, ?>) dataBase.find(Toolkit.hash(Project.class.getName()));
 		logger.warn("Project : " + project.getName());
 		for (Package<?, ?> pakkage : ((List<Package<?, ?>>) project.getChildren())) {
-			logger.warn("\tPackage : " + pakkage.getId() + " : " + pakkage.getName());
+			logger.warn("\tPackage : " + pakkage.getId() + " : " + pakkage.getName() + " : " + pakkage.getCoverage());
 			for (Class<?, ?> klass : ((List<Class<?, ?>>) pakkage.getChildren())) {
-				logger.warn("\t\tClass : " + klass.getId() + " : " + klass.getName());
+				logger.warn("\t\tClass : " + klass.getId() + " : " + klass.getName() + " : " + klass.getCoverage());
 				for (Method<?, ?> method : ((List<Method<?, ?>>) klass.getChildren())) {
-					logger.warn("\t\t\tMethod : " + method.getId() + " : " + method.getName());
+					logger.warn("\t\t\tMethod : " + method.getId() + " : " + method.getName() + " : " + method.getCoverage());
 					for (Line<?, ?> line : ((List<Line<?, ?>>) method.getChildren())) {
-						logger.warn("\t\t\t\tLine : " + line.getId() + " : " + line.getNumber());
-						line.setCounter(0d);
+						logger.warn("\t\t\t\tLine : " + line.getId() + " : " + line.getNumber() + " : " + line.getCounter());
 					}
 				}
 			}

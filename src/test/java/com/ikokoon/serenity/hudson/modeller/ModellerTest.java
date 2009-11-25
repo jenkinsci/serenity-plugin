@@ -66,11 +66,11 @@ public class ModellerTest extends ATest {
 	public void visitPackage() {
 		Package<?, ?> pakkageOne = getPackage();
 		pakkageOne.setAbstractness(0.25);
-		pakkageOne.setAfferent(17);
+		pakkageOne.setAfference(17);
 		pakkageOne.setComplexity(17);
 		pakkageOne.setCoverage(63);
 		pakkageOne.setDistance(0.68);
-		pakkageOne.setEfferent(5);
+		pakkageOne.setEfference(5);
 		pakkageOne.setImplement(8);
 		pakkageOne.setInterfaces(4);
 		pakkageOne.setLines(1058);
@@ -80,11 +80,11 @@ public class ModellerTest extends ATest {
 		Package<?, ?> pakkageTwo = getPackage();
 		pakkageTwo.setName(Target.class.getPackage().getName());
 		pakkageTwo.setAbstractness(0.36);
-		pakkageTwo.setAfferent(5);
+		pakkageTwo.setAfference(5);
 		pakkageTwo.setComplexity(59);
 		pakkageTwo.setCoverage(23);
 		pakkageTwo.setDistance(0.21);
-		pakkageTwo.setEfferent(4);
+		pakkageTwo.setEfference(4);
 		pakkageTwo.setImplement(542);
 		pakkageTwo.setInterfaces(25);
 		pakkageTwo.setLines(20225);
@@ -107,20 +107,20 @@ public class ModellerTest extends ATest {
 	@Test
 	public void visitClass() {
 		Class<?, ?> klassOne = getClass(getPackage());
-		klassOne.setAfferent(5);
+		klassOne.setAfference(5);
 		klassOne.setComplexity(19);
 		klassOne.setCoverage(81);
-		klassOne.setEfferent(6);
+		klassOne.setEfference(6);
 		klassOne.setExecuted(2561);
 		klassOne.setInterfaze(true);
 		klassOne.setLines(256);
 		klassOne.setStability(0.235);
 
 		Class<?, ?> klassTwo = getClass(getPackage());
-		klassTwo.setAfferent(98);
+		klassTwo.setAfference(98);
 		klassTwo.setComplexity(21);
 		klassTwo.setCoverage(05);
-		klassTwo.setEfferent(65);
+		klassTwo.setEfference(65);
 		klassTwo.setExecuted(61);
 		klassTwo.setInterfaze(false);
 		klassTwo.setLines(254);

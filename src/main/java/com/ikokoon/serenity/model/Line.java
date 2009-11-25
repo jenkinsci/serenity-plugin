@@ -64,7 +64,7 @@ public class Line<E, F> extends Composite<Class<?, ?>, Object> implements Compar
 	}
 
 	public String toString() {
-		return getId() + ":" + className + ":" + methodName + " : " + number;
+		return getId() + ":" + className + ":" + methodName + " : " + number + ":" + counter;
 	}
 
 	public int compareTo(Line<?, ?> o) {

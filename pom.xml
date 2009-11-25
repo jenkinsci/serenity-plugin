@@ -13,6 +13,9 @@
 	<packaging>hpi</packaging>
 	<name>Hudson Serenity plugin</name>
 	<url>http://wiki.hudson-ci.org/display/HUDSON/Serenity+Plugin</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
 	<build>
 		<plugins>
@@ -40,7 +43,7 @@
 									</fileset>
 								</jar>
 								<echo message="Copying the serrenity jar to the test project (Findbugs)" />
-								<copy todir="../Findbugs/lib" file="${serenity.jar}" overwrite="true" failonerror="false" />
+								<copy todir="../Findbugs/lib" file="${serenity.jar}" overwrite="true" failonerror="true" />
 							</tasks>
 						</configuration>
 						<goals>
@@ -67,12 +70,6 @@
 						<argLine>-javaagent:target/serenity.jar -Xms512m -Xmx1024m</argLine>
 						<additionalClasspathElements>${surefire.test.class.path}</additionalClasspathElements>
 					</systemProperties>
-					<!-- excludes>
-						<exclude>**/DataBaseXmlTest.java</exclude>
-					</excludes -->
-					<!-- includes>
-						<include>**/DataBaseXmlTest.java</include>
-					</includes -->
 				</configuration>
 			</plugin>
 			<plugin>
@@ -89,16 +86,30 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>asm</groupId>
-			<artifactId>asm</artifactId>
-			<version>3.1</version>
+			<groupId>org.neodatis</groupId>
+			<artifactId>neodatis-odb</artifactId>
+			<version>1.9-beta-1</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.neodatis</groupId>
-			<artifactId>neodatis-odb</artifactId>
-			<version>1.9-beta-1</version>
+			<groupId>de.java2html</groupId>
+			<artifactId>java2html</artifactId>
+			<version>5.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>asm</groupId>
+			<artifactId>asm-all</artifactId>
+			<version>3.0</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>

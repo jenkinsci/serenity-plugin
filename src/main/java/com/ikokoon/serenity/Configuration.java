@@ -1,7 +1,6 @@
 package com.ikokoon.serenity;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -10,6 +9,7 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassVisitor;
 
+import com.ikokoon.serenity.model.Project;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -90,25 +90,13 @@ public class Configuration {
 	}
 
 	private void addDefaultExcludedPackages() {
-		excludedPackages.add("com.sun");
 		excludedPackages.add("javax");
+		excludedPackages.add("java.lang");
 		excludedPackages.add("sun");
 		excludedPackages.add("sunw");
-		excludedPackages.add("java.lang");
+		excludedPackages.add("com.sun");
 		excludedPackages.add("Test");
-
-		excludedPackages.add(Object.class.getPackage().getName());
-		excludedPackages.add(Collection.class.getPackage().getName());
-
-		// excludedPackages.add(Accumulator.class.getSimpleName());
-		// excludedPackages.add(Aggregator.class.getSimpleName());
-		excludedPackages.add(Collector.class.getSimpleName());
-		excludedPackages.add(Transformer.class.getSimpleName());
-		// excludedPackages.add(CoverageClassAdapter.class.getPackage().getName());
-		// excludedPackages.add(ComplexityClassAdapter.class.getPackage().getName());
-		// excludedPackages.add(SourceClassAdapter.class.getPackage().getName());
-		// excludedPackages.add(ProfilingClassAdapter.class.getPackage().getName());
-		// excludedPackages.add(IDataBase.class.getPackage().getName());
+		excludedPackages.add(Project.class.getPackage().getName());
 	}
 
 	/**

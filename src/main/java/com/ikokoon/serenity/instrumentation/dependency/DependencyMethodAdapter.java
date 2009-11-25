@@ -6,9 +6,10 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
 import com.ikokoon.serenity.Collector;
-import com.ikokoon.toolkit.Toolkit;
+import com.ikokoon.serenity.instrumentation.VisitorFactory;
 
 /**
  * Please @see SourceClassAdapter for more on dependency.
@@ -49,10 +50,33 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 		this.className = className;
 		this.methodName = methodName;
 		this.methodDescription = methodDescription;
-		String[] methodClasses = Toolkit.byteCodeSignatureToClassNameArray(methodDescription);
-		Collector.collectEfferentAndAfferent(className, methodClasses);
+		Type[] argumentTypes = Type.getArgumentTypes(methodDescription);
+		for (Type argumentType : argumentTypes) {
+			if (argumentType.getSort() == Type.OBJECT) {
+				Collector.collectEfferentAndAfferent(className, argumentType.getClassName());
+			}
+			if (argumentType.getSort() == Type.ARRAY) {
+				visitArray(argumentType);
+			}
+		}
 		if (logger.isDebugEnabled()) {
 			logger.debug("Class name : " + className + ", name : " + methodName + ", desc : " + methodDescription);
+		}
+	}
+
+	/**
+	 * This method recursively visits array types.
+	 * 
+	 * @param argumentType
+	 *            the type to visit
+	 */
+	private void visitArray(Type argumentType) {
+		if (argumentType.getSort() == Type.OBJECT) {
+			Collector.collectEfferentAndAfferent(className, argumentType.getClassName());
+		}
+		if (argumentType.getSort() == Type.ARRAY) {
+			argumentType = argumentType.getElementType();
+			visitArray(argumentType);
 		}
 	}
 
@@ -60,8 +84,7 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 	 * {@inheritDoc}
 	 */
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-		String[] annotationClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectEfferentAndAfferent(className, annotationClasses);
+		VisitorFactory.getSignatureVisitor(className, desc);
 		return super.visitAnnotation(desc, visible);
 	}
 
@@ -72,8 +95,7 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitFieldInst - " + owner + ", " + name + ", " + desc);
 		}
-		String[] fieldClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectEfferentAndAfferent(className, fieldClasses);
+		VisitorFactory.getSignatureVisitor(className, desc);
 		super.visitFieldInsn(opcode, owner, name, desc);
 	}
 
@@ -81,7 +103,9 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 	 * {@inheritDoc}
 	 */
 	public void visitLineNumber(int lineNumber, Label label) {
-		logger.debug("visitLineNumber : " + lineNumber + ", " + label + ", " + label.getOffset() + ", " + className + ", " + methodName);
+		if (logger.isDebugEnabled()) {
+			logger.debug("visitLineNumber : " + lineNumber + ", " + label + ", " + label.getOffset() + ", " + className + ", " + methodName);
+		}
 		Collector.collectLines(className, Double.toString(lineNumber), methodName, methodDescription);
 		super.visitLineNumber(lineNumber, label);
 	}
@@ -93,10 +117,10 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitLocalVariable - " + name + ", " + desc + ", " + signature + ", " + start + ", " + end + ", " + index);
 		}
-		String[] variableClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectEfferentAndAfferent(className, variableClasses);
-		variableClasses = Toolkit.byteCodeSignatureToClassNameArray(signature);
-		Collector.collectEfferentAndAfferent(className, variableClasses);
+		VisitorFactory.getSignatureVisitor(className, desc);
+		if (signature != null) {
+			VisitorFactory.getSignatureVisitor(className, signature);
+		}
 		super.visitLocalVariable(name, desc, signature, start, end, index);
 	}
 
@@ -107,8 +131,7 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitMethodInst - " + opcode + ", " + owner + ", " + name + ", " + desc);
 		}
-		String[] methodClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectEfferentAndAfferent(className, methodClasses);
+		VisitorFactory.getSignatureVisitor(className, desc);
 		super.visitMethodInsn(opcode, owner, name, desc);
 	}
 
@@ -119,8 +142,7 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitMultiANewArrayInst - " + desc + ", " + dims);
 		}
-		String[] arrayClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectEfferentAndAfferent(className, arrayClasses);
+		VisitorFactory.getSignatureVisitor(className, desc);
 		super.visitMultiANewArrayInsn(desc, dims);
 	}
 
@@ -131,8 +153,7 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitParameterAnnotation - " + parameter + ", " + desc + ", " + visible);
 		}
-		String[] parameterAnnotationClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectEfferentAndAfferent(className, parameterAnnotationClasses);
+		VisitorFactory.getSignatureVisitor(className, desc);
 		return super.visitParameterAnnotation(parameter, desc, visible);
 	}
 

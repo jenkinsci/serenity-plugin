@@ -8,12 +8,11 @@ import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import com.ikokoon.serenity.Collector;
-import com.ikokoon.toolkit.Toolkit;
+import com.ikokoon.serenity.instrumentation.VisitorFactory;
 
 /**
  * Dependency metrics consist of the following:<br>
@@ -37,9 +36,6 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	private Logger logger = Logger.getLogger(DependencyClassAdapter.class);
 	/** The name of the class that is being instrumented. */
 	private String className;
-	/** The byte array of the byte code for the class being parsed.. */
-	@SuppressWarnings("unused")
-	private byte[] classfileBuffer;
 	/** The source for the class if available. */
 	private byte[] sourcefileBuffer;
 
@@ -54,7 +50,6 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	public DependencyClassAdapter(ClassVisitor visitor, String className, byte[] classfileBuffer, byte[] sourcefileBuffer) {
 		super(visitor);
 		this.className = className;
-		this.classfileBuffer = classfileBuffer;
 		this.sourcefileBuffer = sourcefileBuffer;
 	}
 
@@ -81,9 +76,9 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitAnnotation : " + desc + ", " + visible);
 		}
-		String[] annotationClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectEfferentAndAfferent(className, annotationClasses);
-		return super.visitAnnotation(desc, visible);
+		AnnotationVisitor visitor = super.visitAnnotation(desc, visible);
+		AnnotationVisitor adapter = VisitorFactory.getAnnotationVisitor(visitor, className, desc);
+		return adapter;
 	}
 
 	/**
@@ -93,16 +88,8 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitAttribute : " + attr);
 		}
-		// TODO - what is an attribute?
+		// Attributes are code added that is not standard, and we are not really interested in it are we?
 		super.visitAttribute(attr);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void visitEnd() {
-		logger.debug("visitEnd : ");
-		super.visitEnd();
 	}
 
 	/**
@@ -112,11 +99,10 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitField : " + access + ", " + fieldName + ", " + desc + ", " + signature + ", " + value);
 		}
-		String[] fieldClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectEfferentAndAfferent(className, fieldClasses);
-		fieldClasses = Toolkit.byteCodeSignatureToClassNameArray(signature);
-		Collector.collectEfferentAndAfferent(className, fieldClasses);
-		return super.visitField(access, fieldName, desc, signature, value);
+
+		FieldVisitor visitor = super.visitField(access, fieldName, desc, signature, value);
+		FieldVisitor adapter = VisitorFactory.getFieldVisitor(visitor, className, desc, signature);
+		return adapter;
 	}
 
 	/**
@@ -139,9 +125,9 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 				logger.debug(Arrays.asList(exceptions).toString());
 			}
 		}
-		MethodVisitor methodVisitor = super.visitMethod(access, name, desc, signature, exceptions);
-		MethodAdapter methodAdapter = new DependencyMethodAdapter(methodVisitor, className, name, desc);
-		return methodAdapter;
+		MethodVisitor visitor = super.visitMethod(access, name, desc, signature, exceptions);
+		MethodVisitor adapter = VisitorFactory.getMethodVisitor(visitor, DependencyMethodAdapter.class, className, name, desc);
+		return adapter;
 	}
 
 	/**
@@ -151,8 +137,7 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.info("visitOuterClass : " + owner + ", " + methodName + ", " + desc);
 		}
-		String[] outerClassClasses = Toolkit.byteCodeSignatureToClassNameArray(desc);
-		Collector.collectEfferentAndAfferent(owner, outerClassClasses);
+		VisitorFactory.getSignatureVisitor(className, desc);
 		super.visitOuterClass(owner, methodName, desc);
 	}
 
@@ -168,6 +153,14 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 			Collector.collectSource(className, code);
 		}
 		super.visitSource(source, debug);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void visitEnd() {
+		logger.debug("visitEnd : ");
+		super.visitEnd();
 	}
 
 }

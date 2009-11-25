@@ -4,7 +4,8 @@
 			<link rel="stylesheet" href="/css/style.css" />
 		</head>
 		<body>
-			<p>The coloured source here</p>
+			<b>${it.klass.getName()}</b><br />
+			${it.getSource()}
 		</body>
 	</html>
 </j:jelly>

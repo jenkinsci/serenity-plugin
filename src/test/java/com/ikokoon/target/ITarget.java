@@ -1,5 +1,5 @@
 package com.ikokoon.target;
 
-public interface ITarget {
+public interface ITarget<E, F> {
 
 }

@@ -3,6 +3,13 @@ package com.ikokoon.serenity.model;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * This class represents a package that the owner is affected by.
+ * 
+ * @author Michael Couck
+ * @since 17.07.09
+ * @version 01.00
+ */
 @Unique(fields = { Afferent.NAME })
 public class Afferent extends Composite<Object, Object> implements Comparable<Afferent>, Serializable {
 

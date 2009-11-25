@@ -13,9 +13,9 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
+import org.objectweb.asm.Type;
 
 import com.ikokoon.serenity.model.Unique;
 
@@ -104,24 +104,20 @@ public class Toolkit {
 	 * @return the package name of the class
 	 */
 	public static String classNameToPackageName(String className) {
-		className = slashToDot(className);
-		// First try the Class package name if it is in the path, which it should be of course
-		if (className.indexOf('$') > -1) {
-			if (className.endsWith(".class")) {
-				className = className.substring(0, className.lastIndexOf('.'));
-			}
-			if (className.indexOf('.') > -1) {
-				return className.substring(0, className.lastIndexOf('.'));
-			}
-		}
+		Type type = Type.getObjectType(className);
 		try {
-			Class<?> klass = Class.forName(className);
-			String packageName = klass.getPackage().getName();
-			return packageName;
+			return Class.forName(type.getClassName()).getPackage().getName();
 		} catch (ClassNotFoundException e) {
-			logger.error("Class not found : " + className, e);
+			logger.info("Class not found, this could be an anon inner class : " + className, e);
+			// This is bad practice
+			if (type.getClassName().equals("java.lang.Synthetic")) {
+				// Dynamically created by the compiler? Synthetic access.
+				return "java.lang";
+			}
+		} catch (Exception e) {
+			logger.info("Shut down too soon? : " + className, e);
 		}
-		// Default package or class not found
+		// Default and exception package
 		return "";
 	}
 
@@ -159,56 +155,54 @@ public class Toolkit {
 	 *            the signature of the field or method
 	 * @return the classes in the description/signature
 	 */
-	public static String[] byteCodeSignatureToClassNameArray(String signature) {
-		List<String> classNames = new ArrayList<String>();
-		if (signature == null) {
-			return classNames.toArray(new String[classNames.size()]);
-		}
-		StringTokenizer tokenizer = new StringTokenizer(signature, ";<>*()[]+-");
-		while (tokenizer.hasMoreTokens()) {
-			String token = tokenizer.nextToken().trim();
-			String className = Toolkit.slashToDot(token);
-			className = stripByteCodeCharacters(className);
-			if (className.trim().equals("")) {
-				continue;
-			}
-			classNames.add(className);
-		}
-		return classNames.toArray(new String[classNames.size()]);
-	}
-
-	private static final String stripByteCodeCharacters(String string) {
-		StringBuilder builder = new StringBuilder();
-		char[] chars = string.toCharArray();
-		for (int i = 0; i < chars.length; i++) {
-			char c = chars[i];
-			switch (c) {
-			case 'B':
-			case 'C':
-			case 'D':
-			case 'F':
-			case 'I':
-			case 'J':
-			case 'L':
-			case 'S':
-			case 'T':
-			case 'V':
-			case 'Z':
-				if (i <= 4) {
-					break;
-				}
-			default:
-				builder.append(c);
-				break;
-			}
-		}
-		string = builder.toString();
-		if (string.startsWith("I") || string.startsWith("L") || string.startsWith("V") || string.startsWith("D") || string.startsWith("Z")) {
-			return stripByteCodeCharacters(string);
-		}
-		return string;
-	}
-
+	// public static String[] byteCodeSignatureToClassNameArray(String signature) {
+	// List<String> classNames = new ArrayList<String>();
+	// if (signature == null) {
+	// return classNames.toArray(new String[classNames.size()]);
+	// }
+	// StringTokenizer tokenizer = new StringTokenizer(signature, ";<>*()[]+-");
+	// while (tokenizer.hasMoreTokens()) {
+	// String token = tokenizer.nextToken().trim();
+	// String className = Toolkit.slashToDot(token);
+	// className = stripByteCodeCharacters(className);
+	// if (className.trim().equals("")) {
+	// continue;
+	// }
+	// classNames.add(className);
+	// }
+	// return classNames.toArray(new String[classNames.size()]);
+	// }
+	// private static final String stripByteCodeCharacters(String string) {
+	// StringBuilder builder = new StringBuilder();
+	// char[] chars = string.toCharArray();
+	// for (int i = 0; i < chars.length; i++) {
+	// char c = chars[i];
+	// switch (c) {
+	// case 'B':
+	// case 'C':
+	// case 'D':
+	// case 'F':
+	// case 'I':
+	// case 'J':
+	// case 'L':
+	// case 'S':
+	// case 'T':
+	// case 'V':
+	// case 'Z':
+	// if (i <= 4) {
+	// break;
+	// }
+	// default:
+	// builder.append(c);
+	// break;
+	// }
+	// }
+	// string = builder.toString();
+	// if (string.startsWith("I") || string.startsWith("L") || string.startsWith("V") || string.startsWith("D") || string.startsWith("Z")) {
+	// return stripByteCodeCharacters(string);
+	// }
+	// return string;
+	// }
 	/**
 	 * Removes any whitespace from the string.
 	 * 
@@ -717,7 +711,6 @@ public class Toolkit {
 			result.append(aInput.substring(startIdx, idxOld));
 			// add aNewPattern to take place of aOldPattern
 			result.append(aNewPattern);
-
 			// reset the startIdx to just after the current match, to see
 			// if there are any further matches
 			startIdx = idxOld + aOldPattern.length();

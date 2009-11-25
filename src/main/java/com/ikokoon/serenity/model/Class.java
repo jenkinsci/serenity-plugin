@@ -2,7 +2,6 @@ package com.ikokoon.serenity.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -30,14 +29,15 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 	@Legend(name = EXECUTED, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
 	private double executed;
 	@Legend(name = EFFERENCE, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
-	private double efferent;
+	private double efference;
 	@Legend(name = AFFERENCE, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
-	private double afferent;
+	private double afference;
 
 	private boolean interfaze;
 	private Date timestamp;
-	private List<Efferent> efferentPackages = new ArrayList<Efferent>();
-	private List<Afferent> afferentPackages = new ArrayList<Afferent>();
+
+	private List<Efferent> efferent = new ArrayList<Efferent>();
+	private List<Afferent> afferent = new ArrayList<Afferent>();
 
 	public String getName() {
 		return name;
@@ -105,20 +105,20 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 		this.stability = stability;
 	}
 
-	public double getEfferent() {
-		return Toolkit.format(efferent, PRECISION);
+	public double getEfference() {
+		return Toolkit.format(efference, PRECISION);
 	}
 
-	public void setEfferent(double efferent) {
-		this.efferent = efferent;
+	public void setEfference(double efferent) {
+		this.efference = efferent;
 	}
 
-	public double getAfferent() {
-		return Toolkit.format(afferent, PRECISION);
+	public double getAfference() {
+		return Toolkit.format(afference, PRECISION);
 	}
 
-	public void setAfferent(double afferent) {
-		this.afferent = afferent;
+	public void setAfference(double afferent) {
+		this.afference = afferent;
 	}
 
 	public boolean getInterfaze() {
@@ -137,20 +137,20 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 		this.timestamp = timestamp;
 	}
 
-	public Collection<Efferent> getEfferentPackages() {
-		return efferentPackages;
+	public List<Efferent> getEfferent() {
+		return efferent;
 	}
 
-	public void setEfferentPackages(List<Efferent> efferent) {
-		this.efferentPackages = efferent;
+	public void setEfferent(List<Efferent> efferent) {
+		this.efferent = efferent;
 	}
 
-	public List<Afferent> getAfferentPackages() {
-		return afferentPackages;
+	public List<Afferent> getAfferent() {
+		return afferent;
 	}
 
-	public void setAfferentPackages(List<Afferent> afferent) {
-		this.afferentPackages = afferent;
+	public void setAfferent(List<Afferent> afferent) {
+		this.afferent = afferent;
 	}
 
 	public String toString() {

@@ -144,7 +144,7 @@ public final class DataBaseRam implements IDataBase {
 			odb.commit();
 			odb.close();
 		} catch (Exception e) {
-			logger.error("", e);
+			logger.error("Exception comitting and closing the database", e);
 		}
 		closed = true;
 	}

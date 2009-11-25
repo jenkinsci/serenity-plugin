@@ -14,7 +14,7 @@ import com.ikokoon.serenity.Configuration;
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.Transformer;
 import com.ikokoon.serenity.model.Class;
-import com.ikokoon.serenity.persistence.DataBaseToolkitTest;
+import com.ikokoon.serenity.persistence.DataBaseToolkit;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -44,7 +44,7 @@ public class AccumulatorTest extends ATest implements IConstants {
 
 	@Test
 	public void accumulate() {
-		DataBaseToolkitTest.clear(dataBase);
+		DataBaseToolkit.clear(dataBase);
 		Accumulator accumulator = new Accumulator(null);
 		accumulator.execute();
 		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Toolkit.hash(Configuration.class.getName()));

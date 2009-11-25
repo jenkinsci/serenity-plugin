@@ -17,6 +17,8 @@ import org.kohsuke.stapler.StaplerResponse;
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.hudson.modeller.IModeller;
 import com.ikokoon.serenity.hudson.modeller.Modeller;
+import com.ikokoon.serenity.hudson.source.ISourceCode;
+import com.ikokoon.serenity.hudson.source.CoverageSourceCode;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.IComposite;
 import com.ikokoon.serenity.model.Method;
@@ -182,7 +184,7 @@ public class SerenityResult implements ISerenityResult {
 	}
 
 	public Class<?, ?> getKlass() {
-		logger.debug("getKlass");
+		logger.info("getKlass");
 		return klass;
 	}
 
@@ -202,6 +204,11 @@ public class SerenityResult implements ISerenityResult {
 	public String getModel(String parameter) {
 		logger.info("getModel(parameter):" + parameter);
 		return this.model;
+	}
+
+	public String getSource() {
+		ISourceCode sourceCode = new CoverageSourceCode(this.klass);
+		return sourceCode.getSource();
 	}
 
 	public String getModel(IComposite<?, ?> composite) {

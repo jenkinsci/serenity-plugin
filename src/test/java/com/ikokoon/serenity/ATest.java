@@ -1,10 +1,12 @@
 package com.ikokoon.serenity;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.objectweb.asm.Type;
 
 import com.ikokoon.serenity.instrumentation.complexity.ComplexityClassAdapter;
 import com.ikokoon.serenity.instrumentation.coverage.CoverageClassAdapter;
@@ -15,9 +17,9 @@ import com.ikokoon.serenity.model.Efferent;
 import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
-import com.ikokoon.serenity.model.Project;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.target.Target;
+import com.ikokoon.toolkit.Toolkit;
 
 /**
  * Base class for the tests.
@@ -35,7 +37,10 @@ public abstract class ATest implements IConstants {
 	protected String packageName = Target.class.getPackage().getName();
 	protected String className = Target.class.getName();
 	protected String methodName = "complexMethod";
-	protected String methodDescription = "methodDescription";
+	protected Type stringType = Type.getType(String.class);
+	protected Type integerType = Type.getType(Integer.class);
+	protected Type[] types = new Type[] { stringType, stringType, stringType, integerType, integerType };
+	protected String methodSignature = Type.getMethodDescriptor(Type.VOID_TYPE, types);
 	protected double lineNumber = 70;
 	protected double complexity = 10d;
 	protected int access = 1537;
@@ -53,36 +58,40 @@ public abstract class ATest implements IConstants {
 		builder.append(";");
 		builder.append(ComplexityClassAdapter.class.getName());
 		System.setProperty(IConstants.INCLUDED_ADAPTERS_PROPERTY, builder.toString());
-		System.setProperty(IConstants.INCLUDED_PACKAGES_PROPERTY, Target.class.getPackage().getName());
 		Configuration.getConfiguration().includedPackages.add(Transformer.class.getPackage().getName());
-		// Configuration.getConfiguration().excludedPackages.add(Target.class.getPackage().getName());
-		Configuration.getConfiguration().excludedPackages.add(Project.class.getPackage().getName());
 	}
 
 	@Before
 	public void initilize() {
-		// OdbConfiguration.setDebugEnabled(true);
-		// OdbConfiguration.setAutomaticCloseFileOnExit(true);
-		// OdbConfiguration.setDisplayWarnings(true);
 		if (dataBase == null) {
 			dataBase = IDataBase.DataBaseManager.getDataBase(IConstants.DATABASE_FILE, true);
 		}
-		// Project<?, ?> project = (Project<?, ?>) dataBase.find(Toolkit.hash(Project.class.getName()));
-		// project.getChildren().clear();
-		// project.getIndex().clear();
-		// project.getIndex().add(project);
+	}
+
+	protected byte[] getClassBytes(String className) {
+		String classPath = Toolkit.dotToSlash(className) + ".class";
+		InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(classPath);
+		byte[] classBytes = Toolkit.getContents(inputStream).toByteArray();
+		return classBytes;
+	}
+
+	protected byte[] getSourceBytes(String className) {
+		String classPath = Toolkit.dotToSlash(className) + ".java";
+		InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(classPath);
+		byte[] sourceBytes = Toolkit.getContents(inputStream).toByteArray();
+		return sourceBytes;
 	}
 
 	@SuppressWarnings("unchecked")
 	protected Package<?, ?> getPackage() {
 		Package pakkage = new Package();
 		pakkage.setAbstractness(1d);
-		pakkage.setAfferent(1d);
+		pakkage.setAfference(1d);
 		pakkage.setChildren(new ArrayList<Class>());
 		pakkage.setComplexity(1d);
 		pakkage.setCoverage(1d);
 		pakkage.setDistance(1d);
-		pakkage.setEfferent(1d);
+		pakkage.setEfference(1d);
 		pakkage.setImplement(1d);
 		pakkage.setInterfaces(1d);
 		pakkage.setName(packageName);
@@ -96,19 +105,19 @@ public abstract class ATest implements IConstants {
 		Class klass = new Class();
 		klass.setParent(pakkage);
 		pakkage.getChildren().add(klass);
-		klass.setAfferent(1d);
+		klass.setAfference(1d);
 
 		klass.setComplexity(1d);
 		klass.setCoverage(1d);
-		klass.setEfferent(1d);
+		klass.setEfference(1d);
 
 		Efferent efferent = new Efferent();
 		efferent.setName(efferentName);
-		klass.getEfferentPackages().add(efferent);
+		klass.getEfferent().add(efferent);
 
 		Afferent afferent = new Afferent();
 		afferent.setName(afferentName);
-		klass.getAfferentPackages().add(afferent);
+		klass.getAfferent().add(afferent);
 
 		klass.setInterfaze(true);
 		klass.setName(className);
@@ -125,7 +134,7 @@ public abstract class ATest implements IConstants {
 		klass.getChildren().add(method);
 		method.setComplexity(1d);
 		method.setCoverage(1d);
-		method.setDescription(methodDescription);
+		method.setDescription(methodSignature);
 		method.setLines(1d);
 		method.setName(methodName);
 		getLine(method);

@@ -36,11 +36,12 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 	@Legend(name = EXECUTED, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
 	private double executed;
 
-	private double efferent;
-	private double afferent;
+	private double efference;
+	private double afference;
 	private Date timestamp;
-	private Set<Efferent> efference = new TreeSet<Efferent>();
-	private Set<Afferent> afference = new TreeSet<Afferent>();
+
+	private Set<Efferent> efferent = new TreeSet<Efferent>();
+	private Set<Afferent> afferent = new TreeSet<Afferent>();
 
 	public String getName() {
 		return name;
@@ -130,36 +131,36 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 		this.implement = implementations;
 	}
 
-	public double getEfferent() {
-		return Toolkit.format(efferent, PRECISION);
+	public double getEfference() {
+		return Toolkit.format(efference, PRECISION);
 	}
 
-	public void setEfferent(double efferent) {
-		this.efferent = efferent;
+	public void setEfference(double efferent) {
+		this.efference = efferent;
 	}
 
-	public double getAfferent() {
-		return Toolkit.format(afferent, PRECISION);
+	public double getAfference() {
+		return Toolkit.format(afference, PRECISION);
 	}
 
-	public void setAfferent(double afferent) {
-		this.afferent = afferent;
+	public void setAfference(double afferent) {
+		this.afference = afferent;
 	}
 
-	public Set<Efferent> getEfference() {
-		return efference;
+	public Set<Efferent> getEfferent() {
+		return efferent;
 	}
 
-	public void setEfference(Set<Efferent> efference) {
-		this.efference = efference;
+	public void setEfferent(Set<Efferent> efference) {
+		this.efferent = efference;
 	}
 
-	public Set<Afferent> getAfference() {
-		return afference;
+	public Set<Afferent> getAfferent() {
+		return afferent;
 	}
 
-	public void setAfference(Set<Afferent> afference) {
-		this.afference = afference;
+	public void setAfferent(Set<Afferent> afference) {
+		this.afferent = afference;
 	}
 
 	public String toString() {

@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
+import com.ikokoon.serenity.PerformanceTester;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.IComposite;
 import com.ikokoon.serenity.model.Line;
@@ -23,24 +24,21 @@ public class DataBaseRamTest extends ATest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void insert() {
-		DataBaseRam dataBase = (DataBaseRam) this.dataBase;
-
-		List<IComposite<?, ?>> list = getList();
-
+		final DataBaseRam dataBase = (DataBaseRam) this.dataBase;
+		final List<IComposite<?, ?>> list = getList();
 		// Check the performance
 		list.clear();
-		double inserts = 1000;
-		double start = System.currentTimeMillis();
-		for (long i = 0; i < inserts; i++) {
-			Class<?, ?> klass = new Class();
-			klass.setName("" + i);
-			klass.setId(i);
-			dataBase.insert(list, klass);
-		}
-		double end = System.currentTimeMillis();
-		double duration = end - start;
-		double insertsPerSecond = inserts / (duration / 60);
-		logger.info("Duration : " + duration + ", inserts per second : " + insertsPerSecond);
+		double inserts = 100000;
+		double insertsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
+			public void execute() {
+				long currentTime = System.currentTimeMillis();
+				Class<?, ?> klass = new Class();
+				klass.setName("Name : " + currentTime);
+				klass.setId(currentTime);
+				dataBase.insert(list, klass);
+			}
+		}, "inserts of class", inserts);
+		assertTrue(insertsPerSecond > 1000);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -95,10 +93,10 @@ public class DataBaseRamTest extends ATest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void findId() {
-		DataBaseToolkitTest.clear(dataBase);
+		DataBaseToolkit.clear(dataBase);
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
-		DataBaseToolkitTest.dump(dataBase);
+		DataBaseToolkit.dump(dataBase);
 		// 7873017250689681547, 437917821655607927
 		Line line = (Line) dataBase.find(7873017250689681547l);
 		assertNotNull(line);
@@ -123,7 +121,7 @@ public class DataBaseRamTest extends ATest {
 		parameters.clear();
 		parameters.add(klass.getName());
 		parameters.add(methodName);
-		parameters.add(methodDescription);
+		parameters.add(methodSignature);
 		Method method = (Method) dataBase.find(parameters);
 		assertNotNull(method);
 
@@ -153,20 +151,17 @@ public class DataBaseRamTest extends ATest {
 	@SuppressWarnings("unchecked")
 	public void persistPerformance() throws Exception {
 		// Test the insert performance
-		double inserts = 100;
-		double start = System.currentTimeMillis();
-		for (int i = 0; i < inserts; i++) {
-			Package pakkage = getPackage();
-			pakkage.setName(pakkage.getName() + System.currentTimeMillis());
-			Class klass = (Class) pakkage.getChildren().iterator().next();
-			klass.setName(klass.getName() + System.currentTimeMillis());
-			dataBase.persist(pakkage);
-		}
-		double end = System.currentTimeMillis();
-		double duration = (end - start) / 1000d;
-		double insertsPerSecond = ((inserts * 6d) / duration);
-		logger.error("Duration : " + duration + ", inserts per second : " + insertsPerSecond);
-		double minimumInsertsPerSecond = 100d;
+		double inserts = 10000;
+		double insertsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
+			public void execute() {
+				Package pakkage = getPackage();
+				pakkage.setName(pakkage.getName() + System.currentTimeMillis());
+				Class klass = (Class) pakkage.getChildren().iterator().next();
+				klass.setName(klass.getName() + System.currentTimeMillis());
+				dataBase.persist(pakkage);
+			}
+		}, "inserts of package", inserts);
+		double minimumInsertsPerSecond = 1000d;
 		assertTrue(insertsPerSecond > minimumInsertsPerSecond);
 	}
 
@@ -192,52 +187,43 @@ public class DataBaseRamTest extends ATest {
 
 		// Test the select performance
 		double selects = 10000;
-		double start = System.currentTimeMillis();
-		List<Object> packageParameters = new ArrayList<Object>();
+
+		final List<Object> packageParameters = new ArrayList<Object>();
 		packageParameters.add(packageName + "." + 13);
 
-		List<Object> lineParameters = new ArrayList<Object>();
+		final List<Object> lineParameters = new ArrayList<Object>();
 		lineParameters.add(className + "." + 26);
 		lineParameters.add(methodName + "." + 26);
 		lineParameters.add(26d);
 
-		Long packageId = Toolkit.hash(packageName + "." + 233);
-		Long classId = Toolkit.hash(className + "." + 871);
-		Long methodId = Toolkit.hash(className + "." + 441 + methodName + "." + 441 + methodDescription + "." + 441);
-		Long lineId = Toolkit.hash(className + "." + 359 + methodName + "." + 359 + "" + 359d);
+		double selectsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
+			public void execute() {
+				Long packageId = Toolkit.hash(packageName + "." + 233);
+				Long classId = Toolkit.hash(className + "." + 871);
+				Long methodId = Toolkit.hash(className + "." + 441 + methodName + "." + 441 + methodSignature + "." + 441);
+				Long lineId = Toolkit.hash(className + "." + 359 + methodName + "." + 359 + "" + 359d);
 
-		for (int i = 0; i < selects; i++) {
-			dataBase.find(packageId);
-			// assertNotNull(pakkage);
-			dataBase.find(classId);
-			// assertNotNull(klass);
-			dataBase.find(methodId);
-			// assertNotNull(method);
-			dataBase.find(lineId);
-			// assertNotNull(line);
+				dataBase.find(packageId);
+				dataBase.find(classId);
+				dataBase.find(methodId);
+				dataBase.find(lineId);
 
-			dataBase.find(packageParameters);
-			// assertNotNull(object);
-			dataBase.find(lineParameters);
-			// assertNotNull(object);
-			dataBase.find(lineParameters);
-			// assertNotNull(object);
-		}
-		double end = System.currentTimeMillis();
-		double duration = (end - start) / 1000d;
-		double selectsPerSecond = (selects * 7 / duration);
-		logger.info("Duration : " + duration + ", selects per second : " + selectsPerSecond);
-		double minimumSelectsPerSecond = 100000;
+				dataBase.find(packageParameters);
+				// assertNotNull(object);
+				dataBase.find(lineParameters);
+				// assertNotNull(object);
+				dataBase.find(lineParameters);
+				// assertNotNull(object);
+			}
+		}, "select different, by id and by parameters, package and line", selects) * 7;
+		double minimumSelectsPerSecond = 10000;
 		assertTrue(selectsPerSecond > minimumSelectsPerSecond);
 
-		start = System.currentTimeMillis();
-		for (int i = 0; i < selects; i++) {
-			dataBase.find(lineParameters);
-		}
-		end = System.currentTimeMillis();
-		duration = (end - start) / 1000d;
-		selectsPerSecond = (selects * 7 / duration);
-		logger.info("Only line : Duration : " + duration + ", selects per second : " + selectsPerSecond);
+		selectsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
+			public void execute() {
+				dataBase.find(lineParameters);
+			}
+		}, "select line with parameters", selects);
 		assertTrue(selectsPerSecond > minimumSelectsPerSecond);
 	}
 

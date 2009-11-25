@@ -10,7 +10,7 @@ import com.ikokoon.serenity.Collector;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
- * This class actually enhances the lines to call the collector class. Please see the JavaDoc in the CoverageClassAdapter for method details.
+ * This class actually enhances the lines to call the collector class. Please see the JavaDoc in the AccumulatorClassAdapter for method details.
  * 
  * @author Michael Couck
  * @since 12.07.09

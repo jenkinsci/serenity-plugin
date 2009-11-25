@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassVisitor;
 
 import com.ikokoon.serenity.Configuration;
-import com.ikokoon.serenity.Transformer;
+import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import com.ikokoon.serenity.instrumentation.complexity.ComplexityClassAdapter;
 import com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapter;
 import com.ikokoon.toolkit.Toolkit;
@@ -156,7 +156,7 @@ public class Accumulator extends AProcess {
 		logger.debug("Class name : " + name + ", length : " + classBytes.length);
 		try {
 			Class<ClassVisitor>[] classAdapterClasses = new Class[] { DependencyClassAdapter.class, ComplexityClassAdapter.class };
-			Transformer.INSTANCE.getVisitorChain(classAdapterClasses, name, classBytes, sourceBytes);
+			VisitorFactory.getClassVisitor(classAdapterClasses, name, classBytes, sourceBytes);
 		} catch (Exception e) {
 			logger.error("Exception generating complexity and dependency statistics on class " + name, e);
 		}
