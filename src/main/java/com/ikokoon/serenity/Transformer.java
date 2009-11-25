@@ -12,7 +12,6 @@ import org.objectweb.asm.ClassWriter;
 
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import com.ikokoon.serenity.persistence.IDataBase;
-import com.ikokoon.serenity.process.Accumulator;
 import com.ikokoon.serenity.process.Aggregator;
 import com.ikokoon.serenity.process.Cleaner;
 
@@ -32,8 +31,6 @@ public class Transformer implements ClassFileTransformer, IConstants {
 	public static final Transformer INSTANCE = new Transformer();
 	/** During tests there can be more than one shutdown hook added. */
 	private static boolean shutdownHookAdded = false;
-
-	private static boolean accumulated = false;
 
 	/** The chain of adapters for analysing the classes. */
 	private Class<ClassVisitor>[] classAdapterClasses;
@@ -94,8 +91,8 @@ public class Transformer implements ClassFileTransformer, IConstants {
 	/**
 	 * This method transforms the classes that are specified.
 	 */
-	public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
-			byte[] classfileBuffer) throws IllegalClassFormatException {
+	public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classBytes)
+			throws IllegalClassFormatException {
 		// Can we implement a classloader here? Would it make things simpler/more robust/faster?
 		// Thread.currentThread().setContextClassLoader(and the custom classloader);
 
@@ -108,24 +105,20 @@ public class Transformer implements ClassFileTransformer, IConstants {
 
 		if (loader != ClassLoader.getSystemClassLoader()) {
 			LOGGER.info("No system classloader : " + className);
-			return classfileBuffer;
+			return classBytes;
 		}
 		if (Configuration.getConfiguration().excluded(className)) {
 			LOGGER.info("Excluded class : " + className);
-			return classfileBuffer;
+			return classBytes;
 		}
 		if (Configuration.getConfiguration().included(className)) {
 			LOGGER.info("Enhancing class : " + className);
-			ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(classAdapterClasses, className, classfileBuffer, new byte[0]);
-			byte[] result = writer.toByteArray();
-			return result;
-		}
-		if (!accumulated) {
-			accumulated = true;
-			new Accumulator(null); // .execute();
+			ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(classAdapterClasses, className, classBytes, new byte[0]);
+			classBytes = writer.toByteArray();
+			return classBytes;
 		}
 		LOGGER.info("Class : " + className);
-		return classfileBuffer;
+		return classBytes;
 	}
 
 }

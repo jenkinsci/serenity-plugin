@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import com.ikokoon.serenity.model.Unique;
 import com.ikokoon.target.consumer.Annotation;
+import com.ikokoon.target.consumer.TargetConsumer;
 
 /**
  * This is the test class for the coverage functionality.
@@ -21,6 +22,8 @@ public class Target<E, F> implements ITarget<E, F>, Serializable {
 	/** The logger for the class. */
 	private transient Logger logger = Logger.getLogger(Target.class);
 	protected static final String NAME = "name";
+	@SuppressWarnings("unused")
+	private TargetConsumer consumer = null;
 
 	@SuppressWarnings("unused")
 	private String name;
@@ -89,32 +92,43 @@ public class Target<E, F> implements ITarget<E, F>, Serializable {
 	public void complexMethod(String s1, String s2, String s3, Integer i1, Integer i2) throws Exception {
 		if (s1.equals(s2)) {
 			if (s2.equals(s3)) {
+				System.out.println("Out");
 			}
 		}
 		if (s3.equals(i1)) {
+			System.out.println("Out");
 		}
 		if (i1.equals(i2)) {
 		} else {
 			if (s3.equals(s1)) {
+				// We ignore the jump instruction because there is nothing
+				// after the condition so the compiler optimises it and removes the
+				// jump
 			} else {
+				System.out.println("Out");
 			}
 		}
 		if (i2.equals(s2)) {
 			if (s3.equals(i1)) {
 				if (s3.equals(i1)) {
+					System.out.println("Out");
 				}
 			}
 		}
 		if (s3.equals(i1)) {
 			if (s3.equals(i1)) {
+				System.out.println("Out");
 			}
 		}
 		int x = (int) (Math.random() * 100d);
 		if (x > 50) {
+			System.out.println("Out");
 		}
 		if (x < 50) {
+			System.out.println("Out");
 		}
 		for (int i = 0; i < 10; i++) {
+			System.out.println("Out");
 		}
 
 		int a = 0;
@@ -124,16 +138,22 @@ public class Target<E, F> implements ITarget<E, F>, Serializable {
 
 		switch (i1) {
 		case 1:
+			System.out.println("Out");
 			break;
 		case 2:
+			System.out.println("Out");
 			break;
 		case 3:
+			System.out.println("Out");
 			break;
 		case 4:
+			System.out.println("Out");
 			break;
 		case 5:
+			System.out.println("Out");
 			break;
 		default:
+			System.out.println("Out");
 			break;
 		}
 		if (x < -1) {

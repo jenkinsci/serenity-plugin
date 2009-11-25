@@ -99,7 +99,6 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitField : " + access + ", " + fieldName + ", " + desc + ", " + signature + ", " + value);
 		}
-
 		FieldVisitor visitor = super.visitField(access, fieldName, desc, signature, value);
 		FieldVisitor adapter = VisitorFactory.getFieldVisitor(visitor, className, desc, signature);
 		return adapter;

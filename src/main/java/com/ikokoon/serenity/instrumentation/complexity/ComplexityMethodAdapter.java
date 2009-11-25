@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 
 import com.ikokoon.serenity.Collector;
 
@@ -15,7 +14,7 @@ import com.ikokoon.serenity.Collector;
  * @since 12.07.09
  * @version 01.00
  */
-public class ComplexityMethodAdapter extends MethodAdapter implements Opcodes {
+public class ComplexityMethodAdapter extends MethodAdapter {
 
 	/** The logger for the class. */
 	private Logger logger = Logger.getLogger(ComplexityMethodAdapter.class);
@@ -64,6 +63,12 @@ public class ComplexityMethodAdapter extends MethodAdapter implements Opcodes {
 		complexityCounter++;
 		super.visitJumpInsn(opcode, paramLabel);
 	}
+
+	// visitTryCatchBlock
+	// visitLookupSwitchInsn
+	// visitTableSwitchInsn
+	// visitMethodInsn
+	// visitInsn
 
 	/**
 	 * {@inheritDoc}

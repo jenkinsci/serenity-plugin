@@ -2,8 +2,9 @@ package com.ikokoon.serenity.instrumentation.complexity;
 
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
+
+import com.ikokoon.serenity.instrumentation.VisitorFactory;
 
 /**
  * This is the top level class adapter for collecting the complexity for the classes. It just calls the complexity method adapter where the real work
@@ -35,9 +36,9 @@ public class ComplexityClassAdapter extends ClassAdapter {
 	 * This method calls the complexity method adapter that will collect the complexity for each method as the byte code for the class is parsed.
 	 */
 	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-		MethodVisitor methodVisitor = super.visitMethod(access, name, desc, signature, exceptions);
-		MethodAdapter methodAdapter = new ComplexityMethodAdapter(methodVisitor, className, name, desc);
-		return methodAdapter;
+		MethodVisitor visitor = super.visitMethod(access, name, desc, signature, exceptions);
+		MethodVisitor adapter = VisitorFactory.getMethodVisitor(visitor, ComplexityMethodAdapter.class, className, name, desc);
+		return adapter;
 	}
 
 }

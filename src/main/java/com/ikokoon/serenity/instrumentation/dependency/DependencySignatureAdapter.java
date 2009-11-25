@@ -1,5 +1,6 @@
 package com.ikokoon.serenity.instrumentation.dependency;
 
+import org.apache.log4j.Logger;
 import org.objectweb.asm.signature.SignatureVisitor;
 
 import com.ikokoon.serenity.Collector;
@@ -13,6 +14,7 @@ import com.ikokoon.serenity.Collector;
  */
 public class DependencySignatureAdapter implements SignatureVisitor {
 
+	private Logger logger = Logger.getLogger(this.getClass());
 	private String className;
 
 	public DependencySignatureAdapter(String className) {
@@ -20,27 +22,29 @@ public class DependencySignatureAdapter implements SignatureVisitor {
 	}
 
 	public void visitClassType(String name) {
+		logger.debug("visitClassType:" + name);
 		Collector.collectEfferentAndAfferent(className, name);
 	}
 
 	public SignatureVisitor visitTypeArgument(char wildcard) {
+		logger.debug("visitTypeArgument:" + wildcard);
 		return this;
 	}
 
 	public void visitTypeVariable(String name) {
-		// signatureVisitor.visitTypeVariable(name);
+		logger.debug("visitTypeVariable:" + name);
 	}
 
 	public void visitBaseType(char descriptor) {
-		// signatureVisitor.visitBaseType(descriptor);
+		logger.debug("visitBaseType:" + descriptor);
 	}
 
 	public void visitFormalTypeParameter(String name) {
-		// signatureVisitor.visitFormalTypeParameter(name);
+		logger.debug("visitFormalTypeParameter:" + name);
 	}
 
 	public void visitInnerClassType(String name) {
-		// signatureVisitor.visitInnerClassType(name);
+		logger.debug("visitInnerClassType:" + name);
 	}
 
 	public SignatureVisitor visitArrayType() {
@@ -52,7 +56,7 @@ public class DependencySignatureAdapter implements SignatureVisitor {
 	}
 
 	public void visitEnd() {
-		// signatureVisitor.visitEnd();
+		logger.debug("visitEnd:");
 	}
 
 	public SignatureVisitor visitExceptionType() {
@@ -80,7 +84,7 @@ public class DependencySignatureAdapter implements SignatureVisitor {
 	}
 
 	public void visitTypeArgument() {
-		// signatureVisitor.visitTypeArgument();
+		logger.debug("visitArgumentType:");
 	}
 
 }

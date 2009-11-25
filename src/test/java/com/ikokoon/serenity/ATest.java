@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.objectweb.asm.Type;
 
+import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import com.ikokoon.serenity.instrumentation.complexity.ComplexityClassAdapter;
 import com.ikokoon.serenity.instrumentation.coverage.CoverageClassAdapter;
 import com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapter;
@@ -58,6 +59,7 @@ public abstract class ATest implements IConstants {
 		builder.append(";");
 		builder.append(ComplexityClassAdapter.class.getName());
 		System.setProperty(IConstants.INCLUDED_ADAPTERS_PROPERTY, builder.toString());
+		Configuration.getConfiguration().includedPackages.add(IConstants.class.getPackage().getName());
 		Configuration.getConfiguration().includedPackages.add(Transformer.class.getPackage().getName());
 	}
 
@@ -66,6 +68,17 @@ public abstract class ATest implements IConstants {
 		if (dataBase == null) {
 			dataBase = IDataBase.DataBaseManager.getDataBase(IConstants.DATABASE_FILE, true);
 		}
+	}
+
+	protected void visitClass(java.lang.Class<?> visitorClass, String className) {
+		byte[] classBytes = getClassBytes(className);
+		byte[] sourceBytes = getSourceBytes(className);
+		visitClass(visitorClass, classBytes, sourceBytes);
+	}
+
+	@SuppressWarnings("unchecked")
+	protected void visitClass(java.lang.Class<?> visitorClass, byte[] classBytes, byte[] sourceBytes) {
+		VisitorFactory.getClassVisitor(new java.lang.Class[] { visitorClass }, className, classBytes, sourceBytes);
 	}
 
 	protected byte[] getClassBytes(String className) {

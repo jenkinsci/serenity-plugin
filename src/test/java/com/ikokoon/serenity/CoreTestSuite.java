@@ -25,8 +25,7 @@ import com.ikokoon.serenity.hudson.source.CoverageSourceCodeTest;
 import com.ikokoon.serenity.instrumentation.VisitorFactoryTest;
 import com.ikokoon.serenity.instrumentation.complexity.ComplexityTest;
 import com.ikokoon.serenity.instrumentation.coverage.CoverageTest;
-import com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapterTest;
-import com.ikokoon.serenity.instrumentation.dependency.DependencySignatureAdapterTest;
+import com.ikokoon.serenity.instrumentation.dependency.DependencyTest;
 import com.ikokoon.serenity.persistence.DataBaseRamTest;
 import com.ikokoon.serenity.persistence.PermutationsTest;
 import com.ikokoon.serenity.process.AccumulatorTest;
@@ -39,14 +38,28 @@ import com.ikokoon.toolkit.ToolkitTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses( {
-
-		// Adapter and adapter functionality tests
+// Adapter functionality tests
 		ComplexityTest.class, // Tests the complexity functionality
-		CoverageTest.class, //  
-		DependencyClassAdapterTest.class, // 
-		DependencySignatureAdapterTest.class, //
-		VisitorFactoryTest.class, ModellerTest.class, AccumulatorTest.class, AggregatorTest.class, CollectorTest.class, TransformerTest.class,
-		PermutationsTest.class, ToolkitTest.class, DataBaseRamTest.class, MatrixTest.class, CoverageSourceCodeTest.class, ObjectFactoryTest.class })
+		CoverageTest.class, // Tests that the coverage instructions have been added
+		DependencyTest.class, // Tests that the dependency adapters are collecting the dependency data correctly
+
+		// Processors tests
+		AccumulatorTest.class, // Accumulates all the classes on the classpath
+		AggregatorTest.class, // Aggregates the data when finished
+
+		// Top level tests, functional rather than unit
+		CollectorTest.class, // Tests that the collector is collecting the data
+		TransformerTest.class, // Tests that the transformer is transforming the classes
+
+		// The factory tests
+		ObjectFactoryTest.class, // Instantiates objects based on the class and parameters
+		VisitorFactoryTest.class, // Instantiates the visitors
+
+		// Some of the many database/persistence tests
+		DataBaseRamTest.class, // The in memory database
+
+		// Toolkit and assorted common functionality tests
+		ToolkitTest.class, ModellerTest.class, PermutationsTest.class, MatrixTest.class, CoverageSourceCodeTest.class })
 public class CoreTestSuite {
 	// DataBaseDb4oTest.class
 }

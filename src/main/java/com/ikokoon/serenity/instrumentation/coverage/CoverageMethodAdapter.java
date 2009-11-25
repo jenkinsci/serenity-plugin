@@ -5,12 +5,12 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
 import com.ikokoon.serenity.Collector;
-import com.ikokoon.toolkit.Toolkit;
 
 /**
- * This class actually enhances the lines to call the collector class. Please see the JavaDoc in the AccumulatorClassAdapter for method details.
+ * This class actually enhances the lines to call the collector class.
  * 
  * @author Michael Couck
  * @since 12.07.09
@@ -20,12 +20,16 @@ public class CoverageMethodAdapter extends MethodAdapter {
 
 	/** The logger for the class. */
 	private Logger logger = Logger.getLogger(CoverageMethodAdapter.class);
+
+	private Type stringType = Type.getType(String.class);
+	private Type[] types = new Type[] { stringType, stringType, stringType, stringType };
+
 	/** The name of the class that will be the collector for the method adapter. */
-	private String profileClassName = Toolkit.dotToSlash(Collector.class.getName());
+	private String collectorClassName = Type.getInternalName(Collector.class);
 	/** The method that is called by the added instructions. */
-	private String profileMethodName = "collectCoverage";
+	private String collectorMethodName = "collectCoverage";
 	/** The byte code signature of the coverage method in the Collector. */
-	private String invocation = Toolkit.classesToByteCodeSignature(null, String.class, String.class, String.class, String.class);
+	private String collectorMethodDescription = Type.getMethodDescriptor(Type.VOID_TYPE, types);
 	/** The name of the class that this method adapter is enhancing the methods for. */
 	private String className;
 	/** The name of the method that is being enhanced. */
@@ -68,7 +72,7 @@ public class CoverageMethodAdapter extends MethodAdapter {
 		this.visitLdcInsn(Integer.toString(lineNumber));
 		this.visitLdcInsn(methodName);
 		this.visitLdcInsn(methodDescription);
-		this.visitMethodInsn(Opcodes.INVOKESTATIC, profileClassName, profileMethodName, invocation);
+		this.visitMethodInsn(Opcodes.INVOKESTATIC, collectorClassName, collectorMethodName, collectorMethodDescription);
 		super.visitLineNumber(lineNumber, label);
 	}
 
