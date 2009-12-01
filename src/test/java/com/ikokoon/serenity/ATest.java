@@ -60,7 +60,6 @@ public abstract class ATest implements IConstants {
 		builder.append(ComplexityClassAdapter.class.getName());
 		System.setProperty(IConstants.INCLUDED_ADAPTERS_PROPERTY, builder.toString());
 		Configuration.getConfiguration().includedPackages.add(IConstants.class.getPackage().getName());
-		Configuration.getConfiguration().includedPackages.add(Transformer.class.getPackage().getName());
 	}
 
 	@Before
@@ -73,11 +72,11 @@ public abstract class ATest implements IConstants {
 	protected void visitClass(java.lang.Class<?> visitorClass, String className) {
 		byte[] classBytes = getClassBytes(className);
 		byte[] sourceBytes = getSourceBytes(className);
-		visitClass(visitorClass, classBytes, sourceBytes);
+		visitClass(visitorClass, className, classBytes, sourceBytes);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void visitClass(java.lang.Class<?> visitorClass, byte[] classBytes, byte[] sourceBytes) {
+	protected void visitClass(java.lang.Class<?> visitorClass, String className, byte[] classBytes, byte[] sourceBytes) {
 		VisitorFactory.getClassVisitor(new java.lang.Class[] { visitorClass }, className, classBytes, sourceBytes);
 	}
 

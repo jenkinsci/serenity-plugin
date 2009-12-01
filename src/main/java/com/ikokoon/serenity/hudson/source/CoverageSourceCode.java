@@ -59,7 +59,7 @@ public class CoverageSourceCode implements ISourceCode {
 	}
 
 	String highlightSource(String html) throws Exception {
-		html = Toolkit.replaceOld(html, "&nbsp;", "#####");
+		html = Toolkit.replaceAll(html, "&nbsp;", "#####");
 
 		SAXReader reader = new SAXReader(false);
 		reader.setStripWhitespaceText(true);
@@ -69,7 +69,7 @@ public class CoverageSourceCode implements ISourceCode {
 		highlightSource(element);
 
 		html = document.asXML();
-		html = Toolkit.replaceOld(html, "#####", "&#160;");
+		html = Toolkit.replaceAll(html, "#####", "&#160;");
 
 		return html;
 	}

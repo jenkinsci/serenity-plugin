@@ -100,7 +100,7 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 			logger.debug("visitField : " + access + ", " + fieldName + ", " + desc + ", " + signature + ", " + value);
 		}
 		FieldVisitor visitor = super.visitField(access, fieldName, desc, signature, value);
-		FieldVisitor adapter = VisitorFactory.getFieldVisitor(visitor, className, desc, signature);
+		FieldVisitor adapter = VisitorFactory.getFieldVisitor(visitor, DependencyFieldAdapter.class, className, desc, signature);
 		return adapter;
 	}
 
@@ -136,7 +136,9 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.info("visitOuterClass : " + owner + ", " + methodName + ", " + desc);
 		}
-		VisitorFactory.getSignatureVisitor(className, desc);
+		if (className.indexOf('$') == -1) {
+			VisitorFactory.getSignatureVisitor(className, desc);
+		}
 		super.visitOuterClass(owner, methodName, desc);
 	}
 

@@ -7,6 +7,8 @@ import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import com.ikokoon.serenity.instrumentation.VisitorFactory;
+
 /**
  * This is the class visitor that visits the class structures and invokes the method visitor for the coverage functionality.
  * 
@@ -33,7 +35,9 @@ public class CoverageClassAdapter extends ClassAdapter implements Opcodes {
 	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 		logger.debug("visitMethod : " + access + ", " + name + ", " + desc + ", " + signature + ", " + exceptions);
 		MethodVisitor methodVisitor = super.visitMethod(access, name, desc, signature, exceptions);
-		MethodAdapter methodAdapter = new CoverageMethodAdapter(methodVisitor, className, name, desc);
+		// MethodAdapter methodAdapter = new CoverageMethodAdapter(methodVisitor, className, name, desc);
+		MethodAdapter methodAdapter = (MethodAdapter) VisitorFactory.getMethodVisitor(methodVisitor, CoverageMethodAdapter.class, className, name,
+				desc);
 		return methodAdapter;
 	}
 

@@ -29,7 +29,7 @@ public class DependencyAnnotationAdapter implements AnnotationVisitor {
 	 *            the description of the annotation
 	 */
 	public DependencyAnnotationAdapter(AnnotationVisitor annotationVisitor, String className, String description) {
-		logger.debug("DependencyAnnotationadapter:" + className + ", " + description);
+		logger.debug("Class name : " + className + ", " + description);
 		this.className = className;
 		this.annotationVisitor = annotationVisitor;
 		VisitorFactory.getSignatureVisitor(className, description);
@@ -39,7 +39,7 @@ public class DependencyAnnotationAdapter implements AnnotationVisitor {
 	 * {@inheritDoc}
 	 */
 	public void visit(String name, Object value) {
-		logger.debug("visit:" + className + ", " + name + ", " + value);
+		logger.debug("visit : " + className + ", " + name + ", " + value);
 		if (name != null && value != null) {
 			VisitorFactory.getSignatureVisitor(className, value.toString());
 		}
@@ -52,7 +52,7 @@ public class DependencyAnnotationAdapter implements AnnotationVisitor {
 	 * {@inheritDoc}
 	 */
 	public AnnotationVisitor visitAnnotation(String name, String desc) {
-		logger.debug("visitAnnotation:" + className + ", " + name + ", " + desc);
+		logger.debug("visitAnnotation : " + className + ", " + name + ", " + desc);
 		AnnotationVisitor visitor = annotationVisitor.visitAnnotation(name, desc);
 		AnnotationVisitor adapter = VisitorFactory.getAnnotationVisitor(visitor, name, desc);
 		return adapter;
@@ -62,7 +62,7 @@ public class DependencyAnnotationAdapter implements AnnotationVisitor {
 	 * {@inheritDoc}
 	 */
 	public AnnotationVisitor visitArray(String name) {
-		logger.debug("visitArray:" + className + ", " + name);
+		logger.debug("visitArray : " + className + ", " + name);
 		return annotationVisitor.visitArray(name);
 	}
 
@@ -70,7 +70,7 @@ public class DependencyAnnotationAdapter implements AnnotationVisitor {
 	 * {@inheritDoc}
 	 */
 	public void visitEnd() {
-		logger.debug("visitEnd:" + className);
+		logger.debug("visitEnd : " + className);
 		annotationVisitor.visitEnd();
 	}
 
@@ -78,7 +78,7 @@ public class DependencyAnnotationAdapter implements AnnotationVisitor {
 	 * {@inheritDoc}
 	 */
 	public void visitEnum(String name, String desc, String value) {
-		logger.debug("visitEnum:" + className + ", " + name + ", " + desc + ", " + value);
+		logger.debug("visitEnum : " + className + ", " + name + ", " + desc + ", " + value);
 		VisitorFactory.getSignatureVisitor(className, desc);
 		if (name != null) {
 			annotationVisitor.visitEnum(name, desc, value);

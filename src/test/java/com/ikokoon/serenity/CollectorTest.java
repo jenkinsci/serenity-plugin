@@ -1,6 +1,9 @@
 package com.ikokoon.serenity;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,7 @@ import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
+import com.ikokoon.target.consumer.TargetConsumer;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -78,6 +82,7 @@ public class CollectorTest extends ATest implements IConstants {
 	@SuppressWarnings("unchecked")
 	public void collectComplexity() {
 		Collector.collectComplexity(className, methodName, methodSignature, complexity, 1000);
+		Collector.collectComplexity(className, methodName, methodSignature, complexity, 1000);
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(className);
 		parameters.add(methodName);
@@ -85,6 +90,8 @@ public class CollectorTest extends ATest implements IConstants {
 		Method method = (Method) dataBase.find(parameters);
 		assertNotNull(method);
 		assertTrue(complexity == method.getComplexity());
+
+		Collector.collectComplexity(TargetConsumer.class.getName(), methodName + ":1", methodSignature + ":1", complexity, 1000);
 	}
 
 	@Test

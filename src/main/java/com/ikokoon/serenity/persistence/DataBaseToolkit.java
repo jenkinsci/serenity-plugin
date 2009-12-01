@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.ikokoon.serenity.model.Afferent;
 import com.ikokoon.serenity.model.Class;
+import com.ikokoon.serenity.model.Efferent;
 import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
@@ -46,6 +48,16 @@ public class DataBaseToolkit {
 			logger.warn("\tPackage : " + pakkage.getId() + " : " + pakkage.getName() + " : " + pakkage.getCoverage());
 			for (Class<?, ?> klass : ((List<Class<?, ?>>) pakkage.getChildren())) {
 				logger.warn("\t\tClass : " + klass.getId() + " : " + klass.getName() + " : " + klass.getCoverage());
+				List<Efferent> efferents = klass.getEfferent();
+				List<Afferent> afferents = klass.getAfferent();
+				logger.warn("\t\t\tEfferent : ");
+				for (Efferent efferent : efferents) {
+					logger.warn("\t\t\t\t: " + efferent.getName());
+				}
+				logger.warn("\t\t\tAfferent : ");
+				for (Afferent afferent : afferents) {
+					logger.warn("\t\t\t\t: " + afferent.getName());
+				}
 				for (Method<?, ?> method : ((List<Method<?, ?>>) klass.getChildren())) {
 					logger.warn("\t\t\tMethod : " + method.getId() + " : " + method.getName() + " : " + method.getCoverage());
 					for (Line<?, ?> line : ((List<Line<?, ?>>) method.getChildren())) {

@@ -22,7 +22,7 @@ public class CoverageTest extends ATest {
 		// Verify that the coverage instructions are not in the byte code
 		Exception exception = null;
 		try {
-			visitClass(CoverageMethodAdapterChecker.class, classBytes, sourceBytes);
+			visitClass(CoverageMethodAdapterChecker.class, className, classBytes, sourceBytes);
 		} catch (Exception e) {
 			exception = e;
 		}
@@ -37,7 +37,7 @@ public class CoverageTest extends ATest {
 		CheckClassAdapter.verify(new ClassReader(classBytes), false, new PrintWriter(System.out));
 
 		// Verify each line has a call to collect the coverage
-		visitClass(CoverageClassAdapterChecker.class, classBytes, sourceBytes);
+		visitClass(CoverageClassAdapterChecker.class, className, classBytes, sourceBytes);
 	}
 
 }

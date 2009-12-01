@@ -105,17 +105,10 @@ public class Toolkit {
 	 */
 	public static String classNameToPackageName(String className) {
 		Type type = Type.getObjectType(className);
-		try {
-			return Class.forName(type.getClassName()).getPackage().getName();
-		} catch (ClassNotFoundException e) {
-			logger.info("Class not found, this could be an anon inner class : " + className, e);
-			// This is bad practice
-			if (type.getClassName().equals("java.lang.Synthetic")) {
-				// Dynamically created by the compiler? Synthetic access.
-				return "java.lang";
-			}
-		} catch (Exception e) {
-			logger.info("Shut down too soon? : " + className, e);
+		className = type.getClassName();
+		int index = className.lastIndexOf('.');
+		if (index > -1) {
+			return className.substring(0, index);
 		}
 		// Default and exception package
 		return "";
@@ -504,7 +497,7 @@ public class Toolkit {
 		try {
 			d = Double.parseDouble(doubleString);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Exception formatting : " + d + ", " + precision, e);
 		}
 		return d;
 	}
@@ -697,7 +690,7 @@ public class Toolkit {
 	 * @param aNewPattern
 	 *            is the replacement for aOldPattern
 	 */
-	public static String replaceOld(final String aInput, final String aOldPattern, final String aNewPattern) {
+	public static String replaceAll(final String aInput, final String aOldPattern, final String aNewPattern) {
 		if (aOldPattern.equals("")) {
 			throw new IllegalArgumentException("Old pattern must have content.");
 		}

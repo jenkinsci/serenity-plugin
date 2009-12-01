@@ -40,7 +40,7 @@ public class TransformerTest extends ATest {
 		byte[] sourceBytes = getSourceBytes(className);
 		Exception exception = null;
 		try {
-			visitClass(CoverageMethodAdapterChecker.class, classBytes, sourceBytes);
+			visitClass(CoverageMethodAdapterChecker.class, className, classBytes, sourceBytes);
 		} catch (Exception e) {
 			exception = e;
 		}
@@ -52,7 +52,7 @@ public class TransformerTest extends ATest {
 		classBytes = transformer.transform(classLoader, className, classBeingRedefined, protectionDomain, classBytes);
 
 		// We need to verify that the collector instructions have been added
-		visitClass(CoverageClassAdapterChecker.class, classBytes, sourceBytes);
+		visitClass(CoverageClassAdapterChecker.class, className, classBytes, sourceBytes);
 	}
 
 	@Test

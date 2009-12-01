@@ -33,8 +33,8 @@ public class AccumulatorTest extends ATest implements IConstants {
 		Transformer.premain(null, null);
 		String classPath = System.getProperty("java.class.path");
 		classPath += ";" + new File(".", "/target/serenity.jar").getAbsolutePath() + ";";
-		classPath = Toolkit.replaceOld(classPath, "\\.\\", "\\");
-		classPath = Toolkit.replaceOld(classPath, "/./", "/");
+		classPath = Toolkit.replaceAll(classPath, "\\.\\", "\\");
+		classPath = Toolkit.replaceAll(classPath, "/./", "/");
 		System.setProperty("java.class.path", classPath);
 		StringTokenizer stringTokenizer = new StringTokenizer(classPath, ";");
 		while (stringTokenizer.hasMoreTokens()) {

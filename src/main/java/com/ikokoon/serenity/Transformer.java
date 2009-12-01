@@ -12,6 +12,7 @@ import org.objectweb.asm.ClassWriter;
 
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import com.ikokoon.serenity.persistence.IDataBase;
+import com.ikokoon.serenity.process.Accumulator;
 import com.ikokoon.serenity.process.Aggregator;
 import com.ikokoon.serenity.process.Cleaner;
 
@@ -62,7 +63,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 					LOGGER.info("Starting accumulation : " + start);
 					IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(IConstants.DATABASE_FILE, false);
 
-					// Accumulator accumulator = new Accumulator(null);
+					new Accumulator(null).execute();
 					new Cleaner(null).execute();
 					new Aggregator(null, dataBase).execute();
 
@@ -104,20 +105,20 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		// });
 
 		if (loader != ClassLoader.getSystemClassLoader()) {
-			LOGGER.info("No system classloader : " + className);
+			LOGGER.debug("No system classloader : " + className);
 			return classBytes;
 		}
 		if (Configuration.getConfiguration().excluded(className)) {
-			LOGGER.info("Excluded class : " + className);
+			LOGGER.debug("Excluded class : " + className);
 			return classBytes;
 		}
 		if (Configuration.getConfiguration().included(className)) {
-			LOGGER.info("Enhancing class : " + className);
+			LOGGER.debug("Enhancing class : " + className);
 			ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(classAdapterClasses, className, classBytes, new byte[0]);
 			classBytes = writer.toByteArray();
 			return classBytes;
 		}
-		LOGGER.info("Class : " + className);
+		LOGGER.debug("Class : " + className);
 		return classBytes;
 	}
 

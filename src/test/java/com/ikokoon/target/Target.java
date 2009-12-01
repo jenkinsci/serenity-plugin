@@ -20,10 +20,10 @@ import com.ikokoon.target.consumer.TargetConsumer;
 public class Target<E, F> implements ITarget<E, F>, Serializable {
 
 	/** The logger for the class. */
-	private transient Logger logger = Logger.getLogger(Target.class);
+	private transient volatile Logger logger = Logger.getLogger(Target.class);
 	protected static final String NAME = "name";
 	@SuppressWarnings("unused")
-	private TargetConsumer consumer = null;
+	private TargetConsumer consumer;
 
 	@SuppressWarnings("unused")
 	private String name;

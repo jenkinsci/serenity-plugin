@@ -1,7 +1,9 @@
 package com.ikokoon.serenity.instrumentation.complexity;
 
+import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
@@ -16,29 +18,23 @@ import com.ikokoon.serenity.instrumentation.VisitorFactory;
  */
 public class ComplexityClassAdapter extends ClassAdapter {
 
+	private Logger logger = Logger.getLogger(this.getClass());
 	/** The name of the class that is being instrumented. */
 	private String className;
 
-	/**
-	 * Constructor takes the parent visitor and the name of the class that complexity will be collected for.
-	 * 
-	 * @param visitor
-	 *            the parent visitor in the chain of visitors
-	 * @param className
-	 *            the name of the class to collect complexity for
-	 */
 	public ComplexityClassAdapter(ClassVisitor visitor, String className) {
 		super(visitor);
 		this.className = className;
+		logger.debug("Constructor : " + className);
 	}
 
-	/**
-	 * This method calls the complexity method adapter that will collect the complexity for each method as the byte code for the class is parsed.
-	 */
-	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-		MethodVisitor visitor = super.visitMethod(access, name, desc, signature, exceptions);
-		MethodVisitor adapter = VisitorFactory.getMethodVisitor(visitor, ComplexityMethodAdapter.class, className, name, desc);
-		return adapter;
+	public MethodVisitor visitMethod(int access, String methodName, String methodDescription, String signature, String[] exceptions) {
+		logger.debug("visitMethod : " + access + ", " + methodName + ", " + methodDescription + ", " + signature + ", " + exceptions);
+		MethodVisitor methodVisitor = super.visitMethod(access, methodName, methodDescription, signature, exceptions);
+		// MethodAdapter methodAdapter = new CoverageMethodAdapter(methodVisitor, className, name, desc);
+		MethodAdapter methodAdapter = (MethodAdapter) VisitorFactory.getMethodVisitor(methodVisitor, ComplexityMethodAdapter.class, className,
+				methodName, methodDescription);
+		return methodAdapter;
 	}
 
 }

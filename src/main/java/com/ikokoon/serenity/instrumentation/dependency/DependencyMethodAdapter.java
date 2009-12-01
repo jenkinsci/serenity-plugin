@@ -84,8 +84,9 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 	 * {@inheritDoc}
 	 */
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+		logger.debug("visitAnnotation : " + desc + ", " + visible);
 		VisitorFactory.getSignatureVisitor(className, desc);
-		return super.visitAnnotation(desc, visible);
+		return this.mv.visitAnnotation(desc, visible);
 	}
 
 	/**
@@ -93,10 +94,10 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 	 */
 	public void visitFieldInsn(int opcode, String owner, String name, String desc) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("visitFieldInst - " + owner + ", " + name + ", " + desc);
+			logger.debug("visitFieldInst : " + owner + ", " + name + ", " + desc);
 		}
 		VisitorFactory.getSignatureVisitor(className, desc);
-		super.visitFieldInsn(opcode, owner, name, desc);
+		this.mv.visitFieldInsn(opcode, owner, name, desc);
 	}
 
 	/**
@@ -107,7 +108,7 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 			logger.debug("visitLineNumber : " + lineNumber + ", " + label + ", " + label.getOffset() + ", " + className + ", " + methodName);
 		}
 		Collector.collectLines(className, Double.toString(lineNumber), methodName, methodDescription);
-		super.visitLineNumber(lineNumber, label);
+		this.mv.visitLineNumber(lineNumber, label);
 	}
 
 	/**
@@ -115,13 +116,13 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 	 */
 	public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("visitLocalVariable - " + name + ", " + desc + ", " + signature + ", " + start + ", " + end + ", " + index);
+			logger.debug("visitLocalVariable : " + name + ", " + desc + ", " + signature + ", " + start + ", " + end + ", " + index);
 		}
 		VisitorFactory.getSignatureVisitor(className, desc);
 		if (signature != null) {
 			VisitorFactory.getSignatureVisitor(className, signature);
 		}
-		super.visitLocalVariable(name, desc, signature, start, end, index);
+		this.mv.visitLocalVariable(name, desc, signature, start, end, index);
 	}
 
 	/**
@@ -129,10 +130,10 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 	 */
 	public void visitMethodInsn(int opcode, String owner, String name, String desc) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("visitMethodInst - " + opcode + ", " + owner + ", " + name + ", " + desc);
+			logger.debug("visitMethodInst : " + opcode + ", " + owner + ", " + name + ", " + desc);
 		}
 		VisitorFactory.getSignatureVisitor(className, desc);
-		super.visitMethodInsn(opcode, owner, name, desc);
+		this.mv.visitMethodInsn(opcode, owner, name, desc);
 	}
 
 	/**
@@ -140,10 +141,10 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 	 */
 	public void visitMultiANewArrayInsn(String desc, int dims) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("visitMultiANewArrayInst - " + desc + ", " + dims);
+			logger.debug("visitMultiANewArrayInst : " + desc + ", " + dims);
 		}
 		VisitorFactory.getSignatureVisitor(className, desc);
-		super.visitMultiANewArrayInsn(desc, dims);
+		this.mv.visitMultiANewArrayInsn(desc, dims);
 	}
 
 	/**
@@ -151,10 +152,10 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 	 */
 	public AnnotationVisitor visitParameterAnnotation(int parameter, String desc, boolean visible) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("visitParameterAnnotation - " + parameter + ", " + desc + ", " + visible);
+			logger.debug("visitParameterAnnotation : " + parameter + ", " + desc + ", " + visible);
 		}
 		VisitorFactory.getSignatureVisitor(className, desc);
-		return super.visitParameterAnnotation(parameter, desc, visible);
+		return this.mv.visitParameterAnnotation(parameter, desc, visible);
 	}
 
 }

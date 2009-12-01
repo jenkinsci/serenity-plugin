@@ -11,7 +11,6 @@ import org.objectweb.asm.signature.SignatureReader;
 import org.objectweb.asm.signature.SignatureVisitor;
 
 import com.ikokoon.serenity.instrumentation.dependency.DependencyAnnotationAdapter;
-import com.ikokoon.serenity.instrumentation.dependency.DependencyFieldAdapter;
 import com.ikokoon.serenity.instrumentation.dependency.DependencySignatureAdapter;
 import com.ikokoon.toolkit.ObjectFactory;
 
@@ -38,9 +37,9 @@ public class VisitorFactory {
 		return adapter;
 	}
 
-	public static FieldVisitor getFieldVisitor(FieldVisitor visitor, String className, String description, String signature) {
+	public static FieldVisitor getFieldVisitor(FieldVisitor visitor, Class<?> klass, String className, String description, String signature) {
 		Object[] parameters = new Object[] { visitor, className, description, signature };
-		FieldVisitor adapter = ObjectFactory.getObject(DependencyFieldAdapter.class, parameters);
+		FieldVisitor adapter = (FieldVisitor) ObjectFactory.getObject(klass, parameters);
 		return adapter;
 	}
 

@@ -68,12 +68,12 @@ public class CoverageMethodAdapter extends MethodAdapter {
 	 */
 	public void visitLineNumber(int lineNumber, Label label) {
 		logger.debug("visitLineNumber : " + lineNumber + ", " + label + ", " + label.getOffset() + ", " + className + ", " + methodName);
-		this.visitLdcInsn(className);
-		this.visitLdcInsn(Integer.toString(lineNumber));
-		this.visitLdcInsn(methodName);
-		this.visitLdcInsn(methodDescription);
-		this.visitMethodInsn(Opcodes.INVOKESTATIC, collectorClassName, collectorMethodName, collectorMethodDescription);
-		super.visitLineNumber(lineNumber, label);
+		this.mv.visitLdcInsn(className);
+		this.mv.visitLdcInsn(Integer.toString(lineNumber));
+		this.mv.visitLdcInsn(methodName);
+		this.mv.visitLdcInsn(methodDescription);
+		this.mv.visitMethodInsn(Opcodes.INVOKESTATIC, collectorClassName, collectorMethodName, collectorMethodDescription);
+		this.mv.visitLineNumber(lineNumber, label);
 	}
 
 }
