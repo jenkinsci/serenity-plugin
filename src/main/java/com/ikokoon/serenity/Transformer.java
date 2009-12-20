@@ -1,5 +1,6 @@
 package com.ikokoon.serenity;
 
+import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
@@ -11,10 +12,14 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
+import com.ikokoon.serenity.persistence.DataBaseOdb;
+import com.ikokoon.serenity.persistence.DataBaseRam;
+import com.ikokoon.serenity.persistence.DataBaseToolkit;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.serenity.process.Accumulator;
 import com.ikokoon.serenity.process.Aggregator;
 import com.ikokoon.serenity.process.Cleaner;
+import com.ikokoon.toolkit.Toolkit;
 
 /**
  * This class is the entry point for the Serenity code coverage/complexity/dependency/profiling functionality. This class is called by the JVM on
@@ -38,12 +43,14 @@ public class Transformer implements ClassFileTransformer, IConstants {
 
 	/**
 	 * This method is called by the JVM at startup. This method will only be called if the command line for starting the JVM has the following on it:
-	 * -javaagent:coverage.jar. This instruction tells the JVM that there is an agent that must be used. In the META-INF directory of the jar
+	 * -javaagent:serenity.jar. This instruction tells the JVM that there is an agent that must be used. In the META-INF directory of the jar
 	 * specified there must be a MANIFEST.MF file. In this file the instructions must be something like the following:
 	 * 
 	 * Manifest-Version: 1.0 <br>
-	 * Boot-Class-Path: asm-3.1.jar and so on...<br>
+	 * Boot-Class-Path: asm-3.1.jar and so on..., in the case that the required libraries are not on the classpath, which they should be<br>
 	 * Premain-Class: com.ikokoon.serenity.instrumentation.Transformer
+	 * 
+	 * Another line in the manifest can start an agent after the JVM has been started, but not for all JVMs. So not very useful.
 	 * 
 	 * These instructions tell the JVM to call this method when loading class files.
 	 * 
@@ -60,9 +67,10 @@ public class Transformer implements ClassFileTransformer, IConstants {
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 				public void run() {
 					Date start = new Date();
-					LOGGER.info("Starting accumulation : " + start);
-					IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(IConstants.DATABASE_FILE, false);
+					LOGGER.error("Starting accumulation : " + start);
+					IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, false, null);
 
+					// Execute the processing chain, child first
 					new Accumulator(null).execute();
 					new Cleaner(null).execute();
 					new Aggregator(null, dataBase).execute();
@@ -72,8 +80,8 @@ public class Transformer implements ClassFileTransformer, IConstants {
 					Date end = new Date();
 					long million = 1000 * 1000;
 					long duration = end.getTime() - start.getTime();
-					LOGGER.info("Finished accumulation : " + end + ", duration : " + duration + " millis");
-					LOGGER.info("Total memory : " + (Runtime.getRuntime().totalMemory() / million) + ", max memory : "
+					LOGGER.error("Finished accumulation : " + end + ", duration : " + duration + " millis");
+					LOGGER.error("Total memory : " + (Runtime.getRuntime().totalMemory() / million) + ", max memory : "
 							+ (Runtime.getRuntime().maxMemory() / million) + ", free memory : " + (Runtime.getRuntime().freeMemory() / million));
 				}
 			});
@@ -81,6 +89,19 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		if (instrumentation != null) {
 			instrumentation.addTransformer(INSTANCE);
 		}
+		String cleanClasses = Configuration.getConfiguration().getProperty(IConstants.CLEAN_CLASSES);
+		if (cleanClasses != null && cleanClasses.equals(Boolean.TRUE.toString())) {
+			File serenityDirectory = new File(IConstants.SERENITY_DIRECTORY);
+			Toolkit.deleteFile(serenityDirectory);
+			if (!serenityDirectory.exists()) {
+				if (!serenityDirectory.mkdirs()) {
+					LOGGER.warn("Didn't re-create Serenity directory : " + serenityDirectory.getAbsolutePath());
+				}
+			}
+		}
+		IDataBase iDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, true, null);
+		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, true, iDataBase);
+		DataBaseToolkit.clear(dataBase);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -96,14 +117,6 @@ public class Transformer implements ClassFileTransformer, IConstants {
 			throws IllegalClassFormatException {
 		// Can we implement a classloader here? Would it make things simpler/more robust/faster?
 		// Thread.currentThread().setContextClassLoader(and the custom classloader);
-
-		// JUnit4TestAdapterCache.getDefault().getNotifier(null, null).addListener(new RunListener() {
-		// @Override
-		// public void testRunStarted(Description description) throws Exception {
-		// super.testRunStarted(description);
-		// }
-		// });
-
 		if (loader != ClassLoader.getSystemClassLoader()) {
 			LOGGER.debug("No system classloader : " + className);
 			return classBytes;
@@ -115,11 +128,30 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		if (Configuration.getConfiguration().included(className)) {
 			LOGGER.debug("Enhancing class : " + className);
 			ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(classAdapterClasses, className, classBytes, new byte[0]);
-			classBytes = writer.toByteArray();
-			return classBytes;
+			byte[] enhancedClassBytes = writer.toByteArray();
+			String writeClasses = Configuration.getConfiguration().getProperty(IConstants.WRITE_CLASSES);
+			if (writeClasses != null && writeClasses.equals(Boolean.TRUE.toString())) {
+				writeClass(className, enhancedClassBytes);
+			}
+			return enhancedClassBytes;
+		} else {
+			LOGGER.debug("Class not included : " + className);
 		}
-		LOGGER.debug("Class : " + className);
 		return classBytes;
+	}
+
+	private void writeClass(String className, byte[] classBytes) {
+		// Write the class so we can check it with JD decompiler visually
+		String directoryPath = Toolkit.dotToSlash(Toolkit.classNameToPackageName(className));
+		String fileName = className.replaceFirst(Toolkit.classNameToPackageName(className), "") + ".class";
+		File directory = new File(IConstants.SERENITY_DIRECTORY + directoryPath);
+		if (!directory.exists()) {
+			directory.mkdirs();
+		}
+		LOGGER.debug(directory.getAbsolutePath());
+
+		File file = new File(directory, fileName);
+		Toolkit.setContents(file, classBytes);
 	}
 
 }

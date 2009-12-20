@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.objectweb.asm.AnnotationVisitor;
 
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
+import com.ikokoon.toolkit.Toolkit;
 
 /**
  * This class visits the annotation description collecting the dependency information on the class that defines the annotation.
@@ -15,11 +16,14 @@ import com.ikokoon.serenity.instrumentation.VisitorFactory;
 public class DependencyAnnotationAdapter implements AnnotationVisitor {
 
 	private Logger logger = Logger.getLogger(this.getClass());
-	private String className;
+	/** The parent annotation visitor. */
 	private AnnotationVisitor annotationVisitor;
+	/** The class that has the annotation. */
+	private String className;
 
 	/**
-	 * Constructor takes the annotation visitor parent, the class name that uses the annotation and the description of the annotation.
+	 * Constructor initialises a {@link DependencyAnnotationAdapter}, takes the annotation visitor parent, the class name that uses the annotation and
+	 * the description of the annotation.
 	 * 
 	 * @param annotationVisitor
 	 *            the parent annotation visitor
@@ -30,7 +34,7 @@ public class DependencyAnnotationAdapter implements AnnotationVisitor {
 	 */
 	public DependencyAnnotationAdapter(AnnotationVisitor annotationVisitor, String className, String description) {
 		logger.debug("Class name : " + className + ", " + description);
-		this.className = className;
+		this.className = Toolkit.slashToDot(className);
 		this.annotationVisitor = annotationVisitor;
 		VisitorFactory.getSignatureVisitor(className, description);
 	}

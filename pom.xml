@@ -18,7 +18,47 @@
 	</properties>
 
 	<build>
+		<resources>
+		</resources>
+		<filters>
+		</filters>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>applet.package.task</id>
+						<phase>package</phase>
+						<configuration>
+							<tasks verbose="true">
+
+								<property name="src" value="src/main/java" />
+								<property name="applet.src" value="src/main/applet" />
+								<property name="bin" value="target/Serenity/WEB-INF/classes" />
+								<property name="lib" value="src/main/webapp/WEB-INF/lib" />
+
+								<path id="build.classpath">
+									<fileset dir="${lib}">
+										<include name="*.jar" />
+									</fileset>
+									<pathelement path="${bin}" />
+								</path>
+
+								<echo message="Compiling the chart applet." />
+								<!--
+									javac debug="true" debuglevel="lines,vars,source" optimize="false" srcdir="${applet.src}" destdir="${bin}" encoding="UTF8"
+									failonerror="true"> <classpath refid="build.classpath" /> </javac
+								-->
+
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -100,16 +140,23 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>dom4j</groupId>
-			<artifactId>dom4j</artifactId>
-			<version>1.6</version>
+			<groupId>asm</groupId>
+			<artifactId>asm-all</artifactId>
+			<version>3.0</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>asm</groupId>
-			<artifactId>asm-all</artifactId>
-			<version>3.0</version>
+			<groupId>org.apache.openjpa</groupId>
+			<artifactId>openjpa</artifactId>
+			<version>1.2.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>1.8.0.1</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>

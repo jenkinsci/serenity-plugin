@@ -2,8 +2,12 @@ package com.ikokoon.serenity.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 
 import com.ikokoon.toolkit.Toolkit;
 
@@ -12,29 +16,23 @@ import com.ikokoon.toolkit.Toolkit;
  * @since 12.08.09
  * @version 01.00
  */
+@Entity
 @Unique(fields = { Composite.NAME })
 public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implements Comparable<Class<?, ?>>, Serializable {
 
 	private String name;
 	private String source;
 
-	@Legend(name = COVERAGE, limits = { COVERAGE_GOOD, COVERAGE_OK, COVERAGE_BAD }, positive = 1.0)
 	private double coverage;
-	@Legend(name = COMPLEXITY, limits = { COMPLEXITY_GOOD, COMPLEXITY_OK, COMPLEXITY_BAD })
 	private double complexity;
-	@Legend(name = STABILITY, limits = { STABILITY_GOOD, STABILITY_OK, STABILITY_BAD }, positive = 1.0)
 	private double stability;
-	@Legend(name = LINES, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
+
 	private double lines;
-	@Legend(name = EXECUTED, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
 	private double executed;
-	@Legend(name = EFFERENCE, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
 	private double efference;
-	@Legend(name = AFFERENCE, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
 	private double afference;
 
 	private boolean interfaze;
-	private Date timestamp;
 
 	private List<Efferent> efferent = new ArrayList<Efferent>();
 	private List<Afferent> afferent = new ArrayList<Afferent>();
@@ -129,14 +127,7 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 		this.interfaze = interfaze;
 	}
 
-	public Date getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
-	}
-
+	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public List<Efferent> getEfferent() {
 		return efferent;
 	}
@@ -145,6 +136,7 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 		this.efferent = efferent;
 	}
 
+	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public List<Afferent> getAfferent() {
 		return afferent;
 	}

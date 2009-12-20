@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,12 +56,6 @@ public class ToolkitTest extends ATest {
 
 		String name = Toolkit.classNameToPackageName(Toolkit.dotToSlash(Target.class.getName()));
 		assertEquals("com.ikokoon.target", name);
-	}
-
-	@Test
-	public void classesToByteCodeSignature() {
-		String signature = Toolkit.classesToByteCodeSignature(String.class, Integer.class, BigDecimal.class);
-		assertEquals("(Ljava/lang/Integer;Ljava/math/BigDecimal;)Ljava/lang/String;", signature);
 	}
 
 	@Test

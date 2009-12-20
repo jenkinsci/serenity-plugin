@@ -6,6 +6,8 @@ import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import com.ikokoon.toolkit.Toolkit;
+
 /**
  * TODO - @see {@link ProfilingClassAdapter}
  * 
@@ -40,7 +42,7 @@ public class ProfilingMethodAdapter extends MethodAdapter implements Opcodes {
 	 */
 	public ProfilingMethodAdapter(MethodVisitor methodVisitor, String className, String name, String desc) {
 		super(methodVisitor);
-		this.className = className;
+		this.className = Toolkit.slashToDot(className);
 		this.name = name;
 		this.desc = desc;
 		logger.debug("Class name : " + className + ", name : " + name + ", desc : " + desc);

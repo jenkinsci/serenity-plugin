@@ -19,21 +19,7 @@ import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
- * TODO:<br>
- * 
- * Metrics:<br>
- * 1) Total lines executed<br>
- * 2) Total lines of code<br>
- * 3) Total methods executed<br>
- * 4) Project abstractness, stability, efference and afference<br>
- * 5) Lines per method<br>
- * 6) Lines per class<br>
- * 7) Lines per package<br>
- * 8) % code executed per package, class and method<br>
- * 9) Weighted average of above<br>
- * 10) Maven support<br>
- * 
- * Profiling:<br>
+ * TODO - Profiling:<br>
  * 11) Total time per method<br>
  * 12) % time per method<br>
  * 13) Total time per class<br>
@@ -79,15 +65,19 @@ public class Aggregator extends AProcess implements IConstants {
 	public void execute() {
 		super.execute();
 		logger.info("Running Aggregator: ");
-		Project<?, ?> project = (Project<?, ?>) dataBase.find(Toolkit.hash(Project.class.getName()));
-		if (project != null) {
-			aggregateProject(project);
+		Project<?, ?> project = (Project<?, ?>) dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
+		if (project == null) {
+			project = new Project<Object, Object>();
+			dataBase.persist(project);
 		}
 		// DataBaseToolkit.dump(dataBase);
+		aggregateProject(project);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void aggregateProject(Project<?, ?> project) {
-		List<Package<?, ?>> children = project.getChildren();
+		List<Package> children = dataBase.find(Package.class);
+
 		aggregatePackages(children);
 		project.setTimestamp(new Date());
 
@@ -134,7 +124,7 @@ public class Aggregator extends AProcess implements IConstants {
 				complexity += (packageLines / lines) * pakkage.getComplexity();
 				coverage += (packageLines / lines) * pakkage.getCoverage();
 				interfaces += pakkage.getInterfaces();
-				implementations += pakkage.getImplement();
+				implementations += pakkage.getImplementations();
 				efference.addAll(pakkage.getEfferent());
 				afference.addAll(pakkage.getAfferent());
 			}
@@ -163,8 +153,9 @@ public class Aggregator extends AProcess implements IConstants {
 		project.setPackagesExecuted(packagesExecuted);
 	}
 
-	private void aggregatePackages(List<Package<?, ?>> packages) {
-		for (Package<?, ?> pakkage : packages) {
+	@SuppressWarnings("unchecked")
+	private void aggregatePackages(List<Package> children) {
+		for (Package<?, ?> pakkage : children) {
 			List<Class<?, ?>> classes = pakkage.getChildren();
 			aggregateClasses(classes);
 
@@ -232,7 +223,7 @@ public class Aggregator extends AProcess implements IConstants {
 			pakkage.setComplexity(complexity);
 			pakkage.setCoverage(coverage);
 			pakkage.setDistance(distance);
-			pakkage.setImplement(implementations);
+			pakkage.setImplementations(implementations);
 			pakkage.setInterfaces(interfaces);
 			pakkage.setStability(stability);
 		}

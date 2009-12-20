@@ -35,18 +35,18 @@ public class CollectorTest extends ATest implements IConstants {
 		Configuration.getConfiguration().includedPackages.add(packageName);
 		Configuration.getConfiguration().includedPackages.add(Toolkit.dotToSlash(packageName));
 		// After this we expect a package, a class, a method and a line element
-		Collector.collectCoverage(className, Double.toString(lineNumber), methodName, methodSignature);
+		Collector.collectCoverage(className, methodName, methodSignature, (int) lineNumber);
 		// We must test that the package is correct
 
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(packageName);
-		Package pakkage = (Package) dataBase.find(parameters);
+		Package pakkage = (Package) dataBase.find(Package.class, parameters);
 		assertNotNull(pakkage);
 
 		// We must test that the class element is correct
 		parameters.clear();
 		parameters.add(className);
-		Class klass = (Class) dataBase.find(parameters);
+		Class klass = (Class) dataBase.find(Class.class, parameters);
 		assertNotNull(klass);
 
 		// We must test that the method element is correct
@@ -57,12 +57,12 @@ public class CollectorTest extends ATest implements IConstants {
 		parameters.add(className);
 		parameters.add(methodName);
 		parameters.add(lineNumber);
-		Line line = (Line) dataBase.find(parameters);
+		Line line = (Line) dataBase.find(Line.class, parameters);
 		assertNotNull(line);
 
 		assertEquals(1.0, line.getCounter());
 
-		Collector.collectCoverage(className, Double.toString(lineNumber), methodName, methodSignature);
+		Collector.collectCoverage(className, methodName, methodSignature, (int) lineNumber);
 
 		assertEquals(2.0, line.getCounter());
 	}
@@ -73,7 +73,7 @@ public class CollectorTest extends ATest implements IConstants {
 		Collector.collectInterface(className, access);
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(className);
-		Class klass = (Class) dataBase.find(parameters);
+		Class klass = (Class) dataBase.find(Class.class, parameters);
 		assertNotNull(klass);
 		assertTrue(klass.getInterfaze());
 	}
@@ -87,7 +87,7 @@ public class CollectorTest extends ATest implements IConstants {
 		parameters.add(className);
 		parameters.add(methodName);
 		parameters.add(methodSignature);
-		Method method = (Method) dataBase.find(parameters);
+		Method method = (Method) dataBase.find(Method.class, parameters);
 		assertNotNull(method);
 		assertTrue(complexity == method.getComplexity());
 
@@ -97,15 +97,15 @@ public class CollectorTest extends ATest implements IConstants {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void collectMetricsAfferentEfferent() {
-		Class toDelete = (Class) dataBase.find(Toolkit.hash(className));
-		dataBase.remove(toDelete.getId());
-		toDelete = (Class) dataBase.find(Toolkit.hash(className));
+		Class toDelete = (Class) dataBase.find(Class.class, Toolkit.hash(className));
+		dataBase.remove(Class.class, toDelete.getId());
+		toDelete = (Class) dataBase.find(Class.class, Toolkit.hash(className));
 		assertNull(toDelete);
 
 		Collector.collectEfferentAndAfferent(className, Logger.class.getName());
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(packageName);
-		Package<?, ?> pakkage = (Package) dataBase.find(parameters);
+		Package<?, ?> pakkage = (Package) dataBase.find(Package.class, parameters);
 		assertNotNull(pakkage);
 		boolean containsLogger = false;
 		outer: for (Class<?, ?> klass : ((List<Class<?, ?>>) pakkage.getChildren())) {
@@ -124,23 +124,23 @@ public class CollectorTest extends ATest implements IConstants {
 		int iterations = 10000;
 		double collectionsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
 			public void execute() {
-				String lineNumber = Double.toString(System.currentTimeMillis() * Math.random());
-				Collector.collectCoverage(className, lineNumber, methodName, methodSignature);
+				double lineNumber = System.currentTimeMillis() * Math.random();
+				Collector.collectCoverage(className, methodName, methodSignature, (int) lineNumber);
 			}
 		}, "line collections for collector new line", iterations);
 		assertTrue(collectionsPerSecond > 10000);
 
-		final String lineNumber = Double.toString(System.currentTimeMillis() * Math.random());
+		final double lineNumber = System.currentTimeMillis() * Math.random();
 		collectionsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
 			public void execute() {
-				Collector.collectCoverage(className, lineNumber, methodName, methodSignature);
+				Collector.collectCoverage(className, methodName, methodSignature, (int) lineNumber);
 			}
 		}, "line counter collections", iterations);
 		assertTrue(collectionsPerSecond > 10000);
 
 		collectionsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
 			public void execute() {
-				Collector.getLine(className, methodName, methodSignature, lineNumber);
+				Collector.getLine(className, methodName, methodSignature, Double.valueOf(lineNumber).intValue());
 			}
 		}, "get line", iterations);
 	}

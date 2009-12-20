@@ -30,6 +30,9 @@ public class Target<E, F> implements ITarget<E, F>, Serializable {
 
 	private E e = null;
 
+	public Target() {
+	}
+
 	/**
 	 * Constructor.
 	 */

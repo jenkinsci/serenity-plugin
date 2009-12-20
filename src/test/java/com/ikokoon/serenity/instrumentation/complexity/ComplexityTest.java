@@ -22,9 +22,9 @@ public class ComplexityTest extends ATest {
 	@Test
 	public void visit() throws Exception {
 		visitClass(ComplexityClassAdapter.class, className);
-		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Toolkit.hash(className));
+		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(className));
 		assertNotNull(klass);
-		Method<?, ?> method = (Method<?, ?>) dataBase.find(Toolkit.hash(className, methodName, methodSignature));
+		Method<?, ?> method = (Method<?, ?>) dataBase.find(Method.class, Toolkit.hash(className, methodName, methodSignature));
 		assertNotNull(method);
 		assertTrue(method.getComplexity() == 22 || method.getComplexity() == 24);
 	}

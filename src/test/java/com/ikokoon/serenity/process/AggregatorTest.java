@@ -16,10 +16,9 @@ import com.ikokoon.serenity.model.Efferent;
 import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
-import com.ikokoon.serenity.model.Project;
+import com.ikokoon.serenity.persistence.DataBaseToolkit;
 import com.ikokoon.target.ITarget;
 import com.ikokoon.target.Target;
-import com.ikokoon.toolkit.Toolkit;
 
 /**
  * This is the test for the aggregator. The aggregator takes the collected data on the methods, classes and packages and calculates the metrics like
@@ -40,13 +39,11 @@ public class AggregatorTest extends ATest implements IConstants {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void onePackageClassMethodAndLine() {
-		Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
+		DataBaseToolkit.clear(dataBase);
 		Package pakkage = getPackage();
 		Class klass = getClass(pakkage, Target.class.getName());
 		Method method = getMethod(klass, "method name one", "method description one", 10, 10);
 		Line line = getline(method, 1, 5);
-
-		project.getChildren().add(pakkage);
 
 		dataBase.persist(pakkage);
 
@@ -60,7 +57,7 @@ public class AggregatorTest extends ATest implements IConstants {
 		assertEquals(0.5, pakkage.getStability());
 		assertEquals(0.582910995399281, pakkage.getDistance());
 		assertEquals(0, pakkage.getInterfaces());
-		assertEquals(1, pakkage.getImplement());
+		assertEquals(1, pakkage.getImplementations());
 		assertEquals(1, pakkage.getEfference());
 		assertEquals(1, pakkage.getAfference());
 		assertEquals(1, pakkage.getChildren().size());
@@ -87,13 +84,11 @@ public class AggregatorTest extends ATest implements IConstants {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void onePackageThreeClassesTwoMethodsAndTwoLines() {
-		Project project = (Project) dataBase.find(Toolkit.hash(Project.class.getName()));
+		DataBaseToolkit.clear(dataBase);
 		Efferent efferent = new Efferent();
 		efferent.setName(Logger.class.getPackage().getName());
 
 		Package pakkage = getPackage();
-
-		project.getChildren().add(pakkage);
 
 		Class classTarget = getClass(pakkage, Target.class.getName());
 		// classTarget.setInterfaze(true);
@@ -137,7 +132,7 @@ public class AggregatorTest extends ATest implements IConstants {
 		// d=|-stability + -abstractness + 1|/sqrt(-1²+-1²) = |-0.6666666666666666 + -0.5 + 1|sqrt(-1sq + -1sq) =
 		// assertEquals(0.38860733026618743, pakkage.getDistance());
 		assertEquals(1, pakkage.getInterfaces());
-		assertEquals(2, pakkage.getImplement());
+		assertEquals(2, pakkage.getImplementations());
 		assertEquals(2, pakkage.getEfference());
 		assertEquals(1, pakkage.getAfference());
 		assertEquals(3, pakkage.getChildren().size());

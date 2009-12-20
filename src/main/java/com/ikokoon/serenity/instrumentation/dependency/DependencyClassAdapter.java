@@ -13,18 +13,21 @@ import org.objectweb.asm.Opcodes;
 
 import com.ikokoon.serenity.Collector;
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
+import com.ikokoon.toolkit.Toolkit;
 
 /**
+ * This is the entry point for parsing the byte code and collecting the dependency metrics for the class. This class also collects the Java source for
+ * the class if it is available.
+ * 
  * Dependency metrics consist of the following:<br>
  * 
- * 1) Afferent - the number of packages that rely on this package, i.e. how many times it is referenced by other packages<br>
- * 2) Efferent - the number of packages this package relies on, i.e. the opposite of afferent<br>
+ * 1) Afferent - the number of packages that rely on this package, i.e. how many times it is referenced by other packages, the number of packages that
+ * this class affects<br>
+ * 2) Efferent - the number of packages this package relies on, i.e. the opposite of afferent, the number of classes that this class is effected by<br>
  * 3) Abstractness - the ratio of abstract to implementations in a package<br>
  * 4) Entropy - package A relies on package B. Then Package C is introduced and relies on A and B increasing the entropy<br>
  * 5) Stability - Ce / (Ca + Ce), efferent coupling divided by the afferent coupling plus the efferent coupling<br>
  * 6) Distance from main - find the stability distance of the package from the main which is (X=0,Y=1) to (X=1,Y=0) <br>
- * 
- * This class collects all the dependency data for a class while visiting the byte code.
  * 
  * @author Michael Couck
  * @since 18.07.09
@@ -34,23 +37,26 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 
 	/** The logger for the class. */
 	private Logger logger = Logger.getLogger(DependencyClassAdapter.class);
-	/** The name of the class that is being instrumented. */
+	/** The name of the class to collect dependency metrics on. */
 	private String className;
 	/** The source for the class if available. */
-	private byte[] sourcefileBuffer;
+	private byte[] sourceBytes;
 
 	/**
-	 * Constructor takes the parent visitor and the name of the class that will be analysed for dependency.
+	 * Constructor initialises a {@link DependencyClassAdapter} and takes the parent visitor and the name of the class that will be analysed for
+	 * dependency.
 	 * 
-	 * @param visitor
+	 * @param classVisitor
 	 *            the parent visitor for the class
 	 * @param className
 	 *            the name of the class to be analysed
+	 * @param sourceBytes
+	 *            the byte array of the Java source
 	 */
-	public DependencyClassAdapter(ClassVisitor visitor, String className, byte[] classfileBuffer, byte[] sourcefileBuffer) {
-		super(visitor);
-		this.className = className;
-		this.sourcefileBuffer = sourcefileBuffer;
+	public DependencyClassAdapter(ClassVisitor classVisitor, String className, byte[] sourceBytes) {
+		super(classVisitor);
+		this.className = Toolkit.slashToDot(className);
+		this.sourceBytes = sourceBytes;
 	}
 
 	/**
@@ -62,6 +68,9 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 			if (interfaces != null) {
 				logger.debug(Arrays.asList(interfaces).toString());
 			}
+		}
+		if (this.className == null || this.className != className) {
+			this.className = className;
 		}
 		Collector.collectEfferentAndAfferent(className, superName);
 		Collector.collectEfferentAndAfferent(className, interfaces);
@@ -125,6 +134,11 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 			}
 		}
 		MethodVisitor visitor = super.visitMethod(access, name, desc, signature, exceptions);
+		if (exceptions != null) {
+			for (String exception : exceptions) {
+				Collector.collectEfferentAndAfferent(className, exception);
+			}
+		}
 		MethodVisitor adapter = VisitorFactory.getMethodVisitor(visitor, DependencyMethodAdapter.class, className, name, desc);
 		return adapter;
 	}
@@ -149,8 +163,8 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitSource : " + source + ", " + debug);
 		}
-		if (sourcefileBuffer != null && sourcefileBuffer.length > 0) {
-			String code = new String(sourcefileBuffer);
+		if (sourceBytes != null && sourceBytes.length > 0) {
+			String code = new String(sourceBytes);
 			Collector.collectSource(className, code);
 		}
 		super.visitSource(source, debug);

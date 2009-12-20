@@ -1,4 +1,4 @@
-package com.ikokoon.serenity.applet;
+package com.ikokoon.toolkit;
 
 /**
  * Matrix manipulation class.

@@ -34,7 +34,7 @@ import com.ikokoon.toolkit.Base64;
  * @since 07.11.09
  * @version 01.00
  */
-public class TrendApplet extends JApplet {
+public class ChartApplet extends JApplet {
 
 	private static final int WIDTH = 750;
 	private static final int HEIGHT = 210;
@@ -272,7 +272,7 @@ public class TrendApplet extends JApplet {
 
 	private void setColumns(Graphics2D g2d) {
 		// Draw the columns on the graph
-		List<ArrayList<Double>> limits = model.getLimits();
+		List<ArrayList<Double>> limits = null; // model.getLimits();
 		List<ArrayList<Double>> metrics = model.getMetrics();
 		int segments = metrics.size();
 		int segmentSize = xAxisLength / segments;

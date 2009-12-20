@@ -48,18 +48,18 @@ public class ModellerTest extends ATest {
 		projectTwo.setClasses(854);
 		projectTwo.setPackages(25);
 
+		Project projectThree = null;
+
 		Modeller modeller = new Modeller();
-		modeller.visit(Project.class, projectOne, projectTwo);
+		modeller.visit(Project.class, projectOne, projectTwo, projectThree);
 
 		String string = modeller.getModel();
-		logger.debug(string);
 		assertNotNull(string);
 
 		// This is what we expect from the model
 		IModel model = (IModel) Toolkit.deserializeFromBase64(string);
-		assertEquals(
-				"[[24.0, 89.0], [17.0, 5.0], [0.25, 0.65], [0.36, 0.93], [0.65, 0.33], [25045.0, 65442.0], [523.0, 2554.0], [542.0, 854.0], [51.0, 25.0]]",
-				model.getMetrics().toString());
+		// Coverage, complexity, abstractness, stability, distance
+		assertEquals("[[24.0, 89.0, 0.0], [17.0, 5.0, 0.0], [25.0, 65.0, 0.0], [36.0, 93.0, 0.0], [65.0, 33.0, 0.0]]", model.getMetrics().toString());
 	}
 
 	@Test
@@ -71,7 +71,7 @@ public class ModellerTest extends ATest {
 		pakkageOne.setCoverage(63);
 		pakkageOne.setDistance(0.68);
 		pakkageOne.setEfference(5);
-		pakkageOne.setImplement(8);
+		pakkageOne.setImplementations(8);
 		pakkageOne.setInterfaces(4);
 		pakkageOne.setLines(1058);
 		pakkageOne.setStability(0.66);
@@ -85,23 +85,23 @@ public class ModellerTest extends ATest {
 		pakkageTwo.setCoverage(23);
 		pakkageTwo.setDistance(0.21);
 		pakkageTwo.setEfference(4);
-		pakkageTwo.setImplement(542);
+		pakkageTwo.setImplementations(542);
 		pakkageTwo.setInterfaces(25);
 		pakkageTwo.setLines(20225);
 		pakkageTwo.setStability(0.05);
 		pakkageTwo.setExecuted(5233658);
 
+		Package<?, ?> pakkageThree = null;
+
 		Modeller modeller = new Modeller();
-		modeller.visit(Package.class, pakkageOne, pakkageTwo);
+		modeller.visit(Package.class, pakkageOne, pakkageTwo, pakkageThree);
 
 		String string = modeller.getModel();
 		assertNotNull(string);
 
 		// This is what we expect from the model
 		IModel model = (IModel) Toolkit.deserializeFromBase64(string);
-		assertEquals(
-				"[[63.0, 23.0], [17.0, 59.0], [0.25, 0.36], [0.66, 0.05], [0.68, 0.21], [1058.0, 20225.0], [4.0, 25.0], [8.0, 542.0], [523645.0, 5233658.0]]",
-				model.getMetrics().toString());
+		assertEquals("[[63.0, 23.0, 0.0], [17.0, 59.0, 0.0], [25.0, 36.0, 0.0], [66.0, 5.0, 0.0], [68.0, 21.0, 0.0]]", model.getMetrics().toString());
 	}
 
 	@Test
@@ -126,16 +126,17 @@ public class ModellerTest extends ATest {
 		klassTwo.setLines(254);
 		klassTwo.setStability(0.885);
 
+		Class<?, ?> klassThree = null;
+
 		Modeller modeller = new Modeller();
-		modeller.visit(Class.class, klassOne, klassTwo);
+		modeller.visit(Class.class, klassOne, klassTwo, klassThree);
 
 		String string = modeller.getModel();
 		assertNotNull(string);
 
 		// This is what we expect from the model
 		IModel model = (IModel) Toolkit.deserializeFromBase64(string);
-		assertEquals("[[81.0, 5.0], [19.0, 21.0], [0.23, 0.88], [256.0, 254.0], [2561.0, 61.0], [6.0, 65.0], [5.0, 98.0]]", model.getMetrics()
-				.toString());
+		assertEquals("[[81.0, 5.0, 0.0], [19.0, 21.0, 0.0], [23.5, 88.5, 0.0]]", model.getMetrics().toString());
 	}
 
 }

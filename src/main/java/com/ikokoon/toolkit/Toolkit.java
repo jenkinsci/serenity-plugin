@@ -115,88 +115,6 @@ public class Toolkit {
 	}
 
 	/**
-	 * Builds the string required in byte code to call a method given parameters and a return type.
-	 * 
-	 * @param returnType
-	 *            the type that the method being called returns
-	 * @param parameters
-	 *            the parameter types of the method
-	 * @return the byte code string representation of a method
-	 */
-	public static String classesToByteCodeSignature(Class<?> returnType, Class<?>... parameters) {
-		StringBuilder builder = new StringBuilder("(");
-		for (Class<?> parameter : parameters) {
-			builder.append("L");
-			builder.append(Toolkit.dotToSlash(parameter.getName()));
-			builder.append(";");
-		}
-		builder.append(")");
-		if (returnType != null) {
-			builder.append("L");
-			builder.append(Toolkit.dotToSlash(returnType.getName()));
-			builder.append(";");
-		} else {
-			builder.append("V");
-		}
-		return builder.toString();
-	}
-
-	/**
-	 * Takes the signature of a method, a fields or a class and returns the class names in it.
-	 * 
-	 * @param signature
-	 *            the signature of the field or method
-	 * @return the classes in the description/signature
-	 */
-	// public static String[] byteCodeSignatureToClassNameArray(String signature) {
-	// List<String> classNames = new ArrayList<String>();
-	// if (signature == null) {
-	// return classNames.toArray(new String[classNames.size()]);
-	// }
-	// StringTokenizer tokenizer = new StringTokenizer(signature, ";<>*()[]+-");
-	// while (tokenizer.hasMoreTokens()) {
-	// String token = tokenizer.nextToken().trim();
-	// String className = Toolkit.slashToDot(token);
-	// className = stripByteCodeCharacters(className);
-	// if (className.trim().equals("")) {
-	// continue;
-	// }
-	// classNames.add(className);
-	// }
-	// return classNames.toArray(new String[classNames.size()]);
-	// }
-	// private static final String stripByteCodeCharacters(String string) {
-	// StringBuilder builder = new StringBuilder();
-	// char[] chars = string.toCharArray();
-	// for (int i = 0; i < chars.length; i++) {
-	// char c = chars[i];
-	// switch (c) {
-	// case 'B':
-	// case 'C':
-	// case 'D':
-	// case 'F':
-	// case 'I':
-	// case 'J':
-	// case 'L':
-	// case 'S':
-	// case 'T':
-	// case 'V':
-	// case 'Z':
-	// if (i <= 4) {
-	// break;
-	// }
-	// default:
-	// builder.append(c);
-	// break;
-	// }
-	// }
-	// string = builder.toString();
-	// if (string.startsWith("I") || string.startsWith("L") || string.startsWith("V") || string.startsWith("D") || string.startsWith("Z")) {
-	// return stripByteCodeCharacters(string);
-	// }
-	// return string;
-	// }
-	/**
 	 * Removes any whitespace from the string.
 	 * 
 	 * @param string
@@ -224,76 +142,6 @@ public class Toolkit {
 			}
 		}
 		return buffer.toString();
-	}
-
-	/**
-	 * Removes all the characters from the string that are not defined in the unicode set for all languages. This efectively removes all the binary
-	 * data from a string that may come from an executable file or a binary file that is no in human readable format.
-	 * 
-	 * @param string
-	 *            the string to remove the non readable characters from
-	 * @return the string sans the non readable characters
-	 */
-	public static final String stripNonCharacters(String string) {
-		if (string == null) {
-			return string;
-		}
-		StringBuffer buffer = new StringBuffer();
-		char[] chars = string.toCharArray();
-		for (int i = 0; i < chars.length; i++) {
-			char c = chars[i];
-			if (Character.isDefined(c)) {
-				buffer.append(c);
-			}
-		}
-		return buffer.toString();
-	}
-
-	/**
-	 * Takes an object and adds all the fields in the object and all super class objects to a string buffer that can be preinted.
-	 * 
-	 * @param object
-	 *            the object to get all the fields from
-	 * @param klass
-	 *            the class of the object to start from
-	 * @param buffer
-	 *            the buffer to put all the field values in
-	 * @return a string buffer with all the fields in an object including the super classes
-	 */
-	public static String toString(Object object, Class<?> klass, StringBuffer buffer) {
-		if (object != null && klass != null && buffer != null) {
-			try {
-				buffer.append(String.valueOf(klass.getName())).append("\n");
-				Class<?>[] interfaceClasses = klass.getInterfaces();
-				for (Class<?> interfaceClass : interfaceClasses) {
-					buffer.append("        :");
-					buffer.append(interfaceClass.getName());
-					buffer.append("\n");
-				}
-				Field fields[] = klass.getDeclaredFields();
-				for (int i = 0; i < fields.length; i++) {
-					fields[i].setAccessible(true);
-					try {
-						Object field = fields[i].get(object);
-						buffer.append("        :");
-						buffer.append(fields[i].getName());
-						buffer.append("=");
-						buffer.append(field);
-						buffer.append("\n");
-					} catch (Throwable t) {
-						logger.error("Exception generating string for object " + object, t);
-					}
-				}
-				klass = klass.getSuperclass();
-				return toString(object, klass, buffer);
-			} catch (Exception t) {
-				logger.error("Exception generating string for object " + object, t);
-			}
-		}
-		if (buffer != null) {
-			return buffer.toString();
-		}
-		return null;
 	}
 
 	/**
@@ -348,34 +196,6 @@ public class Toolkit {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Sets the field in the object to the value specified in the parameter list.
-	 * 
-	 * @param object
-	 *            the target object to set the field for
-	 * @param name
-	 *            the name of the field
-	 * @param value
-	 *            the value to set for the field
-	 * @return whether the field was set or not
-	 */
-	public static boolean setField(Object object, String name, Object value) {
-		if (object == null) {
-			return false;
-		}
-		Field field = getField(object.getClass(), name);
-		if (field != null) {
-			try {
-				field.setAccessible(true);
-				field.set(object, value);
-				return true;
-			} catch (Throwable t) {
-				return false;
-			}
-		}
-		return false;
 	}
 
 	/**

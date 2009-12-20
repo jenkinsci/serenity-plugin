@@ -1,4 +1,4 @@
-package com.ikokoon.serenity.applet;
+package com.ikokoon.toolkit;
 
 import static org.junit.Assert.assertEquals;
 

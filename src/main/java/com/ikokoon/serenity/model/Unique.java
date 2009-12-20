@@ -18,6 +18,11 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 public @interface Unique {
 
+	/**
+	 * The unique fields combination in the object.
+	 * 
+	 * @return the names of the unique field combination in the object
+	 */
 	public String[] fields();
 
 }

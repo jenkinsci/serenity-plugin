@@ -14,7 +14,6 @@ import com.ikokoon.serenity.model.Afferent;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Efferent;
 import com.ikokoon.serenity.model.Package;
-import com.ikokoon.serenity.persistence.DataBaseToolkit;
 import com.ikokoon.target.consumer.Annotation;
 import com.ikokoon.target.consumer.TargetConsumer;
 import com.ikokoon.toolkit.Toolkit;
@@ -26,11 +25,9 @@ public class DependencyTest extends ATest {
 		visitClass(DependencyClassAdapter.class, className);
 		visitClass(DependencyClassAdapter.class, TargetConsumer.class.getName());
 
-		DataBaseToolkit.dump(dataBase);
-
-		Package<?, ?> pakkage = (Package<?, ?>) dataBase.find(Toolkit.hash(java.lang.Class.forName(className).getPackage().getName()));
+		Package<?, ?> pakkage = (Package<?, ?>) dataBase.find(Package.class, Toolkit.hash(java.lang.Class.forName(className).getPackage().getName()));
 		assertNotNull(pakkage);
-		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Toolkit.hash(className));
+		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(className));
 		assertNotNull(klass);
 
 		List<Afferent> afferent = klass.getAfferent();

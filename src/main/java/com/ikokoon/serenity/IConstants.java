@@ -9,7 +9,15 @@ package com.ikokoon.serenity;
  */
 public interface IConstants {
 
-	public String DATABASE_FILE = "./serenity/serenity.db";
+	/** The Serenity directory for work and output data. */
+	public String SERENITY_DIRECTORY = "./serenity/";
+	/** The database file. */
+	public String DATABASE_FILE_RAM = SERENITY_DIRECTORY + "serenity.ram";
+	public String DATABASE_FILE_ODB = SERENITY_DIRECTORY + "serenity.odb";
+	public String DATABASE_FILE_JPA = SERENITY_DIRECTORY + "serenity.jpa";
+	/** The JPA persistence unit name. */
+	public String SERENITY_PERSISTENCE_UNIT = "SerenityPersistenceUnit";
+	/** The logging configuration file. */
 	public String LOG_4_J_PROPERTIES = "/META-INF/log4j.properties";
 
 	/** The system property key for the packages to enhance. */
@@ -18,6 +26,9 @@ public interface IConstants {
 	public String EXCLUDED_PACKAGES_PROPERTY = "excluded.packages";
 	/** The system property key for the class adapter classes to exclude. */
 	public String INCLUDED_ADAPTERS_PROPERTY = "included.adapters";
-
+	/** Whether to write the enhanced classes to the ./serenity directory for visual checking. */
+	public String WRITE_CLASSES = "write.classes";
+	/** Whether to delete the old class files before writing the new enhanced class files. */
+	public String CLEAN_CLASSES = "clean.classes";
 
 }

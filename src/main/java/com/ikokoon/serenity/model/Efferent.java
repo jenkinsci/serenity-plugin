@@ -1,7 +1,8 @@
 package com.ikokoon.serenity.model;
 
 import java.io.Serializable;
-import java.util.Date;
+
+import javax.persistence.Entity;
 
 /**
  * This class represents a package that the owner effects.
@@ -10,11 +11,11 @@ import java.util.Date;
  * @since 17.07.09
  * @version 01.00
  */
+@Entity
 @Unique(fields = { Composite.NAME })
 public class Efferent extends Composite<Object, Object> implements Comparable<Efferent>, Serializable {
 
 	private String name;
-	private Date timestamp;
 
 	public String getName() {
 		return name;
@@ -22,14 +23,6 @@ public class Efferent extends Composite<Object, Object> implements Comparable<Ef
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public Date getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
 	}
 
 	public String toString() {

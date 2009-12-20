@@ -1,57 +1,59 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 	<html>
 		<head>
-			<link rel="stylesheet" href="/css/style.css" />
+			<link rel="stylesheet" href="${rootURL}/css/style.css" />
 		</head>
 		<body>
 			<div style="line-height: 8px">
 				<j:forEach var="class" items="${it.package.children}">
-					<a href="${it.url}${'SerenityResult/source'}?className=${class.name}" title="Efferent: ${class.efferent}, Afferent: ${class.afferent}" onclick="JavaScript:window.parent.document.applet.setModel('model');"
-						target="source">
+					<!-- onclick="JavaScript:window.parent.document.applet.setModel('${it.getModel(class.class, class.id)}');" - too slow -->
+					<a href="${it.url}${'SerenityResult/source'}?className=${class.name}" 
+						onclick="JavaScript:window.parent.document.applet.setModel('model');"
+						target="source" title="Efference - ${class.efference}, afference - ${class.afference}, lines - ${class.lines}, executed - ${class.executed}">
 						<j:choose>
 							<j:when test="${class.coverage > class.COVERAGE_GOOD or class.interfaze}">
-								<img src="${rootURL}/images/16x16/blue.gif" alt="Coverage good" title="Coverage for class good" height="8" width="8" />
+								<img src="${rootURL}/images/16x16/blue.gif" border="0" alt="Coverage good" title="Coverage for class good" height="8" width="8" />
 							</j:when>
 							<j:otherwise>
 								<j:choose>
 									<j:when test="${class.coverage > class.COVERAGE_OK}">
-										<img src="${rootURL}/images/16x16/yellow.gif" alt="Some coverage" title="Need more coverage, another unit test perhaps" height="8"
-											width="8" />
+										<img src="${rootURL}/images/16x16/yellow.gif" border="0" alt="Some coverage" title="Need more coverage, another unit test perhaps"
+											height="8" width="8" />
 									</j:when>
 									<j:otherwise>
-										<img src="${rootURL}/images/16x16/red.gif" alt="Very little coverage" title="Do I have a unit test?" height="8" width="8" />
+										<img src="${rootURL}/images/16x16/red.gif" border="0" alt="Very little coverage" title="Do I have a unit test?" height="8" width="8" />
 									</j:otherwise>
 								</j:choose>
 							</j:otherwise>
 						</j:choose>
 						<j:choose>
 							<j:when test="${class.complexity > class.COMPLEXITY_BAD}">
-								<img src="${rootURL}/images/16x16/red.gif" alt="Much too complexity, hai carumba!" title="Class much too complex, please refactor immediately"
+								<img src="${rootURL}/images/16x16/red.gif" border="0" alt="Much too complex, hai carumba!" title="Class much too complex, please refactor immediately"
 									height="8" width="8" />
 							</j:when>
 							<j:otherwise>
 								<j:choose>
 									<j:when test="${class.complexity > class.COMPLEXITY_OK}">
-										<img src="${rootURL}/images/16x16/yellow.gif" alt="Too complex" title="Class too complex, please refactor" height="8" width="8" />
+										<img src="${rootURL}/images/16x16/yellow.gif" border="0" alt="Too complex" title="Class too complex, please refactor" height="8" width="8" />
 									</j:when>
 									<j:otherwise>
-										<img src="${rootURL}/images/16x16/blue.gif" alt="Good" title="Class complexity fine" height="8" width="8" />
+										<img src="${rootURL}/images/16x16/blue.gif" border="0" alt="Good" title="Class complexity fine" height="8" width="8" />
 									</j:otherwise>
 								</j:choose>
 							</j:otherwise>
 						</j:choose>
 						<j:choose>
 							<j:when test="${class.stability > class.STABILITY_GOOD}">
-								<img src="${rootURL}/images/16x16/blue.gif" alt="Stability good" title="Class stable" height="8" width="8" />
+								<img src="${rootURL}/images/16x16/blue.gif" border="0" alt="Stability good" title="Class stable" height="8" width="8" />
 							</j:when>
 							<j:otherwise>
 								<j:choose>
 									<j:when test="${class.stability > class.STABILITY_OK}">
-										<img src="${rootURL}/images/16x16/yellow.gif" alt="Stability not perfect" title="Class a little unstable, could be refactored" height="8"
-											width="8" />
+										<img src="${rootURL}/images/16x16/yellow.gif" border="0" alt="Stability not perfect" title="Class a little unstable, could be refactored"
+											height="8" width="8" />
 									</j:when>
 									<j:otherwise>
-										<img src="${rootURL}/images/16x16/blue.gif" alt="Unstable" title="Class unstable, needs refactoring" height="8" width="8" />
+										<img src="${rootURL}/images/16x16/blue.gif" border="0" alt="Unstable" title="Class unstable, needs refactoring" height="8" width="8" />
 									</j:otherwise>
 								</j:choose>
 							</j:otherwise>

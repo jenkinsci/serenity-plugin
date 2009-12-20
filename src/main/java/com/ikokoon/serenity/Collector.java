@@ -2,28 +2,29 @@ package com.ikokoon.serenity;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import com.ikokoon.serenity.model.Afferent;
 import com.ikokoon.serenity.model.Class;
+import com.ikokoon.serenity.model.Composite;
 import com.ikokoon.serenity.model.Efferent;
-import com.ikokoon.serenity.model.IComposite;
 import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.model.Project;
-import com.ikokoon.serenity.persistence.DataBaseToolkit;
+import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
  * TODO - make this class non static? Is this a better option? More OO? Better performance? Will it be easier to understand? In the case of
  * distributing the collector class by putting it in the constant pool of the classes and then calling the instance variable from inside the classes,
- * will this be more difficult to understand? In this static class all the real collection logic is in one place and is called statically. The
- * generation of the instructions to call this class is simple and seemingly not much less performant than an instance variable.
+ * will this be more difficult to understand?
+ * 
+ * In this static class all the real collection logic is in one place and is called statically. The generation of the instructions to call this class
+ * is simple and seemingly not much less performant than an instance variable.
  * 
  * This class collects the data from the processing. It adds the metrics to the packages, classes, methods and lines and persists the data in the
  * database. This is the central collection class for the coverage and dependency functionality.
@@ -36,32 +37,22 @@ public class Collector implements IConstants {
 
 	/** The logger. */
 	private static final Logger LOGGER = Logger.getLogger(Collector.class);
-	/** The timestamp for the build. */
-	public static final Date timestamp = new Date();
 	/** The database/persistence object. */
-	private static IDataBase dataBase;
-	static {
-		try {
-			dataBase = IDataBase.DataBaseManager.getDataBase(IConstants.DATABASE_FILE, true);
-			DataBaseToolkit.clear(dataBase);
-		} catch (Exception e) {
-			LOGGER.error("Exception initilizing the database", e);
-		}
-	}
+	private static IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, false, null);
 
 	/**
 	 * This method accumulates the number of times a thread goes through each line in a method.
 	 * 
 	 * @param className
 	 *            the name of the class that is calling this method
-	 * @param lineNumber
-	 *            the line number of the line that is calling this method
 	 * @param methodName
 	 *            the name of the method that the line is in
 	 * @param methodDescription
 	 *            the description of the method
+	 * @param lineNumber
+	 *            the line number of the line that is calling this method
 	 */
-	public static final void collectCoverage(String className, String lineNumber, String methodName, String methodDescription) {
+	public static final void collectCoverage(String className, String methodName, String methodDescription, int lineNumber) {
 		Line<?, ?> line = getLine(className, methodName, methodDescription, lineNumber);
 		line.increment();
 	}
@@ -78,10 +69,18 @@ public class Collector implements IConstants {
 	 * @param methodDescription
 	 *            the description of the method
 	 */
-	public static final void collectLines(String className, String lineNumber, String methodName, String methodDescription) {
+	public static final void collectLines(String className, String methodName, String methodDescription, Integer lineNumber) {
 		getLine(className, methodName, methodDescription, lineNumber);
 	}
 
+	/**
+	 * This method collects the Java source for the class.
+	 * 
+	 * @param className
+	 *            the name of the class
+	 * @param source
+	 *            the source for the class
+	 */
 	public static final void collectSource(String className, String source) {
 		Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
 		klass.setSource(source);
@@ -97,6 +96,10 @@ public class Collector implements IConstants {
 	 *            the name of the method
 	 * @param methodDescription
 	 *            the methodDescriptionription of the method
+	 * @param complexity
+	 *            the complexity of the method
+	 * @param lineCounter
+	 *            the number of lines in the method
 	 */
 	public static final void collectComplexity(String className, String methodName, String methodDescription, double complexity, double lineCounter) {
 		Method<?, ?> method = getMethod(className, methodName, methodDescription);
@@ -163,12 +166,12 @@ public class Collector implements IConstants {
 
 	@SuppressWarnings("unchecked")
 	private static final Package<Project<?, ?>, Class<?, ?>> getPackage(String className) {
-		className = Toolkit.slashToDot(className);
+		// className = Toolkit.slashToDot(className);
 		String packageName = Toolkit.classNameToPackageName(className);
 
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(packageName);
-		Package<Project<?, ?>, Class<?, ?>> pakkage = (Package<Project<?, ?>, Class<?, ?>>) dataBase.find(parameters);
+		Package<Project<?, ?>, Class<?, ?>> pakkage = (Package<Project<?, ?>, Class<?, ?>>) dataBase.find(Package.class, parameters);
 
 		if (pakkage == null) {
 			pakkage = new Package<Project<?, ?>, Class<?, ?>>();
@@ -179,13 +182,8 @@ public class Collector implements IConstants {
 			pakkage.setStability(0d);
 			pakkage.setDistance(0d);
 			pakkage.setInterfaces(0d);
-			pakkage.setImplement(0d);
-			pakkage.setTimestamp(timestamp);
+			pakkage.setImplementations(0d);
 			pakkage = (Package<Project<?, ?>, Class<?, ?>>) dataBase.persist(pakkage);
-
-			Project project = (Project<Object, Package<?, ?>>) dataBase.find(Toolkit.hash(Project.class.getName()));
-			project.getChildren().add(pakkage);
-			pakkage.setParent(project);
 
 			LOGGER.debug("Added package : " + pakkage);
 		}
@@ -194,11 +192,11 @@ public class Collector implements IConstants {
 
 	@SuppressWarnings("unchecked")
 	private static final Class<Package<?, ?>, Method<?, ?>> getClass(String className) {
-		className = Toolkit.slashToDot(className);
+		// className = Toolkit.slashToDot(className);
 
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(className);
-		Class klass = (Class) dataBase.find(parameters);
+		Class klass = (Class) dataBase.find(Class.class, parameters);
 
 		if (klass == null) {
 			klass = new Class();
@@ -210,7 +208,6 @@ public class Collector implements IConstants {
 			klass.setEfference(0d);
 			klass.setAfference(0d);
 			klass.setInterfaze(false);
-			klass.setTimestamp(timestamp);
 
 			Package<Project<?, ?>, Class<?, ?>> pakkage = getPackage(className);
 			pakkage.getChildren().add(klass);
@@ -224,14 +221,14 @@ public class Collector implements IConstants {
 
 	@SuppressWarnings("unchecked")
 	private static final Method<?, ?> getMethod(String className, String methodName, String methodDescription) {
-		className = Toolkit.slashToDot(className);
+		// className = Toolkit.slashToDot(className);
 		methodName = methodName.replace('<', ' ').replace('>', ' ').trim();
 
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(className);
 		parameters.add(methodName);
 		parameters.add(methodDescription);
-		Method method = (Method) dataBase.find(parameters);
+		Method method = (Method) dataBase.find(Method.class, parameters);
 
 		if (method == null) {
 			method = new Method();
@@ -241,7 +238,6 @@ public class Collector implements IConstants {
 			method.setDescription(methodDescription);
 			method.setComplexity(0d);
 			method.setCoverage(0d);
-			method.setTimestamp(timestamp);
 
 			Class klass = getClass(className);
 			method.setParent(klass);
@@ -257,28 +253,27 @@ public class Collector implements IConstants {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected static final Line<?, ?> getLine(String className, String methodName, String methodDescription, String lineNumber) {
+	protected static final Line<?, ?> getLine(String className, String methodName, String methodDescription, double lineNumber) {
 		Line line = null;
-		double lineNumberDouble = Double.parseDouble(lineNumber);
-		className = Toolkit.slashToDot(className);
+		// double lineNumberDouble = Double.parseDouble(lineNumber);
+		// className = Toolkit.slashToDot(className);
 
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(className);
 		parameters.add(methodName);
-		parameters.add(lineNumberDouble);
-		line = (Line) dataBase.find(parameters);
+		parameters.add(lineNumber);
+		line = (Line) dataBase.find(Line.class, parameters);
 
 		if (line == null) {
 			line = new Line();
 
-			line.setNumber(Double.parseDouble(lineNumber));
+			line.setNumber(lineNumber);
 			line.setCounter(0d);
-			line.setTimestamp(timestamp);
 			line.setClassName(className);
 			line.setMethodName(methodName);
 
 			Method method = getMethod(className, methodName, methodDescription);
-			Collection<IComposite> lines = method.getChildren();
+			Collection<Composite> lines = method.getChildren();
 			line.setParent(method);
 			lines.add(line);
 
@@ -297,11 +292,10 @@ public class Collector implements IConstants {
 		packageName = builder.toString();
 
 		parameters.add(packageName);
-		Efferent efferent = (Efferent) dataBase.find(parameters);
+		Efferent efferent = (Efferent) dataBase.find(Efferent.class, parameters);
 		if (efferent == null) {
 			efferent = new Efferent();
 			efferent.setName(packageName);
-			efferent.setTimestamp(timestamp);
 
 			klass.getEfferent().add(efferent);
 
@@ -320,11 +314,10 @@ public class Collector implements IConstants {
 		packageName = builder.toString();
 
 		parameters.add(packageName);
-		Afferent afferent = (Afferent) dataBase.find(parameters);
+		Afferent afferent = (Afferent) dataBase.find(Afferent.class, parameters);
 		if (afferent == null) {
 			afferent = new Afferent();
 			afferent.setName(packageName);
-			afferent.setTimestamp(timestamp);
 
 			klass.getAfferent().add(afferent);
 

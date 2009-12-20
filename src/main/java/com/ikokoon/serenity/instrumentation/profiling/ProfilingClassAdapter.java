@@ -6,6 +6,8 @@ import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import com.ikokoon.toolkit.Toolkit;
+
 /**
  * TODO - implement a simple profiling strategy, start an instruction at the start of the method and end it at the end of the method and take the
  * time, simple.
@@ -21,7 +23,7 @@ public class ProfilingClassAdapter extends ClassAdapter implements Opcodes {
 
 	public ProfilingClassAdapter(ClassVisitor visitor, String className) {
 		super(visitor);
-		this.className = className;
+		this.className = Toolkit.slashToDot(className);
 	}
 
 	/**

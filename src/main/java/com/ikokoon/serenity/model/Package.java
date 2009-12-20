@@ -1,9 +1,13 @@
 package com.ikokoon.serenity.model;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 
 import com.ikokoon.toolkit.Toolkit;
 
@@ -12,33 +16,25 @@ import com.ikokoon.toolkit.Toolkit;
  * @since 12.08.09
  * @version 01.00
  */
+@Entity
 @Unique(fields = { Composite.NAME })
 public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> implements Comparable<Package<?, ?>>, Serializable {
 
 	private String name;
 
-	@Legend(name = COVERAGE, limits = { COVERAGE_GOOD, COVERAGE_OK, COVERAGE_BAD }, positive = 1.0)
 	private double coverage;
-	@Legend(name = COMPLEXITY, limits = { COMPLEXITY_GOOD, COMPLEXITY_OK, COMPLEXITY_BAD })
 	private double complexity;
-	@Legend(name = ABSTRACTNESS, limits = { ABSTRACTNESS_GOOD, ABSTRACTNESS_OK, ABSTRACTNESS_BAD }, positive = 1.0)
 	private double abstractness;
-	@Legend(name = STABILITY, limits = { STABILITY_GOOD, STABILITY_OK, STABILITY_BAD }, positive = 1.0)
 	private double stability;
-	@Legend(name = DISTANCE, limits = { DISTANCE_GOOD, DISTANCE_OK, DISTANCE_BAD }, positive = 1.0)
 	private double distance;
-	@Legend(name = LINES, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
+
 	private double lines;
-	@Legend(name = INTERFACES, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
 	private double interfaces;
-	@Legend(name = IMPLEMENTATIONS, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
-	private double implement;
-	@Legend(name = EXECUTED, limits = { NO_LIMIT, NO_LIMIT, NO_LIMIT })
+	private double implementations;
 	private double executed;
 
 	private double efference;
 	private double afference;
-	private Date timestamp;
 
 	private Set<Efferent> efferent = new TreeSet<Efferent>();
 	private Set<Afferent> afferent = new TreeSet<Afferent>();
@@ -65,14 +61,6 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 
 	public void setExecuted(double totalLinesExecuted) {
 		this.executed = totalLinesExecuted;
-	}
-
-	public Date getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
 	}
 
 	public double getComplexity() {
@@ -123,12 +111,12 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 		this.interfaces = interfaces;
 	}
 
-	public double getImplement() {
-		return Toolkit.format(implement, PRECISION);
+	public double getImplementations() {
+		return Toolkit.format(implementations, PRECISION);
 	}
 
-	public void setImplement(double implementations) {
-		this.implement = implementations;
+	public void setImplementations(double implementations) {
+		this.implementations = implementations;
 	}
 
 	public double getEfference() {
@@ -147,6 +135,7 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 		this.afference = afferent;
 	}
 
+	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public Set<Efferent> getEfferent() {
 		return efferent;
 	}
@@ -155,6 +144,7 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 		this.efferent = efference;
 	}
 
+	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public Set<Afferent> getAfferent() {
 		return afferent;
 	}

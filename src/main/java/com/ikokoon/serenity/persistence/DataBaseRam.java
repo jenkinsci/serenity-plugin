@@ -1,111 +1,97 @@
 package com.ikokoon.serenity.persistence;
 
-import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.neodatis.odb.ODB;
-import org.neodatis.odb.ODBFactory;
-import org.neodatis.odb.Objects;
 
-import com.ikokoon.serenity.model.IComposite;
+import com.ikokoon.serenity.model.Composite;
+import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.model.Project;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
- * This database implementation is in memory and serializes the data model to XML when it closes.
+ * This is the in memory database. Several options were explored including DB4O, Neodatis, JPA, SQL, and finally none were performant enough. As well
+ * as that several hybrids were investigated like including a l1 cache and a l2 cache, but the actual persistence in the case of JPA and SQL was just
+ * too slow. This class does everything in memory and commits the data finally to a Neodatis database once the processing is finished.
  * 
  * @author Michael Couck
  * @since 11.10.09
  * @version 01.00
  */
-public final class DataBaseRam implements IDataBase {
+public final class DataBaseRam extends DataBase {
 
 	private Logger logger = Logger.getLogger(this.getClass());
-	/** The project for the build. */
-	private Project<Object, Package> project;
-	/** The object database from Neodatis. */
-	/** The Neodatis object database for persistence. */
-	private ODB odb = null;
-	/** The database file for Neodatis. */
-	private String dataBaseFile;
+	/** The underlying persistence database to the file system. */
+	private IDataBase dataBase;
+	/** The listener that catches events. */
+	private IDataBaseListener dataBaseListener;
 	/** The closed flag. */
 	private boolean closed = true;
 
-	/**
-	 * @param dataBaseFile
-	 * @param create
-	 */
-	@SuppressWarnings("unchecked")
-	DataBaseRam(String dataBaseFile, boolean create) {
-		this.dataBaseFile = dataBaseFile;
-		logger.info("Opening database on file : " + dataBaseFile);
-		try {
-			if (create) {
-				File file = new File(this.dataBaseFile);
-				if (!file.delete()) {
-					logger.warn("Couldn't delete old database file");
-				}
-				logger.info("Database file : " + file.getAbsolutePath());
-			}
-			odb = ODBFactory.open(this.dataBaseFile);
-			Objects objects = odb.getObjects(Project.class);
-			if (objects.hasNext()) {
-				project = (Project<Object, Package>) objects.getFirst();
-			}
-		} catch (Exception e) {
-			logger.error("", e);
-		} finally {
-			try {
-				odb.close();
-			} catch (Exception e) {
-				logger.error("", e);
-			}
-		}
+	private transient volatile List<Composite<?, ?>> index = new ArrayList<Composite<?, ?>>();
 
-		if (project == null) {
-			project = new Project<Object, Package>();
-		}
-
-		project.getIndex().clear();
-		persist(project);
+	DataBaseRam(IDataBase dataBase, IDataBaseListener dataBaseListener, Boolean create) {
+		logger.info("Opening RAM database with " + dataBase + " underneath.");
+		this.dataBase = dataBase;
+		this.dataBaseListener = dataBaseListener;
+		index.clear();
+		// if (this.dataBase != null) {
+		// List<Package> packages = dataBase.find(Package.class);
+		// for (Package<?, ?> pakkage : packages) {
+		// setIds(pakkage);
+		// }
+		// }
 		closed = false;
-		logger.info("Finished initilizing the database data model in memory");
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public synchronized final IComposite<?, ?> persist(IComposite<?, ?> composite) {
+	public synchronized final <E extends Composite<?, ?>> E persist(E composite) {
 		setIds(composite);
-		logger.debug("Persisted object : " + composite);
 		return composite;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public synchronized final IComposite<?, ?> find(Long id) {
-		List<IComposite<?, ?>> index = project.getIndex();
-		return search(index, id);
+	@SuppressWarnings("unchecked")
+	public synchronized final <E extends Composite<?, ?>> E find(Class<E> klass, Long id) {
+		return (E) search(index, id);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public synchronized final IComposite<?, ?> find(List<Object> parameters) {
+	@SuppressWarnings("unchecked")
+	public synchronized final <E extends Composite<?, ?>> E find(Class<E> klass, List<Object> parameters) {
 		Long id = Toolkit.hash(parameters.toArray());
-		List<IComposite<?, ?>> index = project.getIndex();
-		return search(index, id);
+		return (E) search(index, id);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public synchronized final IComposite<?, ?> remove(Long id) {
-		IComposite<?, ?> composite = find(id);
+	@SuppressWarnings("unchecked")
+	public synchronized final <E extends Composite<?, ?>> List<E> find(Class<E> klass) {
+		List<E> list = new ArrayList<E>();
+		for (Composite<?, ?> composite : index) {
+			if (klass.isInstance(composite)) {
+				list.add((E) composite);
+			}
+		}
+		return list;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	public synchronized final <E extends Composite<?, ?>> E remove(Class<E> klass, Long id) {
+		Composite<?, ?> composite = find(klass, id);
 		if (composite != null) {
-			IComposite<?, ?> parent = composite.getParent();
+			Composite<?, ?> parent = composite.getParent();
 			if (parent != null) {
 				List<?> children = parent.getChildren();
 				if (children != null) {
@@ -113,11 +99,11 @@ public final class DataBaseRam implements IDataBase {
 				}
 			}
 			composite.setParent(null);
-			if (!project.getIndex().remove(composite)) {
+			if (!index.remove(composite)) {
 				logger.warn("Didn't remove composite with id : " + id + ", because it wasn't in the index.");
 			}
 		}
-		return composite;
+		return (E) composite;
 	}
 
 	/**
@@ -138,11 +124,30 @@ public final class DataBaseRam implements IDataBase {
 		logger.info("Comitting and closing the database");
 
 		try {
-			project.getIndex().clear();
-			odb = ODBFactory.open(this.dataBaseFile);
-			odb.store(project);
-			odb.commit();
-			odb.close();
+			logger.info("Persisting index : " + dataBase);
+			if (dataBase != null) {
+				for (Composite<?, ?> composite : index) {
+					if (Package.class.isInstance(composite) || Project.class.isInstance(composite)) {
+						logger.debug("Persisting : " + composite);
+						dataBase.persist(composite);
+					}
+				}
+				dataBase.close();
+			} else {
+				logger.warn("Persistence database was null : " + this);
+			}
+			index.clear();
+			final IDataBase dataBase = this;
+			IDataBaseEvent dataBaseEvent = new IDataBaseEvent() {
+				public IDataBase getDataBase() {
+					return dataBase;
+				}
+
+				public Type getEventType() {
+					return IDataBaseEvent.Type.DATABASE_CLOSE;
+				}
+			};
+			dataBaseListener.fireDataBaseEvent(dataBaseEvent);
 		} catch (Exception e) {
 			logger.error("Exception comitting and closing the database", e);
 		}
@@ -162,43 +167,41 @@ public final class DataBaseRam implements IDataBase {
 	 *            a list of already set id fields
 	 */
 	@SuppressWarnings("unchecked")
-	synchronized final <T> void setIds(IComposite<?, ?> composite) {
+	synchronized final <T> void setIds(Composite<?, ?> composite) {
 		if (composite == null) {
 			return;
 		}
-		if (composite.getId() == null) {
-			Object[] uniqueValues = Toolkit.getUniqueValues(composite);
-			Long id = Toolkit.hash(uniqueValues);
-			composite.setId(id);
-		}
+		super.setId(composite);
 		// Insert the object into the index
-		insert(project.getIndex(), composite);
-		List<IComposite<?, ?>> children = (List<IComposite<?, ?>>) composite.getChildren();
-		for (IComposite<?, ?> child : children) {
+		insert(index, composite);
+		logger.debug("Persisted object : " + composite);
+		List<Composite<?, ?>> children = (List<Composite<?, ?>>) composite.getChildren();
+		for (Composite<?, ?> child : children) {
 			setIds(child);
 		}
 	}
 
 	/**
-	 * Binday search through the index of composite objects.
+	 * Binary search through the index of composite objects.
 	 * 
 	 * @param index
 	 * @param id
 	 * @return
 	 */
-	final IComposite<?, ?> search(List<IComposite<?, ?>> index, long id) {
+	@SuppressWarnings("unchecked")
+	final <E extends Composite<?, ?>> E search(List<Composite<?, ?>> index, long id) {
 		int low = 0;
 		int high = index.size() - 1;
 		while (low <= high) {
 			int mid = (low + high) >>> 1;
-			IComposite<?, ?> composite = index.get(mid);
+			Composite<?, ?> composite = index.get(mid);
 			long midVal = composite.getId();
 			if (midVal < id) {
 				low = mid + 1;
 			} else if (midVal > id) {
 				high = mid - 1;
 			} else {
-				return composite;
+				return (E) composite;
 			}
 		}
 		return null;
@@ -209,53 +212,59 @@ public final class DataBaseRam implements IDataBase {
 	 * 
 	 * @param index
 	 * @param toInsert
-	 * @param key
 	 */
-	final void insert(List<IComposite<?, ?>> index, IComposite<?, ?> toInsert) {
+	final void insert(List<Composite<?, ?>> index, Composite<?, ?> toInsert) {
+		boolean inserted = false;
 		if (index.size() == 0) {
 			index.add(toInsert);
-			return;
-		}
-		long key = toInsert.getId();
-		int low = 0;
-		int high = index.size();
-		while (low <= high) {
-			int mid = (low + high) >>> 1;
-			if (mid >= index.size()) {
-				index.add(mid, toInsert);
-				break;
-			}
-			IComposite<?, ?> composite = index.get(mid);
-			long midVal = composite.getId();
-			if (midVal < key) {
-				int next = mid + 1;
-				if (index.size() > next) {
-					IComposite<?, ?> nextComposite = index.get(next);
-					long nextVal = nextComposite.getId();
-					if (nextVal > key) {
-						index.add(next, toInsert);
-						break;
-					}
-				}
-				low = mid + 1;
-			} else if (midVal > key) {
-				int previous = mid - 1;
-				if (previous >= 0) {
-					IComposite<?, ?> previousComposite = index.get(previous);
-					long previousVal = previousComposite.getId();
-					if (previousVal < key) {
-						index.add(mid, toInsert);
-						break;
-					}
-				} else {
-					index.add(0, toInsert);
+			inserted = true;
+		} else {
+			long key = toInsert.getId();
+			int low = 0;
+			int high = index.size();
+			while (low <= high) {
+				int mid = (low + high) >>> 1;
+				if (mid >= index.size()) {
+					index.add(mid, toInsert);
+					inserted = true;
 					break;
 				}
-				high = mid - 1;
-			} else {
-				break;
+				Composite<?, ?> composite = index.get(mid);
+				long midVal = composite.getId();
+				if (midVal < key) {
+					int next = mid + 1;
+					if (index.size() > next) {
+						Composite<?, ?> nextComposite = index.get(next);
+						long nextVal = nextComposite.getId();
+						if (nextVal > key) {
+							index.add(next, toInsert);
+							inserted = true;
+							break;
+						}
+					}
+					low = mid + 1;
+				} else if (midVal > key) {
+					int previous = mid - 1;
+					if (previous >= 0) {
+						Composite<?, ?> previousComposite = index.get(previous);
+						long previousVal = previousComposite.getId();
+						if (previousVal < key) {
+							index.add(mid, toInsert);
+							inserted = true;
+							break;
+						}
+					} else {
+						index.add(0, toInsert);
+						inserted = true;
+						break;
+					}
+					high = mid - 1;
+				} else {
+					break;
+				}
 			}
 		}
+		logger.debug("Inserted : " + toInsert + " - " + inserted);
 	}
 
 }

@@ -24,6 +24,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 import com.ikokoon.serenity.IConstants;
+import com.ikokoon.serenity.LoggingConfigurator;
 
 /**
  * This class runs at the end of the build, called by Hudson. The purpose is to copy the database file from the output directory for the reports
@@ -36,7 +37,10 @@ import com.ikokoon.serenity.IConstants;
 @SuppressWarnings("unchecked")
 public class SerenityPublisher extends Recorder {
 
-	protected static final Logger logger = Logger.getLogger(SerenityPublisher.class);
+	static {
+		LoggingConfigurator.configure();
+	}
+	protected static Logger logger = Logger.getLogger(SerenityPublisher.class);
 	/** The description for Hudson. */
 	@Extension
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
@@ -45,7 +49,7 @@ public class SerenityPublisher extends Recorder {
 
 	@DataBoundConstructor
 	public SerenityPublisher(String serenityDatabase) {
-		logger.info("SerenityPublisher:" + serenityDatabase);
+		logger.debug("SerenityPublisher:" + serenityDatabase);
 		this.serenityDatabase = serenityDatabase;
 	}
 
@@ -53,7 +57,7 @@ public class SerenityPublisher extends Recorder {
 	 * {@inheritDoc}
 	 */
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener buildListener) throws InterruptedException, IOException {
-		logger.info("perform");
+		logger.debug("perform");
 		PrintStream consolePrintStream = buildListener.getLogger();
 		consolePrintStream.println("Looking for database file : " + serenityDatabase);
 		if (serenityDatabase == null) {
@@ -92,7 +96,7 @@ public class SerenityPublisher extends Recorder {
 
 		FilePath buildTarget = new FilePath(build.getRootDir());
 		FilePath singleReport = reports[0];
-		FilePath targetPath = new FilePath(buildTarget, IConstants.DATABASE_FILE);
+		FilePath targetPath = new FilePath(buildTarget, IConstants.DATABASE_FILE_ODB);
 		try {
 			buildListener.getLogger().println(
 					"Publishing serenity db from : " + singleReport.toURI().getRawPath() + ", to : " + targetPath.toURI().getRawPath());
@@ -115,17 +119,17 @@ public class SerenityPublisher extends Recorder {
 	 * {@inheritDoc}
 	 */
 	public Action getProjectAction(hudson.model.Project project) {
-		logger.info("getProjectAction");
+		logger.debug("getProjectAction");
 		return new SerenityProjectAction(project);
 	}
 
 	public void setSerenityDatabase(String serenityDatabase) {
-		logger.info("setSerenityDatabase");
+		logger.debug("setSerenityDatabase");
 		this.serenityDatabase = serenityDatabase;
 	}
 
 	public String getSerenityDatabase() {
-		logger.info("getSerenityDatabase");
+		logger.debug("getSerenityDatabase");
 		return serenityDatabase;
 	}
 
@@ -136,19 +140,20 @@ public class SerenityPublisher extends Recorder {
 	 * See <tt>views/hudson/plugins/coverage/CoveragePublisher/*.jelly</tt> for the actual HTML fragment for the configuration screen.
 	 */
 	public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+
 		/**
 		 * Constructs a new DescriptorImpl.
 		 */
 		DescriptorImpl() {
 			super(SerenityPublisher.class);
-			logger.info("DescriptorImpl");
+			logger.debug("DescriptorImpl");
 		}
 
 		/**
 		 * This human readable name is used in the configuration screen.
 		 */
 		public String getDisplayName() {
-			logger.info("getDisplayName");
+			logger.debug("getDisplayName");
 			return "Publish Serenity Report";
 		}
 
@@ -162,7 +167,7 @@ public class SerenityPublisher extends Recorder {
 		 */
 		@Override
 		public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
-			logger.info("configure");
+			logger.debug("configure");
 			req.bindParameters(this, "serenity.");
 			save();
 			return super.configure(req, json);
@@ -173,14 +178,14 @@ public class SerenityPublisher extends Recorder {
 		 */
 		@Override
 		public SerenityPublisher newInstance(StaplerRequest req, JSONObject json) throws FormException {
-			logger.info("newInstance");
+			logger.debug("newInstance");
 			SerenityPublisher instance = req.bindParameters(SerenityPublisher.class, "serenity.");
 			return instance;
 		}
 	}
 
 	public BuildStepMonitor getRequiredMonitorService() {
-		logger.info("getRequiredMonitorService");
+		logger.debug("getRequiredMonitorService");
 		return BuildStepMonitor.STEP;
 	}
 }

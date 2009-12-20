@@ -9,6 +9,12 @@ import java.io.InputStream;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
+import com.ikokoon.serenity.IConstants;
+import com.ikokoon.serenity.persistence.DataBaseOdb;
+import com.ikokoon.serenity.persistence.DataBaseRam;
+import com.ikokoon.serenity.persistence.IDataBase;
+import com.ikokoon.serenity.persistence.IDataBaseEvent;
+import com.ikokoon.serenity.persistence.IDataBaseListener;
 
 public class ObjectFactoryTest extends ATest {
 
@@ -23,6 +29,22 @@ public class ObjectFactoryTest extends ATest {
 
 		String string = ObjectFactory.getObject(String.class, parameters);
 		assertNotNull(string);
+
+		IDataBaseListener dataBaseListener = new IDataBaseListener() {
+			public void fireDataBaseEvent(IDataBaseEvent dataBaseEvent) {
+			}
+		};
+		dataBase.close();
+		IDataBase iDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, true, null);
+		IDataBase dataBase = ObjectFactory.getObject(DataBaseRam.class, iDataBase, dataBaseListener, true);
+		assertNotNull(dataBase);
+
+		dataBase.close();
+		iDataBase.close();
+		iDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, true, null);
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, true, iDataBase);
+		Object dataBaseField = Toolkit.getValue(dataBase.getClass(), dataBase, "dataBase");
+		assertNotNull(dataBaseField);
 	}
 
 }

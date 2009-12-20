@@ -7,9 +7,14 @@ import org.objectweb.asm.MethodVisitor;
 
 import com.ikokoon.serenity.Collector;
 import com.ikokoon.serenity.instrumentation.coverage.CoverageMethodAdapter;
+import com.ikokoon.toolkit.Toolkit;
 
 /**
- * This class just visits the byte code in the classes and collects the complexity metrics for the class.
+ * TODO - add the interesting methods to the collection of the complexity. Do we need to add try catch? And what about multiple catch? One for each
+ * potential exception thrown? No?
+ * 
+ * This class just visits the byte code in the classes and collects the complexity metrics for the class. Complexity is calculated by adding one every
+ * time there is a jump instruction.
  * 
  * @author Michael Couck
  * @since 12.07.09
@@ -33,33 +38,28 @@ public class ComplexityMethodAdapter extends MethodAdapter {
 	private double lineCounter;
 
 	/**
-	 * The constructor takes all the interesting items for the method that is to be enhanced.
+	 * The constructor initialises a {@link ComplexityMethodAdapter} that takes all the interesting items for the method that is to be enhanced
+	 * including the parent method visitor.
 	 * 
 	 * @param methodVisitor
 	 *            the method visitor of the parent
 	 * @param className
 	 *            the name of the class the method belongs to
-	 * @param access
-	 *            the access code for the method
-	 * @param name
-	 *            the name of the method
-	 * @param desc
-	 *            the description of the method
-	 * @param exceptions
-	 *            exceptions that can be thrown by the method
+	 * @param methodName
+	 *            the name of the method that will be collected for complexity
+	 * @param methodDescription
+	 *            the description of the method, i.e. the byte code signature
 	 */
 	public ComplexityMethodAdapter(MethodVisitor methodVisitor, String className, String methodName, String methodDescription) {
 		super(methodVisitor);
-		this.className = className;
+		this.className = Toolkit.slashToDot(className);
 		this.methodName = methodName;
 		this.methodDescription = methodDescription;
 		logger.debug("Class name : " + className + ", name : " + methodName + ", desc : " + methodDescription);
 	}
 
 	/**
-	 * This is the method that actually adds the instructions to the enhanced class. It adds an instruction to call a collector class which then
-	 * collects the data about each line being called. This method puts five strings onto the stack. These are then popped by the call to the
-	 * collector class and passed as parameters to the collector method.
+	 * {@inheritDoc}
 	 */
 	public void visitLineNumber(int lineNumber, Label label) {
 		logger.debug("visitLineNumber : " + lineNumber + ", " + label + ", " + label.getOffset() + ", " + className + ", " + methodName);
@@ -85,10 +85,44 @@ public class ComplexityMethodAdapter extends MethodAdapter {
 		this.mv.visitEnd();
 	}
 
-	// visitTryCatchBlock
-	// visitLookupSwitchInsn
-	// visitTableSwitchInsn
-	// visitMethodInsn
-	// visitInsn
+	/**
+	 * {@inheritDoc}
+	 */
+	public void visitTryCatchBlock(Label start, Label end, Label handler, String type) {
+		// TODO - implement me
+		this.mv.visitTryCatchBlock(start, end, handler, type);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void visitLookupSwitchInsn(Label dflt, int keys[], Label labels[]) {
+		// TODO - implement me
+		this.mv.visitLookupSwitchInsn(dflt, keys, labels);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void visitTableSwitchInsn(int min, int max, Label dflt, Label labels[]) {
+		// TODO - implement me
+		this.mv.visitTableSwitchInsn(min, max, dflt, labels);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void visitMethodInsn(int opcode, String owner, String name, String desc) {
+		// TODO - implement me
+		this.mv.visitMethodInsn(opcode, owner, name, desc);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void visitInsn(int opcode) {
+		// TODO - implement me
+		this.mv.visitInsn(opcode);
+	}
 
 }

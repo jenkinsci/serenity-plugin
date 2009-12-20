@@ -26,7 +26,7 @@ public class Configuration {
 	private static Configuration configuration = new Configuration();
 
 	/** The logger for the class. */
-	public Logger logger = Logger.getLogger(this.getClass());
+	public Logger logger;
 	/** Packages that are included in the enhancement. */
 	public Set<String> includedPackages = new TreeSet<String>();
 	/** Patterns in class names that are excluded from enhancement. */
@@ -39,10 +39,56 @@ public class Configuration {
 	}
 
 	private Configuration() {
+		LoggingConfigurator.configure();
+		logger = Logger.getLogger(this.getClass());
 		addIncludedPackages();
 		addExcludedPackages();
 		addIncludedClassAdapters();
 		addDefaultExcludedPackages();
+	}
+
+	/**
+	 * Checks to see that the class name is included in the packages that are to be included.
+	 * 
+	 * @param string
+	 *            the string to check for pattern inclusion
+	 * @return whether the string is included in the pattern list
+	 */
+	public boolean included(String string) {
+		if (string == null) {
+			return false;
+		}
+		string = Toolkit.slashToDot(string);
+		for (String pattern : includedPackages) {
+			if (string.indexOf(pattern) > -1) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Checks to see if the class is included in the classes that can be enhanced, so for example java.lang is excluded.
+	 * 
+	 * @param className
+	 *            the name of the class to check
+	 * @return whether the class is excluded and should not be used
+	 */
+	public boolean excluded(String string) {
+		if (string == null) {
+			return true;
+		}
+		string = Toolkit.slashToDot(string);
+		for (String pattern : excludedPackages) {
+			if (string.indexOf(pattern) > -1) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public String getProperty(String name) {
+		return System.getProperty(name);
 	}
 
 	private void addIncludedPackages() {
@@ -90,53 +136,12 @@ public class Configuration {
 	}
 
 	private void addDefaultExcludedPackages() {
-		excludedPackages.add("javax");
 		excludedPackages.add("java.lang");
 		excludedPackages.add("sun");
 		excludedPackages.add("sunw");
 		excludedPackages.add("com.sun");
 		excludedPackages.add("Test");
 		excludedPackages.add(Project.class.getPackage().getName());
-	}
-
-	/**
-	 * Checks to see that the class name is included in the packages that are to be included.
-	 * 
-	 * @param string
-	 *            the string to check for pattern inclusion
-	 * @return whether the string is included in the pattern list
-	 */
-	public boolean included(String string) {
-		if (string == null) {
-			return false;
-		}
-		string = Toolkit.slashToDot(string);
-		for (String pattern : includedPackages) {
-			if (string.indexOf(pattern) > -1) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Checks to see if the class is included in the classes that can be enhanced, so for example java.lang is excluded.
-	 * 
-	 * @param className
-	 *            the name of the class to check
-	 * @return whether the class is excluded and should not be used
-	 */
-	public boolean excluded(String string) {
-		if (string == null) {
-			return true;
-		}
-		string = Toolkit.slashToDot(string);
-		for (String pattern : excludedPackages) {
-			if (string.indexOf(pattern) > -1) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 }

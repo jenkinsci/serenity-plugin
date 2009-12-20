@@ -1,11 +1,19 @@
 package com.ikokoon.serenity;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+/**
+ * 
+ * @author Michael Couck
+ * @since 09.12.09
+ * @version 01.00
+ */
 public class LoggingConfigurator {
 
 	private static Logger LOGGER;
@@ -40,6 +48,17 @@ public class LoggingConfigurator {
 		properties.put("log4j.appender.file", "org.apache.log4j.DailyRollingFileAppender");
 		properties.put("log4j.appender.file.Threshold", "DEBUG");
 		properties.put("log4j.appender.file.File", "./serenity/serenity.log");
+
+		File file = new File("./serenity/serenity.log");
+		if (!file.getParentFile().exists()) {
+			file.getParentFile().mkdirs();
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
 		properties.put("log4j.appender.file.layout", "org.apache.log4j.PatternLayout");
 		properties.put("log4j.appender.file.layout.ConversionPattern", "%d{HH:mm:ss,SSS} %-5p %C:%L - %m%n");
 		properties.put("log4j.appender.file.Append", "false");

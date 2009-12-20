@@ -1,7 +1,8 @@
 package com.ikokoon.serenity.model;
 
 import java.io.Serializable;
-import java.util.Date;
+
+import javax.persistence.Entity;
 
 import com.ikokoon.toolkit.Toolkit;
 
@@ -10,6 +11,7 @@ import com.ikokoon.toolkit.Toolkit;
  * @since 12.08.09
  * @version 01.00
  */
+@Entity
 @Unique(fields = { Composite.CLASS_NAME, Composite.NAME, Composite.DESCRIPTION })
 public class Method<E, F> extends Composite<Class<?, ?>, Line<?, ?>> implements Comparable<Method<?, ?>>, Serializable {
 
@@ -20,7 +22,6 @@ public class Method<E, F> extends Composite<Class<?, ?>, Line<?, ?>> implements 
 	private double lines;
 	private double executed;
 	private double coverage;
-	private Date timestamp;
 
 	public String getName() {
 		return name;
@@ -36,14 +37,6 @@ public class Method<E, F> extends Composite<Class<?, ?>, Line<?, ?>> implements 
 
 	public void setClassName(String className) {
 		this.className = className;
-	}
-
-	public Date getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
 	}
 
 	public String getDescription() {

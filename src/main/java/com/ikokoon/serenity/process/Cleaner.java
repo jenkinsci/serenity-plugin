@@ -5,9 +5,8 @@ import java.util.List;
 import com.ikokoon.serenity.Configuration;
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.model.Package;
-import com.ikokoon.serenity.model.Project;
+import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.IDataBase;
-import com.ikokoon.toolkit.Toolkit;
 
 /**
  * During the collection of the data packages are collected along with the data so we have references to the packages. For example if a class relies
@@ -33,25 +32,17 @@ public class Cleaner extends AProcess implements IConstants {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	public void execute() {
 		super.execute();
 		// Clean all the packages that got in the database along the processing
 		// that were not included in the packages required
-		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(IConstants.DATABASE_FILE, false);
-		Project<?, ?> project = (Project<?, ?>) dataBase.find(Toolkit.hash(Project.class.getName()));
-		if (project != null) {
-			List<Package<?, ?>> packages = project.getChildren();
-			for (Package<?, ?> pakkage : packages.toArray(new Package[packages.size()])) {
-				// Remove the packages that are not included in the list to process
-				if (!Configuration.getConfiguration().included(pakkage.getName())) {
-					dataBase.remove(pakkage.getId());
-					continue;
-				}
-				// Remove the packages that have no classes, not interesting
-				// if (pakkage.getChildren() != null && pakkage.getChildren().size() == 0) {
-				// dataBase.remove(pakkage.getId());
-				// continue;
-				// }
+		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, false, null);
+		List<Package> packages = dataBase.find(Package.class);
+		for (Package<?, ?> pakkage : packages.toArray(new Package[packages.size()])) {
+			// Remove the packages that are not included in the list to process
+			if (!Configuration.getConfiguration().included(pakkage.getName())) {
+				dataBase.remove(Package.class, pakkage.getId());
 			}
 		}
 	}

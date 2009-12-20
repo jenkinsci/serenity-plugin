@@ -10,9 +10,10 @@ import org.objectweb.asm.Type;
 
 import com.ikokoon.serenity.Collector;
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
+import com.ikokoon.toolkit.Toolkit;
 
 /**
- * Please @see SourceClassAdapter for more on dependency.
+ * This class visits the method instructions and collects dependency metrics on the method.
  * 
  * @author Michael Couck
  * @since 18.07.09
@@ -21,8 +22,8 @@ import com.ikokoon.serenity.instrumentation.VisitorFactory;
 public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 
 	/** The logger for the class. */
-	private Logger logger = Logger.getLogger(DependencyMethodAdapter.class);
-	/** The name of the class that this method adapter is enhancing the methods for. */
+	private Logger logger = Logger.getLogger(this.getClass());
+	/** The name of the class that this method adapter parsing for dependency metrics. */
 	private String className;
 	/** The name of the method. */
 	private String methodName;
@@ -30,24 +31,21 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 	private String methodDescription;
 
 	/**
-	 * The constructor takes all the interesting items for the method that is to be enhanced.
+	 * The constructor initialises a {@link DependencyMethodAdapter} and takes all the interesting items for the method that are used for the
+	 * collection of the data.
 	 * 
 	 * @param methodVisitor
 	 *            the method visitor of the parent
 	 * @param className
 	 *            the name of the class the method belongs to
-	 * @param access
-	 *            the access code for the method
-	 * @param name
+	 * @param methodName
 	 *            the name of the method
-	 * @param desc
+	 * @param methodDescription
 	 *            the description of the method
-	 * @param exceptions
-	 *            exceptions that can be thrown by the method
 	 */
 	public DependencyMethodAdapter(MethodVisitor methodVisitor, String className, String methodName, String methodDescription) {
 		super(methodVisitor);
-		this.className = className;
+		this.className = Toolkit.slashToDot(className);
 		this.methodName = methodName;
 		this.methodDescription = methodDescription;
 		Type[] argumentTypes = Type.getArgumentTypes(methodDescription);
@@ -107,7 +105,7 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitLineNumber : " + lineNumber + ", " + label + ", " + label.getOffset() + ", " + className + ", " + methodName);
 		}
-		Collector.collectLines(className, Double.toString(lineNumber), methodName, methodDescription);
+		Collector.collectLines(className, methodName, methodDescription, lineNumber);
 		this.mv.visitLineNumber(lineNumber, label);
 	}
 

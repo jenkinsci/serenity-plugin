@@ -21,7 +21,8 @@ import com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapter;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
- * This class looks through the classpath and collects metrics on the classes that were not instanciated by the classloader.
+ * This class looks through the classpath and collects metrics on the classes that were not instanciated by the classloader during the unit tests and
+ * creates a visitor chain for the class that will collect the complexity and dependency metrics for the class.
  * 
  * @author Michael Couck
  * @since 24.07.09
@@ -77,25 +78,38 @@ public class Accumulator extends AProcess {
 	 * class.
 	 * 
 	 * @param file
-	 *            the directory to look in for the class data
+	 *            the directory or file to look in for the class data
 	 */
 	private void processDir(File file) {
-		// TODO - get the classes from the file system and not in jars?
 		// Iteratively go through the directories
-		// if (file == null || !file.exists() || !file.canWrite()) {
-		// return;
-		// }
-		// if (file.isDirectory()) {
-		// File files[] = file.listFiles();
-		// for (int j = 0; j < files.length; j++) {
-		// file = files[j];
-		// processDir(file);
-		// }
-		// } else if (file.isFile() && file.canRead()) {
-		// String filePath = file.getAbsolutePath();
-		// String name = filePath.substring(beginIndex)
-		// processClass();
-		// }
+		if (file == null || !file.exists() || !file.canWrite()) {
+			return;
+		}
+		if (file.isDirectory()) {
+			File files[] = file.listFiles();
+			for (int j = 0; j < files.length; j++) {
+				file = files[j];
+				processDir(file);
+			}
+		} else if (file.isFile() && file.canRead()) {
+			String filePath = file.getAbsolutePath();
+			filePath = Toolkit.slashToDot(filePath);
+			if (excluded(filePath)) {
+				return;
+			}
+			if (filePath.endsWith(".class")) {
+				byte[] classBytes = Toolkit.getContents(file).toByteArray();
+				byte[] sourceBytes = null;
+
+				String classFileName = file.getName();
+				String javaFileName = classFileName.substring(0, classFileName.lastIndexOf('.')) + ".java";
+				File javaFile = new File(file.getParent(), javaFileName);
+				if (javaFile.exists() && javaFile.isFile() && javaFile.canRead()) {
+					sourceBytes = Toolkit.getContents(javaFile).toByteArray();
+				}
+				processClass(file.getAbsolutePath(), classBytes, sourceBytes);
+			}
+		}
 	}
 
 	/**
@@ -123,7 +137,7 @@ public class Accumulator extends AProcess {
 		while (jarEntries.hasMoreElements()) {
 			JarEntry jarEntry = jarEntries.nextElement();
 			String entryName = jarEntry.getName();
-			if (excluded(entryName)) {
+			if (excluded(Toolkit.slashToDot(entryName))) {
 				continue;
 			}
 			logger.debug("Processsing file : " + entryName);
@@ -140,7 +154,7 @@ public class Accumulator extends AProcess {
 						inputStream = jarFile.getInputStream(javaEntry);
 						sourceFileBytes = Toolkit.getContents(inputStream).toByteArray();
 					}
-					processClass(entryName, classFileBytes, sourceFileBytes);
+					processClass(Toolkit.slashToDot(entryName), classFileBytes, sourceFileBytes);
 				}
 			} catch (IOException e) {
 				logger.error("Exception reading entry : " + jarEntry + ", from file : " + jarFile, e);
@@ -150,7 +164,7 @@ public class Accumulator extends AProcess {
 
 	@SuppressWarnings("unchecked")
 	private void processClass(String name, byte[] classBytes, byte[] sourceBytes) {
-		if (name.endsWith(".class")) {
+		if (name != null && name.endsWith(".class")) {
 			name = name.substring(0, name.lastIndexOf('.'));
 		}
 		logger.debug("Class name : " + name + ", length : " + classBytes.length);

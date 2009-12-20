@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
 
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
@@ -18,6 +19,8 @@ import com.ikokoon.serenity.model.Efferent;
 import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
+import com.ikokoon.serenity.persistence.DataBaseOdb;
+import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.target.Target;
 import com.ikokoon.toolkit.Toolkit;
@@ -65,7 +68,8 @@ public abstract class ATest implements IConstants {
 	@Before
 	public void initilize() {
 		if (dataBase == null) {
-			dataBase = IDataBase.DataBaseManager.getDataBase(IConstants.DATABASE_FILE, true);
+			IDataBase iDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, false, null);
+			dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, true, iDataBase);
 		}
 	}
 
@@ -76,8 +80,9 @@ public abstract class ATest implements IConstants {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void visitClass(java.lang.Class<?> visitorClass, String className, byte[] classBytes, byte[] sourceBytes) {
-		VisitorFactory.getClassVisitor(new java.lang.Class[] { visitorClass }, className, classBytes, sourceBytes);
+	protected ClassWriter visitClass(java.lang.Class<?> visitorClass, String className, byte[] classBytes, byte[] sourceBytes) {
+		ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(new java.lang.Class[] { visitorClass }, className, classBytes, sourceBytes);
+		return writer;
 	}
 
 	protected byte[] getClassBytes(String className) {
@@ -104,7 +109,7 @@ public abstract class ATest implements IConstants {
 		pakkage.setCoverage(1d);
 		pakkage.setDistance(1d);
 		pakkage.setEfference(1d);
-		pakkage.setImplement(1d);
+		pakkage.setImplementations(1d);
 		pakkage.setInterfaces(1d);
 		pakkage.setName(packageName);
 		pakkage.setStability(1d);

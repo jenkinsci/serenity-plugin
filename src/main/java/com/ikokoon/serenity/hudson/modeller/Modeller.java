@@ -3,10 +3,11 @@ package com.ikokoon.serenity.hudson.modeller;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
-import com.ikokoon.serenity.model.IComposite;
+import com.ikokoon.serenity.model.Composite;
 import com.ikokoon.serenity.model.IModel;
-import com.ikokoon.serenity.model.Legend;
 import com.ikokoon.serenity.model.Model;
 import com.ikokoon.toolkit.Toolkit;
 
@@ -24,43 +25,58 @@ public class Modeller implements IModeller {
 
 	/** The string representation in base 64 of the serialised model object. */
 	private String model;
+	private Set<String> fields = new TreeSet<String>();
+	{
+		fields.add("coverage");
+		fields.add("complexity");
+		fields.add("abstractness");
+		fields.add("stability");
+		fields.add("distance");
+	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public String getModel() {
 		return model;
 	}
 
-	public void visit(Class<?> klass, IComposite<?, ?>... composites) {
+	/**
+	 * {@inheritDoc}
+	 */
+	public void visit(Class<?> klass, Composite<?, ?>... composites) {
 		String name = null;
 		List<String> legend = new ArrayList<String>();
-		List<ArrayList<Double>> limits = new ArrayList<ArrayList<Double>>();
 		List<ArrayList<Double>> metrics = new ArrayList<ArrayList<Double>>();
 		// First build the legend and the metrics
 		Field[] fields = klass.getDeclaredFields();
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
-			Legend annotation = field.getAnnotation(Legend.class);
-			if (annotation == null) {
+			if (!this.fields.contains(field.getName())) {
 				continue;
 			}
-			String legendName = annotation.name();
-			legend.add(legendName);
-			ArrayList<Double> limit = new ArrayList<Double>();
-			for (double d : annotation.limits()) {
-				limit.add(d);
-			}
-			limit.add(annotation.positive());
-			limits.add(limit);
+			String fieldName = field.getName();
+			String firstLetter = fieldName.substring(0, 1);
+			String firstLetterCapital = firstLetter.toUpperCase();
+			legend.add(fieldName.replaceFirst(firstLetter, firstLetterCapital));
 		}
-		for (IComposite<?, ?> composite : composites) {
+		for (Composite<?, ?> composite : composites) {
 			name = (String) Toolkit.getValue(klass, composite, "name");
 			for (int i = 0, index = 0; i < fields.length; i++) {
 				Field field = fields[i];
-				Legend annotation = field.getAnnotation(Legend.class);
-				if (annotation == null) {
+				if (!this.fields.contains(field.getName())) {
 					continue;
 				}
 				String fieldName = field.getName();
-				double value = Toolkit.getValue(Double.class, composite, fieldName);
+				double value = 0;
+				if (composite != null) {
+					value = Toolkit.getValue(Double.class, composite, fieldName);
+				}
+
+				if (fieldName.equals("abstractness") || fieldName.equals("stability") || fieldName.equals("distance")) {
+					value *= 100;
+				}
+
 				value = Toolkit.format(value, PRECISION);
 
 				ArrayList<Double> metric = null;
@@ -74,7 +90,7 @@ public class Modeller implements IModeller {
 				index++;
 			}
 		}
-		IModel model = new Model(name, legend, limits, metrics);
+		IModel model = new Model(name, legend, metrics);
 		this.model = Toolkit.serializeToBase64(model);
 	}
 

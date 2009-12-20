@@ -32,10 +32,11 @@ public abstract class ObjectFactory {
 	 * @param klass
 	 *            the class to be instanciated
 	 * @param parameters
-	 *            the parameters for the constructor
+	 *            the parameters for the constructor, these cannot be primitives and the parameters in the constructor have to be objects as well, not
+	 *            primitives
 	 * @return the class that best matches the desired class and the parameters for constructors
 	 */
-	public static <E> E getObject(Class<E> klass, Object[] allParameters) {
+	public static <E> E getObject(Class<E> klass, Object... allParameters) {
 		List<Object> parameters = new ArrayList<Object>();
 		Constructor<E> constructor = getConstructor(klass, allParameters, parameters);
 		if (constructor != null) {
@@ -58,23 +59,32 @@ public abstract class ObjectFactory {
 	}
 
 	/**
-	 * Finds a constructor in a class that has a signature that includes some the parameters in the parameter list on a best match principal.
+	 * Finds a constructor in a class that has a signature that includes some the parameters in the parameter list on a best match principal. Note
+	 * that this method will return the first constructor that has all the parameters in one of the permutations even if there is another constructor
+	 * that has more parameters in another of the permutations.
 	 * 
 	 * @param klass
 	 *            the class look for a constructor in
-	 * @param parameters
-	 *            the parameters for the constructor
+	 * @param allParameters
+	 *            all the parameters that are available for the constructor
 	 * @param parameters
 	 *            the parameters that were collected for the best match constructor
 	 * @return the constructor that has all the parameters
 	 */
 	protected static <E> Constructor<E> getConstructor(Class<E> klass, Object[] allParameters, List<Object> parameters) {
+		Constructor<E> constructor = getConstructor(klass, allParameters);
+		if (constructor != null) {
+			parameters.addAll(Arrays.asList(allParameters));
+			LOGGER.debug("Got constructor : " + constructor + ", with parameters : " + parameters);
+			return constructor;
+		}
+
 		Permutations permutations = new Permutations();
 		List<Object[]> permutationsList = new ArrayList<Object[]>();
 		permutations.getPermutations(allParameters, permutationsList, allParameters.length);
 		for (Object[] permutationParameters : permutationsList) {
 			LOGGER.debug("Permutations : " + Arrays.asList(permutationParameters));
-			Constructor<E> constructor = getConstructor(klass, permutationParameters);
+			constructor = getConstructor(klass, permutationParameters);
 			if (constructor != null) {
 				parameters.addAll(Arrays.asList(allParameters));
 				LOGGER.debug("Got constructor : " + constructor + ", with parameters : " + parameters);

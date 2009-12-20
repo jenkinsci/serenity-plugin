@@ -13,7 +13,8 @@ public class CoverageMethodAdapterChecker extends MethodAdapter {
 	private boolean isCovered = false;
 
 	private Type stringType = Type.getType(String.class);
-	private Type[] types = new Type[] { stringType, stringType, stringType, stringType };
+	private Type intType = Type.getType(int.class);
+	private Type[] types = new Type[] { stringType, stringType, stringType, intType };
 
 	private String className = Type.getInternalName(Collector.class);
 	private String methodName = "collectCoverage";
