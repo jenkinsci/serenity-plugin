@@ -39,7 +39,7 @@ public class CoverageTest extends ATest {
 		classBytes = writer.toByteArray();
 
 		// Verify the byte code is valid
-		CheckClassAdapter.verify(new ClassReader(classBytes), true, new PrintWriter(System.out));
+		CheckClassAdapter.verify(new ClassReader(classBytes), false, new PrintWriter(System.out));
 
 		// Verify each line has a call to collect the coverage
 		visitClass(CoverageClassAdapterChecker.class, className, classBytes, sourceBytes);

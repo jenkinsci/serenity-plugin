@@ -1,7 +1,8 @@
 package com.ikokoon.serenity.persistence;
 
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,13 +30,12 @@ public class DataBaseOdbTest extends ATest {
 		long freeMemoryStart = Runtime.getRuntime().freeMemory() / million;
 		logger.info("Free memory start : " + freeMemoryStart);
 
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, "./serenity/serenity.findbugs.db", false, null);
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, "./serenity/findbugs.serenity.odb", false, null);
 
 		long freeMemoryEnd = Runtime.getRuntime().freeMemory() / million;
 		logger.info("Free memory difference after initialise : " + (freeMemoryEnd - freeMemoryStart));
 
 		Package<?, ?> pakkage = dataBase.find(Package.class, Toolkit.hash("edu.umd.cs.findbugs"));
-		logger.info(pakkage);
 		assertNotNull(pakkage);
 
 		freeMemoryEnd = Runtime.getRuntime().freeMemory() / million;
@@ -89,7 +89,7 @@ public class DataBaseOdbTest extends ATest {
 			public boolean satisfied(Composite<?, ?> composite) {
 				return true;
 			}
-		});
+		}, this.getClass().getSimpleName() + " database dump : ");
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
 		// 7873017250689681547, 437917821655607927

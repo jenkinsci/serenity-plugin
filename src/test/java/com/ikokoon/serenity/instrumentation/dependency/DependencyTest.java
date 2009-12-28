@@ -23,7 +23,6 @@ public class DependencyTest extends ATest {
 	@Test
 	public void visit() throws Exception {
 		visitClass(DependencyClassAdapter.class, className);
-		visitClass(DependencyClassAdapter.class, TargetConsumer.class.getName());
 
 		Package<?, ?> pakkage = (Package<?, ?>) dataBase.find(Package.class, Toolkit.hash(java.lang.Class.forName(className).getPackage().getName()));
 		assertNotNull(pakkage);
@@ -36,6 +35,7 @@ public class DependencyTest extends ATest {
 		assertTrue(containsAfferentPackage(afferent, Serializable.class.getPackage().getName()));
 		assertTrue(containsAfferentPackage(afferent, Annotation.class.getPackage().getName()));
 
+		visitClass(DependencyClassAdapter.class, TargetConsumer.class.getName());
 		assertTrue(containsEfferentPackage(efferent, TargetConsumer.class.getPackage().getName()));
 
 		// Test that Annotation has a reference to AnnotationAnnotation and visa versa

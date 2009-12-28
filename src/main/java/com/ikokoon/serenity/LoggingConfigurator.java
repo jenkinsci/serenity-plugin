@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 /**
+ * This is a central class for initialising the Log4j logging parameters.
  * 
  * @author Michael Couck
  * @since 09.12.09
@@ -16,13 +16,17 @@ import org.apache.log4j.PropertyConfigurator;
  */
 public class LoggingConfigurator {
 
-	private static Logger LOGGER;
+	/** Whether the logging has already be initialised. */
 	private static boolean initilised = false;
 
 	static {
 		configure();
 	}
 
+	/**
+	 * Configures the Jog4j properties. In the case the log4j.properties file is not on the classpath in the META-INF directory hard coded properties
+	 * will be used.
+	 */
 	public static void configure() {
 		if (!initilised) {
 			URL url = LoggingConfigurator.class.getResource(IConstants.LOG_4_J_PROPERTIES);
@@ -32,8 +36,6 @@ public class LoggingConfigurator {
 				Properties properties = getProperties();
 				PropertyConfigurator.configure(properties);
 			}
-			LOGGER = Logger.getLogger(LoggingConfigurator.class);
-			LOGGER.info("Loaded logging properties from : " + url);
 			initilised = true;
 		}
 	}

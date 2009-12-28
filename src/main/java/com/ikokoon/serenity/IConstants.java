@@ -1,7 +1,7 @@
 package com.ikokoon.serenity;
 
 /**
- * This class contains mainly the tags for the xml that is generated for the metrics.
+ * This is a constants class for database names and system property names.
  * 
  * @author Michael Couck
  * @since 19.07.09
@@ -9,7 +9,7 @@ package com.ikokoon.serenity;
  */
 public interface IConstants {
 
-	/** The Serenity directory for work and output data. */
+	/** The Serenity directory for work and output data, i.e. the database.. */
 	public String SERENITY_DIRECTORY = "./serenity/";
 	/** The database file. */
 	public String DATABASE_FILE_RAM = SERENITY_DIRECTORY + "serenity.ram";
@@ -26,6 +26,8 @@ public interface IConstants {
 	public String EXCLUDED_PACKAGES_PROPERTY = "excluded.packages";
 	/** The system property key for the class adapter classes to exclude. */
 	public String INCLUDED_ADAPTERS_PROPERTY = "included.adapters";
+	/** The system property for the Java class path. */
+	public String JAVA_CLASS_PATH = "java.class.path";
 	/** Whether to write the enhanced classes to the ./serenity directory for visual checking. */
 	public String WRITE_CLASSES = "write.classes";
 	/** Whether to delete the old class files before writing the new enhanced class files. */

@@ -1,7 +1,6 @@
 package com.ikokoon.serenity.process;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.StringTokenizer;
@@ -47,8 +46,5 @@ public class AccumulatorTest extends ATest implements IConstants {
 		accumulator.execute();
 		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(Configuration.class.getName()));
 		assertNotNull(klass);
-		String source = klass.getSource();
-		assertNotNull(source);
-		assertTrue(source.indexOf(Configuration.class.getSimpleName()) > -1);
 	}
 }

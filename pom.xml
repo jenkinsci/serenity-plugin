@@ -82,8 +82,10 @@
 										<include name="**" />
 									</fileset>
 								</jar>
-								<echo message="Copying the serrenity jar to the test project (Findbugs)" />
+								<copy todir="serenity" file="${serenity.jar}" overwrite="true" failonerror="true" />
+								<echo message="Copying the serrenity jar to the test project (Findbugs, Search)" />
 								<copy todir="../Findbugs/lib" file="${serenity.jar}" overwrite="true" failonerror="true" />
+								<copy todir="../Search/modules/Ejb/serenity" file="${serenity.jar}" overwrite="true" failonerror="true" />
 							</tasks>
 						</configuration>
 						<goals>
@@ -95,21 +97,15 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.4.2</version>
 				<configuration>
-					<systemProperties>
-						<forkMode>once</forkMode>
-						<property>
-							<name>java.class.path</name>
-							<value>${java.class.path}</value>
-						</property>
-						<property>
-							<name>included.packages</name>
-							<value>com.ikokoon.target;com.ikokoon.serenity</value>
-						</property>
-						<argLine>-javaagent:target/serenity.jar -Xms512m -Xmx1024m</argLine>
-						<additionalClasspathElements>${surefire.test.class.path}</additionalClasspathElements>
-					</systemProperties>
+					<forkMode>once</forkMode>
+					<argLine>-javaagent:serenity/serenity.jar -Xms512m -Xmx1024m -Dincluded.packages=com.ikokoon.target -Dexcluded.packages=com.ikokoon.serenity -Dincluded.adapters=com.ikokoon.serenity.instrumentation.coverage.CoverageClassAdapter;com.ikokoon.serenity.instrumentation.complexity.ComplexityClassAdapter;com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapter</argLine>
+
+					<!--
+						additionalClasspathElements>${surefire.test.class.path}</additionalClasspathElements> <systemProperties> <property> <name>java.class.path</name>
+						<value>${java.class.path}</value> </property> <property> <name>included.packages</name> <value>com.ikokoon.target;com.ikokoon.serenity</value>
+						</property> </systemProperties
+					-->
 				</configuration>
 			</plugin>
 			<plugin>

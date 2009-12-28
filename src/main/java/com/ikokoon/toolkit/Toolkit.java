@@ -223,6 +223,39 @@ public class Toolkit {
 	}
 
 	/**
+	 * Deletes all the files in a directory with one of the specified extensions.
+	 * 
+	 * @param file
+	 *            the file to delete or the directory to delete files in
+	 * @param extensions
+	 *            the extensions of files to delete
+	 */
+	public static void deleteFiles(File file, String... extensions) {
+		if (file == null || !file.exists() || !file.canWrite()) {
+			return;
+		}
+		if (file.isDirectory()) {
+			File files[] = file.listFiles();
+			for (int j = 0; j < files.length; j++) {
+				file = files[j];
+				deleteFiles(file, extensions);
+			}
+		}
+		if (file.isFile()) {
+			String fileName = file.getName();
+			for (String extension : extensions) {
+				if (fileName.endsWith(extension)) {
+					if (file.delete()) {
+						logger.debug("Deleted file : " + file);
+					} else {
+						logger.warn("Couldn't delete file : " + file);
+					}
+				}
+			}
+		}
+	}
+
+	/**
 	 * Reads the contents of the file and returns the contents in a byte array form.
 	 * 
 	 * @param file

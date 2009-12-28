@@ -41,17 +41,17 @@ public class ToolkitTest extends ATest {
 	@Test
 	public void classNameToPackageName() {
 		Type type = Type.getObjectType(className);
-		logger.info("Type : " + type.getClassName() + ", " + type.getDescriptor() + ", " + type.getInternalName() + ", " + type.getSize() + ", "
+		logger.debug("Type : " + type.getClassName() + ", " + type.getDescriptor() + ", " + type.getInternalName() + ", " + type.getSize() + ", "
 				+ type.getSort());
 
 		Type[] types = Type.getArgumentTypes("(Ljava/lang/Integer;Ljava/math/BigDecimal;)Ljava/lang/String;");
 		for (Type argumentType : types) {
-			logger.info("Type : " + argumentType.getClassName() + ", " + argumentType.getDescriptor() + ", " + argumentType.getInternalName() + ", "
+			logger.debug("Type : " + argumentType.getClassName() + ", " + argumentType.getDescriptor() + ", " + argumentType.getInternalName() + ", "
 					+ argumentType.getSize() + ", " + argumentType.getSort());
 		}
 
 		Type returnType = Type.getReturnType("(Ljava/lang/Integer;Ljava/math/BigDecimal;)Ljava/lang/String;");
-		logger.info("Type : " + returnType.getClassName() + ", " + returnType.getDescriptor() + ", " + returnType.getInternalName() + ", "
+		logger.debug("Type : " + returnType.getClassName() + ", " + returnType.getDescriptor() + ", " + returnType.getInternalName() + ", "
 				+ returnType.getSize() + ", " + returnType.getSort());
 
 		String name = Toolkit.classNameToPackageName(Toolkit.dotToSlash(Target.class.getName()));
@@ -100,7 +100,7 @@ public class ToolkitTest extends ATest {
 	public void deleteFile() throws Exception {
 		File folder = createFolderAndOneFile("target/folder", "file.txt");
 		Toolkit.deleteFile(folder);
-		logger.info("Deleted folder and file : " + folder.exists());
+		logger.debug("Deleted folder and file : " + folder.exists());
 	}
 
 	private File createFolderAndOneFile(String folderName, String fileName) throws Exception {
@@ -122,9 +122,9 @@ public class ToolkitTest extends ATest {
 		if (destination.exists()) {
 			Toolkit.deleteFile(destination);
 		}
-		logger.info("Deleted destination : " + destination.exists());
+		logger.debug("Deleted destination : " + destination.exists());
 		Toolkit.copyFile(source, destination);
-		logger.info("Copied file exists : " + new File(destination, "file.txt").exists());
+		logger.debug("Copied file exists : " + new File(destination, "file.txt").exists());
 	}
 
 }

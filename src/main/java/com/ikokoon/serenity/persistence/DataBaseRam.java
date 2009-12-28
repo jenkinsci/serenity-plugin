@@ -175,6 +175,12 @@ public final class DataBaseRam extends DataBase {
 		// Insert the object into the index
 		insert(index, composite);
 		logger.debug("Persisted object : " + composite);
+		if (composite instanceof com.ikokoon.serenity.model.Class) {
+			String name = ((com.ikokoon.serenity.model.Class) composite).getName();
+			if (name.indexOf('/') > -1) {
+				Thread.dumpStack();
+			}
+		}
 		List<Composite<?, ?>> children = (List<Composite<?, ?>>) composite.getChildren();
 		for (Composite<?, ?> child : children) {
 			setIds(child);

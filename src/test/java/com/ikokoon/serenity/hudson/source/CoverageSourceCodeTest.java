@@ -27,7 +27,7 @@ public class CoverageSourceCodeTest extends ATest {
 		setCovered(klass);
 		final CoverageSourceCode coverageSourceCode = new CoverageSourceCode(klass);
 		String html = coverageSourceCode.getSource();
-		logger.info(html);
+		logger.debug(html);
 
 		double executionsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
 			public void execute() {

@@ -50,9 +50,6 @@ public class ComplexityClassAdapter extends ClassAdapter {
 				logger.debug(Arrays.asList(interfaces).toString());
 			}
 		}
-		if (this.className == null || this.className != className) {
-			this.className = className;
-		}
 		super.visit(version, access, className, signature, superName, interfaces);
 	}
 

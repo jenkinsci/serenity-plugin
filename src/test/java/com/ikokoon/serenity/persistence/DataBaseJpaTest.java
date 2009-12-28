@@ -7,8 +7,6 @@ import static junit.framework.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-
 import com.ikokoon.serenity.ATest;
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.model.Class;
@@ -59,7 +57,7 @@ public class DataBaseJpaTest extends ATest {
 		logger.info("Free memory end : " + freeMemoryEnd);
 	}
 
-	@Test
+	// @Test
 	@SuppressWarnings("unchecked")
 	public void persist() {
 		DataBaseToolkit.clear(dataBase);
@@ -79,7 +77,7 @@ public class DataBaseJpaTest extends ATest {
 		assertNotNull(klass);
 	}
 
-	@Test
+	// @Test
 	@SuppressWarnings("unchecked")
 	public void findId() {
 		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseJpa.class, IConstants.DATABASE_FILE_JPA, true, null);
@@ -90,7 +88,7 @@ public class DataBaseJpaTest extends ATest {
 		assertNotNull(line);
 	}
 
-	@Test
+	// @Test
 	@SuppressWarnings("unchecked")
 	public void findParameters() {
 		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseJpa.class, IConstants.DATABASE_FILE_JPA, true, null);
@@ -122,7 +120,7 @@ public class DataBaseJpaTest extends ATest {
 		assertNotNull(line);
 	}
 
-	@Test
+	// @Test
 	@SuppressWarnings("unchecked")
 	public void removeId() throws Exception {
 		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseJpa.class, IConstants.DATABASE_FILE_JPA, true, null);

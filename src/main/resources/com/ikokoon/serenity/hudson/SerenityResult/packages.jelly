@@ -16,7 +16,6 @@
 						<j:choose>
 							<j:when test="${package.coverage > package.COVERAGE_GOOD}">
 								<img src="${rootURL}/images/16x16/blue.gif" border="0" alt="Coverage good" title="Coverage for package good" height="8" width="8" />
-								<img src="${it.url}/icons/coverage06.gif" border="0" alt="Coverage good" title="Coverage for package good" height="8" width="8" />
 							</j:when>
 							<j:otherwise>
 								<j:choose>

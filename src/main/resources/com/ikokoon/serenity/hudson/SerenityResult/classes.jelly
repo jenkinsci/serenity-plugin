@@ -6,9 +6,7 @@
 		<body>
 			<div style="line-height: 8px">
 				<j:forEach var="class" items="${it.package.children}">
-					<!-- onclick="JavaScript:window.parent.document.applet.setModel('${it.getModel(class.class, class.id)}');" - too slow -->
-					<a href="${it.url}${'SerenityResult/source'}?className=${class.name}" 
-						onclick="JavaScript:window.parent.document.applet.setModel('model');"
+					<a href="${it.url}${'SerenityResult/source'}?className=${class.name}" onclick="JavaScript:window.parent.document.applet.setModel('model');"
 						target="source" title="Efference - ${class.efference}, afference - ${class.afference}, lines - ${class.lines}, executed - ${class.executed}">
 						<j:choose>
 							<j:when test="${class.coverage > class.COVERAGE_GOOD or class.interfaze}">

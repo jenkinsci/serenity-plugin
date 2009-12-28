@@ -35,7 +35,8 @@ public class DependencySignatureAdapter implements SignatureVisitor {
 	 */
 	public void visitClassType(String name) {
 		logger.debug("visitClassType : " + name);
-		Collector.collectEfferentAndAfferent(className, name);
+		String normedName = Toolkit.slashToDot(name);
+		Collector.collectEfferentAndAfferent(className, normedName);
 	}
 
 	/**

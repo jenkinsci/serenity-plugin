@@ -184,7 +184,7 @@ public class Accumulator extends AProcess {
 		}
 		// Check that the class is included in the included packages
 		if (!Configuration.getConfiguration().included(name)) {
-			logger.debug("File not included : " + name + " - not included");
+			logger.debug("File not included : " + name);
 			return true;
 		}
 		// Don't do excluded classes and packages

@@ -69,12 +69,14 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 				logger.debug(Arrays.asList(interfaces).toString());
 			}
 		}
-		if (this.className == null || this.className != className) {
-			this.className = className;
+		String[] normedInterfaces = new String[interfaces.length];
+		for (int i = 0; i < interfaces.length; i++) {
+			String normedInterface = Toolkit.slashToDot(interfaces[i]);
+			normedInterfaces[i] = normedInterface;
 		}
-		Collector.collectEfferentAndAfferent(className, superName);
-		Collector.collectEfferentAndAfferent(className, interfaces);
-		Collector.collectInterface(className, access);
+		Collector.collectEfferentAndAfferent(Toolkit.slashToDot(className), Toolkit.slashToDot(superName));
+		Collector.collectEfferentAndAfferent(Toolkit.slashToDot(className), normedInterfaces);
+		Collector.collectInterface(Toolkit.slashToDot(className), access);
 		super.visit(version, access, className, signature, superName, interfaces);
 	}
 
@@ -136,7 +138,7 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 		MethodVisitor visitor = super.visitMethod(access, name, desc, signature, exceptions);
 		if (exceptions != null) {
 			for (String exception : exceptions) {
-				Collector.collectEfferentAndAfferent(className, exception);
+				Collector.collectEfferentAndAfferent(className, Toolkit.slashToDot(exception));
 			}
 		}
 		MethodVisitor adapter = VisitorFactory.getMethodVisitor(visitor, DependencyMethodAdapter.class, className, name, desc);

@@ -63,6 +63,7 @@ public abstract class ATest implements IConstants {
 		builder.append(ComplexityClassAdapter.class.getName());
 		System.setProperty(IConstants.INCLUDED_ADAPTERS_PROPERTY, builder.toString());
 		Configuration.getConfiguration().includedPackages.add(IConstants.class.getPackage().getName());
+		Configuration.getConfiguration().includedPackages.add(Target.class.getPackage().getName());
 	}
 
 	@Before

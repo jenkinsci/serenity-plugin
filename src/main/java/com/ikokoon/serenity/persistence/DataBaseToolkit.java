@@ -68,7 +68,10 @@ public class DataBaseToolkit {
 	 *            the criteria to match if the data for the composite must be written to the output
 	 */
 	@SuppressWarnings("unchecked")
-	public static void dump(IDataBase dataBase, ICriteria criteria) {
+	public static void dump(IDataBase dataBase, ICriteria criteria, String message) {
+		if (message != null) {
+			logger.warn(message);
+		}
 		try {
 			Object object = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
 			logger.info(object);
@@ -113,7 +116,7 @@ public class DataBaseToolkit {
 	}
 
 	private static void log(ICriteria criteria, Composite<?, ?> composite, int tabs, String data) {
-		if (criteria.satisfied(composite)) {
+		if (criteria != null && criteria.satisfied(composite)) {
 			StringBuilder builder = new StringBuilder();
 			for (int i = 0; i < tabs; i++) {
 				builder.append("\t");
@@ -135,20 +138,18 @@ public class DataBaseToolkit {
 
 	public static void main(String[] args) {
 		// C:/Eclipse/workspace/serenity/work/jobs/Findbugs/builds/2009-12-12_21-08-50/serenity/serenity.odb
-		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, "C:/Eclipse/workspace/Findbugs/serenity/serenity.odb", false,
+		// C:/Eclipse/workspace/Findbugs/serenity
+		// C:/Eclipse/workspace/Search/modules/Ejb/serenity
+		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, "C:/Eclipse/workspace/Search/modules/Ejb/serenity/serenity.odb", false,
 				null);
 		DataBaseToolkit.dump(dataBase, new ICriteria() {
 			public boolean satisfied(Composite<?, ?> composite) {
-				if (composite instanceof Line && ((Line<?, ?>) composite).getCounter() > 0) {
-					counter++;
-					// return true;
-				}
-				if (composite instanceof Class || composite instanceof Afferent || composite instanceof Efferent) {
+				if (composite instanceof Class || composite instanceof Package) {
 					return true;
 				}
 				return false;
 			}
-		});
+		}, null);
 		logger.warn("Counter : " + counter);
 		dataBase.close();
 	}

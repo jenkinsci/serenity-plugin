@@ -116,7 +116,6 @@ public class Collector implements IConstants {
 	 *            the referenced class names
 	 */
 	public static final void collectEfferentAndAfferent(String className, String... targetClassNames) {
-		// String packageName = Toolkit.classNameToPackageName(className);
 		String packageName = Toolkit.classNameToPackageName(className);
 		for (String targetClassName : targetClassNames) {
 			// Is the target name outside the package for this class
@@ -166,7 +165,6 @@ public class Collector implements IConstants {
 
 	@SuppressWarnings("unchecked")
 	private static final Package<Project<?, ?>, Class<?, ?>> getPackage(String className) {
-		// className = Toolkit.slashToDot(className);
 		String packageName = Toolkit.classNameToPackageName(className);
 
 		List<Object> parameters = new ArrayList<Object>();
@@ -192,8 +190,6 @@ public class Collector implements IConstants {
 
 	@SuppressWarnings("unchecked")
 	private static final Class<Package<?, ?>, Method<?, ?>> getClass(String className) {
-		// className = Toolkit.slashToDot(className);
-
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(className);
 		Class klass = (Class) dataBase.find(Class.class, parameters);
@@ -221,7 +217,6 @@ public class Collector implements IConstants {
 
 	@SuppressWarnings("unchecked")
 	private static final Method<?, ?> getMethod(String className, String methodName, String methodDescription) {
-		// className = Toolkit.slashToDot(className);
 		methodName = methodName.replace('<', ' ').replace('>', ' ').trim();
 
 		List<Object> parameters = new ArrayList<Object>();
@@ -255,9 +250,6 @@ public class Collector implements IConstants {
 	@SuppressWarnings("unchecked")
 	protected static final Line<?, ?> getLine(String className, String methodName, String methodDescription, double lineNumber) {
 		Line line = null;
-		// double lineNumberDouble = Double.parseDouble(lineNumber);
-		// className = Toolkit.slashToDot(className);
-
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(className);
 		parameters.add(methodName);

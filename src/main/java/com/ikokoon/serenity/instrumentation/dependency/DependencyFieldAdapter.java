@@ -4,7 +4,9 @@ import org.apache.log4j.Logger;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.Type;
 
+import com.ikokoon.serenity.Collector;
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import com.ikokoon.toolkit.Toolkit;
 
@@ -39,10 +41,12 @@ public class DependencyFieldAdapter implements FieldVisitor {
 	public DependencyFieldAdapter(FieldVisitor visitor, String className, String description, String signature) {
 		this.visitor = visitor;
 		this.className = Toolkit.slashToDot(className);
-		logger.debug("Class name : " + className + ", " + description + ", " + signature);
-		VisitorFactory.getSignatureVisitor(className, description);
+		logger.debug("Class name : " + this.className + ", " + description + ", " + signature);
+		VisitorFactory.getSignatureVisitor(this.className, description);
 		if (signature != null) {
-			VisitorFactory.getSignatureVisitor(className, signature);
+			VisitorFactory.getSignatureVisitor(this.className, signature);
+			String targetClassName = Type.getType(description).getClassName();
+			Collector.collectEfferentAndAfferent(this.className, targetClassName);
 		}
 	}
 

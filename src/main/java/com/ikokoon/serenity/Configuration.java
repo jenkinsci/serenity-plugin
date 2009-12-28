@@ -140,7 +140,7 @@ public class Configuration {
 		excludedPackages.add("sun");
 		excludedPackages.add("sunw");
 		excludedPackages.add("com.sun");
-		excludedPackages.add("Test");
+		// excludedPackages.add("Test");
 		excludedPackages.add(Project.class.getPackage().getName());
 	}
 

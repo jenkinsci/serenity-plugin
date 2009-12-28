@@ -22,8 +22,7 @@ public class Target<E, F> implements ITarget<E, F>, Serializable {
 	/** The logger for the class. */
 	private transient volatile Logger logger = Logger.getLogger(Target.class);
 	protected static final String NAME = "name";
-	@SuppressWarnings("unused")
-	private TargetConsumer consumer;
+	protected TargetConsumer consumer; //  = new TargetConsumer();
 
 	@SuppressWarnings("unused")
 	private String name;
