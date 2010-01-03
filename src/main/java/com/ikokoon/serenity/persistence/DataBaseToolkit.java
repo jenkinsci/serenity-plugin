@@ -140,11 +140,12 @@ public class DataBaseToolkit {
 		// C:/Eclipse/workspace/serenity/work/jobs/Findbugs/builds/2009-12-12_21-08-50/serenity/serenity.odb
 		// C:/Eclipse/workspace/Findbugs/serenity
 		// C:/Eclipse/workspace/Search/modules/Ejb/serenity
-		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, "C:/Eclipse/workspace/Search/modules/Ejb/serenity/serenity.odb", false,
-				null);
+		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class,
+				"C:/Eclipse/workspace/Search/modules/Ejb/serenity/serenity.odb", false, null);
 		DataBaseToolkit.dump(dataBase, new ICriteria() {
 			public boolean satisfied(Composite<?, ?> composite) {
-				if (composite instanceof Class || composite instanceof Package) {
+				if (composite instanceof Class && ((Class) composite).getName().startsWith("com.ikokoon.search.action.parse.ParserFactory")) {
+					logger.warn("");
 					return true;
 				}
 				return false;

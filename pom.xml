@@ -17,48 +17,22 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
+	<developers>
+		<developer>
+			<id>michael.couck</id>
+			<name>Michael Couck</name>
+			<email>michael.couck@gmail.com</email>
+			<url>http://www.ikokoon.com/ikokoon</url>
+			<timezone>Brussels</timezone>
+		</developer>
+	</developers>
+
 	<build>
 		<resources>
 		</resources>
 		<filters>
 		</filters>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>applet.package.task</id>
-						<phase>package</phase>
-						<configuration>
-							<tasks verbose="true">
-
-								<property name="src" value="src/main/java" />
-								<property name="applet.src" value="src/main/applet" />
-								<property name="bin" value="target/Serenity/WEB-INF/classes" />
-								<property name="lib" value="src/main/webapp/WEB-INF/lib" />
-
-								<path id="build.classpath">
-									<fileset dir="${lib}">
-										<include name="*.jar" />
-									</fileset>
-									<pathelement path="${bin}" />
-								</path>
-
-								<echo message="Compiling the chart applet." />
-								<!--
-									javac debug="true" debuglevel="lines,vars,source" optimize="false" srcdir="${applet.src}" destdir="${bin}" encoding="UTF8"
-									failonerror="true"> <classpath refid="build.classpath" /> </javac
-								-->
-
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -71,20 +45,14 @@
 								<property name="src" value="src/main/java" />
 								<property name="temp" value="target/temp" />
 								<property name="serenity.jar" value="target/serenity.jar" />
-								<property name="serenity.hpi" value="target/serenity.hpi" />
 								<property name="manifest" value="${src}/META-INF/MANIFEST.MF" />
 
-								<echo message="Unpacking and repacking serenity.jar with the agent manifest and log4j  propeties file" />
+								<echo message="Unpacking and repacking serenity.jar with the agent manifest and the source" />
 								<unjar src="${serenity.jar}" dest="${temp}" overwrite="true" taskname="repack.serenity.with.manifest" />
-								<jar destfile="${serenity.jar}" basedir="${temp}" manifest="${manifest}">
-									<!-- Include the source -->
-									<fileset dir="${src}">
-										<include name="**" />
-									</fileset>
-								</jar>
+								<jar destfile="${serenity.jar}" basedir="${temp}" manifest="${manifest}" />
 								<copy todir="serenity" file="${serenity.jar}" overwrite="true" failonerror="true" />
 								<echo message="Copying the serrenity jar to the test project (Findbugs, Search)" />
-								<copy todir="../Findbugs/lib" file="${serenity.jar}" overwrite="true" failonerror="true" />
+								<copy todir="../Findbugs/serenity/" file="${serenity.jar}" overwrite="true" failonerror="true" />
 								<copy todir="../Search/modules/Ejb/serenity" file="${serenity.jar}" overwrite="true" failonerror="true" />
 							</tasks>
 						</configuration>
@@ -93,20 +61,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<forkMode>once</forkMode>
-					<argLine>-javaagent:serenity/serenity.jar -Xms512m -Xmx1024m -Dincluded.packages=com.ikokoon.target -Dexcluded.packages=com.ikokoon.serenity -Dincluded.adapters=com.ikokoon.serenity.instrumentation.coverage.CoverageClassAdapter;com.ikokoon.serenity.instrumentation.complexity.ComplexityClassAdapter;com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapter</argLine>
-
-					<!--
-						additionalClasspathElements>${surefire.test.class.path}</additionalClasspathElements> <systemProperties> <property> <name>java.class.path</name>
-						<value>${java.class.path}</value> </property> <property> <name>included.packages</name> <value>com.ikokoon.target;com.ikokoon.serenity</value>
-						</property> </systemProperties
-					-->
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

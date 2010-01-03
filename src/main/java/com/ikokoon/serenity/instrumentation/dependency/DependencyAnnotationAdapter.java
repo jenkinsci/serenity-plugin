@@ -45,7 +45,13 @@ public class DependencyAnnotationAdapter implements AnnotationVisitor {
 	public void visit(String name, Object value) {
 		logger.debug("visit : " + className + ", " + name + ", " + value);
 		if (name != null && value != null) {
-			VisitorFactory.getSignatureVisitor(className, value.toString());
+			try {
+				VisitorFactory.getSignatureVisitor(className, value.toString());
+			} catch (StringIndexOutOfBoundsException e) {
+				// We swallow this exception more or less because some annotations may contain
+				// Strings that are not even remotely like a class name, like Remote/bean for example
+				logger.debug("String out of bounds for : " + className + ", " + name + ", " + value);
+			}
 		}
 		if (name != null) {
 			annotationVisitor.visit(name, value);

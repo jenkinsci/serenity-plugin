@@ -1,14 +1,9 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-	
-    <f:entry title="Serenity report pattern"
-         description="
-         This is a file name pattern that is used to locate the database file that was generated during the build
-         (for example use &lt;b&gt;serenity/serenity.db).
-       The path is relative to &lt;a href='ws/'&gt;the workspace root&lt;/a&gt;
-       &lt;br/&gt;
-       Serenity must be configured to generate the database file during the JUnit test run.
-       ">
-    	<f:textbox name="serenity.serenityDatabase" value="${instance.serenityDatabase}"/>
+
+	<f:entry title="Serenity report pattern"
+		description="This will publish the Serenity database file to the build folder, the name of 
+			which is '**/serenity/serenity.odb' for the Neodatis database.">
+		<f:textbox name="serenity.serenityDatabase" value="${instance.serenityDatabase}" />
 	</f:entry>
-	
+
 </j:jelly>

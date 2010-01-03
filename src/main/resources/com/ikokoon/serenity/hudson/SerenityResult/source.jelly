@@ -4,7 +4,10 @@
 			<link rel="stylesheet" href="${rootURL}/css/style.css" />
 		</head>
 		<body>
-			${it.getSource()}
+			${it.source}
+			<script>
+				// alert('Reloaded source : ');
+			</script>
 		</body>
 	</html>
 </j:jelly>

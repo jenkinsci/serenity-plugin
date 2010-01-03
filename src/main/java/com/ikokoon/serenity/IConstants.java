@@ -9,28 +9,32 @@ package com.ikokoon.serenity;
  */
 public interface IConstants {
 
-	/** The Serenity directory for work and output data, i.e. the database.. */
+	/** The Serenity directory for work and output data, i.e. the database. './serenity'. */
 	public String SERENITY_DIRECTORY = "./serenity/";
-	/** The database file. */
+	/** The database file, 'serenity.ram', 'serenity.odb', 'serenity.jpa'. */
 	public String DATABASE_FILE_RAM = SERENITY_DIRECTORY + "serenity.ram";
 	public String DATABASE_FILE_ODB = SERENITY_DIRECTORY + "serenity.odb";
 	public String DATABASE_FILE_JPA = SERENITY_DIRECTORY + "serenity.jpa";
-	/** The JPA persistence unit name. */
+	/** The JPA persistence unit name, 'SerenityPersistenceUnit'. */
 	public String SERENITY_PERSISTENCE_UNIT = "SerenityPersistenceUnit";
-	/** The logging configuration file. */
+	/** The logging configuration file, '/META-INF/log4j.properties'. */
 	public String LOG_4_J_PROPERTIES = "/META-INF/log4j.properties";
 
-	/** The system property key for the packages to enhance. */
+	/** The system property key for the packages to enhance, 'included.packages'. */
 	public String INCLUDED_PACKAGES_PROPERTY = "included.packages";
-	/** The system property to exclude patterns from the data collection. */
+	/** The system property to exclude patterns from the data collection, 'excluded.packages'. */
 	public String EXCLUDED_PACKAGES_PROPERTY = "excluded.packages";
-	/** The system property key for the class adapter classes to exclude. */
+	/** The included jars property, 'included.jars'. */
+	public String INCLUDED_JARS_PROPERTY = "included.jars";
+	/** The system property key for the class adapter classes to exclude, 'included.adapters'. */
 	public String INCLUDED_ADAPTERS_PROPERTY = "included.adapters";
-	/** The system property for the Java class path. */
+	/** The system property for the Java class path, 'java.class.path'. */
 	public String JAVA_CLASS_PATH = "java.class.path";
-	/** Whether to write the enhanced classes to the ./serenity directory for visual checking. */
+	/** The Surefire classpath, 'surefire.test.class.path' */
+	public String SUREFIRE_TEST_CLASS_PATH = "surefire.test.class.path";
+	/** Whether to write the enhanced classes to the ./serenity directory for visual checking, 'write.classes'. */
 	public String WRITE_CLASSES = "write.classes";
-	/** Whether to delete the old class files before writing the new enhanced class files. */
+	/** Whether to delete the old class files before writing the new enhanced class files, 'clean.classes'. */
 	public String CLEAN_CLASSES = "clean.classes";
 
 }

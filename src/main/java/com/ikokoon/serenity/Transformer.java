@@ -62,7 +62,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		if (!INITIALISED) {
 			INITIALISED = true;
 
-			// printSystemProperties();
+			printSystemProperties();
 
 			LoggingConfigurator.configure();
 			CLASS_ADAPTER_CLASSES = Configuration.getConfiguration().classAdapters.toArray(new Class[Configuration.getConfiguration().classAdapters

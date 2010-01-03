@@ -1,5 +1,6 @@
 package com.ikokoon.serenity;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -86,9 +87,29 @@ public class Configuration {
 		}
 		return false;
 	}
-	
+
 	public String getProperty(String name) {
 		return System.getProperty(name);
+	}
+
+	public String getClassPath() {
+		StringBuilder builder = new StringBuilder();
+		String classpath = System.getProperty(IConstants.JAVA_CLASS_PATH);
+		builder.append(classpath);
+
+		String surefireClasspath = System.getProperty(IConstants.SUREFIRE_TEST_CLASS_PATH);
+		if (surefireClasspath != null) {
+			builder.append(File.pathSeparator);
+			builder.append(surefireClasspath);
+		}
+
+		String includedJars = System.getProperty(IConstants.INCLUDED_JARS_PROPERTY);
+		logger.warn("Included jars : " + includedJars);
+		if (includedJars != null) {
+			builder.append(File.pathSeparator);
+			builder.append(includedJars);
+		}
+		return builder.toString();
 	}
 
 	private void addIncludedPackages() {
@@ -140,7 +161,7 @@ public class Configuration {
 		excludedPackages.add("sun");
 		excludedPackages.add("sunw");
 		excludedPackages.add("com.sun");
-		// excludedPackages.add("Test");
+		excludedPackages.add("Test");
 		excludedPackages.add(Project.class.getPackage().getName());
 	}
 

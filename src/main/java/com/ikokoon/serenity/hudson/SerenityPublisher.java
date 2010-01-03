@@ -45,17 +45,20 @@ public class SerenityPublisher extends Recorder {
 	@Extension
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 	/** The pattern for the object database file. */
-	private String serenityDatabase;
+	private String serenityDatabase = "**/serenity/serenity.odb";
 
 	@DataBoundConstructor
 	public SerenityPublisher(String serenityDatabase) {
-		logger.debug("SerenityPublisher:" + serenityDatabase);
-		this.serenityDatabase = serenityDatabase;
+		logger.info("SerenityPublisher:" + serenityDatabase);
+		if (serenityDatabase != null) {
+			this.serenityDatabase = serenityDatabase;
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener buildListener) throws InterruptedException, IOException {
 		logger.debug("perform");
 		PrintStream consolePrintStream = buildListener.getLogger();
@@ -118,18 +121,19 @@ public class SerenityPublisher extends Recorder {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Action getProjectAction(hudson.model.Project project) {
-		logger.debug("getProjectAction");
+		logger.info("getProjectAction");
 		return new SerenityProjectAction(project);
 	}
 
 	public void setSerenityDatabase(String serenityDatabase) {
-		logger.debug("setSerenityDatabase");
+		logger.info("setSerenityDatabase");
 		this.serenityDatabase = serenityDatabase;
 	}
 
 	public String getSerenityDatabase() {
-		logger.debug("getSerenityDatabase");
+		logger.info("getSerenityDatabase");
 		return serenityDatabase;
 	}
 
@@ -146,14 +150,14 @@ public class SerenityPublisher extends Recorder {
 		 */
 		DescriptorImpl() {
 			super(SerenityPublisher.class);
-			logger.debug("DescriptorImpl");
+			logger.info("DescriptorImpl");
 		}
 
 		/**
 		 * This human readable name is used in the configuration screen.
 		 */
 		public String getDisplayName() {
-			logger.debug("getDisplayName");
+			logger.info("getDisplayName");
 			return "Publish Serenity Report";
 		}
 
@@ -167,7 +171,7 @@ public class SerenityPublisher extends Recorder {
 		 */
 		@Override
 		public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
-			logger.debug("configure");
+			logger.info("configure");
 			req.bindParameters(this, "serenity.");
 			save();
 			return super.configure(req, json);
@@ -178,14 +182,14 @@ public class SerenityPublisher extends Recorder {
 		 */
 		@Override
 		public SerenityPublisher newInstance(StaplerRequest req, JSONObject json) throws FormException {
-			logger.debug("newInstance");
+			logger.info("newInstance");
 			SerenityPublisher instance = req.bindParameters(SerenityPublisher.class, "serenity.");
 			return instance;
 		}
 	}
 
 	public BuildStepMonitor getRequiredMonitorService() {
-		logger.debug("getRequiredMonitorService");
+		logger.info("getRequiredMonitorService");
 		return BuildStepMonitor.STEP;
 	}
 }

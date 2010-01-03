@@ -1,0 +1,67 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<html>
+		<head>
+			<link rel="stylesheet" type="text/css" href="${rootURL}/css/style.css" />
+			<link rel="stylesheet" type="text/css" href="${rootURL}/plugin/serenity/js/dhtmlxtree.css" />
+			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/dhtmlxcommon.js" />
+			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/ext/dhtmlxtree_start.js" />
+			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/dhtmlxtree.js" />
+			<script>
+				dhtmlx.skin = "dhx_skyblue";
+				
+				function setData(class, id) {
+					var xmlhttp = null;
+					// Object of the current windows
+					if (window.XMLHttpRequest) {
+						// Firefox, Safari, ...
+						xmlhttp = new XMLHttpRequest();
+					} else if (window.ActiveXObject) {
+						xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); // Internet Explorer
+					}
+					xmlhttp.onreadystatechange = function() { // instructions to process the response
+						if (xmlhttp.readyState == 4) {
+							// Received, OK
+							if (xmlhttp.status == 200) {
+								window.parent.document.getElementById('chart').contentDocument.location.reload(true);
+								if (class == 'com.ikokoon.serenity.model.Class') {
+									window.parent.document.getElementById('source').contentDocument.location.reload(true);
+								}
+							}
+						}
+					}
+					var url = 'SerenityResult/chart?class=' + class + '&amp;id=' + id;
+					xmlhttp.open('GET', url, true);
+					xmlhttp.send(null);
+				}
+			</script>
+		</head>
+		<body>
+
+			<div id="tree" setImagePath="${rootURL}/plugin/serenity/js/imgs/" class="dhtmlxTree">
+				<xmp container="true">
+					<j:forEach var="package" items="${it.packages}">
+						<item text="${package.name}" id="${package.id}" call="true">
+							<userdata name="class">${package.class.name}</userdata>
+							<j:forEach var="class" items="${package.children}">
+								<item text="${class.name}" id="${class.id}" call="true">
+									<userdata name="class">${class.class.name}</userdata>
+								</item>
+							</j:forEach>
+						</item>
+					</j:forEach>
+				</xmp>
+			</div>
+
+			<script>
+				var tree = dhtmlXTreeFromHTML('tree');
+				tree.setOnClickHandler(onClick);
+				function onClick(id) {
+					var class = tree.getUserData(id, 'class');
+					var name = tree.getItemText(id);
+					setData(class, id);
+				}
+    		</script>
+
+		</body>
+	</html>
+</j:jelly>

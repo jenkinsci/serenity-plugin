@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -15,13 +16,12 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import com.ikokoon.serenity.IConstants;
+import com.ikokoon.serenity.hudson.modeller.HighchartsModeller;
 import com.ikokoon.serenity.hudson.modeller.IModeller;
-import com.ikokoon.serenity.hudson.modeller.Modeller;
 import com.ikokoon.serenity.hudson.source.CoverageSourceCode;
 import com.ikokoon.serenity.hudson.source.ISourceCode;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Composite;
-import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.model.Project;
 import com.ikokoon.serenity.persistence.DataBaseOdb;
@@ -44,14 +44,10 @@ public class SerenityResult implements ISerenityResult {
 	private IDataBase dataBase;
 	/** The base url for Stapler. */
 	private String url = "";
-	/** The package that the user specified from the front end. */
-	private Long pakkageId;
-	/** The class that the user specified from the front end. */
-	private Long klassId;
 	/** The model for the currently selected composite. */
 	private String model;
-	/** The project model string in base 64. */
-	private String projectModel;
+	/** The source for the currently selected item. */
+	private String source;
 
 	/**
 	 * Constructor takes the real action that generated the build for the project.
@@ -67,7 +63,6 @@ public class SerenityResult implements ISerenityResult {
 		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, false, null);
 		Project<?, ?> project = (Project<?, ?>) dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
 		logger.debug("Project : " + project);
-		this.projectModel = getModel(project);
 	}
 
 	/**
@@ -84,49 +79,27 @@ public class SerenityResult implements ISerenityResult {
 	 * @return the result which is this class
 	 * @throws IOException
 	 */
-	public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) throws IOException {
+	@SuppressWarnings("unchecked")
+	public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) throws Exception {
 		logger.debug("getDynamic:" + token);
 
-		List<Object> parameters = new ArrayList<Object>();
+		printParameters(req);
 
-		String packageName = req.getParameter(PACKAGE_NAME);
-		String className = req.getParameter(CLASS_NAME);
-		String methodName = req.getParameter(METHOD_NAME);
-		String methodDescription = req.getParameter(METHOD_DESCRIPTION);
+		String klass = req.getParameter("class");
+		String id = req.getParameter("id");
 
-		logger.debug("Parameter map : " + req.getParameterMap());
-		logger.debug("Package name : " + packageName + ", class name : " + className + ", method name : " + methodName + ", method description : "
-				+ methodDescription);
-
-		if (className != null) {
-			parameters.clear();
-			parameters.add(className);
-			Class<?, ?> klass = (Class<?, ?>) dataBase.find(Class.class, parameters);
-			if (klass != null) {
-				this.klassId = klass.getId();
-				this.model = getModel(klass);
-				Collections.sort(klass.getChildren(), new Comparator<Method<?, ?>>() {
-					public int compare(Method<?, ?> o1, Method<?, ?> o2) {
-						return o1.getName().compareTo(o2.getName());
-					}
-				});
+		try {
+			if (klass != null && id != null) {
+				Composite<?, ?> composite = this.dataBase.find((java.lang.Class<Composite<?, ?>>) java.lang.Class.forName(klass), Long.parseLong(id));
+				logger.debug("Class : " + klass + ", id : " + id + ", " + composite);
+				this.model = getModel(composite);
+				// logger.warn("Model : " + model);
+				this.source = getSource(composite);
+				// logger.warn("Source : " + source);
 			}
-		} else if (packageName != null) {
-			parameters.clear();
-			parameters.add(packageName);
-			Package<?, ?> pakkage = (Package<?, ?>) dataBase.find(Package.class, parameters);
-			if (pakkage != null) {
-				this.pakkageId = pakkage.getId();
-				this.model = getModel(pakkage);
-				Collections.sort(pakkage.getChildren(), new Comparator<Class<?, ?>>() {
-					public int compare(Class<?, ?> o1, Class<?, ?> o2) {
-						return o1.getName().compareTo(o2.getName());
-					}
-				});
-			}
+		} catch (Exception e) {
+			logger.error("Exception initialising the model and the source for : " + klass + ", " + id, e);
 		}
-
-		logger.debug("Package : " + pakkageId + ", class : " + klassId);
 
 		url = req.getOriginalRequestURI();
 		int endIndex = url.indexOf(this.getClass().getSimpleName());
@@ -136,6 +109,15 @@ public class SerenityResult implements ISerenityResult {
 
 		logger.debug("Url : " + url);
 		return this;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected void printParameters(StaplerRequest req) {
+		Enumeration<String> parameterNames = req.getParameterNames();
+		while (parameterNames.hasMoreElements()) {
+			String parameterName = parameterNames.nextElement();
+			logger.warn("Parameter : " + parameterName + ", value : " + req.getParameter(parameterName));
+		}
 	}
 
 	public String getUrl() {
@@ -169,74 +151,36 @@ public class SerenityResult implements ISerenityResult {
 		return packages;
 	}
 
-	public Package<?, ?> getPackage() {
-		logger.debug("getPackage");
-		if (pakkageId != null) {
-			return dataBase.find(Package.class, pakkageId);
-		}
-		return null;
-	}
-
-	public Class<?, ?> getKlass() {
-		logger.debug("getKlass");
-		if (klassId != null) {
-			return dataBase.find(Class.class, klassId);
-		}
-		return null;
-		// return klass;
-	}
-
-	public String getProjectModel() {
-		return this.projectModel;
-	}
-
 	public String getModel() {
-		return this.model;
-	}
-
-	/**
-	 * This method can be called from a Jelly script and the model can be fed to the applet on the client. Trouble if that generating models for all
-	 * the classes in a package takes too long. So this is not used currently.
-	 * 
-	 * @param klass
-	 *            the class of the composite
-	 * @param id
-	 *            the id of the class or package, or in fact method
-	 * @return the base 64 serialised model
-	 */
-	@SuppressWarnings("unchecked")
-	public String getModel(java.lang.Class klass, Long id) {
-		logger.debug("getModel(className, id) : " + klass + ", " + id);
-		Composite<?, ?> composite = null;
-		composite = (Composite<?, ?>) dataBase.find(klass, id);
-		return getModel(composite);
-		// return this.model;
+		return model;
 	}
 
 	public String getSource() {
-		if (klassId != null) {
-			ISourceCode sourceCode = new CoverageSourceCode(dataBase.find(Class.class, klassId));
+		return source;
+	}
+
+	private String getSource(Composite<?, ?> composite) {
+		if (composite instanceof Class) {
+			ISourceCode sourceCode = new CoverageSourceCode((Class<?, ?>) composite);
 			return sourceCode.getSource();
 		}
-		return "";
+		return "No source";
 	}
 
 	@SuppressWarnings("unchecked")
 	public String getModel(Composite<?, ?> composite) {
-		logger.debug("Composite : " + composite);
 		ArrayList<Composite<?, ?>> composites = new ArrayList<Composite<?, ?>>();
+		composites = getPreviousComposites((java.lang.Class<Composite<?, ?>>) composite.getClass(), owner, composites, composite.getId(), 1);
 		composites.add(composite);
-		Object[] uniqueValues = Toolkit.getUniqueValues(composite);
-		Long id = Toolkit.hash(uniqueValues);
-		composites = getPreviousComposites((java.lang.Class<Composite<?, ?>>) composite.getClass(), owner, id, composites, 1);
-		IModeller modeller = new Modeller();
+		IModeller modeller = new HighchartsModeller();
 		modeller.visit(composite.getClass(), composites.toArray(new Composite[composites.size()]));
-		return modeller.getModel();
+		String model = modeller.getModel();
+		return model;
 	}
 
 	@SuppressWarnings("unchecked")
-	private ArrayList<Composite<?, ?>> getPreviousComposites(java.lang.Class<Composite<?, ?>> klass, AbstractBuild<?, ?> abstractBuild, Long id,
-			ArrayList<Composite<?, ?>> composites, int history) {
+	ArrayList<Composite<?, ?>> getPreviousComposites(java.lang.Class<Composite<?, ?>> klass, AbstractBuild<?, ?> abstractBuild,
+			ArrayList<Composite<?, ?>> composites, Long id, int history) {
 		if (history >= HISTORY) {
 			return composites;
 		}
@@ -251,7 +195,7 @@ public class SerenityResult implements ISerenityResult {
 		Composite<?, ?> composite = dataBase.find(klass, id);
 		logger.debug("Looking for composite : " + id + ", " + composite);
 		composites.add(composite);
-		return getPreviousComposites((java.lang.Class<Composite<?, ?>>) composite.getClass(), previousBuild, id, composites, ++history);
+		return getPreviousComposites((java.lang.Class<Composite<?, ?>>) composite.getClass(), previousBuild, composites, id, ++history);
 	}
 
 	public String getName() {

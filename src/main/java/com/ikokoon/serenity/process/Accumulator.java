@@ -48,12 +48,7 @@ public class Accumulator extends AProcess {
 	 */
 	public void execute() {
 		super.execute();
-		String classpath = System.getProperty("java.class.path");
-		String surefireClasspath = System.getProperty("surefire.test.class.path");
-		if (surefireClasspath != null) {
-			classpath += File.pathSeparator;
-			classpath += surefireClasspath;
-		}
+		String classpath = Configuration.getConfiguration().getClassPath();
 		StringTokenizer stringTokenizer = new StringTokenizer(classpath, File.pathSeparator);
 		while (stringTokenizer.hasMoreTokens()) {
 			String token = stringTokenizer.nextToken();
@@ -148,6 +143,7 @@ public class Accumulator extends AProcess {
 
 					// Look for the source
 					String javaEntryName = entryName.substring(0, entryName.lastIndexOf('.')) + ".java";
+					logger.debug("Looking for source : " + javaEntryName + ", " + entryName);
 					ZipEntry javaEntry = jarFile.getEntry(javaEntryName);
 					byte[] sourceFileBytes = new byte[0];
 					if (javaEntry != null) {
