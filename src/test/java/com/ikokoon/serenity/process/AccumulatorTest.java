@@ -13,7 +13,6 @@ import com.ikokoon.serenity.Configuration;
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.Transformer;
 import com.ikokoon.serenity.model.Class;
-import com.ikokoon.target.Target;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -45,7 +44,7 @@ public class AccumulatorTest extends ATest implements IConstants {
 	public void accumulate() {
 		Accumulator accumulator = new Accumulator(null);
 		accumulator.execute();
-		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(Target.class.getName()));
+		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(Configuration.class.getName()));
 		assertNotNull(klass);
 	}
 }

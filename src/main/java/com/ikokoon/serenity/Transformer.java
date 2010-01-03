@@ -20,6 +20,7 @@ import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.serenity.process.Accumulator;
 import com.ikokoon.serenity.process.Aggregator;
 import com.ikokoon.serenity.process.Cleaner;
+import com.ikokoon.serenity.process.Consolidator;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -77,7 +78,8 @@ public class Transformer implements ClassFileTransformer, IConstants {
 
 					// Execute the processing chain, child first
 					new Accumulator(null).execute();
-					new Cleaner(null).execute();
+					new Consolidator(null, dataBase).execute();
+					new Cleaner(null, dataBase).execute();
 					new Aggregator(null, dataBase).execute();
 
 					dataBase.close();

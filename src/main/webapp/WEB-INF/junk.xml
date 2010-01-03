@@ -1,0 +1,33 @@
+<target name="test" depends="junittests,jars">
+	<echo>Running JUnit test cases for FindBugs...</echo>
+	<junit fork="true" printsummary="true" showoutput="true" filtertrace="true" forkmode="once">
+		<!-- Give the JVM some head room. -->
+		<jvmarg value="-XX:PermSize=256m" />
+		<jvmarg value="-XX:MaxPermSize=512m" />
+		<jvmarg value="-Xms768m" />
+		<jvmarg value="-Xmx1024m" />
+
+		<!-- In some cases the shutdown hook invokes AWT, go figure. -->
+		<sysproperty key="java.awt.headles" value="true" />
+
+		<!-- Serenity system properties. -->
+		<sysproperty key="write.classes" value="false" />
+		<sysproperty key="clean.classes" value="false" />
+		<sysproperty key="included.packages" value="edu.umd.cs.findbugs" />
+		<sysproperty key="included.adapters" value="coverage;complexity;dependency" />
+		<!-- Serenity JVM command line. -->
+		<jvmarg line="-javaagent:serenity/serenity.jar" />
+
+		<formatter type="xml" />
+		<classpath refid="tools.classpath" />
+		<classpath>
+			<pathelement path="${junitclasses.dir}" />
+		</classpath>
+		<!-- And run the tests. -->
+		<batchtest todir="build/junit" haltonerror="false" haltonfailure="false">
+			<fileset dir="${junitsrc.dir}">
+				<include name="**/*Test*.java" />
+			</fileset>
+		</batchtest>
+	</junit>
+</target>

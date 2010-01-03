@@ -6,33 +6,9 @@
 			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/dhtmlxcommon.js" />
 			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/ext/dhtmlxtree_start.js" />
 			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/dhtmlxtree.js" />
+			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/serenity.js" />
 			<script>
 				dhtmlx.skin = "dhx_skyblue";
-				
-				function setData(class, id) {
-					var xmlhttp = null;
-					// Object of the current windows
-					if (window.XMLHttpRequest) {
-						// Firefox, Safari, ...
-						xmlhttp = new XMLHttpRequest();
-					} else if (window.ActiveXObject) {
-						xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); // Internet Explorer
-					}
-					xmlhttp.onreadystatechange = function() { // instructions to process the response
-						if (xmlhttp.readyState == 4) {
-							// Received, OK
-							if (xmlhttp.status == 200) {
-								window.parent.document.getElementById('chart').contentDocument.location.reload(true);
-								if (class == 'com.ikokoon.serenity.model.Class') {
-									window.parent.document.getElementById('source').contentDocument.location.reload(true);
-								}
-							}
-						}
-					}
-					var url = 'SerenityResult/chart?class=' + class + '&amp;id=' + id;
-					xmlhttp.open('GET', url, true);
-					xmlhttp.send(null);
-				}
 			</script>
 		</head>
 		<body>
@@ -58,7 +34,7 @@
 				function onClick(id) {
 					var class = tree.getUserData(id, 'class');
 					var name = tree.getItemText(id);
-					setData(class, id);
+					loadFrames(class, id);
 				}
     		</script>
 

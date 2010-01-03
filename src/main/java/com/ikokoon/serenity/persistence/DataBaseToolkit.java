@@ -116,7 +116,7 @@ public class DataBaseToolkit {
 	}
 
 	private static void log(ICriteria criteria, Composite<?, ?> composite, int tabs, String data) {
-		if (criteria != null && criteria.satisfied(composite)) {
+		if (criteria == null || (criteria != null && criteria.satisfied(composite))) {
 			StringBuilder builder = new StringBuilder();
 			for (int i = 0; i < tabs; i++) {
 				builder.append("\t");
@@ -143,6 +143,7 @@ public class DataBaseToolkit {
 		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class,
 				"C:/Eclipse/workspace/Search/modules/Ejb/serenity/serenity.odb", false, null);
 		DataBaseToolkit.dump(dataBase, new ICriteria() {
+			@SuppressWarnings("unchecked")
 			public boolean satisfied(Composite<?, ?> composite) {
 				if (composite instanceof Class && ((Class) composite).getName().startsWith("com.ikokoon.search.action.parse.ParserFactory")) {
 					logger.warn("");

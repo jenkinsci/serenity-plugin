@@ -10,6 +10,10 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassVisitor;
 
+import com.ikokoon.serenity.instrumentation.complexity.ComplexityClassAdapter;
+import com.ikokoon.serenity.instrumentation.coverage.CoverageClassAdapter;
+import com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapter;
+import com.ikokoon.serenity.instrumentation.profiling.ProfilingClassAdapter;
 import com.ikokoon.serenity.model.Project;
 import com.ikokoon.toolkit.Toolkit;
 
@@ -146,8 +150,17 @@ public class Configuration {
 				String adapterName = tokenizer.nextToken();
 				adapterName = Toolkit.stripWhitespace(adapterName);
 				try {
-					if (classAdapters.add((Class<ClassVisitor>) Class.forName(adapterName))) {
-						logger.info("Added class adapter : " + adapterName);
+					if (adapterName.equals(IConstants.COVERAGE)) {
+						classAdapters.add((Class<ClassVisitor>) Class.forName(CoverageClassAdapter.class.getName()));
+					}
+					if (adapterName.equals(IConstants.COMPLEXITY)) {
+						classAdapters.add((Class<ClassVisitor>) Class.forName(ComplexityClassAdapter.class.getName()));
+					}
+					if (adapterName.equals(IConstants.DEPENDENCY)) {
+						classAdapters.add((Class<ClassVisitor>) Class.forName(DependencyClassAdapter.class.getName()));
+					}
+					if (adapterName.equals(IConstants.PROFILING)) {
+						classAdapters.add((Class<ClassVisitor>) Class.forName(ProfilingClassAdapter.class.getName()));
 					}
 				} catch (ClassNotFoundException e) {
 					logger.error("Class : " + adapterName + " not found", e);

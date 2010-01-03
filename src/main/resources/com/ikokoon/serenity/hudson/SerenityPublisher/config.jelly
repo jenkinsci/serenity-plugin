@@ -2,8 +2,11 @@
 
 	<f:entry title="Serenity report pattern"
 		description="This will publish the Serenity database file to the build folder, the name of 
-			which is '**/serenity/serenity.odb' for the Neodatis database.">
+			which is '**/serenity/serenity.odb' for the Neodatis database. Please refer to the Wiki for setting 
+			up Serenity at - http://wiki.hudson-ci.org/display/HUDSON/Serenity+Plugin.">
+		
 		<f:textbox name="serenity.serenityDatabase" value="${instance.serenityDatabase}" />
+		
 	</f:entry>
 
 </j:jelly>

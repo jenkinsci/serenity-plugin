@@ -37,4 +37,9 @@ public interface IConstants {
 	/** Whether to delete the old class files before writing the new enhanced class files, 'clean.classes'. */
 	public String CLEAN_CLASSES = "clean.classes";
 
+	public String COVERAGE = "coverage";
+	public String COMPLEXITY = "complexity";
+	public String DEPENDENCY = "dependency";
+	public String PROFILING = "profiling";
+
 }

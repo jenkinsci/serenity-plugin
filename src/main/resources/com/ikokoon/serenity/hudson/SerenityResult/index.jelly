@@ -6,19 +6,22 @@
 			<html>
 				<head>
 					<link rel="stylesheet" href="${rootURL}/css/style.css" />
+					<script type="text/javascript" src="${rootURL}/plugin/serenity/js/serenity.js" />
 				</head>
 				<body>
 					<table border="0" width="100%">
 						<tr>
 							<td colspan="2">
 								<h3>
-									<a href="#" onclick="JavaScript:document.getElementById('chart').contentWindow.loadChart('name');">
+									<a href="#" onclick="JavaScript:loadFrames('com.ikokoon.serenity.model.Project', '${it.project.id}');">
 										<img src="${rootURL}/plugin/serenity/icons/project.gif" alt="The Serenity Report Icon" title="Serenity Graph" />
 										Project : ${it.name}
 									</a>
-									<b style="font-size: 10px;">(packages : ${it.project.packages}, classes : ${it.project.classes}, methods :
-										${it.project.methods}, lines :
-										${it.project.lines})</b>
+									<b title="Coverage, complexity, stability, packages, classes, methods, lines" style="font-size: 10px;">
+										(coverage : ${it.project.coverage}, 
+										complexity : ${it.project.complexity}, 
+										stability : ${it.project.stability}, 
+										[${it.project.packages}, ${it.project.classes}, ${it.project.methods}, ${it.project.lines}])</b>
 								</h3>
 							</td>
 						</tr>

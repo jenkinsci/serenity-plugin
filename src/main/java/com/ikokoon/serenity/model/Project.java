@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Entity;
 
+import com.ikokoon.toolkit.Toolkit;
+
 /**
  * @author Michael Couck
  * @since 12.08.09
@@ -42,7 +44,7 @@ public class Project<E, F> extends Composite<Object, Package<?, ?>> implements S
 	}
 
 	public double getComplexity() {
-		return complexity;
+		return Toolkit.format(complexity, 2);
 	}
 
 	public void setComplexity(double complex) {
@@ -50,7 +52,7 @@ public class Project<E, F> extends Composite<Object, Package<?, ?>> implements S
 	}
 
 	public double getCoverage() {
-		return coverage;
+		return Toolkit.format(coverage, 2);
 	}
 
 	public void setCoverage(double coverage) {
@@ -66,7 +68,7 @@ public class Project<E, F> extends Composite<Object, Package<?, ?>> implements S
 	}
 
 	public double getStability() {
-		return stability;
+		return Toolkit.format(stability, 2);
 	}
 
 	public void setStability(double stability) {

@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
-
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.model.Afferent;
 import com.ikokoon.serenity.model.Class;
@@ -43,8 +41,6 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class Aggregator extends AProcess implements IConstants {
 
-	/** The logger for the class. */
-	private Logger logger = Logger.getLogger(Aggregator.class);
 	/** The database to aggregate the data for. */
 	private IDataBase dataBase;
 

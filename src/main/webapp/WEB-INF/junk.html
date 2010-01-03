@@ -3,44 +3,22 @@
 <link rel="stylesheet" href="/css/style.css"></link>
 </head>
 <body>
-<ul class="">
-	<li style="color: blue;" /><br>
-</ul>
 
-<ul>
-	<li style="color: green;" /><br>
-</ul>
+<br />
+Serenity runs as a JavaAgent, as such the byte code is modified in memory.<br />
+<b>Configuration of Serenity for an Ant build:</b><br />
+To enable the JavaAgent the Ant build script needs to be modified to include the agent as in the following:<br />
+&lt;jvmarg line="-javaagent:serenity/serenity.jar" /&gt;<br />
+The JUnit task needs to be in forked mode, and typically with the option 'once'. Starting a new JVM for every test will 
+be very time consuming.<br />
+The serenity.jar needs to then be in the directory directly beneath the working directory of the build.xml. In all cases 
+serenity.jar needs to be in the serenity folder at the root of the project, this is the working folder of serenity, where the 
+database file will be written, and where the log and modified classes are written if specified.<br />
+System properties that are available and can be set are:<br />
+1) included.packages - the package names that are to be collected, semi-colon separated list(mandatory)<br />
+2) included.adapters - the class adapters that will generate the collection data for the classes, semi-colon separated list(mandatory)<br />
+3) write.classes - whether the modified classes are to be written to the file system for later inspection, true or false(optional)<br />
+4) clean.classes -whether to delete the old written classes before writing the new ones, true or false(optional)<br />
 
-<ul>
-	<li style="color: red;" /><br>
-</ul>
-
-<table width="100%" height="100%" border="0">
-	<tr>
-		<td><iframe src="tree" width="100%" height="100%" id="tree"
-			name="tree" frameborder="0">
-		<p>Your browser does not support internal frames.</p>
-		</iframe></td>
-	</tr>
-</table>
-<table width="100%" height="100%" border="0">
-	<tr>
-		<td rowspan="2" height="180"><iframe src="chart" width="100%" height="100%"
-			id="chart" name="chart" frameborder="0">
-		<p>Your browser does not support internal frames.</p>
-		</iframe></td>
-	</tr>
-	<tr>
-		<td>
-		<hr />
-		</td>
-	</tr>
-	<tr>
-		<td height="420px"><iframe src="source" width="100%"
-			height="100%" id="source" name="source" frameborder="0">
-		<p>Your browser does not support internal frames.</p>
-		</iframe></td>
-	</tr>
-</table>
 </body>
 </html>

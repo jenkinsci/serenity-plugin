@@ -11,13 +11,10 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassVisitor;
 
 import com.ikokoon.serenity.Configuration;
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
-import com.ikokoon.serenity.instrumentation.complexity.ComplexityClassAdapter;
-import com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapter;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -30,17 +27,21 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class Accumulator extends AProcess {
 
-	private Logger logger = Logger.getLogger(Accumulator.class);
 	/** The set of jars that are processed so we don't do the same jar more than once. */
 	private Set<String> jars = new TreeSet<String>();
 	/** The set of classes that are processed so we don't process the files more than once. */
 	private Set<String> files = new TreeSet<String>();
+	/** The chain of adapters for analysing the classes. */
+	private Class<ClassVisitor>[] CLASS_ADAPTER_CLASSES;
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	public Accumulator(IProcess parent) {
 		super(parent);
+		CLASS_ADAPTER_CLASSES = Configuration.getConfiguration().classAdapters.toArray(new Class[Configuration.getConfiguration().classAdapters
+				.size()]);
 	}
 
 	/**
@@ -158,15 +159,13 @@ public class Accumulator extends AProcess {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void processClass(String name, byte[] classBytes, byte[] sourceBytes) {
 		if (name != null && name.endsWith(".class")) {
 			name = name.substring(0, name.lastIndexOf('.'));
 		}
 		logger.debug("Class name : " + name + ", length : " + classBytes.length);
 		try {
-			Class<ClassVisitor>[] classAdapterClasses = new Class[] { DependencyClassAdapter.class, ComplexityClassAdapter.class };
-			VisitorFactory.getClassVisitor(classAdapterClasses, name, classBytes, sourceBytes);
+			VisitorFactory.getClassVisitor(CLASS_ADAPTER_CLASSES, name, classBytes, sourceBytes);
 		} catch (Exception e) {
 			logger.error("Exception generating complexity and dependency statistics on class " + name, e);
 		}
