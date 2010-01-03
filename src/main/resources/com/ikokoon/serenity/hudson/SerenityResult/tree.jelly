@@ -17,10 +17,10 @@
 				<xmp container="true">
 					<j:forEach var="package" items="${it.packages}">
 						<item text="${package.name}" id="${package.id}" call="true">
-							<userdata name="class">${package.class.name}</userdata>
-							<j:forEach var="class" items="${package.children}">
-								<item text="${class.name}" id="${class.id}" call="true">
-									<userdata name="class">${class.class.name}</userdata>
+							<userdata name="klass">${package.class.name}</userdata>
+							<j:forEach var="klass" items="${package.children}">
+								<item text="${klass.name}" id="${klass.id}" call="true">
+									<userdata name="klass">${klass.class.name}</userdata>
 								</item>
 							</j:forEach>
 						</item>
@@ -32,9 +32,9 @@
 				var tree = dhtmlXTreeFromHTML('tree');
 				tree.setOnClickHandler(onClick);
 				function onClick(id) {
-					var class = tree.getUserData(id, 'class');
-					var name = tree.getItemText(id);
-					loadFrames(class, id);
+					var klassName = tree.getUserData(id, 'klass');
+					// var name = tree.getItemText(id);
+					loadFrames(klassName, id);
 				}
     		</script>
 

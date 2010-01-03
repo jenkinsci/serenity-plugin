@@ -8,6 +8,14 @@ import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.model.Project;
 import com.ikokoon.toolkit.Toolkit;
 
+/**
+ * This class takes the composites and generates the data arrays for the Highcharts model, and makes a big string that can be inserted into the
+ * Highcharts object on the front end.
+ * 
+ * @author Michael Couck
+ * @since 01.01.10
+ * @version 01.00
+ */
 public class HighchartsModeller implements IModeller {
 
 	public static final int HISTORY = 5;
@@ -73,9 +81,9 @@ public class HighchartsModeller implements IModeller {
 		model = Toolkit.replaceAll(model, "stabilityData", stabilityData.toString());
 		model = Toolkit.replaceAll(model, "categoryData", categoryData.toString());
 
-		logger.warn("Composite name : " + compositeName + ", coverage data : " + coverageData + ", complexity data : " + complexityData
+		logger.debug("Composite name : " + compositeName + ", coverage data : " + coverageData + ", complexity data : " + complexityData
 				+ ", stability data : " + stabilityData + ", category data : " + categoryData);
-		logger.warn("Model : " + model);
+		logger.debug("Model : " + model);
 	}
 
 }

@@ -39,7 +39,7 @@ public interface IDataBase {
 		private static Logger logger = Logger.getLogger(DataBaseManager.class);
 		/** The map of open databases keyed on the database file name. */
 		private static Map<String, IDataBase> dataBases = new HashMap<String, IDataBase>();
-		
+
 		public static synchronized Map<String, IDataBase> getDataBases() {
 			return dataBases;
 		}
@@ -87,7 +87,9 @@ public interface IDataBase {
 					if (dataBaseEvent.getEventType().equals(IDataBaseEvent.Type.DATABASE_CLOSE)) {
 						IDataBase dataBase = dataBaseEvent.getDataBase();
 						if (!dataBases.values().remove(dataBase)) {
-							logger.warn("Database not removed from map : " + dataBase);
+							logger.warn("Database not removed : " + dataBase);
+						} else {
+							logger.info("Removed database : " + dataBase);
 						}
 					}
 				}

@@ -4,15 +4,13 @@
 			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 			<title>Serenity Chart</title>
 			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/jquery.min.js" />
-			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/excanvas.js"></script>
+			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/excanvas.compiled.js"></script>
 			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/highcharts.js" />
 		</head>
 		<body>
-			<div id="container" style="width: 730px; height: 150px"></div>
+			<div id="container" style="width: 730px; height: 145px"></div>
 			<script type="text/javascript">
-				// alert('Reloading chart : ');
 				var chart = new Highcharts.Chart(${it.model});
-				// alert('Reloaded chart : '); 
 			</script>
 		</body>
 	</html>
