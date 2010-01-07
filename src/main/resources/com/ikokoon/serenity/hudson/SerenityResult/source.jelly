@@ -1,7 +1,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 	<html>
 		<head>
-			<link rel="stylesheet" href="${rootURL}/css/style.css" />
+			<link rel="stylesheet" href="${it.context}/css/style.css" />
 		</head>
 		<body>
 			${it.source}

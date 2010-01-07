@@ -103,7 +103,8 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 	 */
 	public void visitLineNumber(int lineNumber, Label label) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("visitLineNumber : " + lineNumber + ", " + label + ", " + label.getOffset() + ", " + className + ", " + methodName);
+			logger.info("visitLineNumber : " + className + ", " + lineNumber + ", " + label + ", " + label.getOffset() + ", " + className + ", "
+					+ methodName);
 		}
 		Collector.collectLines(className, methodName, methodDescription, lineNumber);
 		this.mv.visitLineNumber(lineNumber, label);

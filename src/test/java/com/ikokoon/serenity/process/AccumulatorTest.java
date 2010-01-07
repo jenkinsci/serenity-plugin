@@ -13,6 +13,7 @@ import com.ikokoon.serenity.Configuration;
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.Transformer;
 import com.ikokoon.serenity.model.Class;
+import com.ikokoon.target.Target;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -42,9 +43,11 @@ public class AccumulatorTest extends ATest implements IConstants {
 
 	@Test
 	public void accumulate() {
+		logger.info("Included : " + Configuration.getConfiguration().includedPackages);
+		logger.info("Excluded : " + Configuration.getConfiguration().excludedPackages);
 		Accumulator accumulator = new Accumulator(null);
 		accumulator.execute();
-		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(Configuration.class.getName()));
+		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(Target.class.getName()));
 		assertNotNull(klass);
 	}
 }

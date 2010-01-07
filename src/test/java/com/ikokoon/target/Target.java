@@ -22,7 +22,7 @@ public class Target<E, F> implements ITarget<E, F>, Serializable {
 	/** The logger for the class. */
 	private transient volatile Logger logger = Logger.getLogger(Target.class);
 	protected static final String NAME = "name";
-	protected TargetConsumer consumer; //  = new TargetConsumer();
+	protected TargetConsumer consumer; // = new TargetConsumer();
 
 	@SuppressWarnings("unused")
 	private String name;
@@ -94,11 +94,11 @@ public class Target<E, F> implements ITarget<E, F>, Serializable {
 	public void complexMethod(String s1, String s2, String s3, Integer i1, Integer i2) throws Exception {
 		if (s1.equals(s2)) {
 			if (s2.equals(s3)) {
-				System.out.println("Out");
+				logger.debug("Target Out");
 			}
 		}
 		if (s3.equals(i1)) {
-			System.out.println("Out");
+			logger.debug("Out");
 		}
 		if (i1.equals(i2)) {
 		} else {
@@ -107,30 +107,30 @@ public class Target<E, F> implements ITarget<E, F>, Serializable {
 				// after the condition so the compiler optimises it and removes the
 				// jump
 			} else {
-				System.out.println("Out");
+				logger.debug("Out");
 			}
 		}
 		if (i2.equals(s2)) {
 			if (s3.equals(i1)) {
 				if (s3.equals(i1)) {
-					System.out.println("Out");
+					logger.debug("Out");
 				}
 			}
 		}
 		if (s3.equals(i1)) {
 			if (s3.equals(i1)) {
-				System.out.println("Out");
+				logger.debug("Out");
 			}
 		}
 		int x = (int) (Math.random() * 100d);
 		if (x > 50) {
-			System.out.println("Out");
+			logger.debug("Out");
 		}
 		if (x < 50) {
-			System.out.println("Out");
+			logger.debug("Out");
 		}
 		for (int i = 0; i < 10; i++) {
-			System.out.println("Out");
+			logger.debug("Out");
 		}
 
 		int a = 0;
@@ -140,22 +140,22 @@ public class Target<E, F> implements ITarget<E, F>, Serializable {
 
 		switch (i1) {
 		case 1:
-			System.out.println("Out");
+			logger.debug("Out");
 			break;
 		case 2:
-			System.out.println("Out");
+			logger.debug("Out");
 			break;
 		case 3:
-			System.out.println("Out");
+			logger.debug("Out");
 			break;
 		case 4:
-			System.out.println("Out");
+			logger.debug("Out");
 			break;
 		case 5:
-			System.out.println("Out");
+			logger.debug("Out");
 			break;
 		default:
-			System.out.println("Out");
+			logger.debug("Out");
 			break;
 		}
 		if (x < -1) {

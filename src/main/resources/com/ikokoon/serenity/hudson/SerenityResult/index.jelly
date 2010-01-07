@@ -1,12 +1,12 @@
 <j:jelly trim="false" xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
 	xmlns:f="/lib/form">
-	<l:layout xmlns:serenity="/hudson/plugins/serenity/tags">
+	<l:layout xmlns:serenity="${it.context}/plugins/serenity/tags">
 		<st:include it="${it.owner}" page="sidepanel.jelly" />
 		<l:main-panel>
 			<html>
 				<head>
-					<link rel="stylesheet" href="${rootURL}/css/style.css" />
-					<script type="text/javascript" src="${rootURL}/plugin/serenity/js/serenity.js" />
+					<link rel="stylesheet" href="${it.context}/css/style.css" />
+					<script type="text/javascript" src="${it.context}/plugin/serenity/js/serenity.js" />
 				</head>
 				<body>
 					<table border="0" width="100%">
@@ -14,7 +14,7 @@
 							<td colspan="2">
 								<h3>
 									<a href="#" onclick="JavaScript:loadFrames('com.ikokoon.serenity.model.Project', '${it.project.id}');">
-										<img src="${rootURL}/plugin/serenity/icons/project.gif" alt="The Serenity Report Icon" title="Serenity Graph" />
+										<img src="${it.context}/plugin/serenity/icons/project.gif" alt="The Serenity Report Icon" title="Serenity Graph" />
 										Project : ${it.name}
 									</a>
 									<b title="Coverage, complexity, stability, packages, classes, methods, lines" style="font-size: 10px;">

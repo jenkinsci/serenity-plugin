@@ -1,6 +1,7 @@
 package com.ikokoon.serenity.hudson.modeller;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
@@ -111,9 +112,7 @@ public class ModellerTest extends ATest {
 		klassOne.setComplexity(19);
 		klassOne.setCoverage(81);
 		klassOne.setEfference(6);
-		klassOne.setExecuted(2561);
 		klassOne.setInterfaze(true);
-		klassOne.setLines(256);
 		klassOne.setStability(0.235);
 
 		Class<?, ?> klassTwo = getClass(getPackage());
@@ -121,9 +120,7 @@ public class ModellerTest extends ATest {
 		klassTwo.setComplexity(21);
 		klassTwo.setCoverage(05);
 		klassTwo.setEfference(65);
-		klassTwo.setExecuted(61);
 		klassTwo.setInterfaze(false);
-		klassTwo.setLines(254);
 		klassTwo.setStability(0.885);
 
 		Class<?, ?> klassThree = null;

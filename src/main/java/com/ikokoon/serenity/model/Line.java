@@ -49,6 +49,8 @@ public class Line<E, F> extends Composite<Class<?, ?>, Object> implements Compar
 	}
 
 	public void setCounter(double counter) {
+		// System.out.println("Set counter : " + counter + ", " + number);
+		// Thread.dumpStack();
 		this.counter = counter;
 	}
 
@@ -57,7 +59,8 @@ public class Line<E, F> extends Composite<Class<?, ?>, Object> implements Compar
 	}
 
 	public String toString() {
-		return getId() + ":" + className + ":" + methodName + " : " + number + ":" + counter;
+		return "Id : " + getId() + ", class name : " + className + ", method name : " + methodName + ", number : " + number + ", counter : "
+				+ counter;
 	}
 
 	public int compareTo(Line<?, ?> o) {

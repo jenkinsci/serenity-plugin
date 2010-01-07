@@ -118,11 +118,26 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void visitInnerClass(String name, String outerName, String innerName, int access) {
+	public void visitInnerClass(String innerName, String outerName, String innerSimpleName, int access) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("visitInnerClass : " + name + ", " + outerName + ", " + innerName);
+			logger.info("visitInnerClass : inner name : " + innerName + ", outer name : " + outerName + ", inner simple name : " + innerSimpleName);
 		}
-		super.visitInnerClass(name, outerName, innerName, access);
+		if (outerName != null) {
+			Collector.collectInnerClass(Toolkit.slashToDot(innerName), Toolkit.slashToDot(outerName));
+		}
+		super.visitInnerClass(innerName, outerName, innerSimpleName, access);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void visitOuterClass(String outerName, String outerMethodName, String outerMethodDescription) {
+		if (logger.isDebugEnabled()) {
+			logger.info("visitOuterClass : class name : " + className + ", owner : " + outerName + ", method name : " + outerMethodName
+					+ ", description : " + outerMethodDescription);
+		}
+		Collector.collectOuterClass(className, Toolkit.slashToDot(outerName), outerMethodName, outerMethodDescription);
+		super.visitOuterClass(outerName, outerMethodName, outerMethodDescription);
 	}
 
 	/**
@@ -143,19 +158,6 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 		}
 		MethodVisitor adapter = VisitorFactory.getMethodVisitor(visitor, DependencyMethodAdapter.class, className, name, desc);
 		return adapter;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void visitOuterClass(String owner, String methodName, String desc) {
-		if (logger.isDebugEnabled()) {
-			logger.info("visitOuterClass : " + owner + ", " + methodName + ", " + desc);
-		}
-		if (className.indexOf('$') == -1) {
-			VisitorFactory.getSignatureVisitor(className, desc);
-		}
-		super.visitOuterClass(owner, methodName, desc);
 	}
 
 	/**

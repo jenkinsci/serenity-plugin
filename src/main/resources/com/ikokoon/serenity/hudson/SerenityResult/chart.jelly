@@ -3,9 +3,9 @@
 		<head>
 			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 			<title>Serenity Chart</title>
-			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/jquery.min.js" />
-			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/excanvas.compiled.js"></script>
-			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/highcharts.js" />
+			<script type="text/javascript" src="${it.context}/plugin/serenity/js/jquery.min.js" />
+			<script type="text/javascript" src="${it.context}/plugin/serenity/js/excanvas.compiled.js"></script>
+			<script type="text/javascript" src="${it.context}/plugin/serenity/js/highcharts.js" />
 		</head>
 		<body>
 			<div id="container" style="width: 730px; height: 145px"></div>

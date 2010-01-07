@@ -19,8 +19,6 @@ public class Method<E, F> extends Composite<Class<?, ?>, Line<?, ?>> implements 
 	private String className;
 	private String description;
 	private double complexity;
-	private double lines;
-	private double executed;
 	private double coverage;
 
 	public String getName() {
@@ -53,22 +51,6 @@ public class Method<E, F> extends Composite<Class<?, ?>, Line<?, ?>> implements 
 
 	public void setComplexity(double complexity) {
 		this.complexity = complexity;
-	}
-
-	public double getLines() {
-		return Toolkit.format(lines, PRECISION);
-	}
-
-	public void setLines(double lines) {
-		this.lines = lines;
-	}
-
-	public double getExecuted() {
-		return executed;
-	}
-
-	public void setExecuted(double totalLinesExecuted) {
-		this.executed = totalLinesExecuted;
 	}
 
 	public double getCoverage() {

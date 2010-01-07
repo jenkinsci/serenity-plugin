@@ -20,7 +20,6 @@ import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.serenity.process.Accumulator;
 import com.ikokoon.serenity.process.Aggregator;
 import com.ikokoon.serenity.process.Cleaner;
-import com.ikokoon.serenity.process.Consolidator;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -63,7 +62,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		if (!INITIALISED) {
 			INITIALISED = true;
 
-			printSystemProperties();
+			// printSystemProperties();
 
 			LoggingConfigurator.configure();
 			CLASS_ADAPTER_CLASSES = Configuration.getConfiguration().classAdapters.toArray(new Class[Configuration.getConfiguration().classAdapters
@@ -73,12 +72,12 @@ public class Transformer implements ClassFileTransformer, IConstants {
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 				public void run() {
 					Date start = new Date();
-					LOGGER.error("Starting accumulation : " + start);
+					LOGGER.info("Starting accumulation : " + start);
 					IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, false, null);
 
 					// Execute the processing chain, child first
 					new Accumulator(null).execute();
-					new Consolidator(null, dataBase).execute();
+					// new Consolidator(null, dataBase).execute();
 					new Cleaner(null, dataBase).execute();
 					new Aggregator(null, dataBase).execute();
 
@@ -87,8 +86,8 @@ public class Transformer implements ClassFileTransformer, IConstants {
 					Date end = new Date();
 					long million = 1000 * 1000;
 					long duration = end.getTime() - start.getTime();
-					LOGGER.error("Finished accumulation : " + end + ", duration : " + duration + " millis");
-					LOGGER.error("Total memory : " + (Runtime.getRuntime().totalMemory() / million) + ", max memory : "
+					LOGGER.info("Finished accumulation : " + end + ", duration : " + duration + " millis");
+					LOGGER.info("Total memory : " + (Runtime.getRuntime().totalMemory() / million) + ", max memory : "
 							+ (Runtime.getRuntime().maxMemory() / million) + ", free memory : " + (Runtime.getRuntime().freeMemory() / million));
 				}
 			});

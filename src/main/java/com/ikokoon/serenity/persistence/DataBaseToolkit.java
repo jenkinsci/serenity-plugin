@@ -85,27 +85,25 @@ public class DataBaseToolkit {
 		try {
 			List<Package> packages = dataBase.find(Package.class);
 			for (Package<?, ?> pakkage : packages) {
-				// logger.warn("\tPackage : " + pakkage.getId() + " : " + pakkage.getName() + " : " + pakkage.getCoverage());
-				log(criteria, pakkage, 1, pakkage.getId() + " : " + pakkage.getName() + " : " + pakkage.getCoverage());
+				log(criteria, pakkage, 1, pakkage.getId() + " : " + pakkage.getName() + ", coverage : " + pakkage.getCoverage() + ", complexity : "
+						+ pakkage.getComplexity() + ", stability : " + pakkage.getStability());
 				for (Class<?, ?> klass : ((List<Class<?, ?>>) pakkage.getChildren())) {
-					// logger.warn("\t\tClass : " + klass.getId() + " : " + klass.getName() + " : " + klass.getCoverage());
-					log(criteria, klass, 2, " : " + klass.getId() + " : " + klass.getName() + " : " + klass.getCoverage());
+					log(criteria, klass, 2, " : id : " + klass.getId() + " : name : " + klass.getName() + " : coverage : " + klass.getCoverage()
+							+ ", complexity : " + klass.getComplexity() + ", outer class : " + klass.getOuterClass() + ", outer method : "
+							+ klass.getOuterMethod() + ", lines : " + klass.getChildren().size() + ", inner classes : " + klass.getInnerClasses());
 					List<Efferent> efferents = klass.getEfferent();
 					List<Afferent> afferents = klass.getAfferent();
 					for (Efferent efferent : efferents) {
-						// logger.warn("\t\t\t\t: " + efferent.getName());
 						log(criteria, efferent, 4, efferent.getName());
 					}
 					for (Afferent afferent : afferents) {
-						// logger.warn("\t\t\t\t: " + afferent.getName());
 						log(criteria, afferent, 4, afferent.getName());
 					}
 					for (Method<?, ?> method : ((List<Method<?, ?>>) klass.getChildren())) {
-						// logger.warn("\t\t\tMethod : " + method.getId() + " : " + method.getName() + " : " + method.getCoverage());
-						log(criteria, method, 3, method.getId() + " : " + method.getName() + " : " + method.getCoverage());
+						log(criteria, method, 3, method.getId() + " : name : " + method.getName() + " : coverage : " + method.getCoverage()
+								+ ", complexity : " + method.getComplexity());
 						for (Line<?, ?> line : ((List<Line<?, ?>>) method.getChildren())) {
-							// logger.warn("\t\t\t\tLine : " + line.getId() + " : " + line.getNumber() + " : " + line.getCounter());
-							log(criteria, line, 4, line.getId() + " : " + line.getNumber() + " : " + method.getCoverage());
+							log(criteria, line, 4, line.getId() + " : number : " + line.getNumber() + ", counter : " + line.getCounter());
 						}
 					}
 				}
@@ -134,25 +132,20 @@ public class DataBaseToolkit {
 
 	}
 
-	private static int counter;
-
 	public static void main(String[] args) {
 		// C:/Eclipse/workspace/serenity/work/jobs/Findbugs/builds/2009-12-12_21-08-50/serenity/serenity.odb
 		// C:/Eclipse/workspace/Findbugs/serenity
 		// C:/Eclipse/workspace/Search/modules/Ejb/serenity
-		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class,
-				"C:/Eclipse/workspace/Search/modules/Ejb/serenity/serenity.odb", false, null);
-		DataBaseToolkit.dump(dataBase, new ICriteria() {
-			@SuppressWarnings("unchecked")
-			public boolean satisfied(Composite<?, ?> composite) {
-				if (composite instanceof Class && ((Class) composite).getName().startsWith("com.ikokoon.search.action.parse.ParserFactory")) {
-					logger.warn("");
-					return true;
-				}
-				return false;
-			}
-		}, null);
-		logger.warn("Counter : " + counter);
+		// C:/Eclipse/workspace/Discovery/serenity
+		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, "C:/Eclipse/workspace/Findbugs/serenity/serenity.odb", false,
+				null);
+//		DataBaseToolkit.dump(dataBase, new ICriteria() {
+//			public boolean satisfied(Composite<?, ?> composite) {
+//				return false;
+//			}
+//		}, null);
+		Project<?, ?> project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
+		logger.info("Project : " + project.getCoverage());
 		dataBase.close();
 	}
 

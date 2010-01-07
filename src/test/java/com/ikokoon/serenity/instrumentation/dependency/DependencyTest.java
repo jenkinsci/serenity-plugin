@@ -21,6 +21,16 @@ import com.ikokoon.toolkit.Toolkit;
 public class DependencyTest extends ATest {
 
 	@Test
+	public void visitInner() throws Exception {
+		// logger.info("***************************************************");
+		// visitClass(DependencyClassAdapter.class, Discovery.class.getName());
+		// logger.info("***************************************************");
+		// visitClass(DependencyClassAdapter.class, Discovery.InnerClass.class.getName());
+		// logger.info("***************************************************");
+		// visitClass(DependencyClassAdapter.class, Discovery.InnerClass.InnerInnerClass.class.getName());
+	}
+
+	@Test
 	public void visit() throws Exception {
 		visitClass(DependencyClassAdapter.class, className);
 

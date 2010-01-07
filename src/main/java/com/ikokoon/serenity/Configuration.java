@@ -65,6 +65,7 @@ public class Configuration {
 		}
 		string = Toolkit.slashToDot(string);
 		for (String pattern : includedPackages) {
+			// logger.info("String : " + string + ", pattern : " + pattern + ", index of : " + (string.indexOf(pattern) > -1));	
 			if (string.indexOf(pattern) > -1) {
 				return true;
 			}
@@ -108,7 +109,7 @@ public class Configuration {
 		}
 
 		String includedJars = System.getProperty(IConstants.INCLUDED_JARS_PROPERTY);
-		logger.warn("Included jars : " + includedJars);
+		logger.info("Included jars : " + includedJars);
 		if (includedJars != null) {
 			builder.append(File.pathSeparator);
 			builder.append(includedJars);

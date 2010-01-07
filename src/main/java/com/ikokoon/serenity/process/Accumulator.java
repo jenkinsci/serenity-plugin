@@ -28,9 +28,9 @@ import com.ikokoon.toolkit.Toolkit;
 public class Accumulator extends AProcess {
 
 	/** The set of jars that are processed so we don't do the same jar more than once. */
-	private Set<String> jars = new TreeSet<String>();
+	private Set<String> jarsProcessed = new TreeSet<String>();
 	/** The set of classes that are processed so we don't process the files more than once. */
-	private Set<String> files = new TreeSet<String>();
+	private Set<String> filesProcessed = new TreeSet<String>();
 	/** The chain of adapters for analysing the classes. */
 	private Class<ClassVisitor>[] CLASS_ADAPTER_CLASSES;
 
@@ -76,7 +76,7 @@ public class Accumulator extends AProcess {
 	 * @param file
 	 *            the directory or file to look in for the class data
 	 */
-	private void processDir(File file) {
+	void processDir(File file) {
 		// Iteratively go through the directories
 		if (file == null || !file.exists() || !file.canWrite()) {
 			return;
@@ -93,18 +93,32 @@ public class Accumulator extends AProcess {
 			if (excluded(filePath)) {
 				return;
 			}
-			if (filePath.endsWith(".class")) {
-				byte[] classBytes = Toolkit.getContents(file).toByteArray();
-				byte[] sourceBytes = null;
+			byte[] classBytes = Toolkit.getContents(file).toByteArray();
+			byte[] sourceBytes = null;
 
-				String classFileName = file.getName();
-				String javaFileName = classFileName.substring(0, classFileName.lastIndexOf('.')) + ".java";
-				File javaFile = new File(file.getParent(), javaFileName);
-				if (javaFile.exists() && javaFile.isFile() && javaFile.canRead()) {
-					sourceBytes = Toolkit.getContents(javaFile).toByteArray();
+			String className = null;
+
+			// Strip the beginning of the path off the name
+			for (String packageName : Configuration.getConfiguration().includedPackages) {
+				if (filePath.indexOf(packageName) > -1) {
+					int indexOfPackageName = filePath.indexOf(packageName);
+					int classIndex = filePath.lastIndexOf(".class");
+					int javaIndex = filePath.lastIndexOf(".java");
+					int suffixIndex = Math.max(classIndex, javaIndex);
+					try {
+						if (suffixIndex > -1) {
+							className = filePath.substring(indexOfPackageName, suffixIndex);
+							break;
+						}
+					} catch (Exception e) {
+						logger.error("Exception reading the class files in a directory", e);
+					}
 				}
-				processClass(file.getAbsolutePath(), classBytes, sourceBytes);
 			}
+			if (!filesProcessed.add(className)) {
+				return;
+			}
+			processClass(className, classBytes, sourceBytes);
 		}
 	}
 
@@ -117,10 +131,9 @@ public class Accumulator extends AProcess {
 	 */
 	private void processJar(File file) {
 		// Don't process the jars more than once
-		if (jars.contains(file.getName())) {
+		if (!jarsProcessed.add(file.getName())) {
 			return;
 		}
-		jars.add(file.getName());
 
 		JarFile jarFile = null;
 		try {
@@ -138,21 +151,19 @@ public class Accumulator extends AProcess {
 			}
 			logger.debug("Processsing file : " + entryName);
 			try {
-				if (entryName.endsWith(".class")) {
-					InputStream inputStream = jarFile.getInputStream(jarEntry);
-					byte[] classFileBytes = Toolkit.getContents(inputStream).toByteArray();
+				InputStream inputStream = jarFile.getInputStream(jarEntry);
+				byte[] classFileBytes = Toolkit.getContents(inputStream).toByteArray();
 
-					// Look for the source
-					String javaEntryName = entryName.substring(0, entryName.lastIndexOf('.')) + ".java";
-					logger.debug("Looking for source : " + javaEntryName + ", " + entryName);
-					ZipEntry javaEntry = jarFile.getEntry(javaEntryName);
-					byte[] sourceFileBytes = new byte[0];
-					if (javaEntry != null) {
-						inputStream = jarFile.getInputStream(javaEntry);
-						sourceFileBytes = Toolkit.getContents(inputStream).toByteArray();
-					}
-					processClass(Toolkit.slashToDot(entryName), classFileBytes, sourceFileBytes);
+				// Look for the source
+				String javaEntryName = entryName.substring(0, entryName.lastIndexOf('.')) + ".java";
+				logger.debug("Looking for source : " + javaEntryName + ", " + entryName);
+				ZipEntry javaEntry = jarFile.getEntry(javaEntryName);
+				byte[] sourceFileBytes = new byte[0];
+				if (javaEntry != null) {
+					inputStream = jarFile.getInputStream(javaEntry);
+					sourceFileBytes = Toolkit.getContents(inputStream).toByteArray();
 				}
+				processClass(Toolkit.slashToDot(entryName), classFileBytes, sourceFileBytes);
 			} catch (IOException e) {
 				logger.error("Exception reading entry : " + jarEntry + ", from file : " + jarFile, e);
 			}
@@ -188,11 +199,10 @@ public class Accumulator extends AProcess {
 			return true;
 		}
 		// Don't process the same class twice
-		if (files.contains(name)) {
+		if (!filesProcessed.add(name)) {
 			logger.debug("Already done file : " + name);
 			return true;
 		}
-		files.add(name);
 		return false;
 	}
 

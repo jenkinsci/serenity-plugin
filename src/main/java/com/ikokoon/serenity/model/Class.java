@@ -21,14 +21,15 @@ import com.ikokoon.toolkit.Toolkit;
 public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implements Comparable<Class<?, ?>>, Serializable {
 
 	private String name;
+	private Class<?, ?> outerClass;
+	private Method<?, ?> outerMethod;
+	private List<Class<?, ?>> innerClasses = new ArrayList<Class<?, ?>>();
 	private String source;
 
 	private double coverage;
 	private double complexity;
 	private double stability;
 
-	private double lines;
-	private double executed;
 	private double efference;
 	private double afference;
 
@@ -45,28 +46,36 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 		this.name = name;
 	}
 
+	public Class<?, ?> getOuterClass() {
+		return outerClass;
+	}
+
+	public void setOuterClass(Class<?, ?> outerClass) {
+		this.outerClass = outerClass;
+	}
+
+	public Method<?, ?> getOuterMethod() {
+		return outerMethod;
+	}
+
+	public void setOuterMethod(Method<?, ?> outerMethod) {
+		this.outerMethod = outerMethod;
+	}
+
+	public List<Class<?, ?>> getInnerClasses() {
+		return innerClasses;
+	}
+
+	public void setInnerClasses(List<Class<?, ?>> innerClasses) {
+		this.innerClasses = innerClasses;
+	}
+
 	public String getSource() {
 		return source;
 	}
 
 	public void setSource(String source) {
 		this.source = source;
-	}
-
-	public double getLines() {
-		return lines;
-	}
-
-	public void setLines(double lines) {
-		this.lines = lines;
-	}
-
-	public double getExecuted() {
-		return executed;
-	}
-
-	public void setExecuted(double totalLinesExecuted) {
-		this.executed = totalLinesExecuted;
 	}
 
 	public String getNameTrimmed() {

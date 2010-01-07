@@ -30,11 +30,6 @@ public class Project<E, F> extends Composite<Object, Package<?, ?>> implements S
 	private double classes;
 	private double packages;
 
-	private double linesExecuted;
-	private double methodsExecuted;
-	private double classesExecuted;
-	private double packagesExecuted;
-
 	public String getName() {
 		return name;
 	}
@@ -107,22 +102,6 @@ public class Project<E, F> extends Composite<Object, Package<?, ?>> implements S
 		this.methods = totalMethods;
 	}
 
-	public double getLinesExecuted() {
-		return linesExecuted;
-	}
-
-	public void setLinesExecuted(double totalLinesExecuted) {
-		this.linesExecuted = totalLinesExecuted;
-	}
-
-	public double getMethodsExecuted() {
-		return methodsExecuted;
-	}
-
-	public void setMethodsExecuted(double totalMethodsExecuted) {
-		this.methodsExecuted = totalMethodsExecuted;
-	}
-
 	public double getClasses() {
 		return classes;
 	}
@@ -131,28 +110,12 @@ public class Project<E, F> extends Composite<Object, Package<?, ?>> implements S
 		this.classes = totalClasses;
 	}
 
-	public double getClassesExecuted() {
-		return classesExecuted;
-	}
-
-	public void setClassesExecuted(double totalClassesExecuted) {
-		this.classesExecuted = totalClassesExecuted;
-	}
-
 	public double getPackages() {
 		return packages;
 	}
 
 	public void setPackages(double totalPackages) {
 		this.packages = totalPackages;
-	}
-
-	public double getPackagesExecuted() {
-		return packagesExecuted;
-	}
-
-	public void setPackagesExecuted(double totalPackagesExecuted) {
-		this.packagesExecuted = totalPackagesExecuted;
 	}
 
 }

@@ -34,9 +34,9 @@ public class ComplexityMethodAdapter extends MethodAdapter {
 
 	/** The complexity counter, start with one and increment for each jump instruction. */
 	private int complexityCounter = 1;
-	/** The total number of lines for the method. */
-	private double lineCounter;
 
+	/** The total number of lines for the method. */
+	// private double lineCounter;
 	/**
 	 * The constructor initialises a {@link ComplexityMethodAdapter} that takes all the interesting items for the method that is to be enhanced
 	 * including the parent method visitor.
@@ -63,7 +63,7 @@ public class ComplexityMethodAdapter extends MethodAdapter {
 	 */
 	public void visitLineNumber(int lineNumber, Label label) {
 		logger.debug("visitLineNumber : " + lineNumber + ", " + label + ", " + label.getOffset() + ", " + className + ", " + methodName);
-		lineCounter++;
+		// lineCounter++;
 		this.mv.visitLineNumber(lineNumber, label);
 	}
 
@@ -80,8 +80,8 @@ public class ComplexityMethodAdapter extends MethodAdapter {
 	 * {@inheritDoc}
 	 */
 	public void visitEnd() {
-		logger.debug("visitEnd:" + className + ", " + methodName + ", " + methodDescription + ", " + lineCounter);
-		Collector.collectComplexity(className, methodName, methodDescription, complexityCounter, lineCounter);
+		logger.debug("visitEnd:" + className + ", " + methodName + ", " + methodDescription/* + ", " + lineCounter */);
+		Collector.collectComplexity(className, methodName, methodDescription, complexityCounter/* , lineCounter */);
 		this.mv.visitEnd();
 	}
 

@@ -78,6 +78,7 @@ public class Toolkit {
 			return name;
 		}
 		name = name.replace('/', '.');
+		name = name.replace('\\', '.');
 		return name;
 	}
 

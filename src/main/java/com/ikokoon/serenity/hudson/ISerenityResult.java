@@ -9,6 +9,6 @@ package com.ikokoon.serenity.hudson;
  */
 public interface ISerenityResult {
 
-	public int HISTORY = 100;
+	public int HISTORY = 8;
 
 }

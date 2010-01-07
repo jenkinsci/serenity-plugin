@@ -36,7 +36,6 @@ public class CollectorTest extends ATest implements IConstants {
 		Configuration.getConfiguration().includedPackages.add(packageName);
 		Configuration.getConfiguration().includedPackages.add(Toolkit.dotToSlash(packageName));
 		// After this we expect a package, a class, a method and a line element
-		System.out.println("Start");
 		// dataBase.close();
 		// dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, true, null);
 		Collector.collectCoverage(className, methodName, methodSignature, (int) lineNumber);
@@ -45,7 +44,6 @@ public class CollectorTest extends ATest implements IConstants {
 				return true;
 			}
 		}, this.getClass().getSimpleName() + " database dump");
-		System.out.println("End");
 
 		// We must test that the package is correct
 		Long packageId = Toolkit.hash(packageName);
@@ -85,14 +83,14 @@ public class CollectorTest extends ATest implements IConstants {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void collectComplexity() {
-		Collector.collectComplexity(className, methodName, methodSignature, complexity, 1000);
-		Collector.collectComplexity(className, methodName, methodSignature, complexity, 1000);
+		Collector.collectComplexity(className, methodName, methodSignature, complexity/* , 1000 */);
+		Collector.collectComplexity(className, methodName, methodSignature, complexity/* , 1000 */);
 
 		Method method = (Method) dataBase.find(Method.class, Toolkit.hash(className, methodName, methodSignature));
 		assertNotNull(method);
 		assertTrue(complexity == method.getComplexity());
 
-		Collector.collectComplexity(TargetConsumer.class.getName(), methodName + ":1", methodSignature + ":1", complexity, 1000);
+		Collector.collectComplexity(TargetConsumer.class.getName(), methodName + ":1", methodSignature + ":1", complexity/* , 1000 */);
 	}
 
 	@Test

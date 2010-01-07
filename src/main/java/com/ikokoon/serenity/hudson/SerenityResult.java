@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -50,6 +51,8 @@ public class SerenityResult implements ISerenityResult {
 	private String model;
 	/** The source for the currently selected item. */
 	private String source;
+	/** The root url to the base of the Hudson war on the server. */
+	private String context = "";
 
 	/**
 	 * Constructor takes the real action that generated the build for the project.
@@ -85,6 +88,8 @@ public class SerenityResult implements ISerenityResult {
 	@SuppressWarnings("unchecked")
 	public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) throws Exception {
 		logger.debug("getDynamic:" + token);
+
+		context = req.getContextPath();
 
 		printParameters(req);
 
@@ -130,6 +135,10 @@ public class SerenityResult implements ISerenityResult {
 		return url;
 	}
 
+	public String getContext() {
+		return context;
+	}
+
 	public Object getOwner() {
 		logger.debug("getOwner");
 		return this.owner;
@@ -165,6 +174,24 @@ public class SerenityResult implements ISerenityResult {
 						return o1.getName().compareTo(o2.getName());
 					}
 				});
+				// Sort the classes in the packages
+				for (Package<?, ?> pakkage : packages) {
+					Collections.sort(pakkage.getChildren(), new Comparator<Class<?, ?>>() {
+						public int compare(Class<?, ?> o1, Class<?, ?> o2) {
+							return o1.getName().compareTo(o2.getName());
+						}
+					});
+				}
+			}
+			// Remove the inner classes from the packages
+			for (Package<?, ?> pakkage : packages) {
+				Iterator<Class<?, ?>> iterator = pakkage.getChildren().iterator();
+				while (iterator.hasNext()) {
+					Class<?, ?> klass = iterator.next();
+					if (klass.getName().indexOf("$") > -1) {
+						iterator.remove();
+					}
+				}
 			}
 			return packages;
 		} finally {
@@ -215,8 +242,11 @@ public class SerenityResult implements ISerenityResult {
 		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, false, null);
 		Composite<?, ?> composite = dataBase.find(klass, id);
 		logger.debug("Looking for composite : " + id + ", " + composite);
-		composites.add(composite);
 		dataBase.close();
+		if (composite == null) {
+			return composites;
+		}
+		composites.add(composite);
 		return getPreviousComposites((java.lang.Class<Composite<?, ?>>) composite.getClass(), previousBuild, composites, id, ++history);
 	}
 

@@ -101,10 +101,10 @@ public class Collector implements IConstants {
 	 * @param lineCounter
 	 *            the number of lines in the method
 	 */
-	public static final void collectComplexity(String className, String methodName, String methodDescription, double complexity, double lineCounter) {
+	public static final void collectComplexity(String className, String methodName, String methodDescription, double complexity/* ,double lineCounter */) {
 		Method<?, ?> method = getMethod(className, methodName, methodDescription);
 		method.setComplexity(complexity);
-		method.setLines(lineCounter);
+		// method.setLines(lineCounter);
 	}
 
 	/**
@@ -159,6 +159,34 @@ public class Collector implements IConstants {
 			Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
 			if (!klass.getInterfaze()) {
 				klass.setInterfaze(true);
+			}
+		}
+	}
+
+	public static final void collectInnerClass(String innerName, String outerName) {
+		Class<?, ?> innerClass = getClass(innerName);
+		Class<?, ?> outerClass = getClass(outerName);
+		if (innerClass.getOuterClass() == null) {
+			innerClass.setOuterClass(outerClass);
+		}
+		if (!outerClass.getInnerClasses().contains(innerClass)) {
+			outerClass.getInnerClasses().add(innerClass);
+		}
+	}
+
+	public static final void collectOuterClass(String innerName, String outerName, String outerMethodName, String outerMethodDescription) {
+		Class<?, ?> innerClass = getClass(innerName);
+		Class<?, ?> outerClass = getClass(outerName);
+		if (innerClass.getOuterClass() == null) {
+			innerClass.setOuterClass(outerClass);
+		}
+		if (!outerClass.getInnerClasses().contains(innerClass)) {
+			outerClass.getInnerClasses().add(innerClass);
+		}
+		if (innerClass.getOuterMethod() == null) {
+			if (outerMethodName != null) {
+				Method<?, ?> outerMethod = getMethod(outerName, outerMethodName, outerMethodDescription);
+				innerClass.setOuterMethod(outerMethod);
 			}
 		}
 	}

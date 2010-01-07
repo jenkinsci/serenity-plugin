@@ -10,9 +10,6 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
 
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
-import com.ikokoon.serenity.instrumentation.complexity.ComplexityClassAdapter;
-import com.ikokoon.serenity.instrumentation.coverage.CoverageClassAdapter;
-import com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapter;
 import com.ikokoon.serenity.model.Afferent;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Efferent;
@@ -56,14 +53,10 @@ public abstract class ATest implements IConstants {
 	public static void setup() {
 		LoggingConfigurator.configure();
 		logger = Logger.getLogger(ATest.class);
-		StringBuilder builder = new StringBuilder(CoverageClassAdapter.class.getName());
-		builder.append(";");
-		builder.append(DependencyClassAdapter.class.getName());
-		builder.append(";");
-		builder.append(ComplexityClassAdapter.class.getName());
-		System.setProperty(IConstants.INCLUDED_ADAPTERS_PROPERTY, builder.toString());
+		System.setProperty(IConstants.INCLUDED_ADAPTERS_PROPERTY, "coverage;complexity;dependency");
 		Configuration.getConfiguration().includedPackages.add(IConstants.class.getPackage().getName());
 		Configuration.getConfiguration().includedPackages.add(Target.class.getPackage().getName());
+		Configuration.getConfiguration().includedPackages.add(Configuration.class.getPackage().getName());
 	}
 
 	@Before
@@ -137,7 +130,7 @@ public abstract class ATest implements IConstants {
 		afferent.setName(afferentName);
 		klass.getAfferent().add(afferent);
 
-		klass.setInterfaze(true);
+		klass.setInterfaze(false);
 		klass.setName(className);
 		klass.setStability(1d);
 		getMethod(klass);
@@ -153,7 +146,6 @@ public abstract class ATest implements IConstants {
 		method.setComplexity(1d);
 		method.setCoverage(1d);
 		method.setDescription(methodSignature);
-		method.setLines(1d);
 		method.setName(methodName);
 		getLine(method);
 		return method;

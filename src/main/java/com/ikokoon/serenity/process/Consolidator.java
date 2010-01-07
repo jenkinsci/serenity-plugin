@@ -51,12 +51,12 @@ public class Consolidator extends AProcess implements IConstants {
 
 	@SuppressWarnings("unchecked")
 	public void consolidate(Class<?, ?> klass) {
-		logger.info("Class name : " + klass.getName());
+		logger.debug("Class name : " + klass.getName());
 		// Find the parent class
 		String parentClassName = klass.getName().substring(0, klass.getName().indexOf("$"));
-		logger.info("Parent class name : " + parentClassName);
+		logger.debug("Parent class name : " + parentClassName);
 		Class<?, ?> parent = dataBase.find(klass.getClass(), Toolkit.hash(parentClassName));
-		logger.info("Parent : " + parent);
+		logger.debug("Parent : " + parent);
 		if (parent == null) {
 			return;
 		}
@@ -81,7 +81,7 @@ public class Consolidator extends AProcess implements IConstants {
 					}
 				});
 				parentLine.setCounter(line.getCounter());
-				logger.info("Collected line : " + parentLine);
+				logger.debug("Collected line : " + parentLine);
 			}
 		}
 
