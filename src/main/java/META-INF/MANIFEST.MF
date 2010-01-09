@@ -12,5 +12,5 @@ Url: http://wiki.hudson-ci.org/display/HUDSON/Serenity+Plugin
 Plugin-Version: 1.0
 Plugin-Class: com.ikokoon.serenity.hudson.SerenityPlugin
 Hudson-Version: 1.323
-Boot-Class-Path: lib/log4j-1.2.15.jar lib/asm-all-3.0.jar lib/neodatis-odb-1.9-beta-1.jar
+Boot-Class-Path: serenity.jar lib/log4j-1.2.15.jar lib/asm-all-3.0.jar lib/neodatis-odb-1.9-beta-1.jar
 Premain-Class: com.ikokoon.serenity.Transformer

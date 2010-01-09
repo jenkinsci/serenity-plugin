@@ -7,7 +7,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<groupId>com.ikokoon</groupId>
+	<groupId>com.ikokoon.serenity.hudson</groupId>
 	<artifactId>serenity</artifactId>
 	<version>1.0</version>
 	<packaging>hpi</packaging>
@@ -55,14 +55,6 @@
 										<include name="**" />
 									</fileset>
 								</jar>
-								<copy todir="serenity" file="${serenity.jar}" overwrite="true" failonerror="true" />
-								<echo message="Copying the serrenity jar to the test project (Discovery, Findbugs, Search)" />
-								<copy todir="../Discovery/serenity/" file="${serenity.jar}" overwrite="true" failonerror="true" />
-								<copy todir="../Findbugs/serenity/" file="${serenity.jar}" overwrite="true" failonerror="true" />
-								<copy todir="../Search/modules/Ejb/serenity" file="${serenity.jar}" overwrite="true" failonerror="true" />
-
-								<echo message="Copying the HPI file to the Tomcat directory" />
-								<copy todir="C:/Users/Michael/.hudson/plugins" file="${serenity.hpi}" overwrite="true" failonerror="true" />
 							</tasks>
 						</configuration>
 						<goals>
