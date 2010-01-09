@@ -41,12 +41,6 @@ public class SerenityResult implements ISerenityResult {
 	private Logger logger = Logger.getLogger(SerenityResult.class);
 	/** Owner is necessary to render the sidepanel jelly */
 	private AbstractBuild<?, ?> owner;
-	/** The object database with the results from the coverage execution. */
-	private IDataBase dataBase;
-	/** The database file/name. */
-	private String dataBaseFile;
-	/** The base url for Stapler. */
-	private String url = "";
 	/** The model for the currently selected composite. */
 	private String model;
 	/** The source for the currently selected item. */
@@ -61,12 +55,6 @@ public class SerenityResult implements ISerenityResult {
 	public SerenityResult(AbstractBuild<?, ?> abstractBuild) {
 		logger.debug("SerenityResult");
 		this.owner = abstractBuild;
-		dataBaseFile = owner.getRootDir().getAbsolutePath() + File.separator + IConstants.DATABASE_FILE_ODB;
-		logger.debug("Opening database on file : " + dataBaseFile);
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, false, null);
-		Project<?, ?> project = (Project<?, ?>) dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
-		logger.debug("Project : " + project);
-		dataBase.close();
 	}
 
 	/**
@@ -87,15 +75,16 @@ public class SerenityResult implements ISerenityResult {
 	public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) throws Exception {
 		logger.debug("getDynamic:" + token);
 
-		printParameters(req);
+		// printParameters(req);
 
 		String klass = req.getParameter("class");
 		String id = req.getParameter("id");
 
+		IDataBase dataBase = null;
 		try {
 			if (klass != null && id != null) {
-				dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, false, null);
-				Composite<?, ?> composite = this.dataBase.find((java.lang.Class<Composite<?, ?>>) java.lang.Class.forName(klass), Long.parseLong(id));
+				dataBase = getDataBase(owner);
+				Composite<?, ?> composite = dataBase.find((java.lang.Class<Composite<?, ?>>) java.lang.Class.forName(klass), Long.parseLong(id));
 				logger.debug("Class : " + klass + ", id : " + id + ", " + composite);
 				this.model = getModel(composite);
 				// logger.warn("Model : " + model);
@@ -105,16 +94,9 @@ public class SerenityResult implements ISerenityResult {
 		} catch (Exception e) {
 			logger.error("Exception initialising the model and the source for : " + klass + ", " + id, e);
 		} finally {
-			dataBase.close();
+			closeDataBase(dataBase);
 		}
 
-		url = req.getOriginalRequestURI();
-		int endIndex = url.indexOf(this.getClass().getSimpleName());
-		if (endIndex > -1) {
-			url = url.substring(0, endIndex);
-		}
-
-		logger.debug("Url : " + url);
 		return this;
 	}
 
@@ -127,10 +109,6 @@ public class SerenityResult implements ISerenityResult {
 		}
 	}
 
-	public String getUrl() {
-		return url;
-	}
-
 	public Object getOwner() {
 		logger.debug("getOwner");
 		return this.owner;
@@ -138,27 +116,45 @@ public class SerenityResult implements ISerenityResult {
 
 	public boolean hasReport() {
 		logger.debug("hasReport");
+		IDataBase dataBase = null;
 		try {
-			dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, false, null);
+			dataBase = getDataBase(owner);
 			return dataBase.find(Project.class, Toolkit.hash(Project.class.getName())) != null;
 		} finally {
-			dataBase.close();
+			closeDataBase(dataBase);
+		}
+	}
+
+	private IDataBase getDataBase(AbstractBuild<?, ?> owner) {
+		String dataBaseFile = owner.getRootDir().getAbsolutePath() + File.separator + IConstants.DATABASE_FILE_ODB;
+		return IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, false, null);
+	}
+
+	private void closeDataBase(IDataBase dataBase) {
+		try {
+			if (dataBase != null) {
+				dataBase.close();
+			}
+		} catch (Exception e) {
+			logger.error("Exception closing database : " + dataBase, e);
 		}
 	}
 
 	public Project<?, ?> getProject() {
+		IDataBase dataBase = null;
 		try {
-			dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, false, null);
+			dataBase = getDataBase(owner);
 			return dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
 		} finally {
-			dataBase.close();
+			closeDataBase(dataBase);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<Package> getPackages() {
+		IDataBase dataBase = null;
 		try {
-			dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, false, null);
+			dataBase = getDataBase(owner);
 			List<Package> packages = dataBase.find(Package.class);
 			if (packages != null) {
 				Collections.sort(packages, new Comparator<Package>() {
@@ -187,7 +183,7 @@ public class SerenityResult implements ISerenityResult {
 			}
 			return packages;
 		} finally {
-			dataBase.close();
+			closeDataBase(dataBase);
 		}
 	}
 
@@ -229,9 +225,7 @@ public class SerenityResult implements ISerenityResult {
 		if (previousBuild == null) {
 			return composites;
 		}
-		String dataBaseFile = previousBuild.getRootDir().getAbsolutePath() + File.separator + IConstants.DATABASE_FILE_ODB;
-		logger.debug("Previous database file : " + dataBaseFile);
-		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, false, null);
+		IDataBase dataBase = getDataBase(previousBuild);
 		Composite<?, ?> composite = dataBase.find(klass, id);
 		logger.debug("Looking for composite : " + id + ", " + composite);
 		dataBase.close();

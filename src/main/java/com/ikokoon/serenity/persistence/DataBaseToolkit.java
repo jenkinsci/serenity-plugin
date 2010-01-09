@@ -137,14 +137,14 @@ public class DataBaseToolkit {
 		// C:/Eclipse/workspace/Findbugs/serenity
 		// C:/Eclipse/workspace/Search/modules/Ejb/serenity
 		// C:/Eclipse/workspace/Discovery/serenity
-		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, "C:/Eclipse/workspace/Discovery/serenity/serenity.odb", false,
-				null);
+		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class,
+				"C:/Eclipse/workspace/Search/modules/Ejb/serenity/serenity.odb", false, null);
 		DataBaseToolkit.dump(dataBase, new ICriteria() {
 			public boolean satisfied(Composite<?, ?> composite) {
 				if (composite instanceof Class) {
 					logger.info("Source : " + ((Class<?, ?>) composite).getSource());
 				}
-				return true;
+				return false;
 			}
 		}, "Data base toolkit dump : ");
 		Project<?, ?> project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));

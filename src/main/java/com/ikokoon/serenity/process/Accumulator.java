@@ -55,7 +55,7 @@ public class Accumulator extends AProcess {
 		while (stringTokenizer.hasMoreTokens()) {
 			String token = stringTokenizer.nextToken();
 			File file = new File(token);
-			logger.warn("Processing jar : " + token + ", file : " + file.getAbsolutePath());
+			logger.debug("Processing jar : " + token + ", file : " + file.getAbsolutePath());
 			if (!file.exists() || !file.canRead()) {
 				logger.warn("Can't read file : " + file.getAbsolutePath());
 				continue;

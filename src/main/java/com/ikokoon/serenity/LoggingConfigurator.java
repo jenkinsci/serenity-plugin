@@ -43,8 +43,8 @@ public class LoggingConfigurator {
 	private static Properties getProperties() {
 		Properties properties = new Properties();
 		// Root Logger
-		properties.put("log4j.rootLogger", "INFO, ikokoon, file");
-		properties.put("log4j.rootCategory", "INFO, ikokoon");
+		properties.put("log4j.rootLogger", "warn, ikokoon, file");
+		properties.put("log4j.rootCategory", "warn, ikokoon");
 
 		// Serenity application logging file output
 		properties.put("log4j.appender.file", "org.apache.log4j.DailyRollingFileAppender");
@@ -78,14 +78,8 @@ public class LoggingConfigurator {
 		properties.put("log4j.category.org", "WARN");
 
 		// Specific thresholds
-		properties.put("log4j.category.com.ikokoon", "INFO");
-		properties.put("log4j.category.com.ikokoon.toolkit", "INFO");
-		properties.put("log4j.category.com.ikokoon.persistence", "INFO");
-		properties.put("log4j.category.com.ikokoon.instrumentation.process", "INFO");
-		properties.put("log4j.category.com.ikokoon.instrumentation.coverage", "INFO");
-		properties.put("log4j.category.com.ikokoon.instrumentation.complexity", "INFO");
-		properties.put("log4j.category.com.ikokoon.instrumentation.dependency", "INFO");
-		properties.put("log4j.category.com.ikokoon.instrumentation.profiling", "INFO	");
+		properties.put("log4j.category.com.ikokoon", "warn");
+		properties.put("log4j.category.com.ikokoon.serenity", "warn");
 		return properties;
 	}
 
