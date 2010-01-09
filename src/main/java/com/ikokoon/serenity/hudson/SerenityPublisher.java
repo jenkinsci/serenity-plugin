@@ -46,12 +46,18 @@ public class SerenityPublisher extends Recorder {
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 	/** The pattern for the object database file. */
 	private String serenityDatabase = "**/serenity/serenity.odb";
+	/** The web application context. */
+	private String serenityRootURL;
 
 	@DataBoundConstructor
-	public SerenityPublisher(String serenityDatabase) {
+	public SerenityPublisher(String serenityDatabase, String serenityRootURL) {
 		logger.info("SerenityPublisher:" + serenityDatabase);
 		if (serenityDatabase != null) {
 			this.serenityDatabase = serenityDatabase;
+		}
+		if (serenityRootURL != null) {
+			this.serenityRootURL = serenityRootURL;
+			logger.info("Serenity Root URL : " + serenityRootURL);
 		}
 	}
 
@@ -135,6 +141,16 @@ public class SerenityPublisher extends Recorder {
 	public String getSerenityDatabase() {
 		logger.info("getSerenityDatabase");
 		return serenityDatabase;
+	}
+
+	public String getRootURL() {
+		logger.info("getSerenityRootURL : " + serenityRootURL);
+		return serenityRootURL;
+	}
+
+	public void setRootURL(String serenityRootURL) {
+		logger.info("setSerenityRootURL : " + serenityRootURL);
+		this.serenityRootURL = serenityRootURL;
 	}
 
 	/**

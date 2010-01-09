@@ -1,5 +1,7 @@
 package com.ikokoon.serenity.instrumentation;
 
+import java.io.ByteArrayOutputStream;
+
 import org.apache.log4j.Logger;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
@@ -39,12 +41,13 @@ public class VisitorFactory {
 	 *            the byte array of the source code for the class
 	 * @return the class visitor/writer
 	 */
-	public static ClassVisitor getClassVisitor(Class<ClassVisitor>[] classAdapterClasses, String className, byte[] classBytes, byte[] sourceBytes) {
+	public static ClassVisitor getClassVisitor(Class<ClassVisitor>[] classAdapterClasses, String className, byte[] classBytes,
+			ByteArrayOutputStream source) {
 		ClassReader reader = new ClassReader(classBytes);
 		ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
 		ClassVisitor visitor = writer;
 		for (Class<ClassVisitor> klass : classAdapterClasses) {
-			Object[] parameters = new Object[] { visitor, className, classBytes, sourceBytes };
+			Object[] parameters = new Object[] { visitor, className, classBytes, source };
 			visitor = ObjectFactory.getObject(klass, parameters);
 			LOGGER.debug("Adding class visitor : " + visitor);
 		}

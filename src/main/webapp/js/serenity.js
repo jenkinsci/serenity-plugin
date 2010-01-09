@@ -1,5 +1,5 @@
 /**
- * Loads the data in the serenity result. The url is called that will get the
+ * Loads the data in the serenity result. The URL is called that will get the
  * Stapler doDynamic invocation. The model for the class and id will be
  * generated. The frames are then forced to reload which will transfer the model
  * data to the chart and source pages.
@@ -25,18 +25,20 @@ function loadFrames(klass, id) {
 		if (xmlhttp.readyState == 4) {
 			// Received, OK
 			if (xmlhttp.status == 200) {
-				var d = window.parent.document;
+				var d = window.document;
+				// var d = window.parent.document;
 				var f = d.frames ? d.frames['chart'] : d.getElementById('chart');
 				var p = f.document || f.contentWindow.document;
 				p.location.reload(true);
 				// window.parent.document.getElementById('chart').contentWindow.location
-				//		.reload(true);
+				// .reload(true);
+				// alert('Model : ' + xmlhttp.responseText);
 				if (klass == 'com.ikokoon.serenity.model.Class') {
 					f = d.frames ? d.frames['source'] : d.getElementById('source');
 					p = f.document || f.contentWindow.document;
 					p.location.reload(true);
 					// window.parent.document.getElementById('source').contentWindow.location
-					//		.reload(true);
+					// .reload(true);
 				}
 			}
 		}
@@ -44,4 +46,39 @@ function loadFrames(klass, id) {
 	var url = 'SerenityResult/chart?class=' + klass + '&id=' + id;
 	xmlhttp.open('GET', url, true);
 	xmlhttp.send(null);
+}
+
+// Browser Window Size and Position
+// copyright Stephen Chapman, 3rd Jan 2005, 8th Dec 2005
+// you may copy these functions but please keep the copyright notice as well
+function pageWidth() {
+	return window.innerWidth != null ? window.innerWidth
+			: document.documentElement && document.documentElement.clientWidth ? document.documentElement.clientWidth
+					: document.body != null ? document.body.clientWidth : null;
+}
+
+function pageHeight() {
+	return window.innerHeight != null ? window.innerHeight
+			: document.documentElement && document.documentElement.clientHeight ? document.documentElement.clientHeight
+					: document.body != null ? document.body.clientHeight : null;
+}
+
+function posLeft() {
+	return typeof window.pageXOffset != 'undefined' ? window.pageXOffset
+			: document.documentElement && document.documentElement.scrollLeft ? document.documentElement.scrollLeft
+					: document.body.scrollLeft ? document.body.scrollLeft : 0;
+}
+
+function posTop() {
+	return typeof window.pageYOffset != 'undefined' ? window.pageYOffset
+			: document.documentElement && document.documentElement.scrollTop ? document.documentElement.scrollTop
+					: document.body.scrollTop ? document.body.scrollTop : 0;
+}
+
+function posRight() {
+	return posLeft() + pageWidth();
+}
+
+function posBottom() {
+	return posTop() + pageHeight();
 }

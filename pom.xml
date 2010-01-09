@@ -56,7 +56,7 @@
 								<copy todir="../Discovery/serenity/" file="${serenity.jar}" overwrite="true" failonerror="true" />
 								<copy todir="../Findbugs/serenity/" file="${serenity.jar}" overwrite="true" failonerror="true" />
 								<copy todir="../Search/modules/Ejb/serenity" file="${serenity.jar}" overwrite="true" failonerror="true" />
-								
+
 								<echo message="Copying the HPI file to the Tomcat directory" />
 								<copy todir="C:/Users/Michael/.hudson/plugins" file="${serenity.hpi}" overwrite="true" failonerror="true" />
 							</tasks>
@@ -66,6 +66,18 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!-- pertest -->
+					<forkMode>once</forkMode>
+					<excludes>
+						<exclude>**/CollectorTest.java</exclude>
+						<exclude>**/DependencyTest.java</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

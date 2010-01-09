@@ -1,5 +1,6 @@
 package com.ikokoon.serenity;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
@@ -77,11 +78,12 @@ public class Transformer implements ClassFileTransformer, IConstants {
 
 					// Execute the processing chain, child first
 					new Accumulator(null).execute();
-					// new Consolidator(null, dataBase).execute();
 					new Cleaner(null, dataBase).execute();
 					new Aggregator(null, dataBase).execute();
 
-					dataBase.close();
+					if (!dataBase.isClosed()) {
+						dataBase.close();
+					}
 
 					Date end = new Date();
 					long million = 1000 * 1000;
@@ -146,7 +148,8 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		}
 		if (Configuration.getConfiguration().included(className)) {
 			LOGGER.debug("Enhancing class : " + className);
-			ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(CLASS_ADAPTER_CLASSES, className, classBytes, new byte[0]);
+			ByteArrayOutputStream source = new ByteArrayOutputStream(0);
+			ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(CLASS_ADAPTER_CLASSES, className, classBytes, source);
 			byte[] enhancedClassBytes = writer.toByteArray();
 			String writeClasses = Configuration.getConfiguration().getProperty(IConstants.WRITE_CLASSES);
 			if (writeClasses != null && writeClasses.equals(Boolean.TRUE.toString())) {

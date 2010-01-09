@@ -51,8 +51,6 @@ public class SerenityResult implements ISerenityResult {
 	private String model;
 	/** The source for the currently selected item. */
 	private String source;
-	/** The root url to the base of the Hudson war on the server. */
-	private String context = "";
 
 	/**
 	 * Constructor takes the real action that generated the build for the project.
@@ -88,8 +86,6 @@ public class SerenityResult implements ISerenityResult {
 	@SuppressWarnings("unchecked")
 	public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) throws Exception {
 		logger.debug("getDynamic:" + token);
-
-		context = req.getContextPath();
 
 		printParameters(req);
 
@@ -133,10 +129,6 @@ public class SerenityResult implements ISerenityResult {
 
 	public String getUrl() {
 		return url;
-	}
-
-	public String getContext() {
-		return context;
 	}
 
 	public Object getOwner() {

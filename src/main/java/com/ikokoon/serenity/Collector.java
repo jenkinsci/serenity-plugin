@@ -195,9 +195,8 @@ public class Collector implements IConstants {
 	private static final Package<Project<?, ?>, Class<?, ?>> getPackage(String className) {
 		String packageName = Toolkit.classNameToPackageName(className);
 
-		List<Object> parameters = new ArrayList<Object>();
-		parameters.add(packageName);
-		Package<Project<?, ?>, Class<?, ?>> pakkage = (Package<Project<?, ?>, Class<?, ?>>) dataBase.find(Package.class, parameters);
+		long id = Toolkit.hash(packageName);
+		Package<Project<?, ?>, Class<?, ?>> pakkage = (Package<Project<?, ?>, Class<?, ?>>) dataBase.find(Package.class, id);
 
 		if (pakkage == null) {
 			pakkage = new Package<Project<?, ?>, Class<?, ?>>();
@@ -218,9 +217,8 @@ public class Collector implements IConstants {
 
 	@SuppressWarnings("unchecked")
 	private static final Class<Package<?, ?>, Method<?, ?>> getClass(String className) {
-		List<Object> parameters = new ArrayList<Object>();
-		parameters.add(className);
-		Class klass = (Class) dataBase.find(Class.class, parameters);
+		long id = Toolkit.hash(className);
+		Class klass = (Class) dataBase.find(Class.class, id);
 
 		if (klass == null) {
 			klass = new Class();
@@ -247,11 +245,8 @@ public class Collector implements IConstants {
 	private static final Method<?, ?> getMethod(String className, String methodName, String methodDescription) {
 		methodName = methodName.replace('<', ' ').replace('>', ' ').trim();
 
-		List<Object> parameters = new ArrayList<Object>();
-		parameters.add(className);
-		parameters.add(methodName);
-		parameters.add(methodDescription);
-		Method method = (Method) dataBase.find(Method.class, parameters);
+		long id = Toolkit.hash(className, methodName, methodDescription);
+		Method method = (Method) dataBase.find(Method.class, id);
 
 		if (method == null) {
 			method = new Method();
@@ -278,11 +273,8 @@ public class Collector implements IConstants {
 	@SuppressWarnings("unchecked")
 	protected static final Line<?, ?> getLine(String className, String methodName, String methodDescription, double lineNumber) {
 		Line line = null;
-		List<Object> parameters = new ArrayList<Object>();
-		parameters.add(className);
-		parameters.add(methodName);
-		parameters.add(lineNumber);
-		line = (Line) dataBase.find(Line.class, parameters);
+		long id = Toolkit.hash(className, methodName, lineNumber);
+		line = (Line) dataBase.find(Line.class, id);
 
 		if (line == null) {
 			line = new Line();
@@ -303,19 +295,16 @@ public class Collector implements IConstants {
 	}
 
 	private static final Efferent getEfferent(Class<?, ?> klass, String packageName) {
-		List<Object> parameters = new ArrayList<Object>();
-
-		StringBuilder builder = new StringBuilder("<");
-		builder.append("e:");
+		StringBuilder builder = new StringBuilder("<e:");
 		builder.append(packageName);
 		builder.append(">");
-		packageName = builder.toString();
+		String name = builder.toString();
 
-		parameters.add(packageName);
-		Efferent efferent = (Efferent) dataBase.find(Efferent.class, parameters);
+		long id = Toolkit.hash(name);
+		Efferent efferent = (Efferent) dataBase.find(Efferent.class, id);
 		if (efferent == null) {
 			efferent = new Efferent();
-			efferent.setName(packageName);
+			efferent.setName(name);
 
 			klass.getEfferent().add(efferent);
 
@@ -325,19 +314,16 @@ public class Collector implements IConstants {
 	}
 
 	private static final Afferent getAfferent(Class<?, ?> klass, String packageName) {
-		List<Object> parameters = new ArrayList<Object>();
-
-		StringBuilder builder = new StringBuilder("<");
-		builder.append("a:");
+		StringBuilder builder = new StringBuilder("<a:");
 		builder.append(packageName);
 		builder.append(">");
-		packageName = builder.toString();
+		String name = builder.toString();
 
-		parameters.add(packageName);
-		Afferent afferent = (Afferent) dataBase.find(Afferent.class, parameters);
+		long id = Toolkit.hash(name);
+		Afferent afferent = (Afferent) dataBase.find(Afferent.class, id);
 		if (afferent == null) {
 			afferent = new Afferent();
-			afferent.setName(packageName);
+			afferent.setName(name);
 
 			klass.getAfferent().add(afferent);
 

@@ -3,6 +3,7 @@ package com.ikokoon.serenity.instrumentation.coverage;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -34,8 +35,9 @@ public class CoverageTest extends ATest {
 		assertNotNull(exception);
 
 		// Add the coverage instructions
-		ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(new Class[] { CoverageClassAdapter.class }, className, classBytes,
-				sourceBytes);
+		ByteArrayOutputStream source = new ByteArrayOutputStream();
+		source.write(sourceBytes);
+		ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(new Class[] { CoverageClassAdapter.class }, className, classBytes, source);
 		classBytes = writer.toByteArray();
 
 		// Verify the byte code is valid
@@ -66,7 +68,6 @@ public class CoverageTest extends ATest {
 		parameters.add(methodName);
 		parameters.add(96d);
 		Line<?, ?> line = (Line) dataBase.find(Line.class, parameters);
-		logger.info(line);
 		assertNotNull(line);
 		assertTrue(line.getCounter() > 0);
 	}

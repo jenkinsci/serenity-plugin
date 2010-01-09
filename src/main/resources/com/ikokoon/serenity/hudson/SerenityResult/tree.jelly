@@ -1,19 +1,39 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 	<html>
 		<head>
-			<link rel="stylesheet" type="text/css" href="${it.context}/css/style.css" />
-			<link rel="stylesheet" type="text/css" href="${it.context}/plugin/serenity/js/dhtmlxtree.css" />
-			<script type="text/javascript" src="${it.context}/plugin/serenity/js/dhtmlxcommon.js" />
-			<script type="text/javascript" src="${it.context}/plugin/serenity/js/ext/dhtmlxtree_start.js" />
-			<script type="text/javascript" src="${it.context}/plugin/serenity/js/dhtmlxtree.js" />
-			<script type="text/javascript" src="${it.context}/plugin/serenity/js/serenity.js" />
+			<link rel="stylesheet" type="text/css" href="${it.rootURL}/css/style.css" />
+			<link rel="stylesheet" type="text/css" href="${it.rootURL}/plugin/serenity/js/dhtmlxtree.css" />
+			<script type="text/javascript" src="${it.rootURL}/plugin/serenity/js/dhtmlxcommon.js" />
+			<script type="text/javascript" src="${it.rootURL}/plugin/serenity/js/ext/dhtmlxtree_start.js" />
+			<script type="text/javascript" src="${it.rootURL}/plugin/serenity/js/dhtmlxtree.js" />
+			<script type="text/javascript" src="${it.rootURL}/plugin/serenity/js/serenity.js" />
+			<script>
+				dhtmlx.skin = "dhx_skyblue";
+			</script>
+
+			<link rel="stylesheet" type="text/css" href="/css/style.css" />
+			<link rel="stylesheet" type="text/css" href="/plugin/serenity/js/dhtmlxtree.css" />
+			<script type="text/javascript" src="/plugin/serenity/js/dhtmlxcommon.js" />
+			<script type="text/javascript" src="/plugin/serenity/js/ext/dhtmlxtree_start.js" />
+			<script type="text/javascript" src="/plugin/serenity/js/dhtmlxtree.js" />
+			<script type="text/javascript" src="/plugin/serenity/js/serenity.js" />
+			<script>
+				dhtmlx.skin = "dhx_skyblue";
+			</script>
+
+			<link rel="stylesheet" type="text/css" href="/hudson/css/style.css" />
+			<link rel="stylesheet" type="text/css" href="/hudson/plugin/serenity/js/dhtmlxtree.css" />
+			<script type="text/javascript" src="/hudson/plugin/serenity/js/dhtmlxcommon.js" />
+			<script type="text/javascript" src="/hudson/plugin/serenity/js/ext/dhtmlxtree_start.js" />
+			<script type="text/javascript" src="/hudson/plugin/serenity/js/dhtmlxtree.js" />
+			<script type="text/javascript" src="/hudson/plugin/serenity/js/serenity.js" />
 			<script>
 				dhtmlx.skin = "dhx_skyblue";
 			</script>
 		</head>
 		<body>
 
-			<div id="tree" setImagePath="${it.context}/plugin/serenity/js/imgs/" class="dhtmlxTree">
+			<div id="tree" setImagePath="${it.rootURL}/plugin/serenity/js/imgs/" class="dhtmlxTree">
 				<xmp container="true">
 					<j:forEach var="package" items="${it.packages}">
 						<item text="${package.name}" id="${package.id}" call="true">

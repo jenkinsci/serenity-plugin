@@ -25,6 +25,7 @@ import com.ikokoon.serenity.instrumentation.VisitorFactoryTest;
 import com.ikokoon.serenity.instrumentation.complexity.ComplexityTest;
 import com.ikokoon.serenity.instrumentation.coverage.CoverageTest;
 import com.ikokoon.serenity.instrumentation.dependency.DependencyTest;
+import com.ikokoon.serenity.persistence.DataBaseJpaTest;
 import com.ikokoon.serenity.persistence.DataBaseOdbTest;
 import com.ikokoon.serenity.persistence.DataBaseRamTest;
 import com.ikokoon.serenity.persistence.PermutationsTest;
@@ -61,9 +62,10 @@ import com.ikokoon.toolkit.ToolkitTest;
 
 		// Some of the many database/persistence tests
 		DataBaseRamTest.class, // The in memory database
-		DataBaseOdbTest.class // The Neodatis database
+		DataBaseOdbTest.class, // The Neodatis database
+		DataBaseJpaTest.class // The JPA database(experimental)
 
 })
-public class CoreTestSuite {
+public class TestSuite {
 	// DataBaseDb4oTest.class
 }

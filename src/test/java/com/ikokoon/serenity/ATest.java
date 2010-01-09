@@ -1,5 +1,7 @@
 package com.ikokoon.serenity;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -75,7 +77,13 @@ public abstract class ATest implements IConstants {
 
 	@SuppressWarnings("unchecked")
 	protected ClassWriter visitClass(java.lang.Class<?> visitorClass, String className, byte[] classBytes, byte[] sourceBytes) {
-		ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(new java.lang.Class[] { visitorClass }, className, classBytes, sourceBytes);
+		ByteArrayOutputStream source = new ByteArrayOutputStream();
+		try {
+			source.write(sourceBytes);
+		} catch (IOException e) {
+			logger.error("", e);
+		}
+		ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(new java.lang.Class[] { visitorClass }, className, classBytes, source);
 		return writer;
 	}
 

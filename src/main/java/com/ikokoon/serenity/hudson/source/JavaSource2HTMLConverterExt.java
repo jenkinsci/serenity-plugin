@@ -188,7 +188,7 @@ public class JavaSource2HTMLConverterExt extends JavaSource2HTMLConverter {
 	}
 
 	private void writeStyleStart(BufferedWriter writer, JavaSourceStyleEntry style, int lineNumber) throws IOException {
-		if (getCovered(lineNumber - 1)) {
+		if (getCovered(this.klass, lineNumber - 1)) {
 			writer.write("<font color=\"" + style.getHtmlColor() + "\" " + STYLE + ">");
 		} else {
 			writer.write("<font color=\"" + style.getHtmlColor() + "\">");
@@ -211,14 +211,20 @@ public class JavaSource2HTMLConverterExt extends JavaSource2HTMLConverter {
 		writer.write("</font>");
 	}
 
-	private boolean getCovered(double lineNumber) {
-		List<Method<?, ?>> methods = this.klass.getChildren();
+	private boolean getCovered(Class<?, ?> klass, double lineNumber) {
+		List<Method<?, ?>> methods = klass.getChildren();
 		for (Method<?, ?> method : methods) {
 			List<Line<?, ?>> lines = method.getChildren();
 			for (Line<?, ?> line : lines) {
 				if (line.getNumber() == lineNumber) {
 					return line.getCounter() > 0;
 				}
+			}
+		}
+		for (Class<?, ?> innerKlass : klass.getInnerClasses()) {
+			boolean covered = getCovered(innerKlass, lineNumber);
+			if (covered) {
+				return true;
 			}
 		}
 		return false;

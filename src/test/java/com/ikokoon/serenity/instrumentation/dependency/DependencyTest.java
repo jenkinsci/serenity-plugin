@@ -10,10 +10,12 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
+import com.ikokoon.serenity.Configuration;
 import com.ikokoon.serenity.model.Afferent;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Efferent;
 import com.ikokoon.serenity.model.Package;
+import com.ikokoon.serenity.persistence.DataBaseToolkit;
 import com.ikokoon.target.consumer.Annotation;
 import com.ikokoon.target.consumer.TargetConsumer;
 import com.ikokoon.toolkit.Toolkit;
@@ -32,9 +34,14 @@ public class DependencyTest extends ATest {
 
 	@Test
 	public void visit() throws Exception {
+		DataBaseToolkit.clear(dataBase);
+		Configuration.getConfiguration().includedPackages.add(className);
+		Configuration.getConfiguration().includedPackages.add(packageName);
+		Configuration.getConfiguration().includedPackages.add(Logger.class.getPackage().getName());
+
 		visitClass(DependencyClassAdapter.class, className);
 
-		Package<?, ?> pakkage = (Package<?, ?>) dataBase.find(Package.class, Toolkit.hash(java.lang.Class.forName(className).getPackage().getName()));
+		Package<?, ?> pakkage = (Package<?, ?>) dataBase.find(Package.class, Toolkit.hash(packageName));
 		assertNotNull(pakkage);
 		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(className));
 		assertNotNull(klass);
@@ -55,6 +62,7 @@ public class DependencyTest extends ATest {
 
 	private boolean containsAfferentPackage(List<Afferent> afferent, String name) {
 		for (Afferent aff : afferent) {
+			logger.debug("Afferent : " + aff);
 			if (aff.getName().indexOf(name) > -1) {
 				return true;
 			}

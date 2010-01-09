@@ -65,7 +65,7 @@ public class Configuration {
 		}
 		string = Toolkit.slashToDot(string);
 		for (String pattern : includedPackages) {
-			// logger.info("String : " + string + ", pattern : " + pattern + ", index of : " + (string.indexOf(pattern) > -1));	
+			// logger.info("String : " + string + ", pattern : " + pattern + ", index of : " + (string.indexOf(pattern) > -1));
 			if (string.indexOf(pattern) > -1) {
 				return true;
 			}
@@ -109,7 +109,7 @@ public class Configuration {
 		}
 
 		String includedJars = System.getProperty(IConstants.INCLUDED_JARS_PROPERTY);
-		logger.info("Included jars : " + includedJars);
+		logger.debug("Included jars : " + includedJars);
 		if (includedJars != null) {
 			builder.append(File.pathSeparator);
 			builder.append(includedJars);
@@ -119,14 +119,14 @@ public class Configuration {
 
 	private void addIncludedPackages() {
 		String packageNames = System.getProperty(IConstants.INCLUDED_PACKAGES_PROPERTY);
-		logger.info("Package names : " + packageNames);
+		logger.debug("Package names : " + packageNames);
 		if (packageNames != null) {
 			StringTokenizer tokenizer = new StringTokenizer(packageNames, ";: ", false);
 			while (tokenizer.hasMoreTokens()) {
 				String packageName = tokenizer.nextToken();
 				packageName = Toolkit.stripWhitespace(packageName);
 				includedPackages.add(packageName);
-				logger.info("Added package to enhance : " + packageName);
+				logger.debug("Added package to enhance : " + packageName);
 			}
 		}
 	}

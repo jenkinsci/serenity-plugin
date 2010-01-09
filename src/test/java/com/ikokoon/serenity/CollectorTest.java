@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.ikokoon.serenity.model.Afferent;
@@ -30,11 +31,17 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class CollectorTest extends ATest implements IConstants {
 
+	@Before
+	public void before() {
+		DataBaseToolkit.clear(dataBase);
+		Configuration.getConfiguration().includedPackages.add(packageName);
+		Configuration.getConfiguration().includedPackages.add(Toolkit.dotToSlash(packageName));
+	}
+
 	@Test
 	@SuppressWarnings("unchecked")
 	public void collectCoverageLineExecutor() {
-		Configuration.getConfiguration().includedPackages.add(packageName);
-		Configuration.getConfiguration().includedPackages.add(Toolkit.dotToSlash(packageName));
+		before();
 		// After this we expect a package, a class, a method and a line element
 		// dataBase.close();
 		// dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, true, null);
@@ -74,6 +81,7 @@ public class CollectorTest extends ATest implements IConstants {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void collectMetricsInterface() {
+		before();
 		Collector.collectInterface(className, access);
 		Class klass = (Class) dataBase.find(Class.class, Toolkit.hash(className));
 		assertNotNull(klass);
@@ -83,6 +91,7 @@ public class CollectorTest extends ATest implements IConstants {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void collectComplexity() {
+		before();
 		Collector.collectComplexity(className, methodName, methodSignature, complexity/* , 1000 */);
 		Collector.collectComplexity(className, methodName, methodSignature, complexity/* , 1000 */);
 
@@ -96,6 +105,7 @@ public class CollectorTest extends ATest implements IConstants {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void collectMetricsAfferentEfferent() {
+		before();
 		Collector.collectCoverage(className, methodName, methodSignature, (int) lineNumber);
 
 		Class toDelete = (Class) dataBase.find(Class.class, Toolkit.hash(className));
@@ -121,7 +131,8 @@ public class CollectorTest extends ATest implements IConstants {
 
 	@Test
 	public void collectLinePerformance() {
-		int iterations = 10000;
+		before();
+		int iterations = 100000;
 		double executionsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
 			public void execute() {
 				double lineNumber = System.currentTimeMillis() * Math.random();

@@ -7,6 +7,8 @@ import static junit.framework.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Test;
+
 import com.ikokoon.serenity.ATest;
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.model.Class;
@@ -16,6 +18,11 @@ import com.ikokoon.serenity.model.Package;
 import com.ikokoon.toolkit.Toolkit;
 
 public class DataBaseJpaTest extends ATest {
+
+	@Test
+	public void dummy() {
+		// And nothing
+	}
 
 	@SuppressWarnings("unchecked")
 	public void memoryUsage() {

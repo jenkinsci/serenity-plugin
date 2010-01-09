@@ -43,8 +43,8 @@ public class AccumulatorTest extends ATest implements IConstants {
 
 	@Test
 	public void accumulate() {
-		logger.info("Included : " + Configuration.getConfiguration().includedPackages);
-		logger.info("Excluded : " + Configuration.getConfiguration().excludedPackages);
+		logger.debug("Included : " + Configuration.getConfiguration().includedPackages);
+		logger.debug("Excluded : " + Configuration.getConfiguration().excludedPackages);
 		Accumulator accumulator = new Accumulator(null);
 		accumulator.execute();
 		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(Target.class.getName()));

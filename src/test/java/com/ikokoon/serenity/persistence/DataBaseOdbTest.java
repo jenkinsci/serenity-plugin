@@ -20,7 +20,7 @@ import com.ikokoon.toolkit.Toolkit;
 
 public class DataBaseOdbTest extends ATest {
 
-	@Test
+	// @Test
 	@SuppressWarnings("unchecked")
 	public void memoryUsage() {
 		DataBaseToolkit.clear(dataBase);

@@ -1,5 +1,6 @@
 package com.ikokoon.serenity.instrumentation.dependency;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 import org.apache.log4j.Logger;
@@ -40,7 +41,7 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	/** The name of the class to collect dependency metrics on. */
 	private String className;
 	/** The source for the class if available. */
-	private byte[] sourceBytes;
+	private ByteArrayOutputStream source;
 
 	/**
 	 * Constructor initialises a {@link DependencyClassAdapter} and takes the parent visitor and the name of the class that will be analysed for
@@ -50,13 +51,14 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	 *            the parent visitor for the class
 	 * @param className
 	 *            the name of the class to be analysed
-	 * @param sourceBytes
-	 *            the byte array of the Java source
+	 * @param source
+	 *            the Java source
 	 */
-	public DependencyClassAdapter(ClassVisitor classVisitor, String className, byte[] sourceBytes) {
+	public DependencyClassAdapter(ClassVisitor classVisitor, String className, ByteArrayOutputStream source) {
 		super(classVisitor);
 		this.className = Toolkit.slashToDot(className);
-		this.sourceBytes = sourceBytes;
+		this.source = source;
+		logger.debug("Class name : " + className + ", source : " + source);
 	}
 
 	/**
@@ -167,9 +169,8 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitSource : " + source + ", " + debug);
 		}
-		if (sourceBytes != null && sourceBytes.length > 0) {
-			String code = new String(sourceBytes);
-			Collector.collectSource(className, code);
+		if (this.source != null && this.source.size() > 0) {
+			Collector.collectSource(className, this.source.toString());
 		}
 		super.visitSource(source, debug);
 	}
