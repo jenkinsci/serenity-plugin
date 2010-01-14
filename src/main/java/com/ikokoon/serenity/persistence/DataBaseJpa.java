@@ -1,6 +1,7 @@
 package com.ikokoon.serenity.persistence;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -129,6 +130,11 @@ public class DataBaseJpa extends DataBase {
 			}
 		}
 		return entityManager;
+	}
+
+	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, Map<String, Object> parameters) {
+		// TODO implement me
+		throw new RuntimeException("Not implempented.");
 	}
 
 }

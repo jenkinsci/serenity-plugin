@@ -1,19 +1,11 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 	<html>
 		<head>
-			<title>Serenity Chart</title>
-			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/excanvas.compiled.js"></script>
-			<script type="text/javascript" src="{rootURL}/plugin/serenity/js/jquery.min.js" />
-			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/highcharts.js" />
-
-			<script type="text/javascript" src="/plugin/serenity/js/excanvas.compiled.js"></script>
-			<script type="text/javascript" src="/plugin/serenity/js/jquery.min.js" />
-			<script type="text/javascript" src="/plugin/serenity/js/highcharts.js" />
-
-			<script type="text/javascript" src="/hudson/plugin/serenity/js/excanvas.compiled.js"></script>
-			<script type="text/javascript" src="/hudson/plugin/serenity/js/jquery.min.js" />
-			<script type="text/javascript" src="/hudson/plugin/serenity/js/highcharts.js" />
+			<script type="text/javascript">
+				${it.getFile("excanvas.compiled.js")}
+				${it.getFile("jquery.min.js")}
+				${it.getFile("highcharts.js")}
+			</script>
 		</head>
 		<body>
 			<div id="container" style="width: 100%; height: 140px"></div>

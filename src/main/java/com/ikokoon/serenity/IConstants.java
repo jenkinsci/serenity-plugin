@@ -10,11 +10,13 @@ package com.ikokoon.serenity;
 public interface IConstants {
 
 	/** The Serenity directory for work and output data, i.e. the database. './serenity'. */
-	public String SERENITY_DIRECTORY = "./serenity/";
+	public String SERENITY_DIRECTORY = "./serenity";
+	/** The Serenity directory for the soruce to HTML. */
+	public String SERENITY_SOURCE = SERENITY_DIRECTORY + "/source";
 	/** The database file, 'serenity.ram', 'serenity.odb', 'serenity.jpa'. */
-	public String DATABASE_FILE_RAM = SERENITY_DIRECTORY + "serenity.ram";
-	public String DATABASE_FILE_ODB = SERENITY_DIRECTORY + "serenity.odb";
-	public String DATABASE_FILE_JPA = SERENITY_DIRECTORY + "serenity.jpa";
+	public String DATABASE_FILE_RAM = SERENITY_DIRECTORY + "/serenity.ram";
+	public String DATABASE_FILE_ODB = SERENITY_DIRECTORY + "/serenity.odb";
+	public String DATABASE_FILE_JPA = SERENITY_DIRECTORY + "/serenity.jpa";
 	/** The JPA persistence unit name, 'SerenityPersistenceUnit'. */
 	public String SERENITY_PERSISTENCE_UNIT = "SerenityPersistenceUnit";
 	/** The logging configuration file, '/META-INF/log4j.properties'. */

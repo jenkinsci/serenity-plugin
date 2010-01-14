@@ -11,12 +11,12 @@ import java.util.List;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
-import com.ikokoon.serenity.PerformanceTester;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Composite;
 import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
+import com.ikokoon.toolkit.PerformanceTester;
 import com.ikokoon.toolkit.Toolkit;
 
 public class DataBaseRamTest extends ATest {

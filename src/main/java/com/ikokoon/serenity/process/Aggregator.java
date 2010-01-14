@@ -1,5 +1,6 @@
 package com.ikokoon.serenity.process;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,6 +37,8 @@ import com.ikokoon.toolkit.Toolkit;
  * @version 01.00
  */
 public class Aggregator extends AProcess implements IConstants {
+
+	private static final int PRECISION = 2;
 
 	/** The database to aggregate the data for. */
 	private IDataBase dataBase;
@@ -144,6 +147,8 @@ public class Aggregator extends AProcess implements IConstants {
 		project.setMethods(methods.size());
 		project.setClasses(classes);
 		project.setPackages(packages.size());
+
+		setPrecision(project);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -152,6 +157,7 @@ public class Aggregator extends AProcess implements IConstants {
 			List<Class<?, ?>> classes = pakkage.getChildren();
 			aggregateClasses(classes);
 			aggregatePackage(pakkage);
+			setPrecision(pakkage);
 		}
 	}
 
@@ -228,6 +234,7 @@ public class Aggregator extends AProcess implements IConstants {
 			List<Method<?, ?>> methods = klass.getChildren();
 			aggregateMethods(methods);
 			aggregateClass(klass);
+			setPrecision(klass);
 		}
 	}
 
@@ -372,6 +379,22 @@ public class Aggregator extends AProcess implements IConstants {
 				}
 			} catch (Exception e) {
 				logger.error("Exception peocessing the method element : " + method.getName(), e);
+			}
+		}
+	}
+
+	private void setPrecision(Composite<?, ?> composite) {
+		Field[] fields = composite.getClass().getDeclaredFields();
+		for (Field field : fields) {
+			if (double.class.isAssignableFrom(field.getType()) || Double.class.isAssignableFrom(field.getDeclaringClass())) {
+				try {
+					field.setAccessible(true);
+					double value = field.getDouble(composite);
+					value = Toolkit.format(value, PRECISION);
+					field.setDouble(composite, value);
+				} catch (Exception e) {
+					logger.error("Exception accessing the field : " + field, e);
+				}
 			}
 		}
 	}

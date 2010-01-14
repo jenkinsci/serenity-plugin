@@ -3,7 +3,6 @@ package com.ikokoon.serenity.hudson.source;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.List;
 
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Line;
@@ -33,8 +32,10 @@ import de.java2html.util.StringHolder;
  */
 public class JavaSource2HTMLConverterExt extends JavaSource2HTMLConverter {
 
-	public static boolean java2HtmlHomepageLinkEnabled = false;
-	private static final String HTML_BLOCK_HEADER = "\n\n<!-- ======================================================== -->\n"
+	// private static Logger LOGGER = Logger.getLogger(JavaSource2HTMLConverterExt.class);
+
+	public boolean java2HtmlHomepageLinkEnabled = false;
+	private final String HTML_BLOCK_HEADER = "\n\n<!-- ======================================================== -->\n"
 			+ "<!-- = Java Sourcecode to HTML automatically converted code = -->\n<!-- =   " + Version.getJava2HtmlConverterTitle() + " "
 			+ Version.getBuildDate() + " by Markus Gebhard  markus@jave.de   = -->\n"
 			+ "<!-- =     Further information: http://www.java2html.de     = -->\n" + "<div align=\"{0}\" class=\"java\">\n"
@@ -212,18 +213,24 @@ public class JavaSource2HTMLConverterExt extends JavaSource2HTMLConverter {
 	}
 
 	private boolean getCovered(Class<?, ?> klass, double lineNumber) {
-		List<Method<?, ?>> methods = klass.getChildren();
-		for (Method<?, ?> method : methods) {
-			List<Line<?, ?>> lines = method.getChildren();
-			for (Line<?, ?> line : lines) {
+		for (Method<?, ?> method : klass.getChildren()) {
+			// LOGGER.warn("Method : " + method);
+			// LOGGER.warn("Children : " + method.getChildren());
+			for (Line<?, ?> line : method.getChildren()) {
+				// LOGGER.warn("Line : " + line + ", line number : " + line.getNumber() + ", number : " + lineNumber);
 				if (line.getNumber() == lineNumber) {
-					return line.getCounter() > 0;
+					boolean lineCovered = line.getCounter() > 0;
+					if (lineCovered) {
+						// LOGGER.warn("Line covered : " + lineCovered);
+					}
+					return lineCovered;
 				}
 			}
 		}
 		for (Class<?, ?> innerKlass : klass.getInnerClasses()) {
 			boolean covered = getCovered(innerKlass, lineNumber);
 			if (covered) {
+				// LOGGER.warn("Covered : " + covered);
 				return true;
 			}
 		}

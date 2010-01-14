@@ -12,23 +12,46 @@
 					<script type="text/javascript" src="${rootURL}/plugin/serenity/js/dhtmlxcommon.js" />
 					<script type="text/javascript" src="${rootURL}/plugin/serenity/js/ext/dhtmlxtree_start.js" />
 					<script type="text/javascript" src="${rootURL}/plugin/serenity/js/dhtmlxtree.js" />
-					<script>
+					<script type="text/javascript">
 						dhtmlx.skin = "dhx_skyblue";
 						
 						function resizeFrames() {
+							var usableHeight = pageHeight() * 85 / 100;
+							
 							var chart = document.frames ? document.frames['chart'] : document.getElementById('chart');
 							chart.height = 180;
+							
 							var source = document.frames ? document.frames['source'] : document.getElementById('source');
-							source.height = (pageHeight() * 75 / 100) - chart.height;
-							// alert('Width : ' + pageWidth() + ', height : ' + pageHeight() + ', chart : ' + chart.height + ', source : ' + source.height);
+							source.height = usableHeight - chart.height;
+							
+							var treeDiv = document.getElementById('treeDiv');
+							treeDiv.style.width = 330;
+							treeDiv.style.height = usableHeight;
+							// alert('Width : ' + pageWidth() + ', height : ' + pageHeight() + ', chart : ' + chart.height + ', source : ' + source.height + ', tree div : ' + treeDiv.style.height);
+						}
+						
+						var tree;
+						function loadTree() {
+							tree = dhtmlXTreeFromHTML('treeDiv');
+							// alert('Load tree : ' + tree);
+							tree.setOnClickHandler(onClick);
+							// alert('Load tree : 0 : ' + tree);
+						}
+						
+						function onClick(id) {
+							// alert('On click : ' + id + ', ' + tree);
+							var klassName = tree.getUserData(id, 'klass');
+							loadFrames(klassName, id);
 						}
 						
 						window.onresize = function () {
 							resizeFrames();
+							// loadTree();
 						}
 						
 						window.onload = function() {
 							resizeFrames();
+							loadTree();
 						}
 					</script>
 				</head>
@@ -50,7 +73,8 @@
 						</tr>
 						<tr>
 							<td width="30%" valign="top">
-								<div id="tree" setImagePath="${rootURL}/plugin/serenity/js/imgs/" class="dhtmlxTree" style="width : 330; height : 465;">
+								<!-- style="width : 330; height : 465;" -->
+								<div id="treeDiv" setImagePath="${rootURL}/plugin/serenity/js/imgs/" class="dhtmlxTree">
 									<xmp container="true">
 										<j:forEach var="package" items="${it.packages}">
 											<item text="${package.name} (${package.coverage},${package.complexity},${package.stability})" id="${package.id}" call="true">
@@ -65,15 +89,6 @@
 										</j:forEach>
 									</xmp>
 								</div>
-
-								<script>
-									var tree = dhtmlXTreeFromHTML('tree');
-									tree.setOnClickHandler(onClick);
-									function onClick(id) {
-										var klassName = tree.getUserData(id, 'klass');
-										loadFrames(klassName, id);
-									}
-    							</script>
 							</td>
 							<td width="70%" height="100%" valign="top">
 								<table width="100%" height="100%" border="0">

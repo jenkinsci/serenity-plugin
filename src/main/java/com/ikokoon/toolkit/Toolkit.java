@@ -256,6 +256,25 @@ public class Toolkit {
 		}
 	}
 
+	public interface IFileFilter {
+		public boolean matches(File file);
+	}
+
+	public static void findFiles(File file, IFileFilter filter, List<File> list) {
+		if (file == null || !file.exists()) {
+			return;
+		}
+		if (filter.matches(file)) {
+			list.add(file);
+		}
+		if (file.isDirectory()) {
+			File files[] = file.listFiles();
+			for (int j = 0; files != null && j < files.length; j++) {
+				findFiles(files[j], filter, list);
+			}
+		}
+	}
+
 	/**
 	 * Reads the contents of the file and returns the contents in a byte array form.
 	 * 

@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 import javax.persistence.Entity;
 
-import com.ikokoon.toolkit.Toolkit;
-
 /**
  * @author Michael Couck
  * @since 12.08.09
@@ -37,7 +35,7 @@ public class Line<E, F> extends Composite<Class<?, ?>, Object> implements Compar
 	}
 
 	public double getNumber() {
-		return Toolkit.format(number, PRECISION);
+		return number;
 	}
 
 	public void setNumber(double number) {
@@ -45,7 +43,7 @@ public class Line<E, F> extends Composite<Class<?, ?>, Object> implements Compar
 	}
 
 	public double getCounter() {
-		return Toolkit.format(counter, PRECISION);
+		return counter;
 	}
 
 	public void setCounter(double counter) {

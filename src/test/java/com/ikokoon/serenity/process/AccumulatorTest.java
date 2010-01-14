@@ -50,4 +50,5 @@ public class AccumulatorTest extends ATest implements IConstants {
 		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(Target.class.getName()));
 		assertNotNull(klass);
 	}
+
 }

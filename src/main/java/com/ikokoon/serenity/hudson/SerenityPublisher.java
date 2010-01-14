@@ -14,8 +14,10 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.json.JSONObject;
 
@@ -25,6 +27,7 @@ import org.kohsuke.stapler.StaplerRequest;
 
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.LoggingConfigurator;
+import com.ikokoon.toolkit.Toolkit;
 
 /**
  * This class runs at the end of the build, called by Hudson. The purpose is to copy the database file from the output directory for the reports
@@ -44,44 +47,97 @@ public class SerenityPublisher extends Recorder {
 	/** The description for Hudson. */
 	@Extension
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-	/** The pattern for the object database file. */
-	private String serenityDatabase = "**/serenity/serenity.odb";
-	/** The web application context. */
-	private String serenityRootURL;
 
 	@DataBoundConstructor
-	public SerenityPublisher(String serenityDatabase, String serenityRootURL) {
-		logger.info("SerenityPublisher:" + serenityDatabase);
-		if (serenityDatabase != null) {
-			this.serenityDatabase = serenityDatabase;
-		}
-		if (serenityRootURL != null) {
-			this.serenityRootURL = serenityRootURL;
-			logger.info("Serenity Root URL : " + serenityRootURL);
-		}
+	public SerenityPublisher() {
 	}
 
+	/** The pattern for the object database file. */
+	// private String serenityDatabase = "**/serenity/serenity.odb";
+	// @DataBoundConstructor
+	// public SerenityPublisher(String serenityDatabase) {
+	// logger.debug("SerenityPublisher:" + serenityDatabase);
+	// if (serenityDatabase != null) {
+	// // this.serenityDatabase = serenityDatabase;
+	// }
+	// }
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener buildListener) throws InterruptedException, IOException {
 		logger.debug("perform");
-		PrintStream consolePrintStream = buildListener.getLogger();
-		consolePrintStream.println("Looking for database file : " + serenityDatabase);
-		if (serenityDatabase == null) {
-			consolePrintStream.println("Skipping coverage reports as serenityDatabase is null");
-			return false;
-		}
+		// PrintStream consolePrintStream = buildListener.getLogger();
+		// consolePrintStream.println("Looking for database file : " + serenityDatabase);
+
+		// if (serenityDatabase == null) {
+		// consolePrintStream.println("Skipping coverage reports as serenityDatabase is null");
+		// return false;
+		// }
+
 		if (!Result.SUCCESS.equals(build.getResult())) {
-			buildListener.getLogger().println("Build was not successful... but will still publish the report");
-			// return true;
+			buildListener.getLogger().println("Build was not successful... but will still try to publish the report");
 		}
 
 		buildListener.getLogger().println("Publishing Serenity reports...");
 
+		copyDataBaseToBuildDirectory(build, buildListener);
+		copySourceToBuildDirectory(build, buildListener);
+
+		buildListener.getLogger().println("Accessing Serenity results...");
+		ISerenityResult result = new SerenityResult(build);
+		SerenityBuildAction buildAction = new SerenityBuildAction(build, result);
+		build.getActions().add(buildAction);
+
+		return true;
+	}
+
+	private boolean copySourceToBuildDirectory(AbstractBuild<?, ?> build, final BuildListener buildListener) throws InterruptedException, IOException {
+		FilePath moduleRoot = build.getWorkspace();
+		buildListener.getLogger().println("Module root : " + moduleRoot.toURI().getRawPath());
+
+		List<File> sourceDirectories = new ArrayList<File>();
+		Toolkit.findFiles(new File(moduleRoot.toURI().getRawPath()), new Toolkit.IFileFilter() {
+			public boolean matches(File file) {
+				if (file == null) {
+					return false;
+				}
+				if (!file.isDirectory()) {
+					return false;
+				}
+				String filePath = file.getAbsolutePath();
+				filePath = Toolkit.replaceAll(filePath, "\\", "/");
+				if (filePath.indexOf("serenity/source") == -1) {
+					return false;
+				}
+				return true;
+			}
+		}, sourceDirectories);
+
+		FilePath buildDirectory = new FilePath(build.getRootDir());
+		FilePath buildSourceDirectory = new FilePath(buildDirectory, IConstants.SERENITY_SOURCE);
+		File targetSourceDirectory = new File(buildSourceDirectory.toURI().getRawPath());
+
+		try {
+			for (File sourceDirectory : sourceDirectories) {
+				buildListener.getLogger().println(
+						"Publishing serenity source from : " + sourceDirectory.getAbsolutePath() + ", to : "
+								+ buildSourceDirectory.toURI().getRawPath());
+				Toolkit.copyFile(sourceDirectory, targetSourceDirectory);
+			}
+		} catch (IOException e) {
+			Util.displayIOException(e, buildListener);
+			e.printStackTrace(buildListener.fatalError("Unable to copy Serenity database file from : " + sourceDirectories + ", to : "
+					+ buildDirectory));
+		}
+		return true;
+	}
+
+	private boolean copyDataBaseToBuildDirectory(AbstractBuild<?, ?> build, BuildListener buildListener) throws InterruptedException, IOException {
+		String serenityDatabase = "**/serenity/serenity.odb";
 		FilePath[] reports = new FilePath[0];
 		final FilePath moduleRoot = build.getWorkspace();
+		buildListener.getLogger().println("Module root : " + moduleRoot.toURI().getRawPath());
 		try {
 			reports = moduleRoot.list(serenityDatabase);
 		} catch (IOException e) {
@@ -106,6 +162,7 @@ public class SerenityPublisher extends Recorder {
 		FilePath buildTarget = new FilePath(build.getRootDir());
 		FilePath singleReport = reports[0];
 		FilePath targetPath = new FilePath(buildTarget, IConstants.DATABASE_FILE_ODB);
+
 		try {
 			buildListener.getLogger().println(
 					"Publishing serenity db from : " + singleReport.toURI().getRawPath() + ", to : " + targetPath.toURI().getRawPath());
@@ -115,43 +172,24 @@ public class SerenityPublisher extends Recorder {
 			e.printStackTrace(buildListener.fatalError("Unable to copy Serenity database file from : " + singleReport + ", to : " + buildTarget));
 			build.setResult(Result.FAILURE);
 		}
-
-		buildListener.getLogger().println("Accessing Serenity results...");
-		ISerenityResult result = new SerenityResult(build);
-		SerenityBuildAction buildAction = new SerenityBuildAction(build, result);
-		build.getActions().add(buildAction);
-
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public Action getProjectAction(hudson.model.Project project) {
-		logger.info("getProjectAction");
-		return new SerenityProjectAction(project);
+	public Action getProjectAction(AbstractProject abstractProject) {
+		logger.debug("getProjectAction(AbstractProject)");
+		return new SerenityProjectAction(abstractProject);
 	}
 
-	public void setSerenityDatabase(String serenityDatabase) {
-		logger.info("setSerenityDatabase");
-		this.serenityDatabase = serenityDatabase;
-	}
-
-	public String getSerenityDatabase() {
-		logger.info("getSerenityDatabase");
-		return serenityDatabase;
-	}
-
-	public String getRootURL() {
-		logger.info("getSerenityRootURL : " + serenityRootURL);
-		return serenityRootURL;
-	}
-
-	public void setRootURL(String serenityRootURL) {
-		logger.info("setSerenityRootURL : " + serenityRootURL);
-		this.serenityRootURL = serenityRootURL;
-	}
+	// public void setSerenityDatabase(String serenityDatabase) {
+	// logger.debug("setSerenityDatabase");
+	// this.serenityDatabase = serenityDatabase;
+	// }
+	//
+	// public String getSerenityDatabase() {
+	// logger.debug("getSerenityDatabase");
+	// return serenityDatabase;
+	// }
 
 	/**
 	 * Descriptor for {@link SerenityPublisher}. Used as a singleton. The class is marked as public so that it can be accessed from views.
@@ -166,19 +204,20 @@ public class SerenityPublisher extends Recorder {
 		 */
 		DescriptorImpl() {
 			super(SerenityPublisher.class);
-			logger.info("DescriptorImpl");
+			logger.debug("DescriptorImpl");
 		}
 
 		/**
 		 * This human readable name is used in the configuration screen.
 		 */
 		public String getDisplayName() {
-			logger.info("getDisplayName");
+			logger.debug("getDisplayName");
 			return "Publish Serenity Report";
 		}
 
 		@Override
 		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+			logger.debug("isApplicable");
 			return true;
 		}
 
@@ -187,7 +226,7 @@ public class SerenityPublisher extends Recorder {
 		 */
 		@Override
 		public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
-			logger.info("configure");
+			logger.debug("configure");
 			req.bindParameters(this, "serenity.");
 			save();
 			return super.configure(req, json);
@@ -198,14 +237,14 @@ public class SerenityPublisher extends Recorder {
 		 */
 		@Override
 		public SerenityPublisher newInstance(StaplerRequest req, JSONObject json) throws FormException {
-			logger.info("newInstance");
+			logger.debug("newInstance");
 			SerenityPublisher instance = req.bindParameters(SerenityPublisher.class, "serenity.");
 			return instance;
 		}
 	}
 
 	public BuildStepMonitor getRequiredMonitorService() {
-		logger.info("getRequiredMonitorService");
+		logger.debug("getRequiredMonitorService");
 		return BuildStepMonitor.STEP;
 	}
 }

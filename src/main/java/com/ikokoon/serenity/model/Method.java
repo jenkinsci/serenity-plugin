@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 import javax.persistence.Entity;
 
-import com.ikokoon.toolkit.Toolkit;
-
 /**
  * @author Michael Couck
  * @since 12.08.09
@@ -46,7 +44,7 @@ public class Method<E, F> extends Composite<Class<?, ?>, Line<?, ?>> implements 
 	}
 
 	public double getComplexity() {
-		return Toolkit.format(complexity, PRECISION);
+		return complexity;
 	}
 
 	public void setComplexity(double complexity) {
@@ -54,7 +52,7 @@ public class Method<E, F> extends Composite<Class<?, ?>, Line<?, ?>> implements 
 	}
 
 	public double getCoverage() {
-		return Toolkit.format(coverage, PRECISION);
+		return coverage;
 	}
 
 	public void setCoverage(double coverage) {

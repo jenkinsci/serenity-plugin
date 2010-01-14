@@ -9,8 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 
-import com.ikokoon.toolkit.Toolkit;
-
 /**
  * @author Michael Couck
  * @since 12.08.09
@@ -24,7 +22,6 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 	private Class<?, ?> outerClass;
 	private Method<?, ?> outerMethod;
 	private List<Class<?, ?>> innerClasses = new ArrayList<Class<?, ?>>();
-	private String source;
 
 	private double coverage;
 	private double complexity;
@@ -70,26 +67,8 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 		this.innerClasses = innerClasses;
 	}
 
-	public String getSource() {
-		return source;
-	}
-
-	public void setSource(String source) {
-		this.source = source;
-	}
-
-	public String getNameTrimmed() {
-		if (getName() != null) {
-			int index = getName().lastIndexOf('.');
-			if (index > -1) {
-				return getName().substring(index + 1, getName().length());
-			}
-		}
-		return null;
-	}
-
 	public double getComplexity() {
-		return Toolkit.format(complexity, PRECISION);
+		return complexity;
 	}
 
 	public void setComplexity(double complexity) {
@@ -97,7 +76,7 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 	}
 
 	public double getCoverage() {
-		return Toolkit.format(coverage, PRECISION);
+		return coverage;
 	}
 
 	public void setCoverage(double coverage) {
@@ -105,7 +84,7 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 	}
 
 	public double getStability() {
-		return Toolkit.format(stability, PRECISION);
+		return stability;
 	}
 
 	public void setStability(double stability) {
@@ -113,7 +92,7 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 	}
 
 	public double getEfference() {
-		return Toolkit.format(efference, PRECISION);
+		return efference;
 	}
 
 	public void setEfference(double efferent) {
@@ -121,7 +100,7 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 	}
 
 	public double getAfference() {
-		return Toolkit.format(afference, PRECISION);
+		return afference;
 	}
 
 	public void setAfference(double afferent) {

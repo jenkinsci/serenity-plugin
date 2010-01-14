@@ -5,11 +5,11 @@ import hudson.model.AbstractProject;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -19,8 +19,6 @@ import org.kohsuke.stapler.StaplerResponse;
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.hudson.modeller.HighchartsModeller;
 import com.ikokoon.serenity.hudson.modeller.IModeller;
-import com.ikokoon.serenity.hudson.source.CoverageSourceCode;
-import com.ikokoon.serenity.hudson.source.ISourceCode;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Composite;
 import com.ikokoon.serenity.model.Package;
@@ -40,11 +38,9 @@ public class SerenityResult implements ISerenityResult {
 
 	private Logger logger = Logger.getLogger(SerenityResult.class);
 	/** Owner is necessary to render the sidepanel jelly */
-	private AbstractBuild<?, ?> owner;
-	/** The model for the currently selected composite. */
-	private String model;
-	/** The source for the currently selected item. */
-	private String source;
+	private AbstractBuild<?, ?> abstractBuild;
+	/** The currently selected composite. */
+	private Composite<?, ?> composite;
 
 	/**
 	 * Constructor takes the real action that generated the build for the project.
@@ -54,7 +50,7 @@ public class SerenityResult implements ISerenityResult {
 	 */
 	public SerenityResult(AbstractBuild<?, ?> abstractBuild) {
 		logger.debug("SerenityResult");
-		this.owner = abstractBuild;
+		this.abstractBuild = abstractBuild;
 	}
 
 	/**
@@ -83,13 +79,9 @@ public class SerenityResult implements ISerenityResult {
 		IDataBase dataBase = null;
 		try {
 			if (klass != null && id != null) {
-				dataBase = getDataBase(owner);
-				Composite<?, ?> composite = dataBase.find((java.lang.Class<Composite<?, ?>>) java.lang.Class.forName(klass), Long.parseLong(id));
+				dataBase = getDataBase(abstractBuild);
+				composite = dataBase.find((java.lang.Class<Composite<?, ?>>) java.lang.Class.forName(klass), Long.parseLong(id));
 				logger.debug("Class : " + klass + ", id : " + id + ", " + composite);
-				this.model = getModel(composite);
-				// logger.warn("Model : " + model);
-				this.source = getSource(composite);
-				// logger.warn("Source : " + source);
 			}
 		} catch (Exception e) {
 			logger.error("Exception initialising the model and the source for : " + klass + ", " + id, e);
@@ -100,50 +92,38 @@ public class SerenityResult implements ISerenityResult {
 		return this;
 	}
 
-	@SuppressWarnings("unchecked")
-	protected void printParameters(StaplerRequest req) {
-		Enumeration<String> parameterNames = req.getParameterNames();
-		while (parameterNames.hasMoreElements()) {
-			String parameterName = parameterNames.nextElement();
-			logger.warn("Parameter : " + parameterName + ", value : " + req.getParameter(parameterName));
-		}
-	}
-
 	public Object getOwner() {
 		logger.debug("getOwner");
-		return this.owner;
+		return this.abstractBuild;
+	}
+
+	public String getName() {
+		logger.debug("getName");
+		if (abstractBuild != null) {
+			AbstractProject<?, ?> abstractProject = abstractBuild.getProject();
+			if (abstractProject != null) {
+				return abstractProject.getName();
+			}
+		}
+		return "No name Project...";
 	}
 
 	public boolean hasReport() {
 		logger.debug("hasReport");
 		IDataBase dataBase = null;
 		try {
-			dataBase = getDataBase(owner);
+			dataBase = getDataBase(abstractBuild);
 			return dataBase.find(Project.class, Toolkit.hash(Project.class.getName())) != null;
 		} finally {
 			closeDataBase(dataBase);
 		}
 	}
 
-	private IDataBase getDataBase(AbstractBuild<?, ?> owner) {
-		String dataBaseFile = owner.getRootDir().getAbsolutePath() + File.separator + IConstants.DATABASE_FILE_ODB;
-		return IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, false, null);
-	}
-
-	private void closeDataBase(IDataBase dataBase) {
-		try {
-			if (dataBase != null) {
-				dataBase.close();
-			}
-		} catch (Exception e) {
-			logger.error("Exception closing database : " + dataBase, e);
-		}
-	}
-
 	public Project<?, ?> getProject() {
+		logger.debug("getProject");
 		IDataBase dataBase = null;
 		try {
-			dataBase = getDataBase(owner);
+			dataBase = getDataBase(abstractBuild);
 			return dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
 		} finally {
 			closeDataBase(dataBase);
@@ -152,9 +132,10 @@ public class SerenityResult implements ISerenityResult {
 
 	@SuppressWarnings("unchecked")
 	public List<Package> getPackages() {
+		logger.debug("getPackages");
 		IDataBase dataBase = null;
 		try {
-			dataBase = getDataBase(owner);
+			dataBase = getDataBase(abstractBuild);
 			List<Package> packages = dataBase.find(Package.class);
 			if (packages != null) {
 				Collections.sort(packages, new Comparator<Package>() {
@@ -171,7 +152,7 @@ public class SerenityResult implements ISerenityResult {
 					});
 				}
 			}
-			// Remove the inner classes from the packages
+			// Remove the inner classes from the packages, and set the precision
 			for (Package<?, ?> pakkage : packages) {
 				Iterator<Class<?, ?>> iterator = pakkage.getChildren().iterator();
 				while (iterator.hasNext()) {
@@ -188,40 +169,81 @@ public class SerenityResult implements ISerenityResult {
 	}
 
 	public String getModel() {
+		logger.debug("getModel");
+		return getModel(composite, "highcharts.model");
+	}
+
+	public String getProjectModel() {
+		IDataBase dataBase = getDataBase(abstractBuild);
+		Project<?, ?> project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
+		// Move the build forward to the last build because Hudson will go to the last stable build
+		// which we don't want, we want the last build
+		abstractBuild = getLastBuild(abstractBuild);
+		String model = getModel(project, "highchartsSmall.model");
 		return model;
 	}
 
+	private AbstractBuild<?, ?> getLastBuild(AbstractBuild<?, ?> abstractBuild) {
+		if (abstractBuild.getNextBuild() == null) {
+			return abstractBuild;
+		}
+		return getLastBuild(abstractBuild.getNextBuild());
+	}
+
 	public String getSource() {
-		return source;
+		logger.debug("getSource");
+		return getSource(composite);
+	}
+
+	public String getFile(String name) {
+		return Toolkit.getContents(this.getClass().getResourceAsStream(name)).toString();
 	}
 
 	private String getSource(Composite<?, ?> composite) {
+		logger.debug("getSource");
 		if (composite instanceof Class) {
-			ISourceCode sourceCode = new CoverageSourceCode((Class<?, ?>) composite);
-			return sourceCode.getSource();
+			String className = ((Class<?, ?>) composite).getName();
+			String sourceFilePath = abstractBuild.getRootDir().getAbsolutePath() + File.separator + IConstants.SERENITY_SOURCE + File.separator
+					+ className + ".html";
+			logger.debug("Looking for source : " + sourceFilePath);
+			File sourceFile = new File(sourceFilePath);
+			if (sourceFile.exists()) {
+				String source = Toolkit.getContents(sourceFile).toString();
+				return source;
+			}
 		}
 		return "No source";
 	}
 
 	@SuppressWarnings("unchecked")
-	public String getModel(Composite<?, ?> composite) {
-		ArrayList<Composite<?, ?>> composites = new ArrayList<Composite<?, ?>>();
-		composites = getPreviousComposites((java.lang.Class<Composite<?, ?>>) composite.getClass(), owner, composites, composite.getId(), 1);
-		composites.add(composite);
-		IModeller modeller = new HighchartsModeller();
+	public String getModel(Composite<?, ?> composite, String modelName) {
+		logger.debug("getModel");
+		if (composite == null) {
+			return "";
+		}
+		LinkedList<Composite<?, ?>> composites = new LinkedList<Composite<?, ?>>();
+		composites.addFirst(composite);
+		LinkedList<Integer> buildNumbers = new LinkedList<Integer>();
+		buildNumbers.addFirst(abstractBuild.number);
+
+		composites = getPreviousComposites((java.lang.Class<Composite<?, ?>>) composite.getClass(), abstractBuild, composites, buildNumbers,
+				composite.getId(), 1);
+
+		IModeller modeller = new HighchartsModeller(modelName, buildNumbers.toArray(new Integer[buildNumbers.size()]));
 		modeller.visit(composite.getClass(), composites.toArray(new Composite[composites.size()]));
 		String model = modeller.getModel();
 		return model;
 	}
 
 	@SuppressWarnings("unchecked")
-	ArrayList<Composite<?, ?>> getPreviousComposites(java.lang.Class<Composite<?, ?>> klass, AbstractBuild<?, ?> abstractBuild,
-			ArrayList<Composite<?, ?>> composites, Long id, int history) {
+	LinkedList<Composite<?, ?>> getPreviousComposites(java.lang.Class<Composite<?, ?>> klass, AbstractBuild<?, ?> abstractBuild,
+			LinkedList<Composite<?, ?>> composites, LinkedList<Integer> buildNumbers, Long id, int history) {
 		if (history >= HISTORY) {
 			return composites;
 		}
 		logger.debug("Abstract build : " + abstractBuild);
 		AbstractBuild<?, ?> previousBuild = abstractBuild.getPreviousBuild();
+
 		if (previousBuild == null) {
 			return composites;
 		}
@@ -232,19 +254,36 @@ public class SerenityResult implements ISerenityResult {
 		if (composite == null) {
 			return composites;
 		}
-		composites.add(composite);
-		return getPreviousComposites((java.lang.Class<Composite<?, ?>>) composite.getClass(), previousBuild, composites, id, ++history);
+		composites.addFirst(composite);
+		buildNumbers.addFirst(previousBuild.number);
+		return getPreviousComposites((java.lang.Class<Composite<?, ?>>) composite.getClass(), previousBuild, composites, buildNumbers, id, ++history);
 	}
 
-	public String getName() {
-		logger.debug("getName");
-		if (owner != null) {
-			AbstractProject<?, ?> abstractProject = owner.getProject();
-			if (abstractProject != null) {
-				return abstractProject.getName();
-			}
+	@SuppressWarnings("unchecked")
+	protected void printParameters(StaplerRequest req) {
+		Enumeration<String> parameterNames = req.getParameterNames();
+		while (parameterNames.hasMoreElements()) {
+			String parameterName = parameterNames.nextElement();
+			logger.debug("Parameter : " + parameterName + ", value : " + req.getParameter(parameterName));
 		}
-		return "No name Project...";
+	}
+
+	private IDataBase getDataBase(AbstractBuild<?, ?> abstractBuild) {
+		String dataBaseFile = abstractBuild.getRootDir().getAbsolutePath() + File.separator + IConstants.DATABASE_FILE_ODB;
+		return IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, false, null);
+	}
+
+	private void closeDataBase(IDataBase dataBase) {
+		try {
+			if (dataBase != null) {
+				// TODO in production this must be commented. The reason we do
+				// this in test is because when Hpi reloads the plugin when a class is recompiled
+				// the databases hang around causing issues
+				dataBase.close();
+			}
+		} catch (Exception e) {
+			logger.error("Exception closing database : " + dataBase, e);
+		}
 	}
 
 }

@@ -1,11 +1,14 @@
 package com.ikokoon.serenity.persistence;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -148,6 +151,22 @@ public class DataBaseOdbTest extends ATest {
 		dataBase.remove(Class.class, klass.getId());
 		klass = (Class) dataBase.find(Class.class, klass.getId());
 		assertNull(klass);
+		dataBase.close();
+		dataBase = null;
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void find() {
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, true, null);
+		DataBaseToolkit.clear(dataBase);
+
+		Package pakkage = getPackage();
+		dataBase.persist(pakkage);
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("name", pakkage.getName());
+		List<Class> classes = dataBase.find(Class.class, parameters);
+		assertEquals(1, classes.size());
 		dataBase.close();
 		dataBase = null;
 	}

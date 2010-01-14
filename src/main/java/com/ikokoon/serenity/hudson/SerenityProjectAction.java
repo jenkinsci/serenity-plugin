@@ -68,20 +68,24 @@ public class SerenityProjectAction extends Actionable implements ProminentProjec
 	}
 
 	public ISerenityResult getLastResult() {
-		logger.debug("getLastBuild");
+		logger.warn("getLastResult");
 		Run build = owner.getLastStableBuild();
+		if (build == null) {
+			build = owner.getLastBuild();
+		}
 		if (build != null) {
 			SerenityBuildAction action = build.getAction(SerenityBuildAction.class);
-			return action.getResult();
-		} else {
-			return null;
+			if (action != null) {
+				return action.getResult();
+			}
 		}
+		return null;
 	}
 
 	public void doIndex(StaplerRequest req, StaplerResponse rsp) throws IOException {
 		logger.debug("doIndex");
 		if (hasResult()) {
-			rsp.sendRedirect2("../lastStableBuild/serenity");
+			rsp.sendRedirect2("../lastBuild/serenity");
 		} else {
 			rsp.sendRedirect2("nocoverage");
 		}
@@ -89,6 +93,7 @@ public class SerenityProjectAction extends Actionable implements ProminentProjec
 
 	public boolean hasResult() {
 		logger.debug("hasResult");
-		return true;
+		return getLastResult() != null;
 	}
+
 }

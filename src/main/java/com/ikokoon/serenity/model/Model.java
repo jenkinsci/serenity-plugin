@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * NOT USED, used to the the model for the chart applet.
+ * 
  * This model is a collection of metrics for a composite. In the case of several packages that have been analysed over time, the metrics for the
  * packages are accumulated and represented in a list of lists that can be seen as a matrix of data. This data is then displayed in the front end in
  * the Applet.

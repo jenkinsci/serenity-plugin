@@ -18,6 +18,7 @@ public class LoggingConfigurator {
 
 	/** Whether the logging has already be initialised. */
 	private static boolean initilised = false;
+	private static final String SERENITY_LOG_FILE = "./serenity/serenity.log";
 
 	static {
 		configure();
@@ -29,6 +30,7 @@ public class LoggingConfigurator {
 	 */
 	public static void configure() {
 		if (!initilised) {
+			checkLogFolder(SERENITY_LOG_FILE);
 			URL url = LoggingConfigurator.class.getResource(IConstants.LOG_4_J_PROPERTIES);
 			if (url != null) {
 				PropertyConfigurator.configure(url);
@@ -37,6 +39,18 @@ public class LoggingConfigurator {
 				PropertyConfigurator.configure(properties);
 			}
 			initilised = true;
+		}
+	}
+
+	private static void checkLogFolder(String filePath) {
+		File file = new File(filePath);
+		if (!file.getParentFile().exists()) {
+			file.getParentFile().mkdirs();
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -49,17 +63,7 @@ public class LoggingConfigurator {
 		// Serenity application logging file output
 		properties.put("log4j.appender.file", "org.apache.log4j.DailyRollingFileAppender");
 		properties.put("log4j.appender.file.Threshold", "DEBUG");
-		properties.put("log4j.appender.file.File", "./serenity/serenity.log");
-
-		File file = new File("./serenity/serenity.log");
-		if (!file.getParentFile().exists()) {
-			file.getParentFile().mkdirs();
-			try {
-				file.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		properties.put("log4j.appender.file.File", SERENITY_LOG_FILE);
 
 		properties.put("log4j.appender.file.layout", "org.apache.log4j.PatternLayout");
 		properties.put("log4j.appender.file.layout.ConversionPattern", "%d{HH:mm:ss,SSS} %-5p %C:%L - %m%n");

@@ -134,6 +134,8 @@ public interface IDataBase {
 	 */
 	public <E extends Composite<?, ?>> E find(Class<E> klass, List<Object> parameters);
 
+	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, Map<String, Object> parameters);
+
 	/**
 	 * Selects all the classes of a particular type. Note this could potentially return the whole database.
 	 * 

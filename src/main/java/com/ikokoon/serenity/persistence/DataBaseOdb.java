@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.neodatis.odb.ODB;
@@ -214,9 +217,36 @@ public class DataBaseOdb extends DataBase {
 		super.setId(composite);
 		logger.debug("Persisted object : " + composite);
 		List<Composite<?, ?>> children = (List<Composite<?, ?>>) composite.getChildren();
-		for (Composite<?, ?> child : children) {
-			setIds(child);
+		if (children != null) {
+			for (Composite<?, ?> child : children) {
+				setIds(child);
+			}
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public <E extends Composite<?, ?>> List<E> find(final Class<E> klass, final Map<String, Object> parameters) {
+		Set<E> set = new TreeSet<E>();
+		for (String field : parameters.keySet()) {
+			Object value = parameters.get(field);
+			logger.warn("Field : " + field + ", " + value);
+			IQuery query = new CriteriaQuery(klass, Where.like(field, "%" + value.toString() + "%"));
+			try {
+				Objects objects = odb.getObjects(query);
+				logger.warn("Objects : " + objects);
+				if (set.size() == 0) {
+					set.addAll(objects);
+				}
+				set.retainAll(objects);
+				logger.warn("Set : " + set);
+			} catch (Exception e) {
+				logger.error("Exception selecting objects with class : " + klass + ", parameters : " + parameters, e);
+			}
+		}
+		List<E> list = new ArrayList<E>();
+		list.addAll(set);
+		logger.warn("List : " + list);
+		return list;
 	}
 
 }

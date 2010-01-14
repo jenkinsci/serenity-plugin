@@ -44,6 +44,7 @@ public class Cleaner extends AProcess implements IConstants {
 			// Remove the packages that are not included in the list to process
 			if (!Configuration.getConfiguration().included(pakkage.getName())) {
 				dataBase.remove(Package.class, pakkage.getId());
+				continue;
 			}
 		}
 	}

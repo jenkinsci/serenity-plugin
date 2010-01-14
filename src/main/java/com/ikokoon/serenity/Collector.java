@@ -1,11 +1,15 @@
 package com.ikokoon.serenity;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.ikokoon.serenity.hudson.source.CoverageSourceCode;
+import com.ikokoon.serenity.hudson.source.ISourceCode;
 import com.ikokoon.serenity.model.Afferent;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Composite;
@@ -83,7 +87,22 @@ public class Collector implements IConstants {
 	 */
 	public static final void collectSource(String className, String source) {
 		Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
-		klass.setSource(source);
+		File file = new File(IConstants.SERENITY_SOURCE, className + ".html");
+		if (!file.getParentFile().exists()) {
+			file.getParentFile().mkdirs();
+		}
+		if (!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				LOGGER.error("Exception creating the source HTML file", e);
+			}
+		}
+		if (file.exists()) {
+			ISourceCode sourceCode = new CoverageSourceCode(klass, source);
+			String htmlSource = sourceCode.getSource();
+			Toolkit.setContents(file, htmlSource.getBytes());
+		}
 	}
 
 	/**
@@ -101,10 +120,9 @@ public class Collector implements IConstants {
 	 * @param lineCounter
 	 *            the number of lines in the method
 	 */
-	public static final void collectComplexity(String className, String methodName, String methodDescription, double complexity/* ,double lineCounter */) {
+	public static final void collectComplexity(String className, String methodName, String methodDescription, double complexity) {
 		Method<?, ?> method = getMethod(className, methodName, methodDescription);
 		method.setComplexity(complexity);
-		// method.setLines(lineCounter);
 	}
 
 	/**

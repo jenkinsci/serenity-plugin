@@ -1,5 +1,7 @@
 package com.ikokoon.serenity.hudson.modeller;
 
+import java.io.InputStream;
+
 import org.apache.log4j.Logger;
 
 import com.ikokoon.serenity.model.Class;
@@ -18,10 +20,15 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class HighchartsModeller implements IModeller {
 
-	public static final int HISTORY = 5;
-
 	private Logger logger = Logger.getLogger(this.getClass());
 	private String model;
+	private String modelName;
+	private Integer[] buildNumbers;
+
+	public HighchartsModeller(String modelName, Integer... buildNumbers) {
+		this.modelName = modelName;
+		this.buildNumbers = buildNumbers;
+	}
 
 	public String getModel() {
 		return model;
@@ -55,7 +62,7 @@ public class HighchartsModeller implements IModeller {
 				stabilityData.append(((Project<?, ?>) composite).getStability());
 			}
 			categoryData.append("'");
-			categoryData.append(i + 1);
+			categoryData.append(buildNumbers[i]);
 			categoryData.append("'");
 			if (i + 1 < composites.length) {
 				coverageData.append(",");
@@ -73,7 +80,8 @@ public class HighchartsModeller implements IModeller {
 				: composite instanceof Package ? ((Package<?, ?>) composite).getName() : composite instanceof Class ? ((Class<?, ?>) composite)
 						.getName() : "What am I?";
 
-		model = Toolkit.getContents(this.getClass().getResourceAsStream("model.jquery")).toString();
+		InputStream inputStream = this.getClass().getResourceAsStream(modelName);
+		model = Toolkit.getContents(inputStream).toString();
 
 		model = Toolkit.replaceAll(model, "compositeName", compositeName);
 		model = Toolkit.replaceAll(model, "coverageData", coverageData.toString());
@@ -81,9 +89,11 @@ public class HighchartsModeller implements IModeller {
 		model = Toolkit.replaceAll(model, "stabilityData", stabilityData.toString());
 		model = Toolkit.replaceAll(model, "categoryData", categoryData.toString());
 
-		logger.debug("Composite name : " + compositeName + ", coverage data : " + coverageData + ", complexity data : " + complexityData
-				+ ", stability data : " + stabilityData + ", category data : " + categoryData);
-		logger.debug("Model : " + model);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Composite name : " + compositeName + ", coverage data : " + coverageData + ", complexity data : " + complexityData
+					+ ", stability data : " + stabilityData + ", category data : " + categoryData);
+			logger.warn("Model : " + model);
+		}
 	}
 
 }

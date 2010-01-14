@@ -2,15 +2,9 @@ package com.ikokoon.serenity.hudson;
 
 import hudson.Plugin;
 
-import java.io.IOException;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-
-import net.sf.json.JSONObject;
-
 import org.apache.log4j.Logger;
-import org.kohsuke.stapler.StaplerRequest;
 
 import com.ikokoon.serenity.LoggingConfigurator;
 import com.ikokoon.serenity.persistence.IDataBase;
@@ -29,8 +23,6 @@ import com.ikokoon.serenity.persistence.IDataBase;
  */
 public class SerenityPlugin extends Plugin {
 
-	private transient ServletContext context;
-	private String applicationContext;
 	/** The logger for the plugin class. */
 	private Logger logger;
 
@@ -40,23 +32,7 @@ public class SerenityPlugin extends Plugin {
 	public SerenityPlugin() {
 		LoggingConfigurator.configure();
 		logger = Logger.getLogger(SerenityPlugin.class);
-		logger.warn("Loaded plugin : " + this.getClass().getName());
-	}
-
-	@Override
-	public void start() throws Exception {
-		load();
-		super.start();
-	}
-
-	@Override
-	public void configure(StaplerRequest req, JSONObject formData) throws IOException {
-		save();
-	}
-
-	@Override
-	public void setServletContext(ServletContext context) {
-		this.context = context;
+		logger.info("Loaded plugin : " + this.getClass().getName());
 	}
 
 	@Override
@@ -66,10 +42,6 @@ public class SerenityPlugin extends Plugin {
 		for (IDataBase dataBase : dataBasesArray) {
 			dataBase.close();
 		}
-	}
-	
-	public String getApplicationContext() {
-		return applicationContext;
 	}
 
 }

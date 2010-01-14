@@ -21,6 +21,7 @@ import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.serenity.process.Accumulator;
 import com.ikokoon.serenity.process.Aggregator;
 import com.ikokoon.serenity.process.Cleaner;
+import com.ikokoon.serenity.process.Pruner;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -76,14 +77,29 @@ public class Transformer implements ClassFileTransformer, IConstants {
 					LOGGER.info("Starting accumulation : " + start);
 					IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, false, null);
 
-					// Execute the processing chain, child first
+					long processStart = System.currentTimeMillis();
 					new Accumulator(null).execute();
-					new Cleaner(null, dataBase).execute();
-					new Aggregator(null, dataBase).execute();
+					LOGGER.info("Accululator : " + (System.currentTimeMillis() - processStart));
 
+					processStart = System.currentTimeMillis();
+					new Cleaner(null, dataBase).execute();
+					LOGGER.info("Cleaner : " + (System.currentTimeMillis() - processStart));
+
+					processStart = System.currentTimeMillis();
+					new Aggregator(null, dataBase).execute();
+					LOGGER.info("Aggregator : " + (System.currentTimeMillis() - processStart));
+
+					// DataBaseToolkit.dump(dataBase, null, "Transformer database dump before pruning");
+
+					processStart = System.currentTimeMillis();
+					new Pruner(null, dataBase).execute();
+					LOGGER.info("Pruner : " + (System.currentTimeMillis() - processStart));
+
+					processStart = System.currentTimeMillis();
 					if (!dataBase.isClosed()) {
 						dataBase.close();
 					}
+					LOGGER.info("Close database : " + (System.currentTimeMillis() - processStart));
 
 					Date end = new Date();
 					long million = 1000 * 1000;
@@ -166,7 +182,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		// Write the class so we can check it with JD decompiler visually
 		String directoryPath = Toolkit.dotToSlash(Toolkit.classNameToPackageName(className));
 		String fileName = className.replaceFirst(Toolkit.classNameToPackageName(className), "") + ".class";
-		File directory = new File(IConstants.SERENITY_DIRECTORY + directoryPath);
+		File directory = new File(IConstants.SERENITY_DIRECTORY + File.separator + directoryPath);
 		if (!directory.exists()) {
 			directory.mkdirs();
 		}

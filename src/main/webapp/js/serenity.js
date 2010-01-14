@@ -29,6 +29,7 @@ function loadFrames(klass, id) {
 				// var d = window.parent.document;
 				var f = d.frames ? d.frames['chart'] : d.getElementById('chart');
 				var p = f.document || f.contentWindow.document;
+				// alert('P : 0 : ' + p);
 				p.location.reload(true);
 				// window.parent.document.getElementById('chart').contentWindow.location
 				// .reload(true);
@@ -37,15 +38,16 @@ function loadFrames(klass, id) {
 					f = d.frames ? d.frames['source'] : d.getElementById('source');
 					p = f.document || f.contentWindow.document;
 					p.location.reload(true);
+					// alert('P : 1 : ' + p);
 					// window.parent.document.getElementById('source').contentWindow.location
 					// .reload(true);
 				}
 			}
 		}
 	}
-	var url = 'SerenityResult/chart?class=' + klass + '&id=' + id;
-	xmlhttp.open('GET', url, true);
-	xmlhttp.send(null);
+	var url = 'SerenityResult/target?class=' + klass + '&id=' + id;
+	xmlhttp.open('POST', url); // , true
+	xmlhttp.send(); // null
 }
 
 // Browser Window Size and Position

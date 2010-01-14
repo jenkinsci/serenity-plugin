@@ -9,8 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 
-import com.ikokoon.toolkit.Toolkit;
-
 /**
  * @author Michael Couck
  * @since 12.08.09
@@ -64,7 +62,7 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 	}
 
 	public double getComplexity() {
-		return Toolkit.format(complexity, PRECISION);
+		return complexity;
 	}
 
 	public void setComplexity(double complexity) {
@@ -72,7 +70,7 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 	}
 
 	public double getCoverage() {
-		return Toolkit.format(coverage, PRECISION);
+		return coverage;
 	}
 
 	public void setCoverage(double coverage) {
@@ -80,7 +78,7 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 	}
 
 	public double getAbstractness() {
-		return Toolkit.format(abstractness, PRECISION);
+		return abstractness;
 	}
 
 	public void setAbstractness(double abstractness) {
@@ -88,7 +86,7 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 	}
 
 	public double getStability() {
-		return Toolkit.format(stability, PRECISION);
+		return stability;
 	}
 
 	public void setStability(double stability) {
@@ -96,7 +94,7 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 	}
 
 	public double getDistance() {
-		return Toolkit.format(distance, PRECISION);
+		return distance;
 	}
 
 	public void setDistance(double distance) {
@@ -104,7 +102,7 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 	}
 
 	public double getInterfaces() {
-		return Toolkit.format(interfaces, PRECISION);
+		return interfaces;
 	}
 
 	public void setInterfaces(double interfaces) {
@@ -112,7 +110,7 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 	}
 
 	public double getImplementations() {
-		return Toolkit.format(implementations, PRECISION);
+		return implementations;
 	}
 
 	public void setImplementations(double implementations) {
@@ -120,7 +118,7 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 	}
 
 	public double getEfference() {
-		return Toolkit.format(efference, PRECISION);
+		return efference;
 	}
 
 	public void setEfference(double efferent) {
@@ -128,7 +126,7 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 	}
 
 	public double getAfference() {
-		return Toolkit.format(afference, PRECISION);
+		return afference;
 	}
 
 	public void setAfference(double afferent) {

@@ -4,7 +4,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -33,7 +35,7 @@ public class Accumulator extends AProcess {
 	/** The set of classes that are processed so we don't process the files more than once. */
 	private Set<String> filesProcessed = new TreeSet<String>();
 	/** The chain of adapters for analysing the classes. */
-	private Class<ClassVisitor>[] CLASS_ADAPTER_CLASSES;
+	private java.lang.Class<ClassVisitor>[] CLASS_ADAPTER_CLASSES;
 
 	/**
 	 * {@inheritDoc}
@@ -41,8 +43,8 @@ public class Accumulator extends AProcess {
 	@SuppressWarnings("unchecked")
 	public Accumulator(IProcess parent) {
 		super(parent);
-		CLASS_ADAPTER_CLASSES = Configuration.getConfiguration().classAdapters.toArray(new Class[Configuration.getConfiguration().classAdapters
-				.size()]);
+		CLASS_ADAPTER_CLASSES = Configuration.getConfiguration().classAdapters
+				.toArray(new java.lang.Class[Configuration.getConfiguration().classAdapters.size()]);
 	}
 
 	/**
@@ -68,6 +70,22 @@ public class Accumulator extends AProcess {
 			} else if (file.isDirectory()) {
 				processDir(file);
 			}
+		}
+		// Look for all jars below this directory to find some source
+		List<File> list = new ArrayList<File>();
+		File baseDirectory = new File(".");
+		logger.info("Looking for source in base directory : " + baseDirectory.getAbsolutePath());
+		Toolkit.findFiles(baseDirectory, new Toolkit.IFileFilter() {
+			public boolean matches(File file) {
+				if (file.getName().endsWith(".jar") || file.getName().endsWith(".zip")) {
+					return true;
+				}
+				return false;
+			}
+		}, list);
+		for (File file : list) {
+			logger.debug("Processing jar : " + file.getAbsolutePath());
+			processJar(file);
 		}
 	}
 
@@ -153,15 +171,11 @@ public class Accumulator extends AProcess {
 			try {
 				InputStream inputStream = jarFile.getInputStream(jarEntry);
 				byte[] classFileBytes = Toolkit.getContents(inputStream).toByteArray();
-				ByteArrayOutputStream source = new ByteArrayOutputStream();
-
+				ByteArrayOutputStream source = null;
 				if (jarEntry.getName().indexOf("$") == -1) {
-					byte[] sourceFileBytes = null;
-					sourceFileBytes = getSource(jarFile, entryName);
-					if (sourceFileBytes != null) {
-						source.write(sourceFileBytes);
-						// logger.debug("Source : " + source.toString());
-					}
+					source = getSource(jarFile, entryName);
+				} else {
+					source = new ByteArrayOutputStream();
 				}
 				processClass(Toolkit.slashToDot(entryName), classFileBytes, source);
 			} catch (IOException e) {
@@ -170,29 +184,29 @@ public class Accumulator extends AProcess {
 		}
 	}
 
-	private byte[] getSource(JarFile jarFile, String entryName) throws IOException {
+	private ByteArrayOutputStream getSource(JarFile jarFile, String entryName) throws IOException {
 		// Look for the source
 		String javaEntryName = entryName.substring(0, entryName.lastIndexOf('.')) + ".java";
-		// logger.debug("Looking for source : " + javaEntryName + ", " + entryName);
+		// logger.warn("Looking for source : " + javaEntryName + ", " + entryName);
 		ZipEntry javaEntry = jarFile.getEntry(javaEntryName);
-		byte[] sourceFileBytes = null;
 		if (javaEntry != null) {
-			// logger.debug("Got source : " + javaEntry);
+			// logger.warn("Got source : " + javaEntry);
 			InputStream inputStream = jarFile.getInputStream(javaEntry);
-			sourceFileBytes = Toolkit.getContents(inputStream).toByteArray();
+			return Toolkit.getContents(inputStream);
 		}
-		return sourceFileBytes;
+		return new ByteArrayOutputStream();
 	}
 
 	private void processClass(String name, byte[] classBytes, ByteArrayOutputStream source) {
 		if (name != null && name.endsWith(".class")) {
 			name = name.substring(0, name.lastIndexOf('.'));
 		}
-		// logger.debug("Class name : " + name + ", length : " + classBytes.length);
 		try {
 			VisitorFactory.getClassVisitor(CLASS_ADAPTER_CLASSES, name, classBytes, source);
 		} catch (Exception e) {
-			logger.error("Exception generating complexity and dependency statistics on class " + name, e);
+			int sourceLength = source != null ? source.size() : 0;
+			logger.warn("Class name : " + name + ", length : " + classBytes.length + ", source : " + sourceLength);
+			logger.error("Exception accululating data on class " + name, e);
 		}
 	}
 

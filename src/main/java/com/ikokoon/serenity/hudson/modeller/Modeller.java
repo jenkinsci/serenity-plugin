@@ -21,7 +21,7 @@ import com.ikokoon.toolkit.Toolkit;
 public class Modeller implements IModeller {
 
 	/** To avoid having long numbers we make the precision 2 after the decimal. */
-	private static final int PRECISION = 2;
+	private final int PRECISION = 2;
 
 	/** The string representation in base 64 of the serialised model object. */
 	private String model;

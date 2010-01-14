@@ -2,6 +2,7 @@ package com.ikokoon.serenity.persistence;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -36,12 +37,6 @@ public final class DataBaseRam extends DataBase {
 		this.dataBase = dataBase;
 		this.dataBaseListener = dataBaseListener;
 		index.clear();
-		// if (this.dataBase != null) {
-		// List<Package> packages = dataBase.find(Package.class);
-		// for (Package<?, ?> pakkage : packages) {
-		// setIds(pakkage);
-		// }
-		// }
 		closed = false;
 	}
 
@@ -271,6 +266,10 @@ public final class DataBaseRam extends DataBase {
 			}
 		}
 		logger.debug("Inserted : " + toInsert + " - " + inserted);
+	}
+
+	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, Map<String, Object> parameters) {
+		throw new RuntimeException("Not implempented.");
 	}
 
 }

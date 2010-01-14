@@ -7,11 +7,11 @@ import java.util.List;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
-import com.ikokoon.serenity.PerformanceTester;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
+import com.ikokoon.toolkit.PerformanceTester;
 
 public class CoverageSourceCodeTest extends ATest {
 
@@ -23,9 +23,8 @@ public class CoverageSourceCodeTest extends ATest {
 		dataBase.persist(pakkage);
 
 		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Class.class, pakkage.getChildren().get(0).getId());
-		klass.setSource(source);
 		setCovered(klass);
-		final CoverageSourceCode coverageSourceCode = new CoverageSourceCode(klass);
+		final CoverageSourceCode coverageSourceCode = new CoverageSourceCode(klass, source);
 		String html = coverageSourceCode.getSource();
 		logger.info(html);
 
