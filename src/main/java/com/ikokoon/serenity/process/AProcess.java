@@ -3,7 +3,7 @@ package com.ikokoon.serenity.process;
 import org.apache.log4j.Logger;
 
 /**
- * This class is the proces that calls the child processes in the chain. At the end of the coverage processing, i.e. when the unit tests are finished
+ * This class is the process that calls the child processes in the chain. At the end of the coverage processing, i.e. when the unit tests are finished
  * the processes for collecting the dependency and aggregating the data are started. Each process is chained to the next. The order of the processes
  * is somewhat important. The accumulator should run first, then the aggregator then the writer.
  * 

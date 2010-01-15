@@ -256,10 +256,27 @@ public class Toolkit {
 		}
 	}
 
+	/**
+	 * This is the interface to select files with below.
+	 * 
+	 * @author Michael Couck
+	 * @since 10.01.10
+	 * @version 01.00
+	 */
 	public interface IFileFilter {
 		public boolean matches(File file);
 	}
 
+	/**
+	 * Finds files on the file system below the directory specified recursively using the selection criteria supplied in the IFileFilter parameter.
+	 * 
+	 * @param file
+	 *            the file to start looking from
+	 * @param filter
+	 *            the filter to select files with
+	 * @param list
+	 *            the list of files to add the selected files to
+	 */
 	public static void findFiles(File file, IFileFilter filter, List<File> list) {
 		if (file == null || !file.exists()) {
 			return;

@@ -181,6 +181,14 @@ public class Collector implements IConstants {
 		}
 	}
 
+	/**
+	 * Collects the inner class for a class.
+	 * 
+	 * @param innerName
+	 *            the name of the inner class
+	 * @param outerName
+	 *            the name of the outer class
+	 */
 	public static final void collectInnerClass(String innerName, String outerName) {
 		Class<?, ?> innerClass = getClass(innerName);
 		Class<?, ?> outerClass = getClass(outerName);
@@ -192,6 +200,18 @@ public class Collector implements IConstants {
 		}
 	}
 
+	/**
+	 * Collects the outer class of an inner class.
+	 * 
+	 * @param innerName
+	 *            the name of the inner class
+	 * @param outerName
+	 *            the name of the outer class
+	 * @param outerMethodName
+	 *            the method name in the case this is an in-method class definition
+	 * @param outerMethodDescription
+	 *            the description of the method for anonymous and inline inner classes
+	 */
 	public static final void collectOuterClass(String innerName, String outerName, String outerMethodName, String outerMethodDescription) {
 		Class<?, ?> innerClass = getClass(innerName);
 		Class<?, ?> outerClass = getClass(outerName);

@@ -8,7 +8,7 @@ import java.lang.ref.WeakReference;
 import org.kohsuke.stapler.StaplerProxy;
 
 /**
- * This is the Stapler 'proxy'. It serves the result to the front end.
+ * This is the Stapler 'proxy'. It serves the chain of results objects to the front end.
  * 
  * @author Michael Couck
  * @see 12.08.09
@@ -33,7 +33,7 @@ public class SerenityBuildAction implements StaplerProxy, Action {
 	 */
 	public SerenityBuildAction(AbstractBuild owner, ISerenityResult result) {
 		if (owner == null) {
-			throw new RuntimeException("owner cannot be null");
+			throw new RuntimeException("Owner cannot be null");
 		}
 		setResult(result);
 		this.owner = owner;
@@ -67,20 +67,18 @@ public class SerenityBuildAction implements StaplerProxy, Action {
 		return getResult();
 	}
 
-	private void setResult(ISerenityResult result) {
-		this.result = new WeakReference(result);
-	}
-
 	public ISerenityResult getResult() {
 		if (!hasResult()) {
-			// try to reload from file
 			reloadReport();
 		}
 		if (!hasResult()) {
-			// return empty result
 			return new SerenityResult(owner);
 		}
 		return result.get();
+	}
+
+	private void setResult(ISerenityResult result) {
+		this.result = new WeakReference(result);
 	}
 
 	private boolean hasResult() {

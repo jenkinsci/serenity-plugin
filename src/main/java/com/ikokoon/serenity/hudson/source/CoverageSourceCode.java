@@ -15,7 +15,8 @@ import de.java2html.javasource.JavaSourceParser;
 import de.java2html.options.JavaSourceConversionOptions;
 
 /**
- * This class takes the source for a Java file and generates HTML from the source that can be displayed in a browser.
+ * This class takes the source for a Java file and generates HTML from the source that can be displayed in a browser. This class uses the Java2Html
+ * package from java2html.de.
  * 
  * @author Michael Couck
  * @since 09.12.09
@@ -29,6 +30,13 @@ public class CoverageSourceCode implements ISourceCode {
 	private String source;
 	private JavaSourceParser javaSourceParser;
 
+	/**
+	 * This class is for instantiating the options. In the transformer(the agent) this throws an exception for some reason so this is a work around,
+	 * or otherwise known as a hack.
+	 * 
+	 * @author Michael Couck
+	 * 
+	 */
 	class JavaSourceParserExt extends JavaSourceParser {
 		public JavaSourceParserExt() {
 			super(JavaSourceConversionOptions.getRawDefault());
@@ -46,6 +54,8 @@ public class CoverageSourceCode implements ISourceCode {
 	 * 
 	 * @param klass
 	 *            the class that contains the source
+	 * @param the
+	 *            source of the Java class
 	 */
 	public CoverageSourceCode(Class<?, ?> klass, String source) {
 		this.klass = klass;

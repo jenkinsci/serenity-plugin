@@ -1,12 +1,11 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
-	<f:entry title="Serenity report pattern"
+	<!-- title="Serenity report pattern" -->
+	<f:entry
 		description="This will publish the Serenity database file to the build folder, the name of 
 			which is '**/serenity/serenity.odb' for the Neodatis database, and the source for the project if it is available. 
 			Please refer to the Wiki for setting up Serenity at - http://wiki.hudson-ci.org/display/HUDSON/Serenity+Plugin.">
-		
 		<!-- f:textbox name="serenity.serenityDatabase" value="${instance.serenityDatabase}" / -->
-		
 	</f:entry>
 
 </j:jelly>

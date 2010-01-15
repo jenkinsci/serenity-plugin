@@ -51,10 +51,10 @@ public class ModellerTest extends ATest {
 
 		Project projectThree = null;
 
-		Modeller modeller = new Modeller();
-		modeller.visit(Project.class, projectOne, projectTwo, projectThree);
+		JetChartModeller jetChartModeller = new JetChartModeller();
+		jetChartModeller.visit(Project.class, projectOne, projectTwo, projectThree);
 
-		String string = modeller.getModel();
+		String string = jetChartModeller.getModel();
 		assertNotNull(string);
 
 		// This is what we expect from the model
@@ -94,10 +94,10 @@ public class ModellerTest extends ATest {
 
 		Package<?, ?> pakkageThree = null;
 
-		Modeller modeller = new Modeller();
-		modeller.visit(Package.class, pakkageOne, pakkageTwo, pakkageThree);
+		JetChartModeller jetChartModeller = new JetChartModeller();
+		jetChartModeller.visit(Package.class, pakkageOne, pakkageTwo, pakkageThree);
 
-		String string = modeller.getModel();
+		String string = jetChartModeller.getModel();
 		assertNotNull(string);
 
 		// This is what we expect from the model
@@ -125,10 +125,10 @@ public class ModellerTest extends ATest {
 
 		Class<?, ?> klassThree = null;
 
-		Modeller modeller = new Modeller();
-		modeller.visit(Class.class, klassOne, klassTwo, klassThree);
+		JetChartModeller jetChartModeller = new JetChartModeller();
+		jetChartModeller.visit(Class.class, klassOne, klassTwo, klassThree);
 
-		String string = modeller.getModel();
+		String string = jetChartModeller.getModel();
 		assertNotNull(string);
 
 		// This is what we expect from the model

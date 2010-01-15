@@ -31,7 +31,8 @@ import com.ikokoon.toolkit.Toolkit;
 
 /**
  * This class runs at the end of the build, called by Hudson. The purpose is to copy the database file from the output directory for the reports
- * directory where the build action can present the data to the front end.
+ * directory where the build action can present the data to the front end. As well as this the source that was found for the project is copied to the
+ * source directory where the front end can access it.
  * 
  * @author Michael Couck
  * @since 12.07.09
@@ -52,28 +53,12 @@ public class SerenityPublisher extends Recorder {
 	public SerenityPublisher() {
 	}
 
-	/** The pattern for the object database file. */
-	// private String serenityDatabase = "**/serenity/serenity.odb";
-	// @DataBoundConstructor
-	// public SerenityPublisher(String serenityDatabase) {
-	// logger.debug("SerenityPublisher:" + serenityDatabase);
-	// if (serenityDatabase != null) {
-	// // this.serenityDatabase = serenityDatabase;
-	// }
-	// }
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener buildListener) throws InterruptedException, IOException {
 		logger.debug("perform");
-		// PrintStream consolePrintStream = buildListener.getLogger();
-		// consolePrintStream.println("Looking for database file : " + serenityDatabase);
-
-		// if (serenityDatabase == null) {
-		// consolePrintStream.println("Skipping coverage reports as serenityDatabase is null");
-		// return false;
-		// }
 
 		if (!Result.SUCCESS.equals(build.getResult())) {
 			buildListener.getLogger().println("Build was not successful... but will still try to publish the report");
@@ -109,6 +94,13 @@ public class SerenityPublisher extends Recorder {
 				filePath = Toolkit.replaceAll(filePath, "\\", "/");
 				if (filePath.indexOf("serenity/source") == -1) {
 					return false;
+				}
+				// Exclude the Subversion directories if there are any
+				String[] excludedDirectories = { ".svn", "prop-base", "props", "text-base", "tmp" };
+				for (String excludedDirectory : excludedDirectories) {
+					if (filePath.indexOf(excludedDirectory) > -1) {
+						return false;
+					}
 				}
 				return true;
 			}
@@ -180,16 +172,6 @@ public class SerenityPublisher extends Recorder {
 		logger.debug("getProjectAction(AbstractProject)");
 		return new SerenityProjectAction(abstractProject);
 	}
-
-	// public void setSerenityDatabase(String serenityDatabase) {
-	// logger.debug("setSerenityDatabase");
-	// this.serenityDatabase = serenityDatabase;
-	// }
-	//
-	// public String getSerenityDatabase() {
-	// logger.debug("getSerenityDatabase");
-	// return serenityDatabase;
-	// }
 
 	/**
 	 * Descriptor for {@link SerenityPublisher}. Used as a singleton. The class is marked as public so that it can be accessed from views.

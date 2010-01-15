@@ -12,13 +12,14 @@ import com.ikokoon.serenity.model.Model;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
- * This class takes a composite and produces a string base64 representation of the serialised model object for the composite.
+ * This class takes a composite and produces a string base64 representation of the serialised model object for the composite. This modeller is for the
+ * JetChart applet.
  * 
  * @author Michael Couck
  * @since 09.11.09
  * @version 01.00
  */
-public class Modeller implements IModeller {
+public class JetChartModeller implements IModeller {
 
 	/** To avoid having long numbers we make the precision 2 after the decimal. */
 	private final int PRECISION = 2;

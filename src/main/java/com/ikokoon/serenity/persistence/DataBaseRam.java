@@ -14,7 +14,7 @@ import com.ikokoon.toolkit.Toolkit;
 /**
  * This is the in memory database. Several options were explored including DB4O, Neodatis, JPA, SQL, and finally none were performant enough. As well
  * as that several hybrids were investigated like including a l1 cache and a l2 cache, but the actual persistence in the case of JPA and SQL was just
- * too slow. This class does everything in memory and commits the data finally to a Neodatis database once the processing is finished.
+ * too slow. This class does everything in memory and commits the data finally to the under lying database once the processing is finished.
  * 
  * @author Michael Couck
  * @since 11.10.09
@@ -30,9 +30,17 @@ public final class DataBaseRam extends DataBase {
 	/** The closed flag. */
 	private boolean closed = true;
 
+	/** This is the index of packages, classes, methods and lines. */
 	private transient volatile List<Composite<?, ?>> index = new ArrayList<Composite<?, ?>>();
 
-	DataBaseRam(IDataBase dataBase, IDataBaseListener dataBaseListener, Boolean create) {
+	/**
+	 * Constructor takes the underlying database that will commit the data to the file system, the listener for when the database closes we can
+	 * release the resources and whether to create a new database or open an old one.
+	 * 
+	 * @param dataBase
+	 * @param dataBaseListener
+	 */
+	DataBaseRam(IDataBase dataBase, IDataBaseListener dataBaseListener) {
 		logger.info("Opening RAM database with " + dataBase + " underneath.");
 		this.dataBase = dataBase;
 		this.dataBaseListener = dataBaseListener;

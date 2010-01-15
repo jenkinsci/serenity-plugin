@@ -20,8 +20,7 @@ import com.ikokoon.serenity.model.Composite;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
- * This is the database class using Neodatis as the persistence tool. This class is for the Hudson side of things as there is a memory issue with
- * loading all the data for the builds into memory.
+ * This is the database class using Neodatis as the persistence tool.
  * 
  * @author Michael Couck
  * @since 01.12.09
@@ -73,8 +72,6 @@ public class DataBaseOdb extends DataBase {
 	 */
 	@SuppressWarnings("unchecked")
 	public synchronized <E extends Composite<?, ?>> E find(Class<E> klass, Long id) {
-		// ICriterion criterion = new EqualCriterion("id", id.intValue());
-		// IQuery query = new CriteriaQuery(Object.class, criterion);
 		IQuery query = new CriteriaQuery(klass, Where.equal("id", id));
 		return (E) find(query);
 	}
@@ -101,6 +98,34 @@ public class DataBaseOdb extends DataBase {
 		} catch (Exception e) {
 			logger.error("Exception selecting objects with class : " + klass, e);
 		}
+		return list;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	public <E extends Composite<?, ?>> List<E> find(final Class<E> klass, final Map<String, Object> parameters) {
+		Set<E> set = new TreeSet<E>();
+		for (String field : parameters.keySet()) {
+			Object value = parameters.get(field);
+			logger.warn("Field : " + field + ", " + value);
+			IQuery query = new CriteriaQuery(klass, Where.like(field, "%" + value.toString() + "%"));
+			try {
+				Objects objects = odb.getObjects(query);
+				logger.warn("Objects : " + objects);
+				if (set.size() == 0) {
+					set.addAll(objects);
+				}
+				set.retainAll(objects);
+				logger.warn("Set : " + set);
+			} catch (Exception e) {
+				logger.error("Exception selecting objects with class : " + klass + ", parameters : " + parameters, e);
+			}
+		}
+		List<E> list = new ArrayList<E>();
+		list.addAll(set);
+		logger.warn("List : " + list);
 		return list;
 	}
 
@@ -222,31 +247,6 @@ public class DataBaseOdb extends DataBase {
 				setIds(child);
 			}
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public <E extends Composite<?, ?>> List<E> find(final Class<E> klass, final Map<String, Object> parameters) {
-		Set<E> set = new TreeSet<E>();
-		for (String field : parameters.keySet()) {
-			Object value = parameters.get(field);
-			logger.warn("Field : " + field + ", " + value);
-			IQuery query = new CriteriaQuery(klass, Where.like(field, "%" + value.toString() + "%"));
-			try {
-				Objects objects = odb.getObjects(query);
-				logger.warn("Objects : " + objects);
-				if (set.size() == 0) {
-					set.addAll(objects);
-				}
-				set.retainAll(objects);
-				logger.warn("Set : " + set);
-			} catch (Exception e) {
-				logger.error("Exception selecting objects with class : " + klass + ", parameters : " + parameters, e);
-			}
-		}
-		List<E> list = new ArrayList<E>();
-		list.addAll(set);
-		logger.warn("List : " + list);
-		return list;
 	}
 
 }

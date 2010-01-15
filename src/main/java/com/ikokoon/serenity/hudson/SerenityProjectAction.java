@@ -12,6 +12,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 /**
+ * An object in the chain of proxy objects that serve the front end in Hudson.
  * 
  * @author Michael Couck
  * @since 09.12.09

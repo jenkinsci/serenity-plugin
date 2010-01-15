@@ -11,7 +11,7 @@ import com.ikokoon.serenity.model.Method;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
- * TODO - re-do the complexity adapter adding the methods that could be associated to jump instructions.
+ * Tests the complexity of a class. This is a functional test rather than a unit test in fact.
  * 
  * @author Michael Couck
  * @since 25.11.09
@@ -26,7 +26,9 @@ public class ComplexityTest extends ATest {
 		assertNotNull(klass);
 		Method<?, ?> method = (Method<?, ?>) dataBase.find(Method.class, Toolkit.hash(className, methodName, methodSignature));
 		assertNotNull(method);
-		assertTrue(method.getComplexity() == 22 || method.getComplexity() == 24);
+		// This assertion depends on the compiler, in some cases the compiler will optimise the code removing
+		// a jump instruction
+		assertTrue(method.getComplexity() == 23 || method.getComplexity() == 25);
 	}
 
 }

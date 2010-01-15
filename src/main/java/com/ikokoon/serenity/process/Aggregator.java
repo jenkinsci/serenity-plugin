@@ -42,7 +42,7 @@ public class Aggregator extends AProcess implements IConstants {
 
 	/** The database to aggregate the data for. */
 	private IDataBase dataBase;
-	/**  */
+	/** The maps of composites and lines and composites and methods. Makes the processing faster. */
 	private Map<Composite<?, ?>, Set<Line<?, ?>>> compositeLines;
 	private Map<Composite<?, ?>, Set<Method<?, ?>>> compositeMethods;
 
@@ -126,16 +126,14 @@ public class Aggregator extends AProcess implements IConstants {
 			}
 		}
 
-		double efferent = efference.size();
-		double afferent = afference.size();
-		double a = -1, b = -1;
+		double coverage = getCoverage(lines.size(), executed);// lines.size() > 0 ? (executed / lines.size()) * 100d : 0;
+		double complexity = getComplexity(methods.size(), totalComplexity); // methods.size() > 0 ? totalComplexity / methods.size() : 0;
 
-		double coverage = lines.size() > 0 ? (executed / lines.size()) * 100d : 0;
-		double complexity = methods.size() > 0 ? totalComplexity / methods.size() : 0;
-
-		double stability = (efferent + afferent) > 0 ? efferent / (efferent + afferent) : 1d;
-		double abstractness = (interfaces + implementations) > 0 ? interfaces / (interfaces + implementations) : 1d;
-		double distance = Math.abs(-stability + -abstractness + 1) / Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+		double stability = getStability(efference.size(), afference.size()); // (efferent + afferent) > 0 ? efferent / (efferent + afferent) : 1d;
+		double abstractness = getAbstractness(interfaces, implementations); // (interfaces + implementations) > 0 ? interfaces / (interfaces +
+		// implementations) : 1d;
+		double distance = getDistance(stability, abstractness); // Math.abs(-stability + -abstractness + 1) / Math.sqrt(Math.pow(a, 2) + Math.pow(b,
+		// 2));
 
 		project.setComplexity(complexity);
 		project.setCoverage(coverage);
@@ -151,6 +149,40 @@ public class Aggregator extends AProcess implements IConstants {
 		setPrecision(project);
 	}
 
+	/**
+	 * 1) u = (x3 - x1)(x2 - x1) + (y3 - y1)(y2 - y1) / ||p2 - p1||² <br>
+	 * 2) y = mx + c, 0 = ax + by + c, d = |am + bn + c| / sqrt(a² + b²) : d= |-stability + -abstractness + 1| / sqrt(-1² + -1²)
+	 * 
+	 * @param stability
+	 * @param abstractness
+	 * @return
+	 */
+	private double getDistance(double stability, double abstractness) {
+		double a = -1, b = -1;
+		double distance = Math.abs(-stability + -abstractness + 1) / Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+		return distance;
+	}
+
+	private double getAbstractness(double interfaces, double implementations) {
+		double abstractness = (interfaces + implementations) > 0 ? interfaces / (interfaces + implementations) : 1d;
+		return abstractness;
+	}
+
+	private double getStability(double efferent, double afferent) {
+		double stability = (efferent + afferent) > 0 ? efferent / (efferent + afferent) : 1d;
+		return stability;
+	}
+
+	private double getComplexity(double methods, double totalComplexity) {
+		double complexity = methods > 0 ? totalComplexity / methods : 0;
+		return complexity;
+	}
+
+	private double getCoverage(double lines, double executed) {
+		double coverage = lines > 0 ? (executed / lines) * 100d : 0;
+		return coverage;
+	}
+
 	@SuppressWarnings("unchecked")
 	protected void aggregatePackages(List<Package> children) {
 		for (Package<?, ?> pakkage : children) {
@@ -162,16 +194,17 @@ public class Aggregator extends AProcess implements IConstants {
 	}
 
 	protected void aggregatePackage(Package<?, ?> pakkage) {
+		Set<Line<?, ?>> lines = compositeLines.get(pakkage);
+		Set<Method<?, ?>> methods = compositeMethods.get(pakkage);
+
 		double interfaces = 0d;
 		double implementations = 0d;
-		Set<Line<?, ?>> lines = compositeLines.get(pakkage);
-		double linesExecuted = 0d;
-		Set<Method<?, ?>> methods = compositeMethods.get(pakkage);
+		double executed = 0d;
 		double methodAccumulatedComplexity = 0d;
 
 		for (Line<?, ?> line : lines) {
 			if (line.getCounter() > 0) {
-				linesExecuted++;
+				executed++;
 			}
 		}
 
@@ -200,27 +233,24 @@ public class Aggregator extends AProcess implements IConstants {
 		pakkage.setAfferent(afference);
 
 		pakkage.setLines(lines.size());
-		pakkage.setExecuted(linesExecuted);
+		pakkage.setExecuted(executed);
 
-		double coverage = lines.size() > 0 ? (linesExecuted / lines.size()) * 100d : 0;
-		double complexity = methods.size() > 0 ? methodAccumulatedComplexity / methods.size() : 1;
+		double coverage = getCoverage(lines.size(), executed); // lines.size() > 0 ? (linesExecuted / lines.size()) * 100d : 0;
+		double complexity = getComplexity(methods.size(), methodAccumulatedComplexity); // methods.size() > 0 ? methodAccumulatedComplexity /
+		// methods.size() : 1;
 
-		double abstractness = (interfaces + implementations) > 0 ? interfaces / (interfaces + implementations) : 1;
+		double abstractness = getAbstractness(interfaces, implementations); // (interfaces + implementations) > 0 ? interfaces / (interfaces +
+		// implementations) : 1;
 
-		double efferent = efference.size();
-		double afferent = afference.size();
+		double stability = getStability(efference.size(), afference.size()); // (efferent + afferent) > 0 ? efferent / (efferent + afferent) : 1d;
 
-		double stability = (efferent + afferent) > 0 ? efferent / (efferent + afferent) : 1d;
-
-		// 1) u = (x3 - x1)(x2 - x1) + (y3 - y1)(y2 - y1) / ||p2 - p1||²
-		// 2) y = mx + c, 0 = ax + by + c, d = |am + bn + c| / sqrt(a² + b²) : d= |-stability + -abstractness + 1| / sqrt(-1² + -1²)
-		double a = -1, b = -1;
-		double distance = Math.abs(-stability + -abstractness + 1) / Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+		double distance = getDistance(stability, abstractness); // Math.abs(-stability + -abstractness + 1) / Math.sqrt(Math.pow(a, 2) + Math.pow(b,
+		// 2));
 
 		pakkage.setInterfaces(interfaces);
 		pakkage.setImplementations(implementations);
-		pakkage.setEfference(efferent);
-		pakkage.setAfference(afferent);
+		pakkage.setEfference(efference.size());
+		pakkage.setAfference(afference.size());
 
 		pakkage.setCoverage(coverage);
 		pakkage.setComplexity(complexity);
@@ -241,6 +271,7 @@ public class Aggregator extends AProcess implements IConstants {
 	protected void aggregateClass(Class<?, ?> klass) {
 		Set<Line<?, ?>> lines = compositeLines.get(klass);
 		Set<Method<?, ?>> methods = compositeMethods.get(klass);
+
 		double executed = 0d;
 		double totalComplexity = 0d;
 
@@ -257,17 +288,16 @@ public class Aggregator extends AProcess implements IConstants {
 			}
 		}
 
-		double coverage = lines.size() > 0 ? (executed / (double) lines.size()) * 100 : 0;
-		double complexity = methods.size() > 0 ? totalComplexity / methods.size() : 1;
+		double coverage = getCoverage(lines.size(), executed);// lines.size() > 0 ? (executed / (double) lines.size()) * 100 : 0;
+		double complexity = getComplexity(methods.size(), totalComplexity); // methods.size() > 0 ? totalComplexity / methods.size() : 1;
 
 		klass.setCoverage(coverage);
 		klass.setComplexity(complexity);
 		klass.setAfference(klass.getAfferent().size());
 		klass.setEfference(klass.getEfferent().size());
 
-		double efference = klass.getEfference();
-		double afference = klass.getAfference();
-		double stability = (efference + afference) > 0 ? efference / (efference + afference) : 1;
+		double stability = getStability(klass.getEfferent().size(), klass.getAfferent().size()); // (efference + afference) > 0 ? efference /
+		// (efference + afference) : 1;
 
 		klass.setStability(stability);
 	}
@@ -374,7 +404,7 @@ public class Aggregator extends AProcess implements IConstants {
 					}
 				}
 				if (method.getChildren().size() > 0) {
-					double coverage = (executed / method.getChildren().size()) * 100d;
+					double coverage = getCoverage(method.getChildren().size(), executed); // (executed / method.getChildren().size()) * 100d;
 					method.setCoverage(coverage);
 				}
 			} catch (Exception e) {

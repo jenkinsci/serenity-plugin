@@ -37,8 +37,8 @@ public class VisitorFactory {
 	 *            the name of the class to be visited
 	 * @param classBytes
 	 *            the byte array of the byte code
-	 * @param sourceBytes
-	 *            the byte array of the source code for the class
+	 * @param source
+	 *            the output stream of the source code for the class
 	 * @return the class visitor/writer
 	 */
 	public static ClassVisitor getClassVisitor(Class<ClassVisitor>[] classAdapterClasses, String className, byte[] classBytes,

@@ -39,10 +39,18 @@ public class Configuration {
 	/** The class adapters that the system will chain. */
 	public List<Class<ClassVisitor>> classAdapters = new ArrayList<Class<ClassVisitor>>();
 
+	/**
+	 * System wide access to the configuration.
+	 * 
+	 * @return the configuration for the system
+	 */
 	public static synchronized Configuration getConfiguration() {
 		return configuration;
 	}
 
+	/**
+	 * Private access insures singularity.
+	 */
 	private Configuration() {
 		LoggingConfigurator.configure();
 		logger = Logger.getLogger(this.getClass());
@@ -93,10 +101,22 @@ public class Configuration {
 		return false;
 	}
 
+	/**
+	 * Access to the system properties. This method can be extended to include other properties like in files etc.
+	 * 
+	 * @param name
+	 *            the name of the property
+	 * @return the system property with the specified name
+	 */
 	public String getProperty(String name) {
 		return System.getProperty(name);
 	}
 
+	/**
+	 * Access to the classpath of the system. Included in the classpath are the jars that were manually added by the user.
+	 * 
+	 * @return the classpath of the system including the Surefire classpath
+	 */
 	public String getClassPath() {
 		StringBuilder builder = new StringBuilder();
 		String classpath = System.getProperty(IConstants.JAVA_CLASS_PATH);
@@ -111,8 +131,12 @@ public class Configuration {
 		String includedJars = System.getProperty(IConstants.INCLUDED_JARS_PROPERTY);
 		logger.debug("Included jars : " + includedJars);
 		if (includedJars != null) {
-			builder.append(File.pathSeparator);
-			builder.append(includedJars);
+			StringTokenizer tokenizer = new StringTokenizer(includedJars, ";:", false);
+			while (tokenizer.hasMoreTokens()) {
+				String jarFile = tokenizer.nextToken();
+				builder.append(File.pathSeparator);
+				builder.append(jarFile);
+			}
 		}
 		return builder.toString();
 	}

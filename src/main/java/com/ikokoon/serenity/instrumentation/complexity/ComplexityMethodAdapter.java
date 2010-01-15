@@ -32,11 +32,19 @@ public class ComplexityMethodAdapter extends MethodAdapter {
 	/** The description of the method being enhanced. */
 	private String methodDescription;
 
-	/** The complexity counter, start with one and increment for each jump instruction. */
+	/**
+	 * The complexity counter, start with one and increment for each jump instruction/decision point. This will give the approximate value of the
+	 * McCabe method:<br>
+	 * 
+	 * M = E − N + 2P where
+	 * 
+	 * M = cyclomatic complexity <br>
+	 * E = the number of edges of the graph<br>
+	 * N = the number of nodes of the graph<br>
+	 * P = the number of connected components.<br>
+	 */
 	private int complexityCounter = 1;
 
-	/** The total number of lines for the method. */
-	// private double lineCounter;
 	/**
 	 * The constructor initialises a {@link ComplexityMethodAdapter} that takes all the interesting items for the method that is to be enhanced
 	 * including the parent method visitor.
@@ -55,15 +63,18 @@ public class ComplexityMethodAdapter extends MethodAdapter {
 		this.className = Toolkit.slashToDot(className);
 		this.methodName = methodName;
 		this.methodDescription = methodDescription;
-		logger.debug("Class name : " + className + ", name : " + methodName + ", desc : " + methodDescription);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Class name : " + className + ", name : " + methodName + ", desc : " + methodDescription);
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void visitLineNumber(int lineNumber, Label label) {
-		logger.debug("visitLineNumber : " + lineNumber + ", " + label + ", " + label.getOffset() + ", " + className + ", " + methodName);
-		// lineCounter++;
+		if (logger.isDebugEnabled()) {
+			logger.debug("visitLineNumber : " + lineNumber + ", " + label + ", " + label.getOffset() + ", " + className + ", " + methodName);
+		}
 		this.mv.visitLineNumber(lineNumber, label);
 	}
 
@@ -71,7 +82,9 @@ public class ComplexityMethodAdapter extends MethodAdapter {
 	 * {@inheritDoc}
 	 */
 	public void visitJumpInsn(int opcode, Label paramLabel) {
-		logger.debug("visitJumpInsn:" + opcode);
+		if (logger.isDebugEnabled()) {
+			logger.debug("visitJumpInsn:" + opcode);
+		}
 		complexityCounter++;
 		this.mv.visitJumpInsn(opcode, paramLabel);
 	}
@@ -80,7 +93,9 @@ public class ComplexityMethodAdapter extends MethodAdapter {
 	 * {@inheritDoc}
 	 */
 	public void visitEnd() {
-		logger.debug("visitEnd:" + className + ", " + methodName + ", " + methodDescription/* + ", " + lineCounter */);
+		if (logger.isDebugEnabled()) {
+			logger.debug("visitEnd:" + className + ", " + methodName + ", " + methodDescription/* + ", " + lineCounter */);
+		}
 		Collector.collectComplexity(className, methodName, methodDescription, complexityCounter/* , lineCounter */);
 		this.mv.visitEnd();
 	}
@@ -89,7 +104,8 @@ public class ComplexityMethodAdapter extends MethodAdapter {
 	 * {@inheritDoc}
 	 */
 	public void visitTryCatchBlock(Label start, Label end, Label handler, String type) {
-		// TODO - implement me
+		logger.debug("visitTryCatchBlock : " + className + ", " + methodName);
+		complexityCounter++;
 		this.mv.visitTryCatchBlock(start, end, handler, type);
 	}
 
@@ -97,7 +113,8 @@ public class ComplexityMethodAdapter extends MethodAdapter {
 	 * {@inheritDoc}
 	 */
 	public void visitLookupSwitchInsn(Label dflt, int keys[], Label labels[]) {
-		// TODO - implement me
+		logger.debug("visitlookupSwitchInst : " + className + ", " + methodName);
+		complexityCounter++;
 		this.mv.visitLookupSwitchInsn(dflt, keys, labels);
 	}
 
@@ -105,23 +122,17 @@ public class ComplexityMethodAdapter extends MethodAdapter {
 	 * {@inheritDoc}
 	 */
 	public void visitTableSwitchInsn(int min, int max, Label dflt, Label labels[]) {
-		// TODO - implement me
+		logger.debug("visitTableSwitchInst : " + className + ", " + methodName);
+		complexityCounter++;
 		this.mv.visitTableSwitchInsn(min, max, dflt, labels);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public void visitMethodInsn(int opcode, String owner, String name, String desc) {
-		// TODO - implement me
-		this.mv.visitMethodInsn(opcode, owner, name, desc);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public void visitInsn(int opcode) {
-		// TODO - implement me
+		logger.debug("visitInst : " + className + ", " + methodName);
+		// I could be an ATHROW. Do we count as a jump instruction?
 		this.mv.visitInsn(opcode);
 	}
 

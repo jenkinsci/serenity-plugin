@@ -9,7 +9,7 @@
 
 	<groupId>com.ikokoon.serenity.hudson</groupId>
 	<artifactId>serenity</artifactId>
-	<version>1.0</version>
+	<version>0.1</version>
 	<packaging>hpi</packaging>
 	<name>Hudson Serenity plugin</name>
 	<url>http://wiki.hudson-ci.org/display/HUDSON/Serenity+Plugin</url>

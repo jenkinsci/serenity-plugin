@@ -7,7 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is to specify in the persisten entities which fields or combinations of fields are unique, acts somthing like a compound key
+ * This annotation is to specify in the persistent entities which fields or combinations of fields are unique, acts something like a compound key
  * declaration for the entities so that unique indexes can be built from the unique value combinations.
  * 
  * @author Michael Couck

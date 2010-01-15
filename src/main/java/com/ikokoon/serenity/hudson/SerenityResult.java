@@ -179,6 +179,14 @@ public class SerenityResult implements ISerenityResult {
 		// Move the build forward to the last build because Hudson will go to the last stable build
 		// which we don't want, we want the last build
 		abstractBuild = getLastBuild(abstractBuild);
+
+		Object object = abstractBuild.getProject();
+		if (object instanceof hudson.model.Project) {
+			hudson.model.Project<?, ?> hudsonProject = (hudson.model.Project<?, ?>) object;
+			String projectName = hudsonProject.getName();
+			project.setName(projectName);
+		}
+
 		String model = getModel(project, "highchartsSmall.model");
 		return model;
 	}

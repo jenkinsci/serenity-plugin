@@ -24,6 +24,9 @@ import com.ikokoon.toolkit.ObjectFactory;
  *          Added the listeners to the databases so the manager can release them from the map. Changed the IDataBase interface to be generic so
  *          Neodatis can be integrated easier and modified several methods to include the class that is being selected as most persistence libraries
  *          will need this for their selection.
+ * @version 01.3 <br>
+ *          Added a find method that can be implemented as a fuzzy search method by the implementation with multiple search criteria. For example
+ *          'where x like n and y in m'.
  */
 public interface IDataBase {
 
@@ -40,6 +43,11 @@ public interface IDataBase {
 		/** The map of open databases keyed on the database file name. */
 		private static Map<String, IDataBase> dataBases = new HashMap<String, IDataBase>();
 
+		/**
+		 * Access to all the databases in the current VM.
+		 * 
+		 * @return all the databases
+		 */
 		public static synchronized Map<String, IDataBase> getDataBases() {
 			return dataBases;
 		}
@@ -66,15 +74,13 @@ public interface IDataBase {
 
 			if (dataBase == null || dataBase.isClosed()) {
 				dataBase = ObjectFactory.getObject(klass, internalDataBase, dataBaseListener, dataBaseFile, create);
-				logger.info("Adding database : " + dataBase);
-				// Thread.dumpStack();
+				logger.debug("Adding database : " + dataBase);
 				dataBases.put(dataBaseFile, dataBase);
 			} else {
 				if (!klass.isAssignableFrom(dataBase.getClass())) {
 					dataBase.close();
 					dataBase = ObjectFactory.getObject(klass, internalDataBase, dataBaseListener, dataBaseFile, create);
-					// Thread.dumpStack();
-					logger.info("Adding database : " + dataBase);
+					logger.debug("Adding database : " + dataBase);
 					dataBases.put(dataBaseFile, dataBase);
 				}
 			}
@@ -134,6 +140,18 @@ public interface IDataBase {
 	 */
 	public <E extends Composite<?, ?>> E find(Class<E> klass, List<Object> parameters);
 
+	/**
+	 * Selects a list of objects based on the values in the objects and the class of the object. The implementations can implement multiple search
+	 * criteria including fuzzy selection etc.
+	 * 
+	 * @param <E>
+	 *            the return type of the class
+	 * @param klass
+	 *            the type of class to select
+	 * @param parameters
+	 *            the parameters to do the selection with. These are the fields in the objects and the values
+	 * @return the list of composites that match the selection criteria
+	 */
 	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, Map<String, Object> parameters);
 
 	/**

@@ -3,8 +3,7 @@ package com.ikokoon.serenity.hudson.modeller;
 import com.ikokoon.serenity.model.Composite;
 
 /**
- * This is the interface for classes that can generate the model that gets sent to the front end. In the case of the applet the model is sent as a
- * base64 string and de-serialised by the applet before presenting the data.
+ * This is the interface for classes that can generate the model that gets sent to the front end.
  * 
  * @author Michael Couck
  * @since 09.12.09

@@ -16,6 +16,15 @@ import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.model.Composite;
 import com.ikokoon.toolkit.Toolkit;
 
+/**
+ * This is the JPA database implementation. This class could be used in the future if so desired by a user of the Serenity plugin. The issue with the
+ * JPA database is the speed of persistence and where the database will be. This could be configurable of course, but then the user has to do some
+ * serious configuration which will require technical knowledge, and of course set up a database. Too much effort I thinks.
+ * 
+ * @author Michael Couck
+ * @since 20.12.09
+ * @version 01.00
+ */
 public class DataBaseJpa extends DataBase {
 
 	private Logger logger = Logger.getLogger(this.getClass());
@@ -23,11 +32,17 @@ public class DataBaseJpa extends DataBase {
 	private EntityManager entityManager;
 	private boolean closed = true;
 
+	/**
+	 * Constructor opens the entity manager.
+	 */
 	DataBaseJpa() {
 		getEntityManager();
 		closed = false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public synchronized <E extends Composite<?, ?>> E find(Class<E> klass, Long id) {
 		boolean commit = begin();
 		try {
@@ -47,15 +62,31 @@ public class DataBaseJpa extends DataBase {
 		return find(klass, id);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@SuppressWarnings("unchecked")
 	public synchronized <E extends Composite<?, ?>> List<E> find(Class<E> klass) {
 		return entityManager.createQuery("from " + klass.getSimpleName()).getResultList();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, Map<String, Object> parameters) {
+		throw new RuntimeException("Not implempented.");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public synchronized boolean isClosed() {
 		return closed;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public synchronized <E extends Composite<?, ?>> E persist(E composite) {
 		// setId(composite);
 		boolean commit = begin();
@@ -65,6 +96,9 @@ public class DataBaseJpa extends DataBase {
 		return composite;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public synchronized <E extends Composite<?, ?>> E remove(Class<E> klass, Long id) {
 		E composite = find(klass, id);
 		if (composite != null) {
@@ -75,18 +109,21 @@ public class DataBaseJpa extends DataBase {
 		return composite;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public synchronized void close() {
 		logger.info("Closing the JPA database : " + entityManager.isOpen());
-		// if (entityManager.isOpen()) {
-		// boolean commit = begin();
-		// try {
-		// entityManager.flush();
-		// } finally {
-		// commit(commit);
-		// }
-		// entityManager.close();
-		// closed = true;
-		// }
+		if (entityManager.isOpen()) {
+			boolean commit = begin();
+			try {
+				entityManager.flush();
+			} finally {
+				commit(commit);
+			}
+			entityManager.close();
+			closed = true;
+		}
 	}
 
 	/**
@@ -130,11 +167,6 @@ public class DataBaseJpa extends DataBase {
 			}
 		}
 		return entityManager;
-	}
-
-	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, Map<String, Object> parameters) {
-		// TODO implement me
-		throw new RuntimeException("Not implempented.");
 	}
 
 }

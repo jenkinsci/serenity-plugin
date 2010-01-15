@@ -20,7 +20,6 @@ import javax.persistence.OneToMany;
 @Entity
 public abstract class Composite<E, F> {
 
-	public static final int PRECISION = 2;
 	public static final String NAME = "name";
 	public static final String CLASS_NAME = "className";
 	public static final String METHOD_NAME = "methodName";

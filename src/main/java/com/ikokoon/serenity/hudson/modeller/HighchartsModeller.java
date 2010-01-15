@@ -25,15 +25,29 @@ public class HighchartsModeller implements IModeller {
 	private String modelName;
 	private Integer[] buildNumbers;
 
+	/**
+	 * Constructor takes the name of the model file, either the floating box model which is smaller or the graph model.
+	 * 
+	 * @param modelName
+	 *            the name of the model file
+	 * @param buildNumbers
+	 *            the numbers that should be on the x-axis
+	 */
 	public HighchartsModeller(String modelName, Integer... buildNumbers) {
 		this.modelName = modelName;
 		this.buildNumbers = buildNumbers;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public String getModel() {
 		return model;
 	}
 
+	/**
+	 * Visits the composites and generates a model string for the Highcharts javaScript graph.
+	 */
 	public void visit(java.lang.Class<?> klass, Composite<?, ?>... composites) {
 		// coverageData = [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
 		// complexityData - [1016, 1016, 1015.9, 1015.5, 1012.3, 1009.5, 1009.6, 1010.2, 1013.1, 1016.9, 1018.2, 1016.7]
