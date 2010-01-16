@@ -15,7 +15,6 @@ import com.ikokoon.serenity.model.Afferent;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Efferent;
 import com.ikokoon.serenity.model.Package;
-import com.ikokoon.serenity.persistence.DataBaseToolkit;
 import com.ikokoon.target.consumer.Annotation;
 import com.ikokoon.target.consumer.TargetConsumer;
 import com.ikokoon.toolkit.Toolkit;
@@ -34,7 +33,7 @@ public class DependencyTest extends ATest {
 
 	@Test
 	public void visit() throws Exception {
-		DataBaseToolkit.clear(dataBase);
+		// DataBaseToolkit.clear(dataBase);
 		Configuration.getConfiguration().includedPackages.add(className);
 		Configuration.getConfiguration().includedPackages.add(packageName);
 		Configuration.getConfiguration().includedPackages.add(Logger.class.getPackage().getName());
@@ -54,6 +53,8 @@ public class DependencyTest extends ATest {
 
 		visitClass(DependencyClassAdapter.class, TargetConsumer.class.getName());
 		assertTrue(containsEfferentPackage(efferent, TargetConsumer.class.getPackage().getName()));
+
+		dataBase.remove(Package.class, Toolkit.hash(packageName));
 
 		// Test that Annotation has a reference to AnnotationAnnotation and visa versa
 		// Test for field annotations and method annotations

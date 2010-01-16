@@ -1,4 +1,4 @@
-package com.ikokoon.serenity.persistence;
+package com.ikokoon.toolkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
+import com.ikokoon.toolkit.Permutations;
 
 public class PermutationsTest extends ATest {
 

@@ -194,7 +194,6 @@ public class DataBaseOdb extends DataBase {
 			}
 			commit();
 			odb.close();
-			closed = true;
 
 			final IDataBase dataBase = this;
 			IDataBaseEvent dataBaseEvent = new IDataBaseEvent() {
@@ -210,6 +209,7 @@ public class DataBaseOdb extends DataBase {
 		} catch (Exception e) {
 			logger.error("Exception closing the ODB database", e);
 		}
+		closed = true;
 	}
 
 	@SuppressWarnings("unchecked")

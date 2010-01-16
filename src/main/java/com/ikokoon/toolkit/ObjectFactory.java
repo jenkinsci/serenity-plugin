@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.ikokoon.serenity.persistence.Permutations;
 
 /**
  * This is an abstract factory. Classes are selected for construction according to the best match between the parameters and the solid implementation

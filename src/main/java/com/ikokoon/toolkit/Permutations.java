@@ -1,4 +1,4 @@
-package com.ikokoon.serenity.persistence;
+package com.ikokoon.toolkit;
 
 import java.util.ArrayList;
 import java.util.Arrays;

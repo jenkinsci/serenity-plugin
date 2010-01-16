@@ -62,7 +62,7 @@ public abstract class ATest implements IConstants {
 	}
 
 	@Before
-	public void initilize() {
+	public synchronized void initilize() {
 		if (dataBase == null) {
 			IDataBase iDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, false, null);
 			dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, true, iDataBase);

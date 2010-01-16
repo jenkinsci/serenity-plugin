@@ -45,14 +45,16 @@ public class AggregatorTest extends ATest implements IConstants {
 
 	@Before
 	public void before() {
-		DataBaseToolkit.clear(dataBase);
-		new Accumulator(null).execute();
-		new Cleaner(null, dataBase).execute();
-		new Aggregator(null, dataBase).execute();
+
 	}
 
 	@Test
 	public void innerClasses() {
+		DataBaseToolkit.clear(dataBase);
+		new Accumulator(null).execute();
+		new Cleaner(null, dataBase).execute();
+		new Aggregator(null, dataBase).execute();
+
 		Package<?, ?> pakkage = dataBase.find(Package.class, Toolkit.hash(Discovery.class.getPackage().getName()));
 		assertNotNull(pakkage);
 		Class<?, ?> klass = dataBase.find(Class.class, Toolkit.hash(Discovery.class.getName()));

@@ -34,6 +34,7 @@ public class CoverageSourceCodeTest extends ATest {
 			}
 		}, "highlight source", 10);
 		assertTrue(executionsPerSecond > 10);
+		dataBase.remove(pakkage.getClass(), pakkage.getId());
 	}
 
 	private void setCovered(Class<?, ?> klass) {

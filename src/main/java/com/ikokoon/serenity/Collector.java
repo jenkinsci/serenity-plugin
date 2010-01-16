@@ -310,9 +310,8 @@ public class Collector implements IConstants {
 
 	@SuppressWarnings("unchecked")
 	protected static final Line<?, ?> getLine(String className, String methodName, String methodDescription, double lineNumber) {
-		Line line = null;
 		long id = Toolkit.hash(className, methodName, lineNumber);
-		line = (Line) dataBase.find(Line.class, id);
+		Line line = (Line) dataBase.find(Line.class, id);
 
 		if (line == null) {
 			line = new Line();

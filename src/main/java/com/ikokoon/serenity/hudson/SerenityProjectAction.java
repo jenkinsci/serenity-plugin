@@ -69,7 +69,7 @@ public class SerenityProjectAction extends Actionable implements ProminentProjec
 	}
 
 	public ISerenityResult getLastResult() {
-		logger.warn("getLastResult");
+		logger.debug("getLastResult");
 		Run build = owner.getLastStableBuild();
 		if (build == null) {
 			build = owner.getLastBuild();

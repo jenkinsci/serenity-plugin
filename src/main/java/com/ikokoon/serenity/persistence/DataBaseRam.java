@@ -113,6 +113,11 @@ public final class DataBaseRam extends DataBase {
 	 * {@inheritDoc}
 	 */
 	public synchronized final boolean isClosed() {
+		if (dataBase != null) {
+			if (!closed && dataBase.isClosed()) {
+				closed = true;
+			}
+		}
 		return closed;
 	}
 

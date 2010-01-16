@@ -17,6 +17,7 @@ import org.objectweb.asm.util.CheckClassAdapter;
 import com.ikokoon.serenity.ATest;
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import com.ikokoon.serenity.model.Line;
+import com.ikokoon.toolkit.Toolkit;
 
 public class CoverageTest extends ATest {
 
@@ -70,6 +71,8 @@ public class CoverageTest extends ATest {
 		Line<?, ?> line = (Line) dataBase.find(Line.class, parameters);
 		assertNotNull(line);
 		assertTrue(line.getCounter() > 0);
+
+		dataBase.remove(com.ikokoon.serenity.model.Class.class, Toolkit.hash(className));
 	}
 
 }

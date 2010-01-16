@@ -29,6 +29,7 @@ public class ComplexityTest extends ATest {
 		// This assertion depends on the compiler, in some cases the compiler will optimise the code removing
 		// a jump instruction
 		assertTrue(method.getComplexity() == 23 || method.getComplexity() == 25);
+		dataBase.remove(klass.getClass(), klass.getId());
 	}
 
 }

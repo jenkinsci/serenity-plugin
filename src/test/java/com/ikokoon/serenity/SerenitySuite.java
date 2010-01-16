@@ -28,11 +28,11 @@ import com.ikokoon.serenity.instrumentation.dependency.DependencyTest;
 import com.ikokoon.serenity.persistence.DataBaseJpaTest;
 import com.ikokoon.serenity.persistence.DataBaseOdbTest;
 import com.ikokoon.serenity.persistence.DataBaseRamTest;
-import com.ikokoon.serenity.persistence.PermutationsTest;
 import com.ikokoon.serenity.process.AccumulatorTest;
 import com.ikokoon.serenity.process.AggregatorTest;
 import com.ikokoon.toolkit.MatrixTest;
 import com.ikokoon.toolkit.ObjectFactoryTest;
+import com.ikokoon.toolkit.PermutationsTest;
 import com.ikokoon.toolkit.ToolkitTest;
 
 /**
@@ -66,6 +66,6 @@ import com.ikokoon.toolkit.ToolkitTest;
 		DataBaseJpaTest.class // The JPA database(experimental)
 
 })
-public class TestSuite {
+public class SerenitySuite {
 	// DataBaseDb4oTest.class
 }

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
@@ -23,17 +24,20 @@ import com.ikokoon.toolkit.Toolkit;
 
 public class DataBaseOdbTest extends ATest {
 
+	@Before
+	public void clear() {
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, false, null);
+		DataBaseToolkit.clear(dataBase);
+	}
+
 	// @Test
 	@SuppressWarnings("unchecked")
 	public void memoryUsage() {
-		DataBaseToolkit.clear(dataBase);
-		dataBase.close();
-
 		long million = 1000000;
 		long freeMemoryStart = Runtime.getRuntime().freeMemory() / million;
 		logger.info("Free memory start : " + freeMemoryStart);
 
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, "./serenity/findbugs.serenity.odb", false, null);
+		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, "./serenity/findbugs.serenity.odb", false, null);
 
 		long freeMemoryEnd = Runtime.getRuntime().freeMemory() / million;
 		logger.info("Free memory difference after initialise : " + (freeMemoryEnd - freeMemoryStart));
@@ -67,11 +71,6 @@ public class DataBaseOdbTest extends ATest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void persist() {
-		DataBaseToolkit.clear(dataBase);
-		dataBase.close();
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, true, null);
-		DataBaseToolkit.clear(dataBase);
-
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
 		pakkage = (Package) dataBase.find(Package.class, pakkage.getId());
@@ -85,9 +84,6 @@ public class DataBaseOdbTest extends ATest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void findId() {
-		DataBaseToolkit.clear(dataBase);
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, true, null);
-		DataBaseToolkit.clear(dataBase);
 		DataBaseToolkit.dump(dataBase, new DataBaseToolkit.ICriteria() {
 			public boolean satisfied(Composite<?, ?> composite) {
 				return true;
@@ -103,10 +99,6 @@ public class DataBaseOdbTest extends ATest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void findParameters() {
-		DataBaseToolkit.clear(dataBase);
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, true, null);
-		DataBaseToolkit.clear(dataBase);
-
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
 
@@ -138,10 +130,6 @@ public class DataBaseOdbTest extends ATest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void removeId() throws Exception {
-		DataBaseToolkit.clear(dataBase);
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, true, null);
-		DataBaseToolkit.clear(dataBase);
-
 		// java.lang.Class<T> klass, Long id
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
@@ -151,24 +139,17 @@ public class DataBaseOdbTest extends ATest {
 		dataBase.remove(Class.class, klass.getId());
 		klass = (Class) dataBase.find(Class.class, klass.getId());
 		assertNull(klass);
-		dataBase.close();
-		dataBase = null;
 	}
 
 	@Test
 	@SuppressWarnings("unchecked")
 	public void find() {
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, true, null);
-		DataBaseToolkit.clear(dataBase);
-
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("name", pakkage.getName());
 		List<Class> classes = dataBase.find(Class.class, parameters);
 		assertEquals(1, classes.size());
-		dataBase.close();
-		dataBase = null;
 	}
 
 }

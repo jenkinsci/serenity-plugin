@@ -22,6 +22,7 @@ public class DataBaseJpaTest extends ATest {
 	@Test
 	public void dummy() {
 		// And nothing
+		DataBaseToolkit.clear(dataBase);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -62,6 +63,8 @@ public class DataBaseJpaTest extends ATest {
 		freeMemoryEnd = Runtime.getRuntime().freeMemory() / million;
 		logger.info("Free memory difference after null all the packges : " + (freeMemoryEnd - freeMemoryStart));
 		logger.info("Free memory end : " + freeMemoryEnd);
+		
+		dataBase.close();
 	}
 
 	// @Test
