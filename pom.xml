@@ -188,4 +188,10 @@
 			<url>http://maven.glassfish.org/content/groups/public/</url>
 		</pluginRepository>
 	</pluginRepositories>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/serenity-0.1</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/serenity-0.1</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/tags/serenity-0.1</url>
+  </scm>
 </project>
