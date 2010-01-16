@@ -3,115 +3,77 @@
 	<l:layout>
 		<st:include it="${it.owner}" page="sidepanel.jelly" />
 		<l:main-panel>
-			<html>
-				<head>
-					<link rel="stylesheet" type="text/css" href="${rootURL}/css/style.css" />
-					<link rel="stylesheet" type="text/css" href="${rootURL}/plugin/serenity/js/dhtmlxtree.css" />
-					
-					<script type="text/javascript" src="${rootURL}/plugin/serenity/js/serenity.js" />
-					<script type="text/javascript" src="${rootURL}/plugin/serenity/js/dhtmlxcommon.js" />
-					<script type="text/javascript" src="${rootURL}/plugin/serenity/js/ext/dhtmlxtree_start.js" />
-					<script type="text/javascript" src="${rootURL}/plugin/serenity/js/dhtmlxtree.js" />
-					<script type="text/javascript">
-						dhtmlx.skin = "dhx_skyblue";
-						
-						function resizeFrames() {
-							var usableHeight = pageHeight() * 85 / 100;
-							
-							var chart = document.frames ? document.frames['chart'] : document.getElementById('chart');
-							chart.height = 180;
-							
-							var source = document.frames ? document.frames['source'] : document.getElementById('source');
-							source.height = usableHeight - chart.height;
-							
-							var treeDiv = document.getElementById('treeDiv');
-							treeDiv.style.width = 330;
-							treeDiv.style.height = usableHeight;
-							// alert('Width : ' + pageWidth() + ', height : ' + pageHeight() + ', chart : ' + chart.height + ', source : ' + source.height + ', tree div : ' + treeDiv.style.height);
-						}
-						
-						var tree;
-						function loadTree() {
-							tree = dhtmlXTreeFromHTML('treeDiv');
-							// alert('Load tree : ' + tree);
-							tree.setOnClickHandler(onClick);
-							// alert('Load tree : 0 : ' + tree);
-						}
-						
-						function onClick(id) {
-							// alert('On click : ' + id + ', ' + tree);
-							var klassName = tree.getUserData(id, 'klass');
-							loadFrames(klassName, id);
-						}
-						
-						window.onresize = function () {
-							resizeFrames();
-							// loadTree();
-						}
-						
-						window.onload = function() {
-							resizeFrames();
-							loadTree();
-						}
-					</script>
-				</head>
-				<body>
+			<link rel="stylesheet" type="text/css" href="${rootURL}/plugin/serenity/js/dhtmlxtree.css" />
+			
+			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/serenity.js" />
+			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/dhtmlxcommon.js" />
+			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/ext/dhtmlxtree_start.js" />
+			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/dhtmlxtree.js" />
+			<script type="text/javascript">
+			dhtmlx.skin = "dhx_skyblue";
+				window.onresize = function () {
+					resizeFrames();
+					// loadTree();
+				}
+				window.onload = function() {
+					resizeFrames();
+					loadTree();
+				}
+			</script>
 
-					<table border="0" width="100%">
-						<tr>
-							<td colspan="2">
-								<h3>
-									<a href="#" onclick="JavaScript:loadFrames('com.ikokoon.serenity.model.Project', '${it.project.id}');">
-										<img src="${rootURL}/plugin/serenity/icons/project.gif" alt="The Serenity Report Icon" title="Serenity Graph" />
-										Project : ${it.name}
-									</a>
-									<b title="Coverage, complexity, stability, packages, classes, methods, lines" style="font-size: 10px;">
-										(coverage : ${it.project.coverage}, complexity : ${it.project.complexity}, stability : ${it.project.stability},
-										 [${it.project.packages}, ${it.project.classes}, ${it.project.methods}, ${it.project.lines}])</b>
-								</h3>
-							</td>
-						</tr>
-						<tr>
-							<td width="30%" valign="top">
-								<!-- style="width : 330; height : 465;" -->
-								<div id="treeDiv" setImagePath="${rootURL}/plugin/serenity/js/imgs/" class="dhtmlxTree">
-									<xmp container="true">
-										<j:forEach var="package" items="${it.packages}">
-											<item text="${package.name} (${package.coverage},${package.complexity},${package.stability})" id="${package.id}" call="true">
-												<userdata name="klass">${package.class.name}</userdata>
-												<j:forEach var="klass" items="${package.children}">
-													<!-- im0="iconText.gif" im1="iconText.gif" im2="iconText.gif" -->
-													<item text="${klass.name} (${klass.coverage},${klass.complexity},${klass.stability})" id="${klass.id}" call="true">
-														<userdata name="klass">${klass.class.name}</userdata>
-													</item>
-												</j:forEach>
+			<table border="0" width="100%">
+				<tr>
+					<td colspan="2">
+						<h3>
+							<a href="#" onclick="JavaScript:loadFrames('com.ikokoon.serenity.model.Project', '${it.project.id}');">
+								<img src="${rootURL}/plugin/serenity/icons/project.gif" alt="The Serenity Report Icon" title="Serenity Graph" />
+								Project : ${it.name}
+							</a>
+							<b title="Coverage, complexity, stability, packages, classes, methods, lines" style="font-size: 10px;">
+								(coverage : ${it.project.coverage}, complexity : ${it.project.complexity}, stability : ${it.project.stability},
+								 [${it.project.packages}, ${it.project.classes}, ${it.project.methods}, ${it.project.lines}])</b>
+						</h3>
+					</td>
+				</tr>
+				<tr>
+					<td width="30%" valign="top">
+						<!-- style="width : 330; height : 465;" -->
+						<div id="treeDiv" setImagePath="${rootURL}/plugin/serenity/js/imgs/" class="dhtmlxTree">
+							<xmp container="true">
+								<j:forEach var="package" items="${it.packages}">
+									<item text="${package.name} (${package.coverage},${package.complexity},${package.stability})" id="${package.id}" call="true">
+										<userdata name="klass">${package.class.name}</userdata>
+										<j:forEach var="klass" items="${package.children}">
+											<!-- im0="iconText.gif" im1="iconText.gif" im2="iconText.gif" -->
+											<item text="${klass.name} (${klass.coverage},${klass.complexity},${klass.stability})" id="${klass.id}" call="true">
+												<userdata name="klass">${klass.class.name}</userdata>
 											</item>
 										</j:forEach>
-									</xmp>
-								</div>
-							</td>
-							<td width="70%" height="100%" valign="top">
-								<table width="100%" height="100%" border="0">
-									<tr>
-										<td width="100%" height="30%" valign="top">
-											<iframe src="chart" width="100%" height="100%" id="chart" name="chart" frameborder="0">
-												<p>Your browser does not support internal frames.</p>
-											</iframe>
-										</td>
-									</tr>
-									<tr>
-										<td width="100%" height="70%" valign="top">
-											<iframe src="source" width="100%" height="100%" id="source" name="source" frameborder="0">
-												<p>Your browser does not support internal frames.</p>
-											</iframe>
-										</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
-					</table>
-				</body>
-			</html>
+									</item>
+								</j:forEach>
+							</xmp>
+						</div>
+					</td>
+					<td width="70%" height="100%" valign="top">
+						<table width="100%" height="100%" border="0">
+							<tr>
+								<td width="100%" height="30%" valign="top">
+									<iframe src="chart" width="100%" height="100%" id="chart" name="chart" frameborder="0">
+										<p>Your browser does not support internal frames.</p>
+									</iframe>
+								</td>
+							</tr>
+							<tr>
+								<td width="100%" height="70%" valign="top">
+									<iframe src="source" width="100%" height="100%" id="source" name="source" frameborder="0">
+										<p>Your browser does not support internal frames.</p>
+									</iframe>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
 		</l:main-panel>
 	</l:layout>
 </j:jelly>

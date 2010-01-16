@@ -50,6 +50,48 @@ function loadFrames(klass, id) {
 	xmlhttp.send(); // null
 }
 
+/**
+ * This function resizes the frames on the page to fit the displayable area 
+ * on the browser.
+ * 
+ * @return nothing
+ */
+function resizeFrames() {
+	var usableHeight = pageHeight() * 85 / 100;
+	var chart = document.frames ? document.frames['chart'] : document.getElementById('chart');
+	chart.height = 180;
+	var source = document.frames ? document.frames['source'] : document.getElementById('source');
+	source.height = usableHeight - chart.height;
+	var treeDiv = document.getElementById('treeDiv');
+	treeDiv.style.width = 330;
+	treeDiv.style.height = usableHeight;
+	// alert('Width : ' + pageWidth() + ', height : ' + pageHeight() + ', chart : ' + chart.height + ', source : ' + source.height + ', tree div : ' + treeDiv.style.height);
+}
+
+var tree;
+/**
+ * This function takes the 'xmp' tags and loads the JavaScript navigation tree.
+ * @return nothing
+ */
+function loadTree() {
+	tree = dhtmlXTreeFromHTML('treeDiv');
+	// alert('Load tree : ' + tree);
+	tree.setOnClickHandler(onClick);
+	// alert('Load tree : 0 : ' + tree);
+}
+
+/**
+ * This function is the event handler for the tree.
+ * 
+ * @param id the id of the tree item
+ * @return nothing
+ */
+function onClick(id) {
+	// alert('On click : ' + id + ', ' + tree);
+	var klassName = tree.getUserData(id, 'klass');
+	loadFrames(klassName, id);
+}
+
 // Browser Window Size and Position
 // copyright Stephen Chapman, 3rd Jan 2005, 8th Dec 2005
 // you may copy these functions but please keep the copyright notice as well
