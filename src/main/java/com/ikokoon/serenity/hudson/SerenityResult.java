@@ -220,7 +220,7 @@ public class SerenityResult implements ISerenityResult {
 				return source;
 			}
 		}
-		return "No source";
+		return "";
 	}
 
 	@SuppressWarnings("unchecked")
