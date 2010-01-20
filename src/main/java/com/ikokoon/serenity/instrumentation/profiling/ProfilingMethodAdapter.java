@@ -10,7 +10,7 @@ import com.ikokoon.toolkit.Toolkit;
 
 /**
  * TODO - @see {@link ProfilingClassAdapter}
- * 
+ *
  * @author Michael Couck
  * @since 30.09.09
  * @version 01.00
@@ -30,7 +30,7 @@ public class ProfilingMethodAdapter extends MethodAdapter implements Opcodes {
 
 	/**
 	 * The constructor takes all the interesting items for the method that is to be enhanced.
-	 * 
+	 *
 	 * @param methodVisitor
 	 *            the parent method visitor
 	 * @param className
@@ -40,7 +40,7 @@ public class ProfilingMethodAdapter extends MethodAdapter implements Opcodes {
 	 * @param desc
 	 *            the method description
 	 */
-	public ProfilingMethodAdapter(MethodVisitor methodVisitor, String className, String name, String desc) {
+	public ProfilingMethodAdapter(MethodVisitor methodVisitor, Integer access, String className, String name, String desc) {
 		super(methodVisitor);
 		this.className = Toolkit.slashToDot(className);
 		this.name = name;

@@ -14,7 +14,7 @@ import com.ikokoon.toolkit.Toolkit;
 
 /**
  * This class visits the method instructions and collects dependency metrics on the method.
- * 
+ *
  * @author Michael Couck
  * @since 18.07.09
  * @version 01.00
@@ -33,7 +33,7 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 	/**
 	 * The constructor initialises a {@link DependencyMethodAdapter} and takes all the interesting items for the method that are used for the
 	 * collection of the data.
-	 * 
+	 *
 	 * @param methodVisitor
 	 *            the method visitor of the parent
 	 * @param className
@@ -43,7 +43,7 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 	 * @param methodDescription
 	 *            the description of the method
 	 */
-	public DependencyMethodAdapter(MethodVisitor methodVisitor, String className, String methodName, String methodDescription) {
+	public DependencyMethodAdapter(MethodVisitor methodVisitor, Integer access, String className, String methodName, String methodDescription) {
 		super(methodVisitor);
 		this.className = Toolkit.slashToDot(className);
 		this.methodName = methodName;
@@ -64,7 +64,7 @@ public class DependencyMethodAdapter extends MethodAdapter implements Opcodes {
 
 	/**
 	 * This method recursively visits array types.
-	 * 
+	 *
 	 * @param argumentType
 	 *            the type to visit
 	 */

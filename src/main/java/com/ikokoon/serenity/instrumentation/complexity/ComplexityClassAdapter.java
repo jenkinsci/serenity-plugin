@@ -14,7 +14,7 @@ import com.ikokoon.toolkit.Toolkit;
 /**
  * This is the top level class adapter for collecting the complexity for the classes. It just calls the complexity method adapter where the real work
  * happens.
- * 
+ *
  * @author Michael Couck
  * @since 12.07.09
  * @version 01.00
@@ -26,9 +26,9 @@ public class ComplexityClassAdapter extends ClassAdapter {
 	private String className;
 
 	/**
-	 * Constructor initialises a {@link ComplexityClasAdapter} ComplexityClassAdapter with the parent visitor and the name of the class that will be
+	 * Constructor initialises a {@link ComplexityClassAdapter} ComplexityClassAdapter with the parent visitor and the name of the class that will be
 	 * parsed for complexity or jump instructions.
-	 * 
+	 *
 	 * @param visitor
 	 *            the parent visitor what will be called to collect the byte code
 	 * @param className
@@ -59,8 +59,8 @@ public class ComplexityClassAdapter extends ClassAdapter {
 	public MethodVisitor visitMethod(int access, String methodName, String methodDescription, String signature, String[] exceptions) {
 		logger.debug("visitMethod : " + access + ", " + methodName + ", " + methodDescription + ", " + signature + ", " + exceptions);
 		MethodVisitor methodVisitor = super.visitMethod(access, methodName, methodDescription, signature, exceptions);
-		MethodAdapter methodAdapter = (MethodAdapter) VisitorFactory.getMethodVisitor(methodVisitor, ComplexityMethodAdapter.class, className,
-				methodName, methodDescription);
+		MethodAdapter methodAdapter = (MethodAdapter) VisitorFactory.getMethodVisitor(methodVisitor, ComplexityMethodAdapter.class, access,
+				className, methodName, methodDescription);
 		return methodAdapter;
 	}
 

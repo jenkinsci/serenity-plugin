@@ -76,7 +76,9 @@
 					var unit = {
 						'Coverage': '%',
 						'Complexity': 'units',
-						'Stability': ' < 1'
+						'Stability': ' < 1',
+						'Abstractness': ' < 1',
+						'Distance': ' < 1'
 					}[this.series.name];
 					return '<b>'+ this.series.name +'</b><br/>'+
 						this.x +': '+ this.y.toFixed(2) +' '+ unit;
@@ -105,7 +107,7 @@
 					color: '#89A54E',
 					type: 'column',
 					yAxis: 0,
-					data: coverageData		
+					data: coverageData
 				}, {
 					name: 'Complexity',
 					type: 'spline',
@@ -118,6 +120,18 @@
 					type: 'spline',
 					yAxis: 2,
 					data: stabilityData
+				}, {
+					name: 'Abstractness',
+					color: '#CDCD00',
+					type: 'spline',
+					yAxis: 2,
+					data: abstractnessData
+				}, {
+					name: 'Distance',
+					color: '#EE7600',
+					type: 'spline',
+					yAxis: 2,
+					data: distanceData
 				}
 			]
 		}

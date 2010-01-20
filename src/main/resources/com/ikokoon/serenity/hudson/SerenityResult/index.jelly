@@ -4,13 +4,13 @@
 		<st:include it="${it.owner}" page="sidepanel.jelly" />
 		<l:main-panel>
 			<link rel="stylesheet" type="text/css" href="${rootURL}/plugin/serenity/js/dhtmlxtree.css" />
-			
+
 			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/serenity.js" />
 			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/dhtmlxcommon.js" />
 			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/ext/dhtmlxtree_start.js" />
 			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/dhtmlxtree.js" />
 			<script type="text/javascript">
-			dhtmlx.skin = "dhx_skyblue";
+				dhtmlx.skin = "dhx_skyblue";
 				window.onresize = function () {
 					resizeFrames();
 					// loadTree();
@@ -30,8 +30,9 @@
 								Project : ${it.name}
 							</a>
 							<b title="Coverage, complexity, stability, packages, classes, methods, lines" style="font-size: 10px;">
-								(coverage : ${it.project.coverage}, complexity : ${it.project.complexity}, stability : ${it.project.stability},
-								 [${it.project.packages}, ${it.project.classes}, ${it.project.methods}, ${it.project.lines}])</b>
+								(coverage : ${it.project.coverage}, complexity :
+								${it.project.complexity}, stability : ${it.project.stability},
+								[${it.project.packages}, ${it.project.classes}, ${it.project.methods}, ${it.project.lines}])</b>
 						</h3>
 					</td>
 				</tr>
@@ -45,8 +46,28 @@
 										<userdata name="klass">${package.class.name}</userdata>
 										<j:forEach var="klass" items="${package.children}">
 											<!-- im0="iconText.gif" im1="iconText.gif" im2="iconText.gif" -->
-											<item text="${klass.name} (${klass.coverage},${klass.complexity},${klass.stability})" id="${klass.id}" call="true">
+											<item text="${klass.name} (${klass.coverage},${klass.complexity},${klass.stability})" id="${klass.id}" call="true" im0="leaf.gif" im1="leaf.gif"
+												im2="leaf.gif">
 												<userdata name="klass">${klass.class.name}</userdata>
+												<j:forEach var="innerKlass" items="${klass.innerClasses}">
+													<j:choose>
+														<j:when test="${innerKlass.access == org.objectweb.asm.Opcodes.ACC_PUBLIC}">
+															<!-- Assign the image variable a value here -->
+														</j:when>
+													</j:choose>
+													<item text="${innerKlass.name} (${innerKlass.coverage},${innerKlass.complexity},${innerKlass.stability})" call="false"
+														im0="innerclass_public_obj.gif" im1="innerclass_public_obj.gif" im2="linnerclass_public_obj.gif">
+													</item>
+												</j:forEach>
+												<j:forEach var="method" items="${klass.children}">
+													<j:choose>
+														<j:when test="${method.access == org.objectweb.asm.Opcodes.ACC_PUBLIC}">
+															<!-- Assign the image variable a value here -->
+														</j:when>
+													</j:choose>
+													<item text="${method.name} (${method.coverage},${method.complexity})" call="false" im0="public_co.gif" im1="public_co.gif" im2="public_co.gif">
+													</item>
+												</j:forEach>
 											</item>
 										</j:forEach>
 									</item>

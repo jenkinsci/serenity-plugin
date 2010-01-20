@@ -18,7 +18,7 @@ import com.ikokoon.toolkit.ObjectFactory;
 
 /**
  * This class instantiates visitors for classes, methods, field, signature and annotations.
- * 
+ *
  * @author Michael Couck
  * @since 09.12.09
  * @version 01.00
@@ -30,7 +30,7 @@ public class VisitorFactory {
 	/**
 	 * Instantiates a chain of class visitors. Each visitor can modify or add code to the class as it is parsed and the writer will output the new
 	 * class byte code.
-	 * 
+	 *
 	 * @param classAdapterClasses
 	 *            the class visitor classes
 	 * @param className
@@ -57,28 +57,29 @@ public class VisitorFactory {
 
 	/**
 	 * This method constructs a method visitor chain based on the class of the method adapter passed as a parameter.
-	 * 
+	 *
 	 * @param visitor
 	 *            the parent method visitor
 	 * @param klass
 	 *            the class of the method visitor to initialise
 	 * @param className
 	 *            the name of the class that the method visitor will visit
-	 * @param name
+	 * @param methodName
 	 *            the name of the method
-	 * @param desc
+	 * @param methodDescription
 	 *            the description or signature of the method in byte code format
 	 * @return the method visitor
 	 */
-	public static MethodVisitor getMethodVisitor(MethodVisitor visitor, Class<?> klass, String className, String name, String desc) {
-		Object[] parameters = new Object[] { visitor, className, name, desc };
+	public static MethodVisitor getMethodVisitor(MethodVisitor visitor, Class<?> klass, int access, String className, String methodName,
+			String methodDescription) {
+		Object[] parameters = new Object[] { visitor, access, className, methodName, methodDescription };
 		MethodVisitor adapter = (MethodVisitor) ObjectFactory.getObject(klass, parameters);
 		return adapter;
 	}
 
 	/**
 	 * This method constructs a field visitor chain that will visit the byte code for a field in a class.
-	 * 
+	 *
 	 * @param visitor
 	 *            the parent field visitor
 	 * @param klass
@@ -99,7 +100,7 @@ public class VisitorFactory {
 
 	/**
 	 * This method constructs a signature visitor that will visit a signature for something, could be an annotation or a method.
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class the signature is in
 	 * @param signature
@@ -115,7 +116,7 @@ public class VisitorFactory {
 
 	/**
 	 * This method constructs an annotation visitor to visit annotations.
-	 * 
+	 *
 	 * @param visitor
 	 *            the parent annotation visitor
 	 * @param className

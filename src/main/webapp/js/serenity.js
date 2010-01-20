@@ -3,7 +3,7 @@
  * Stapler doDynamic invocation. The model for the class and id will be
  * generated. The frames are then forced to reload which will transfer the model
  * data to the chart and source pages.
- * 
+ *
  * @param class
  *            the class of the composite, i.e. Project, Package or Class
  * @param id
@@ -51,9 +51,9 @@ function loadFrames(klass, id) {
 }
 
 /**
- * This function resizes the frames on the page to fit the displayable area 
+ * This function resizes the frames on the page to fit the displayable area
  * on the browser.
- * 
+ *
  * @return nothing
  */
 function resizeFrames() {
@@ -82,13 +82,16 @@ function loadTree() {
 
 /**
  * This function is the event handler for the tree.
- * 
+ *
  * @param id the id of the tree item
  * @return nothing
  */
 function onClick(id) {
 	// alert('On click : ' + id + ', ' + tree);
 	var klassName = tree.getUserData(id, 'klass');
+	if (!id || !klassName) {
+		return;
+	}
 	loadFrames(klassName, id);
 }
 

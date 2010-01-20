@@ -4,7 +4,7 @@ package com.ikokoon.toolkit;
  * Base64.java
  *
  * Brazil project web application toolkit,
- * export version: 2.0 
+ * export version: 2.0
  * Copyright (c) 2000-2002 Sun Microsystems, Inc.
  *
  * Sun Public License Notice
@@ -14,13 +14,13 @@ package com.ikokoon.toolkit;
  * compliance with the License. A copy of the License is included as
  * the file "license.terms", and also available at
  * http://www.sun.com/
- * 
+ *
  * The Original Code is from:
  *    Brazil project web application toolkit release 2.0.
  * The Initial Developer of the Original Code is: cstevens.
  * Portions created by cstevens are Copyright (C) Sun Microsystems,
  * Inc. All Rights Reserved.
- * 
+ *
  * Contributor(s): cstevens, suhler.
  *
  * Version:  1.9
@@ -30,7 +30,7 @@ package com.ikokoon.toolkit;
 
 /**
  * Utility to base64 encode and decode a string.
- * 
+ *
  * @author Stephen Uhler
  * @version 1.9, 02/07/24
  */
@@ -51,40 +51,37 @@ public class Base64 {
 
 	/**
 	 * base-64 encode a string
-	 * 
+	 *
 	 * @param s
 	 *            The ascii string to encode
-	 * @returns The base64 encoded result
+	 * @return The base64 encoded result
 	 */
-
 	public static String encode(String s) {
 		return encode(s.getBytes());
 	}
 
 	/**
 	 * base-64 encode a byte array
-	 * 
+	 *
 	 * @param src
 	 *            The byte array to encode
-	 * @returns The base64 encoded result
+	 * @return The base64 encoded result
 	 */
-
 	public static String encode(byte[] src) {
 		return encode(src, 0, src.length);
 	}
 
 	/**
 	 * base-64 encode a byte array
-	 * 
+	 *
 	 * @param src
 	 *            The byte array to encode
 	 * @param start
 	 *            The starting index
 	 * @param len
 	 *            The number of bytes
-	 * @returns The base64 encoded result
+	 * @return The base64 encoded result
 	 */
-
 	public static String encode(byte[] src, int start, int length) {
 		byte[] dst = new byte[(length + 2) / 3 * 4 + length / 72];
 		int x = 0;
@@ -135,12 +132,11 @@ public class Base64 {
 
 	/**
 	 * A Base64 decoder. This implementation is slow, and doesn't handle wrapped lines. The output is undefined if there are errors in the input.
-	 * 
+	 *
 	 * @param s
 	 *            a Base64 encoded string
-	 * @returns The byte array eith the decoded result
+	 * @return The byte array with the decoded result
 	 */
-
 	public static byte[] decode(String s) {
 		int end = 0; // end state
 		if (s.endsWith("=")) {
@@ -183,7 +179,6 @@ public class Base64 {
 	/**
 	 * Test the decoder and encoder. Call as <code>Base64 [string]</code>.
 	 */
-
 	public static void main(String[] args) {
 		System.out.println("encode: " + args[0] + " -> (" + encode(args[0]) + ")");
 		System.out.println("decode: " + args[0] + " -> (" + new String(decode(args[0])) + ")");

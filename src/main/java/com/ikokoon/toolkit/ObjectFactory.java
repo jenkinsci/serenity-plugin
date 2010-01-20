@@ -8,11 +8,10 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-
 /**
  * This is an abstract factory. Classes are selected for construction according to the best match between the parameters and the solid implementation
  * of the class.
- * 
+ *
  * @author Michael Couck
  * @since 02.09.08
  * @version 01.00
@@ -25,12 +24,12 @@ public abstract class ObjectFactory {
 	/**
 	 * This method instantiates a class based on the solid implementation class passed as a parameter and the parameters. A best match between the two
 	 * parameters determines the class to be instanciated.
-	 * 
+	 *
 	 * @param <E>
 	 *            the desired class to be instanciated
 	 * @param klass
 	 *            the class to be instanciated
-	 * @param parameters
+	 * @param allParameters
 	 *            the parameters for the constructor, these cannot be primitives and the parameters in the constructor have to be objects as well, not
 	 *            primitives
 	 * @return the class that best matches the desired class and the parameters for constructors
@@ -61,7 +60,7 @@ public abstract class ObjectFactory {
 	 * Finds a constructor in a class that has a signature that includes some the parameters in the parameter list on a best match principal. Note
 	 * that this method will return the first constructor that has all the parameters in one of the permutations even if there is another constructor
 	 * that has more parameters in another of the permutations.
-	 * 
+	 *
 	 * @param klass
 	 *            the class look for a constructor in
 	 * @param allParameters

@@ -20,7 +20,7 @@ import com.ikokoon.toolkit.Toolkit;
 /**
  * The configuration object holds the parameters for the processing, some from the system parameters that can be set by the user and some internal
  * like packages to be excluded always for example java.lang.
- * 
+ *
  * @author Michael Couck
  * @since 05.10.09
  * @version 01.00
@@ -41,7 +41,7 @@ public class Configuration {
 
 	/**
 	 * System wide access to the configuration.
-	 * 
+	 *
 	 * @return the configuration for the system
 	 */
 	public static synchronized Configuration getConfiguration() {
@@ -62,7 +62,7 @@ public class Configuration {
 
 	/**
 	 * Checks to see that the class name is included in the packages that are to be included.
-	 * 
+	 *
 	 * @param string
 	 *            the string to check for pattern inclusion
 	 * @return whether the string is included in the pattern list
@@ -83,9 +83,9 @@ public class Configuration {
 
 	/**
 	 * Checks to see if the class is included in the classes that can be enhanced, so for example java.lang is excluded.
-	 * 
-	 * @param className
-	 *            the name of the class to check
+	 *
+	 * @param string
+	 *            the string that is to be checked for exclusion
 	 * @return whether the class is excluded and should not be used
 	 */
 	public boolean excluded(String string) {
@@ -103,7 +103,7 @@ public class Configuration {
 
 	/**
 	 * Access to the system properties. This method can be extended to include other properties like in files etc.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the property
 	 * @return the system property with the specified name
@@ -114,7 +114,7 @@ public class Configuration {
 
 	/**
 	 * Access to the classpath of the system. Included in the classpath are the jars that were manually added by the user.
-	 * 
+	 *
 	 * @return the classpath of the system including the Surefire classpath
 	 */
 	public String getClassPath() {

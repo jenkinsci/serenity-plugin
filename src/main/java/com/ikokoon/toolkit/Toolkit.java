@@ -22,7 +22,7 @@ import com.ikokoon.serenity.model.Unique;
 /**
  * This class contains methods for changing a string to the byte code representation and visa versa. Also some other nifty functions like stripping a
  * string of white space etc.
- * 
+ *
  * @author Michael Couck
  * @since 12.07.09
  * @version 01.00
@@ -34,7 +34,7 @@ public class Toolkit {
 
 	/**
 	 * Simple, fast hash function to generate quite unique hashes from strings(i.e. toCharArray()).
-	 * 
+	 *
 	 * @param string
 	 *            the string to generate the hash from
 	 * @return the integer representation of the hash of the string characters, typically quite unique for strings less than 10 characters
@@ -52,7 +52,7 @@ public class Toolkit {
 
 	/**
 	 * Builds a hash from an array of objects.
-	 * 
+	 *
 	 * @param objects
 	 *            the objects to build the hash from
 	 * @return the hash of the objects
@@ -68,7 +68,7 @@ public class Toolkit {
 
 	/**
 	 * This method replaces the / in the byte code name with . which is XML friendly.
-	 * 
+	 *
 	 * @param name
 	 *            the byte code name of a class
 	 * @return the Java name of the class
@@ -84,7 +84,7 @@ public class Toolkit {
 
 	/**
 	 * This method replaces the . in the byte code name with / which is what we expect from byte code.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the class or package
 	 * @return the byte code name of the class or package
@@ -99,8 +99,8 @@ public class Toolkit {
 
 	/**
 	 * Takes the name of a class and returns the package name for the class.
-	 * 
-	 * @param name
+	 *
+	 * @param className
 	 *            the name of the class fully qualified
 	 * @return the package name of the class
 	 */
@@ -117,7 +117,7 @@ public class Toolkit {
 
 	/**
 	 * Removes any whitespace from the string.
-	 * 
+	 *
 	 * @param string
 	 *            the string to remove whitespace from
 	 * @return the string without any whitespace that includes carrige returns etc.
@@ -147,7 +147,7 @@ public class Toolkit {
 
 	/**
 	 * Gets a field in the class or in the heirachy of the class.
-	 * 
+	 *
 	 * @param klass
 	 *            the original class
 	 * @param name
@@ -175,7 +175,7 @@ public class Toolkit {
 
 	/**
 	 * Returns the value of the field specified from the object specified.
-	 * 
+	 *
 	 * @param object
 	 *            the object to get the field value from
 	 * @param name
@@ -201,7 +201,7 @@ public class Toolkit {
 
 	/**
 	 * Deletes all the files recursively and then the directories recursively.
-	 * 
+	 *
 	 * @param file
 	 *            the directory or file to delete
 	 */
@@ -225,7 +225,7 @@ public class Toolkit {
 
 	/**
 	 * Deletes all the files in a directory with one of the specified extensions.
-	 * 
+	 *
 	 * @param file
 	 *            the file to delete or the directory to delete files in
 	 * @param extensions
@@ -258,7 +258,7 @@ public class Toolkit {
 
 	/**
 	 * This is the interface to select files with below.
-	 * 
+	 *
 	 * @author Michael Couck
 	 * @since 10.01.10
 	 * @version 01.00
@@ -269,7 +269,7 @@ public class Toolkit {
 
 	/**
 	 * Finds files on the file system below the directory specified recursively using the selection criteria supplied in the IFileFilter parameter.
-	 * 
+	 *
 	 * @param file
 	 *            the file to start looking from
 	 * @param filter
@@ -294,7 +294,7 @@ public class Toolkit {
 
 	/**
 	 * Reads the contents of the file and returns the contents in a byte array form.
-	 * 
+	 *
 	 * @param file
 	 *            the file to read the contents from
 	 * @return the file contents in a byte array output stream
@@ -314,7 +314,7 @@ public class Toolkit {
 
 	/**
 	 * Reads the contents of the file and returns the contents in a byte array form.
-	 * 
+	 *
 	 * @param inputStream
 	 *            the file to read the contents from
 	 * @return the file contents in a byte array output stream
@@ -346,7 +346,7 @@ public class Toolkit {
 
 	/**
 	 * Writes the contents of a byte array to a file.
-	 * 
+	 *
 	 * @param file
 	 *            the file to write to
 	 * @param bytes
@@ -374,7 +374,7 @@ public class Toolkit {
 
 	/**
 	 * Formats a double to the required precision.
-	 * 
+	 *
 	 * @param d
 	 *            the double to format
 	 * @param precision
@@ -394,7 +394,7 @@ public class Toolkit {
 
 	/**
 	 * Formats a string to the desired precision.
-	 * 
+	 *
 	 * @param string
 	 *            the string to format to a precision
 	 * @param precision
@@ -432,7 +432,7 @@ public class Toolkit {
 
 	/**
 	 * Serializes an object to a byte array then to a base 64 string of the byte array.
-	 * 
+	 *
 	 * @param object
 	 *            the object to serialise to base 64
 	 * @return the string representation of the object in serialised base 64
@@ -456,7 +456,7 @@ public class Toolkit {
 
 	/**
 	 * De-serializes an object from a base 64 string to an object.
-	 * 
+	 *
 	 * @param base64
 	 *            the base 64 string representation of the object
 	 * @return the object de-serialised from the string or null if an exception is thrown
@@ -475,7 +475,7 @@ public class Toolkit {
 
 	/**
 	 * Returns an array of values that are defined as being a unique combination for the entity by using the Unique annotation for the class.
-	 * 
+	 *
 	 * @param <T>
 	 *            the type of object to be inspected for unique fields
 	 * @param t
@@ -504,7 +504,7 @@ public class Toolkit {
 	 * This function will copy files or directories from one location to another. note that the source and the destination must be mutually exclusive.
 	 * This function can not be used to copy a directory to a sub directory of itself. The function will also have problems if the destination files
 	 * already exist.
-	 * 
+	 *
 	 * @param src
 	 *            A File object that represents the source for the copy
 	 * @param dest
@@ -572,7 +572,7 @@ public class Toolkit {
 
 	/**
 	 * If Java 1.4 is unavailable, the following technique may be used.
-	 * 
+	 *
 	 * @param aInput
 	 *            is the original String which may contain substring aOldPattern
 	 * @param aOldPattern

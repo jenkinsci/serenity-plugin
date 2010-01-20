@@ -12,7 +12,7 @@ import com.ikokoon.toolkit.Toolkit;
 
 /**
  * This class actually enhances the lines to call the collector class which gathers the data on the lines that are executed during the unit tests.
- * 
+ *
  * @author Michael Couck
  * @since 12.07.09
  * @version 01.00
@@ -46,7 +46,7 @@ public class CoverageMethodAdapter extends MethodAdapter {
 	/**
 	 * The constructor initialises a {@link CoverageMethodAdapter} that takes all the interesting items for the method that is to be enhanced
 	 * including the parent method visitor.
-	 * 
+	 *
 	 * @param methodVisitor
 	 *            the method visitor of the parent
 	 * @param className
@@ -56,7 +56,7 @@ public class CoverageMethodAdapter extends MethodAdapter {
 	 * @param methodDescription
 	 *            the description of the method
 	 */
-	public CoverageMethodAdapter(MethodVisitor methodVisitor, String className, String methodName, String methodDescription) {
+	public CoverageMethodAdapter(MethodVisitor methodVisitor, Integer access, String className, String methodName, String methodDescription) {
 		super(methodVisitor);
 		this.className = Toolkit.slashToDot(className);
 		this.methodName = methodName;

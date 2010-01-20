@@ -12,7 +12,7 @@ import com.ikokoon.serenity.persistence.IDataBase;
 /**
  * This class removes the methods and lines from the model as we will not need them further and they form a very large part of the model which hogs
  * memory.
- * 
+ *
  * @author Michael Couck
  * @since 10.01.10
  * @version 01.00
@@ -24,7 +24,7 @@ public class Pruner extends AProcess implements IConstants {
 
 	/**
 	 * Constructor takes the parent.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent process that will chain this process
 	 */
@@ -51,7 +51,7 @@ public class Pruner extends AProcess implements IConstants {
 				}
 				klass.setAfferent(null);
 				klass.setEfferent(null);
-				klass.setChildren(null);
+				// klass.setChildren(null);
 			}
 			pakkage.setAfferent(null);
 			pakkage.setEfferent(null);

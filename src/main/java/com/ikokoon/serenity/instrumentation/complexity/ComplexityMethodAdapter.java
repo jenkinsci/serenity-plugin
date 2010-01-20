@@ -12,10 +12,10 @@ import com.ikokoon.toolkit.Toolkit;
 /**
  * TODO - add the interesting methods to the collection of the complexity. Do we need to add try catch? And what about multiple catch? One for each
  * potential exception thrown? No?
- * 
+ *
  * This class just visits the byte code in the classes and collects the complexity metrics for the class. Complexity is calculated by adding one every
  * time there is a jump instruction.
- * 
+ *
  * @author Michael Couck
  * @since 12.07.09
  * @version 01.00
@@ -35,9 +35,9 @@ public class ComplexityMethodAdapter extends MethodAdapter {
 	/**
 	 * The complexity counter, start with one and increment for each jump instruction/decision point. This will give the approximate value of the
 	 * McCabe method:<br>
-	 * 
+	 *
 	 * M = E − N + 2P where
-	 * 
+	 *
 	 * M = cyclomatic complexity <br>
 	 * E = the number of edges of the graph<br>
 	 * N = the number of nodes of the graph<br>
@@ -48,7 +48,7 @@ public class ComplexityMethodAdapter extends MethodAdapter {
 	/**
 	 * The constructor initialises a {@link ComplexityMethodAdapter} that takes all the interesting items for the method that is to be enhanced
 	 * including the parent method visitor.
-	 * 
+	 *
 	 * @param methodVisitor
 	 *            the method visitor of the parent
 	 * @param className
@@ -58,7 +58,7 @@ public class ComplexityMethodAdapter extends MethodAdapter {
 	 * @param methodDescription
 	 *            the description of the method, i.e. the byte code signature
 	 */
-	public ComplexityMethodAdapter(MethodVisitor methodVisitor, String className, String methodName, String methodDescription) {
+	public ComplexityMethodAdapter(MethodVisitor methodVisitor, Integer access, String className, String methodName, String methodDescription) {
 		super(methodVisitor);
 		this.className = Toolkit.slashToDot(className);
 		this.methodName = methodName;

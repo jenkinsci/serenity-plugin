@@ -9,9 +9,9 @@ import org.kohsuke.stapler.StaplerProxy;
 
 /**
  * This is the Stapler 'proxy'. It serves the chain of results objects to the front end.
- * 
+ *
  * @author Michael Couck
- * @see 12.08.09
+ * @since 12.08.09
  * @version 01.00
  */
 @SuppressWarnings("unchecked")
@@ -25,7 +25,7 @@ public class SerenityBuildAction implements StaplerProxy, Action {
 	/**
 	 * Constructor takes the Hudson build owner and the result that will be presented to the front end for displaying the data from teh build and
 	 * metrics.
-	 * 
+	 *
 	 * @param owner
 	 *            the build owner that generated the build
 	 * @param result

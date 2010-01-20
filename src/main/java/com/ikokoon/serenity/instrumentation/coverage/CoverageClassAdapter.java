@@ -12,7 +12,7 @@ import com.ikokoon.toolkit.Toolkit;
 
 /**
  * This is the class visitor that visits the class structures and invokes the method visitor for the coverage functionality.
- * 
+ *
  * @author Michael Couck
  * @since 12.07.09
  * @version 01.00
@@ -25,8 +25,8 @@ public class CoverageClassAdapter extends ClassAdapter implements Opcodes {
 
 	/**
 	 * Constructs a {@link CoverageClassAdapter} that takes the parent class visitor and the class name that will be enhanced with instructions to
-	 * invoke the {@link Collector} that collects the instructions that are executed.
-	 * 
+	 * invoke the {@link com.ikokoon.serenity.Collector} that collects the instructions that are executed.
+	 *
 	 * @param visitor
 	 *            the parent class visitor
 	 * @param className
@@ -45,7 +45,7 @@ public class CoverageClassAdapter extends ClassAdapter implements Opcodes {
 	public MethodVisitor visitMethod(int access, String methodName, String methodDescription, String methodSignature, String[] exceptions) {
 		logger.debug("visitMethod : " + access + ", " + methodName + ", " + methodDescription + ", " + methodSignature + ", " + exceptions);
 		MethodVisitor methodVisitor = super.visitMethod(access, methodName, methodDescription, methodSignature, exceptions);
-		MethodAdapter methodAdapter = (MethodAdapter) VisitorFactory.getMethodVisitor(methodVisitor, CoverageMethodAdapter.class, className,
+		MethodAdapter methodAdapter = (MethodAdapter) VisitorFactory.getMethodVisitor(methodVisitor, CoverageMethodAdapter.class, access, className,
 				methodName, methodDescription);
 		return methodAdapter;
 	}

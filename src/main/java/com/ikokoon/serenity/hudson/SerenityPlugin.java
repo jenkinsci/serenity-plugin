@@ -11,13 +11,11 @@ import com.ikokoon.serenity.persistence.IDataBase;
 
 /**
  * Entry point of a plugin.
- * 
+ *
  * <p>
  * There must be one class in each plugin. Actually not any more. If there is no plugin in the plugin then Hudson will create one it seems.. See
  * JavaDoc of for more about what can be done on this class.
- * 
- * @plugin
- * 
+ *
  * @author Michael Couck
  * @since 25.07.09
  * @version 01.00

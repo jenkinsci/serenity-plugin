@@ -83,7 +83,7 @@ public class CollectorTest extends ATest implements IConstants {
 	@SuppressWarnings("unchecked")
 	public void collectMetricsInterface() {
 		before();
-		Collector.collectInterface(className, access);
+		Collector.collectAccess(className, access);
 		Class klass = (Class) dataBase.find(Class.class, Toolkit.hash(className));
 		assertNotNull(klass);
 		assertTrue(klass.getInterfaze());

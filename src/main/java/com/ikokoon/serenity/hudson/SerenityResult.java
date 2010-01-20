@@ -29,7 +29,7 @@ import com.ikokoon.toolkit.Toolkit;
 
 /**
  * This is the result that will be used to render the results on the front end.
- * 
+ *
  * @author Michael Couck
  * @since 12.08.09
  * @version 01.00
@@ -44,7 +44,7 @@ public class SerenityResult implements ISerenityResult {
 
 	/**
 	 * Constructor takes the real action that generated the build for the project.
-	 * 
+	 *
 	 * @param abstractBuild
 	 *            the build action that generated the build for the project
 	 */
@@ -57,7 +57,7 @@ public class SerenityResult implements ISerenityResult {
 	 * This method is called from the front end. The result from the call will result in some piece of data being extracted from the database. For
 	 * example if the user clicks on a package the name of the package will be used to get that package from the database and will be made available
 	 * to the UI.
-	 * 
+	 *
 	 * @param token
 	 *            the token from the front end, could be a package name or a class name
 	 * @param req
@@ -170,7 +170,10 @@ public class SerenityResult implements ISerenityResult {
 
 	public String getModel() {
 		logger.debug("getModel");
-		return getModel(composite, "highcharts.model");
+		if (composite == null) {
+			return "";
+		}
+		return getModel(null, composite);
 	}
 
 	public String getProjectModel() {
@@ -187,7 +190,7 @@ public class SerenityResult implements ISerenityResult {
 			project.setName(projectName);
 		}
 
-		String model = getModel(project, "highchartsSmall.model");
+		String model = getModel("ProjectSmall", project);
 		return model;
 	}
 
@@ -224,7 +227,7 @@ public class SerenityResult implements ISerenityResult {
 	}
 
 	@SuppressWarnings("unchecked")
-	public String getModel(Composite<?, ?> composite, String modelName) {
+	public String getModel(String modelName, Composite<?, ?> composite) {
 		logger.debug("getModel");
 		if (composite == null) {
 			return "";
