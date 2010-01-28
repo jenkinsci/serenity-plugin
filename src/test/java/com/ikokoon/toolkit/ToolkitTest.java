@@ -99,7 +99,7 @@ public class ToolkitTest extends ATest {
 	@Test
 	public void deleteFile() throws Exception {
 		File folder = createFolderAndOneFile("target/folder", "file.txt");
-		Toolkit.deleteFile(folder);
+		Toolkit.deleteFile(folder, 5, 0);
 		logger.debug("Deleted folder and file : " + folder.exists());
 	}
 
@@ -120,7 +120,7 @@ public class ToolkitTest extends ATest {
 		File source = createFolderAndOneFile("target/folder", "file.txt");
 		File destination = new File(".", "target/folderCopy");
 		if (destination.exists()) {
-			Toolkit.deleteFile(destination);
+			Toolkit.deleteFile(destination, 5, 0);
 		}
 		logger.debug("Deleted destination : " + destination.exists());
 		Toolkit.copyFile(source, destination);

@@ -19,9 +19,9 @@ import com.ikokoon.toolkit.Toolkit;
 /**
  * This is the entry point for parsing the byte code and collecting the dependency metrics for the class. This class also collects the Java source for
  * the class if it is available.
- *
+ * 
  * Dependency metrics consist of the following:<br>
- *
+ * 
  * 1) Afferent - the number of packages that rely on this package, i.e. how many times it is referenced by other packages, the number of packages that
  * this class affects<br>
  * 2) Efferent - the number of packages this package relies on, i.e. the opposite of afferent, the number of classes that this class is effected by<br>
@@ -29,7 +29,7 @@ import com.ikokoon.toolkit.Toolkit;
  * 4) Entropy - package A relies on package B. Then Package C is introduced and relies on A and B increasing the entropy<br>
  * 5) Stability - Ce / (Ca + Ce), efferent coupling divided by the afferent coupling plus the efferent coupling<br>
  * 6) Distance from main - find the stability distance of the package from the main which is (X=0,Y=1) to (X=1,Y=0) <br>
- *
+ * 
  * @author Michael Couck
  * @since 18.07.09
  * @version 01.00
@@ -46,7 +46,7 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	/**
 	 * Constructor initialises a {@link DependencyClassAdapter} and takes the parent visitor and the name of the class that will be analysed for
 	 * dependency.
-	 *
+	 * 
 	 * @param classVisitor
 	 *            the parent visitor for the class
 	 * @param className
@@ -145,20 +145,22 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	/**
 	 * {@inheritDoc}
 	 */
-	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+	public MethodVisitor visitMethod(int access, String methodName, String methodDescription, String signature, String[] exceptions) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("visitMethod : " + access + ", " + name + ", " + desc + ", " + signature);
+			logger.debug("visitMethod : " + access + ", " + methodName + ", " + methodDescription + ", " + signature);
 			if (exceptions != null) {
 				logger.debug(Arrays.asList(exceptions).toString());
 			}
 		}
-		MethodVisitor visitor = super.visitMethod(access, name, desc, signature, exceptions);
+		MethodVisitor visitor = super.visitMethod(access, methodName, methodDescription, signature, exceptions);
 		if (exceptions != null) {
 			for (String exception : exceptions) {
 				Collector.collectEfferentAndAfferent(className, Toolkit.slashToDot(exception));
 			}
 		}
-		MethodVisitor adapter = VisitorFactory.getMethodVisitor(visitor, DependencyMethodAdapter.class, access, className, name, desc);
+		Collector.collectAccess(className, methodName, methodDescription, access);
+		MethodVisitor adapter = VisitorFactory.getMethodVisitor(visitor, DependencyMethodAdapter.class, access, className, methodName,
+				methodDescription);
 		return adapter;
 	}
 

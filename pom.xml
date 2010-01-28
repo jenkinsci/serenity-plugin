@@ -122,7 +122,7 @@
 			<artifactId>hsqldb</artifactId>
 			<version>1.8.0.1</version>
 			<type>jar</type>
-			<scope>compile</scope>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -150,15 +150,6 @@
 			<url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
 		</repository>
 		<repository>
-			<id>jboss.com/maven2</id>
-			<name>repo2 Mirror of http://repository.jboss.com/maven2/</name>
-			<url>http://repository.jboss.com/maven2</url>
-		</repository>
-		<repository>
-			<id>java.net2</id>
-			<url>http://download.java.net/maven/2</url>
-		</repository>
-		<repository>
 			<id>hudson-libs</id>
 			<url>https://hudson.dev.java.net/source/browse/*checkout*/hudson/hudson/main/lib
 			</url>
@@ -169,16 +160,6 @@
 			</releases>
 			<snapshots>
 				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>db4o</id>
-			<url>http://source.db4o.com/maven</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
 			</snapshots>
 		</repository>
 	</repositories>

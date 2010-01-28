@@ -50,22 +50,40 @@
 												im2="leaf.gif">
 												<userdata name="klass">${klass.class.name}</userdata>
 												<j:forEach var="innerKlass" items="${klass.innerClasses}">
-													<j:choose>
+													<j:set var="classIcon" value="innerclass_public_obj.gif" />
+                                                    <j:choose>
 														<j:when test="${innerKlass.access == org.objectweb.asm.Opcodes.ACC_PUBLIC}">
-															<!-- Assign the image variable a value here -->
+                                                            <j:set var="classIcon" value="innerclass_public_obj.gif" />
+														</j:when>
+                                                        <j:when test="${innerKlass.access == org.objectweb.asm.Opcodes.ACC_PROTECTED}">
+															<j:set var="classIcon" value="innerclass_default_obj.gif" />
+														</j:when>
+                                                        <j:when test="${innerKlass.access == org.objectweb.asm.Opcodes.ACC_PRIVATE}">
+															<j:set var="classIcon" value="innerclass_private_obj.gif" />
+														</j:when>
+                                                        <j:when test="${innerKlass.interfaze == true}">
+															<j:set var="classIcon" value="innerinterface_public_obj.gif" />
 														</j:when>
 													</j:choose>
-													<item text="${innerKlass.name} (${innerKlass.coverage},${innerKlass.complexity},${innerKlass.stability})" call="false"
-														im0="innerclass_public_obj.gif" im1="innerclass_public_obj.gif" im2="linnerclass_public_obj.gif">
+                                                    <item text="${innerKlass.name} (${innerKlass.coverage},${innerKlass.complexity},${innerKlass.stability})" call="false"
+														im0="${classIcon}" im1="${classIcon}" im2="${classIcon}">
 													</item>
 												</j:forEach>
 												<j:forEach var="method" items="${klass.children}">
+                                                    <j:set var="methodIcon" value="public_co.gif" />
 													<j:choose>
 														<j:when test="${method.access == org.objectweb.asm.Opcodes.ACC_PUBLIC}">
-															<!-- Assign the image variable a value here -->
+															<j:set var="methodIcon" value="public_co.gif" />
+														</j:when>
+                                                        <j:when test="${method.access == org.objectweb.asm.Opcodes.ACC_PROTECTED}">
+															<j:set var="methodIcon" value="protected_co.gif" />
+														</j:when>
+                                                        <j:when test="${method.access == org.objectweb.asm.Opcodes.ACC_PRIVATE}">
+															<j:set var="methodIcon" value="private_co.gif" />
 														</j:when>
 													</j:choose>
-													<item text="${method.name} (${method.coverage},${method.complexity})" call="false" im0="public_co.gif" im1="public_co.gif" im2="public_co.gif">
+													<item text="${method.name} (${method.coverage},${method.complexity})" call="false" 
+                                                        im0="${methodIcon}" im1="${methodIcon}" im2="${methodIcon}">
 													</item>
 												</j:forEach>
 											</item>

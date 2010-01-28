@@ -26,13 +26,13 @@ import com.ikokoon.toolkit.Toolkit;
  * TODO - make this class non static? Is this a better option? More OO? Better performance? Will it be easier to understand? In the case of
  * distributing the collector class by putting it in the constant pool of the classes and then calling the instance variable from inside the classes,
  * will this be more difficult to understand?
- *
+ * 
  * In this static class all the real collection logic is in one place and is called statically. The generation of the instructions to call this class
  * is simple and seemingly not much less performant than an instance variable.
- *
+ * 
  * This class collects the data from the processing. It adds the metrics to the packages, classes, methods and lines and persists the data in the
  * database. This is the central collection class for the coverage and dependency functionality.
- *
+ * 
  * @author Michael Couck
  * @since 12.07.09
  * @version 01.00
@@ -46,7 +46,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * This method accumulates the number of times a thread goes through each line in a method.
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class that is calling this method
 	 * @param methodName
@@ -63,7 +63,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * This method just collects all the lines in the project.
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class that is calling this method
 	 * @param lineNumber
@@ -79,7 +79,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * This method collects the Java source for the class.
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class
 	 * @param source
@@ -108,7 +108,7 @@ public class Collector implements IConstants {
 	/**
 	 * This method is called after each jumps in the method graph. Every time there is a jump the complexity goes up one point. Jumps include if else
 	 * statements, or just if, throws statements, switch and so on.
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class the method is in
 	 * @param methodName
@@ -125,7 +125,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * Collects the packages that the class references and adds them to the document.
-	 *
+	 * 
 	 * @param className
 	 *            the name of the classes
 	 * @param targetClassNames
@@ -163,24 +163,41 @@ public class Collector implements IConstants {
 	}
 
 	/**
-	 * Adds the interface attribute to the class element.
-	 *
+	 * Adds the access attribute to the method object.
+	 * 
+	 * @param className
+	 *            the name of the class
+	 * @param methodName
+	 *            the name of the method
+	 * @param methodDescription
+	 *            the description of the method
+	 * @param access
+	 *            the access opcode associated with the method
+	 */
+	public static final void collectAccess(String className, String methodName, String methodDescription, Integer access) {
+		Method<?, ?> method = getMethod(className, methodName, methodDescription);
+		method.setAccess(access);
+	}
+
+	/**
+	 * Adds the access attribute to the class object.
+	 * 
 	 * @param className
 	 *            the name of the class
 	 * @param access
-	 *            the access opcode associated to the class
+	 *            the access opcode associated with the class
 	 */
 	public static final void collectAccess(String className, Integer access) {
+		Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
 		if (access.intValue() == 1537) {
-			Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
 			klass.setInterfaze(true);
-			klass.setAccess(access);
 		}
+		klass.setAccess(access);
 	}
 
 	/**
 	 * Collects the inner class for a class.
-	 *
+	 * 
 	 * @param innerName
 	 *            the name of the inner class
 	 * @param outerName
@@ -199,7 +216,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * Collects the outer class of an inner class.
-	 *
+	 * 
 	 * @param innerName
 	 *            the name of the inner class
 	 * @param outerName
