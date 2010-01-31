@@ -14,7 +14,7 @@ import javax.persistence.Entity;
 public class Method<E, F> extends Composite<Class<?, ?>, Line<?, ?>> implements Comparable<Method<?, ?>>, Serializable {
 
 	private String name;
-	private double access;
+	private int access;
 	private String className;
 	private String description;
 	private double complexity;
@@ -28,11 +28,11 @@ public class Method<E, F> extends Composite<Class<?, ?>, Line<?, ?>> implements 
 		this.name = name;
 	}
 
-	public double getAccess() {
+	public int getAccess() {
 		return access;
 	}
 
-	public void setAccess(double access) {
+	public void setAccess(int access) {
 		this.access = access;
 	}
 

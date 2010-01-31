@@ -79,7 +79,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 
 					long processStart = System.currentTimeMillis();
 					new Accumulator(null).execute();
-					LOGGER.info("Accululator : " + (System.currentTimeMillis() - processStart));
+					LOGGER.info("Accumlulator : " + (System.currentTimeMillis() - processStart));
 
 					processStart = System.currentTimeMillis();
 					new Cleaner(null, dataBase).execute();

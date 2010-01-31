@@ -26,12 +26,12 @@ import com.ikokoon.toolkit.Toolkit;
  * line that is executed there is a line element. So the percentage of lines that were executed is covered lines / total lines * 100. The complexity
  * total is added up for each method along with the coverage total for each method and divided by the total methods in the class to get the class
  * average for coverage and complexity.
- * 
+ *
  * Similarly for the package totals of complexity and coverage the class totals for the package are added up and divided by the number of classes in
  * the package.
- * 
+ *
  * Metrics are also gathered for the dependency, afferent and efferent and the abstractness and stability calculated from that.
- * 
+ *
  * @author Michael Couck
  * @since 18.07.09
  * @version 01.00
@@ -48,7 +48,7 @@ public class Aggregator extends AProcess implements IConstants {
 
 	/**
 	 * Constructor takes the parent process.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent process that will call this child. The child process, i.e. this instance, will add it's self to the parent
 	 */
@@ -87,11 +87,12 @@ public class Aggregator extends AProcess implements IConstants {
 	@SuppressWarnings("unchecked")
 	protected void aggregateProject(Project<?, ?> project) {
 		List<Package> packages = dataBase.find(Package.class);
-		Set<Line<?, ?>> lines = compositeLines.get(project);
-		Set<Method<?, ?>> methods = compositeMethods.get(project);
 
 		aggregatePackages(packages);
 		project.setTimestamp(new Date());
+
+		Set<Line<?, ?>> lines = compositeLines.get(project);
+		Set<Method<?, ?>> methods = compositeMethods.get(project);
 
 		double classes = 0d;
 
@@ -152,7 +153,7 @@ public class Aggregator extends AProcess implements IConstants {
 	/**
 	 * 1) u = (x3 - x1)(x2 - x1) + (y3 - y1)(y2 - y1) / ||p2 - p1||² <br>
 	 * 2) y = mx + c, 0 = ax + by + c, d = |am + bn + c| / sqrt(a² + b²) : d= |-stability + -abstractness + 1| / sqrt(-1² + -1²)
-	 * 
+	 *
 	 * @param stability
 	 * @param abstractness
 	 * @return
@@ -227,7 +228,10 @@ public class Aggregator extends AProcess implements IConstants {
 			for (Afferent afferent : klass.getAfferent()) {
 				afference.add(afferent);
 			}
+			logger.info("Class : " + klass.getName());
 		}
+
+		logger.info("Package : " + pakkage.getName() + ", interfaces : " + interfaces + ", implementations : " + implementations);
 
 		pakkage.setEfferent(efference);
 		pakkage.setAfferent(afference);

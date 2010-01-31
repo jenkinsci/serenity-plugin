@@ -38,51 +38,52 @@
 				</tr>
 				<tr>
 					<td width="30%" valign="top">
-						<!-- style="width : 330; height : 465;" -->
+						<j:set var="ACC_DEFAULT" value="0" />
+						<j:set var="ACC_PUBLIC" value="1" />
+						<j:set var="ACC_PRIVATE" value="2" />
+						<j:set var="ACC_PROTECTED" value="4" />
 						<div id="treeDiv" setImagePath="${rootURL}/plugin/serenity/js/imgs/" class="dhtmlxTree">
 							<xmp container="true">
 								<j:forEach var="package" items="${it.packages}">
 									<item text="${package.name} (${package.coverage},${package.complexity},${package.stability})" id="${package.id}" call="true">
 										<userdata name="klass">${package.class.name}</userdata>
 										<j:forEach var="klass" items="${package.children}">
-											<!-- im0="iconText.gif" im1="iconText.gif" im2="iconText.gif" -->
 											<item text="${klass.name} (${klass.coverage},${klass.complexity},${klass.stability})" id="${klass.id}" call="true" im0="leaf.gif" im1="leaf.gif"
 												im2="leaf.gif">
 												<userdata name="klass">${klass.class.name}</userdata>
 												<j:forEach var="innerKlass" items="${klass.innerClasses}">
-													<j:set var="classIcon" value="innerclass_public_obj.gif" />
-                                                    <j:choose>
-														<j:when test="${innerKlass.access == org.objectweb.asm.Opcodes.ACC_PUBLIC}">
-                                                            <j:set var="classIcon" value="innerclass_public_obj.gif" />
-														</j:when>
-                                                        <j:when test="${innerKlass.access == org.objectweb.asm.Opcodes.ACC_PROTECTED}">
-															<j:set var="classIcon" value="innerclass_default_obj.gif" />
-														</j:when>
-                                                        <j:when test="${innerKlass.access == org.objectweb.asm.Opcodes.ACC_PRIVATE}">
-															<j:set var="classIcon" value="innerclass_private_obj.gif" />
-														</j:when>
-                                                        <j:when test="${innerKlass.interfaze == true}">
-															<j:set var="classIcon" value="innerinterface_public_obj.gif" />
-														</j:when>
-													</j:choose>
+													<j:set var="classIcon" value="innerclass_default_obj.gif" />
+                                                    <j:if test="${(innerKlass.access &amp; ACC_PUBLIC) == ACC_PUBLIC}">
+														<j:set var="classIcon" value="innerclass_public_obj.gif" />
+													</j:if>
+													<j:if test="${(innerKlass.access &amp; ACC_DEFAULT) == ACC_DEFAULT}">
+														<j:set var="classIcon" value="innerclass_default_obj.gif" />
+													</j:if>
+													<j:if test="${(innerKlass.access &amp; ACC_PROTECTED) == ACC_PROTECTED}">
+														<j:set var="classIcon" value="innerclass_protected_obj.gif" />
+													</j:if>
+													<j:if test="${(innerKlass.access &amp; ACC_PRIVATE) == ACC_PRIVATE}">
+														<j:set var="classIcon" value="innerclass_private_obj.gif" />
+													</j:if>
                                                     <item text="${innerKlass.name} (${innerKlass.coverage},${innerKlass.complexity},${innerKlass.stability})" call="false"
 														im0="${classIcon}" im1="${classIcon}" im2="${classIcon}">
 													</item>
 												</j:forEach>
 												<j:forEach var="method" items="${klass.children}">
-                                                    <j:set var="methodIcon" value="public_co.gif" />
-													<j:choose>
-														<j:when test="${method.access == org.objectweb.asm.Opcodes.ACC_PUBLIC}">
-															<j:set var="methodIcon" value="public_co.gif" />
-														</j:when>
-                                                        <j:when test="${method.access == org.objectweb.asm.Opcodes.ACC_PROTECTED}">
-															<j:set var="methodIcon" value="protected_co.gif" />
-														</j:when>
-                                                        <j:when test="${method.access == org.objectweb.asm.Opcodes.ACC_PRIVATE}">
-															<j:set var="methodIcon" value="private_co.gif" />
-														</j:when>
-													</j:choose>
-													<item text="${method.name} (${method.coverage},${method.complexity})" call="false" 
+	                                                <j:set var="methodIcon" value="methdef_obj.gif" />
+													<j:if test="${(method.access &amp; ACC_PUBLIC) == ACC_PUBLIC}">
+														<j:set var="methodIcon" value="methpub_obj.gif" />
+													</j:if>
+													<j:if test="${(method.access &amp; ACC_DEFAULT) == ACC_DEFAULT}">
+														<j:set var="classIcon" value="methdef_obj.gif" />
+													</j:if>
+													<j:if test="${(method.access &amp; ACC_PROTECTED) == ACC_PROTECTED}">
+														<j:set var="methodIcon" value="methpro_obj.gif" />
+													</j:if>
+													<j:if test="${(method.access &amp; ACC_PRIVATE) == ACC_PRIVATE}">
+														<j:set var="methodIcon" value="methpri_obj.gif" />
+													</j:if>
+													<item text="${method.name} (${method.coverage},${method.complexity})" call="false"
                                                         im0="${methodIcon}" im1="${methodIcon}" im2="${methodIcon}">
 													</item>
 												</j:forEach>

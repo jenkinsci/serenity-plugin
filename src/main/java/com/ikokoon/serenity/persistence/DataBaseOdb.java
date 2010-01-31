@@ -21,7 +21,7 @@ import com.ikokoon.toolkit.Toolkit;
 
 /**
  * This is the database class using Neodatis as the persistence tool.
- * 
+ *
  * @author Michael Couck
  * @since 01.12.09
  * @version 01.00
@@ -40,7 +40,7 @@ public class DataBaseOdb extends DataBase {
 
 	/**
 	 * Constructor initialises a {@link DataBaseOdb} object.
-	 * 
+	 *
 	 * @param dataBaseFile
 	 *            the file to open the database with
 	 * @param create
@@ -60,10 +60,10 @@ public class DataBaseOdb extends DataBase {
 				logger.info("Database file : " + file.getAbsolutePath());
 			}
 			odb = ODBFactory.open(this.dataBaseFile);
+			closed = false;
 		} catch (Exception e) {
 			logger.error("Exception initialising the database", e);
 		}
-		closed = false;
 		commit();
 	}
 
@@ -131,7 +131,9 @@ public class DataBaseOdb extends DataBase {
 
 	private synchronized void commit() {
 		try {
-			odb.commit();
+			if (!isClosed()) {
+				odb.commit();
+			}
 		} catch (IOException e) {
 			logger.error("Exception comitting the ODB database", e);
 		} catch (Exception e) {
@@ -188,7 +190,7 @@ public class DataBaseOdb extends DataBase {
 	 */
 	public synchronized void close() {
 		try {
-			if (closed) {
+			if (isClosed()) {
 				logger.warn("Attempted to close the database again");
 				return;
 			}
@@ -230,7 +232,7 @@ public class DataBaseOdb extends DataBase {
 
 	/**
 	 * This method sets the ids in a graph of objects.
-	 * 
+	 *
 	 * @param object
 	 *            the object to set the ids for
 	 */

@@ -15,7 +15,7 @@ import com.ikokoon.toolkit.Toolkit;
  * This is the in memory database. Several options were explored including DB4O, Neodatis, JPA, SQL, and finally none were performant enough. As well
  * as that several hybrids were investigated like including a l1 cache and a l2 cache, but the actual persistence in the case of JPA and SQL was just
  * too slow. This class does everything in memory and commits the data finally to the under lying database once the processing is finished.
- * 
+ *
  * @author Michael Couck
  * @since 11.10.09
  * @version 01.00
@@ -36,7 +36,7 @@ public final class DataBaseRam extends DataBase {
 	/**
 	 * Constructor takes the underlying database that will commit the data to the file system, the listener for when the database closes we can
 	 * release the resources and whether to create a new database or open an old one.
-	 * 
+	 *
 	 * @param dataBase
 	 * @param dataBaseListener
 	 */
@@ -166,7 +166,7 @@ public final class DataBaseRam extends DataBase {
 	 * This method sets the ids in a graph of objects. The objects need to be stored, perhaps using the top level object in the heirachy, then the
 	 * database is consulted for it's uid for the object. The uid is set in the field that has the Identifier annotation on the setter method for the
 	 * field.
-	 * 
+	 *
 	 * @param <T>
 	 *            the type of object
 	 * @param object
@@ -186,6 +186,7 @@ public final class DataBaseRam extends DataBase {
 		if (composite instanceof com.ikokoon.serenity.model.Class) {
 			String name = ((com.ikokoon.serenity.model.Class) composite).getName();
 			if (name.indexOf('/') > -1) {
+				logger.warn("Invalid class name : " + name);
 				Thread.dumpStack();
 			}
 		}
@@ -197,7 +198,7 @@ public final class DataBaseRam extends DataBase {
 
 	/**
 	 * Binary search through the index of composite objects.
-	 * 
+	 *
 	 * @param index
 	 * @param id
 	 * @return
@@ -223,7 +224,7 @@ public final class DataBaseRam extends DataBase {
 
 	/**
 	 * Insert the composite into the index at the correct index.
-	 * 
+	 *
 	 * @param index
 	 * @param toInsert
 	 */

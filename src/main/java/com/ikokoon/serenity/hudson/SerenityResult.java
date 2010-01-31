@@ -21,6 +21,7 @@ import com.ikokoon.serenity.hudson.modeller.HighchartsModeller;
 import com.ikokoon.serenity.hudson.modeller.IModeller;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Composite;
+import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.model.Project;
 import com.ikokoon.serenity.persistence.DataBaseOdb;
@@ -37,8 +38,10 @@ import com.ikokoon.toolkit.Toolkit;
 public class SerenityResult implements ISerenityResult {
 
 	private Logger logger = Logger.getLogger(SerenityResult.class);
-	/** Owner is necessary to render the sidepanel jelly */
+	/** Owner is necessary to render the sidepanel.jelly */
 	private AbstractBuild<?, ?> abstractBuild;
+	/** The project for the result. */
+	private Project<?, ?> project;
 	/** The currently selected composite. */
 	private Composite<?, ?> composite;
 
@@ -59,7 +62,7 @@ public class SerenityResult implements ISerenityResult {
 	 * to the UI.
 	 *
 	 * @param token
-	 *            the token from the front end, could be a package name or a class name
+	 *            the token from the front end
 	 * @param req
 	 *            the Stapler request from the ui
 	 * @param rsp
@@ -79,8 +82,13 @@ public class SerenityResult implements ISerenityResult {
 		IDataBase dataBase = null;
 		try {
 			if (klass != null && id != null) {
+				long _id = Long.parseLong(id);
+				if (composite != null && composite.getId().equals(_id)) {
+					return this;
+				}
+				java.lang.Class _klass = java.lang.Class.forName(klass);
 				dataBase = getDataBase(abstractBuild);
-				composite = dataBase.find((java.lang.Class<Composite<?, ?>>) java.lang.Class.forName(klass), Long.parseLong(id));
+				composite = dataBase.find((java.lang.Class<Composite<?, ?>>) _klass, _id);
 				logger.debug("Class : " + klass + ", id : " + id + ", " + composite);
 			}
 		} catch (Exception e) {
@@ -121,13 +129,16 @@ public class SerenityResult implements ISerenityResult {
 
 	public Project<?, ?> getProject() {
 		logger.debug("getProject");
-		IDataBase dataBase = null;
-		try {
-			dataBase = getDataBase(abstractBuild);
-			return dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
-		} finally {
-			closeDataBase(dataBase);
+		if (project == null) {
+			IDataBase dataBase = null;
+			try {
+				dataBase = getDataBase(abstractBuild);
+				project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
+			} finally {
+				closeDataBase(dataBase);
+			}
 		}
+		return project;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -150,6 +161,14 @@ public class SerenityResult implements ISerenityResult {
 							return o1.getName().compareTo(o2.getName());
 						}
 					});
+					// Sort the methods in the classes
+					for (Class<?, ?> klass : pakkage.getChildren()) {
+						Collections.sort(klass.getChildren(), new Comparator<Method<?, ?>>() {
+							public int compare(Method<?, ?> o1, Method<?, ?> o2) {
+								return o1.getName().compareTo(o2.getName());
+							}
+						});
+					}
 				}
 			}
 			// Remove the inner classes from the packages, and set the precision
@@ -184,7 +203,7 @@ public class SerenityResult implements ISerenityResult {
 		abstractBuild = getLastBuild(abstractBuild);
 
 		Object object = abstractBuild.getProject();
-		if (object instanceof hudson.model.Project) {
+		if (object instanceof hudson.model.Project<?, ?>) {
 			hudson.model.Project<?, ?> hudsonProject = (hudson.model.Project<?, ?>) object;
 			String projectName = hudsonProject.getName();
 			project.setName(projectName);
@@ -212,7 +231,7 @@ public class SerenityResult implements ISerenityResult {
 
 	private String getSource(Composite<?, ?> composite) {
 		logger.debug("getSource");
-		if (composite instanceof Class) {
+		if (composite instanceof Class<?, ?>) {
 			String className = ((Class<?, ?>) composite).getName();
 			String sourceFilePath = abstractBuild.getRootDir().getAbsolutePath() + File.separator + IConstants.SERENITY_SOURCE + File.separator
 					+ className + ".html";
@@ -254,14 +273,16 @@ public class SerenityResult implements ISerenityResult {
 		}
 		logger.debug("Abstract build : " + abstractBuild);
 		AbstractBuild<?, ?> previousBuild = abstractBuild.getPreviousBuild();
-
 		if (previousBuild == null) {
 			return composites;
 		}
 		IDataBase dataBase = getDataBase(previousBuild);
+		if (dataBase == null) {
+			return composites;
+		}
 		Composite<?, ?> composite = dataBase.find(klass, id);
 		logger.debug("Looking for composite : " + id + ", " + composite);
-		dataBase.close();
+		closeDataBase(dataBase);
 		if (composite == null) {
 			return composites;
 		}
@@ -287,9 +308,6 @@ public class SerenityResult implements ISerenityResult {
 	private void closeDataBase(IDataBase dataBase) {
 		try {
 			if (dataBase != null) {
-				// TODO in production this must be commented. The reason we do
-				// this in test is because when Hpi reloads the plugin when a class is recompiled
-				// the databases hang around causing issues
 				dataBase.close();
 			}
 		} catch (Exception e) {

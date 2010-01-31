@@ -10,7 +10,7 @@ import com.ikokoon.target.consumer.TargetConsumer;
 
 /**
  * This is the test class for the coverage functionality.
- * 
+ *
  * @author Michael Couck
  * @since 12.07.09
  * @version 01.00
@@ -41,7 +41,7 @@ public class Target<E, F> implements ITarget<E, F>, Serializable {
 
 	/**
 	 * Another constructor.
-	 * 
+	 *
 	 * @param name
 	 */
 	public Target(String name) {
@@ -51,7 +51,7 @@ public class Target<E, F> implements ITarget<E, F>, Serializable {
 
 	/**
 	 * Return a generic type.
-	 * 
+	 *
 	 * @return
 	 */
 	public E getE() {
@@ -60,7 +60,7 @@ public class Target<E, F> implements ITarget<E, F>, Serializable {
 
 	/**
 	 * A simple method that does nothing.
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 */
@@ -84,7 +84,7 @@ public class Target<E, F> implements ITarget<E, F>, Serializable {
 
 	/**
 	 * A complex method that does nothing.
-	 * 
+	 *
 	 * @param s1
 	 * @param s2
 	 * @param s3
@@ -163,14 +163,14 @@ public class Target<E, F> implements ITarget<E, F>, Serializable {
 		}
 	}
 
-	public String methodName(String s1, String s2) {
+	String methodName(String s1, String s2) {
 		return s1;
 	}
 
 	@SuppressWarnings("unused")
 	private int f;
 
-	public void checkAndSetF(int f) {
+	protected void checkAndSetF(int f) {
 		if (f >= 0) {
 			this.f = f;
 		} else {
@@ -186,9 +186,12 @@ public class Target<E, F> implements ITarget<E, F>, Serializable {
 		}
 	}
 
+	@SuppressWarnings("unused")
+	private void privy() {}
+
 	/**
 	 * An inner class for shits and giggles.
-	 * 
+	 *
 	 * @author Michael Couck
 	 */
 	public static class InnerTarget {

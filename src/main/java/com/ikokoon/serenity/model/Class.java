@@ -19,7 +19,7 @@ import javax.persistence.ManyToMany;
 public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implements Comparable<Class<?, ?>>, Serializable {
 
 	private String name;
-	private double access;
+	private int access;
 	private Class<?, ?> outerClass;
 	private Method<?, ?> outerMethod;
 	private List<Class<?, ?>> innerClasses = new ArrayList<Class<?, ?>>();
@@ -44,11 +44,11 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 		this.name = name;
 	}
 
-	public double getAccess() {
+	public int getAccess() {
 		return access;
 	}
 
-	public void setAccess(double access) {
+	public void setAccess(int access) {
 		this.access = access;
 	}
 

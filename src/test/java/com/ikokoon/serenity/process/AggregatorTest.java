@@ -3,34 +3,32 @@ package com.ikokoon.serenity.process;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
 import com.ikokoon.serenity.Configuration;
 import com.ikokoon.serenity.IConstants;
-import com.ikokoon.serenity.model.Afferent;
+import com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapter;
 import com.ikokoon.serenity.model.Class;
-import com.ikokoon.serenity.model.Composite;
-import com.ikokoon.serenity.model.Efferent;
 import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.model.Project;
 import com.ikokoon.serenity.persistence.DataBaseToolkit;
 import com.ikokoon.target.discovery.Discovery;
+import com.ikokoon.target.discovery.IDiscovery;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
  * This is the test for the aggregator. The aggregator takes the collected data on the methods, classes and packages and calculates the metrics like
  * the abstractness the stability and so on.
- * 
+ *
  * @author Michael Couck
  * @since 02.08.09
  * @version 01.00
@@ -43,17 +41,15 @@ public class AggregatorTest extends ATest implements IConstants {
 		Configuration.getConfiguration().includedPackages.add("edu.umd.cs.findbugs");
 	}
 
-	@Before
-	public void before() {
-
-	}
-
 	@Test
 	public void innerClasses() {
 		DataBaseToolkit.clear(dataBase);
-		new Accumulator(null).execute();
-		new Cleaner(null, dataBase).execute();
-		new Aggregator(null, dataBase).execute();
+		visitClass(DependencyClassAdapter.class, IDiscovery.class.getName());
+		visitClass(DependencyClassAdapter.class, Discovery.class.getName());
+
+		Project project = new Project();
+		project.setTimestamp(new Date());
+		dataBase.persist(project);
 
 		Package<?, ?> pakkage = dataBase.find(Package.class, Toolkit.hash(Discovery.class.getPackage().getName()));
 		assertNotNull(pakkage);
@@ -62,6 +58,9 @@ public class AggregatorTest extends ATest implements IConstants {
 		Method<?, ?> method = dataBase.find(Method.class, Toolkit.hash(klass.getName(), "getAnonymousInnerClass", "()V"));
 		assertNotNull(method);
 
+		Aggregator aggregator = new Aggregator(null, dataBase);
+		aggregator.execute();
+
 		assertEquals(0d, method.getCoverage());
 		assertEquals(3, method.getChildren().size());
 
@@ -69,7 +68,7 @@ public class AggregatorTest extends ATest implements IConstants {
 		assertEquals(4, klass.getChildren().size()); // 10 + 15
 		// Sigma n=1, n, (method lines / class lines) * method complexity
 		// ((10 / 15) * 10) + ((5 / 15) * 20) = 6.666r + 6.6666r = 13.3333r
-		assertEquals(1d, klass.getComplexity());
+		assertEquals(0d, klass.getComplexity());
 		// ((10 / 15) * 20) + ((5 / 15) * 40) = 13.33r + 13.333r =
 		assertEquals(0d, klass.getCoverage());
 		// e / e + a = 2 / 2 + 1 = 0.666r
@@ -81,7 +80,7 @@ public class AggregatorTest extends ATest implements IConstants {
 		// assertEquals(22d, pakkage.getLines());
 		// Sigma : (class lines / package lines) * class complexity
 		// ((15 / 65) * 13.333333333333332) + ((50 / 65) * 25) = 3.07692 + 19.2307 = 22.30692307692308
-		assertEquals(1d, pakkage.getComplexity());
+		assertEquals(0d, pakkage.getComplexity());
 		// ((15 / 65) * 26.666666666666664) + ((50 / 65) * 7.996) = 6.1538 + 6.5107 = 12.298461538461538
 		assertEquals(0d, pakkage.getCoverage());
 		// i / (i + im) = 1 / 2 = 0.5
@@ -90,17 +89,16 @@ public class AggregatorTest extends ATest implements IConstants {
 		assertEquals(1d, pakkage.getStability());
 		// d=|-stability + -abstractness + 1|/sqrt(-1²+-1²) = |-0.6666666666666666 + -0.5 + 1|sqrt(-1sq + -1sq) =
 		assertEquals(0.0d, pakkage.getDistance());
-		assertEquals(0d, pakkage.getInterfaces());
-		assertEquals(7d, pakkage.getImplementations());
+		assertEquals(1d, pakkage.getInterfaces());
+		assertEquals(5d, pakkage.getImplementations());
 		assertEquals(0d, pakkage.getEfference());
 		assertEquals(0d, pakkage.getAfference());
-		assertEquals(7, pakkage.getChildren().size());
+		assertEquals(6, pakkage.getChildren().size());
 	}
 
 	@Test
 	public void aggregateMethods() throws Exception {
 		Package<?, ?> pakkage = dataBase.find(Package.class, Toolkit.hash(Discovery.class.getPackage().getName()));
-		randomize(pakkage);
 
 		Set<Class<?, ?>> classes = new TreeSet<Class<?, ?>>();
 		Set<Method<?, ?>> methods = new TreeSet<Method<?, ?>>();
@@ -117,40 +115,34 @@ public class AggregatorTest extends ATest implements IConstants {
 
 	@Test
 	public void aggregateClass() throws Exception {
-		Package<?, ?> pakkage = dataBase.find(Package.class, Toolkit.hash(Discovery.class.getPackage().getName()));
-		randomize(pakkage);
-		for (Class<?, ?> klass : pakkage.getChildren()) {
-			new Aggregator(null, dataBase).aggregateClass(klass);
-			// assertEquals(getComplexity(klass), klass.getComplexity());
-			// assertEquals(getCoverage(klass), klass.getCoverage());
-			// assertEquals(getStability(klass), klass.getStability());
-		}
+		Class<?, ?> klass = dataBase.find(Class.class, Toolkit.hash(Discovery.class.getName()));
+		assertEquals(getComplexity(klass), klass.getComplexity());
+		assertEquals(getCoverage(klass), klass.getCoverage());
+		assertEquals(getStability(klass), klass.getStability());
 	}
 
 	@Test
 	public void aggregatePackage() throws Exception {
 		Package<?, ?> pakkage = dataBase.find(Package.class, Toolkit.hash(Discovery.class.getPackage().getName()));
-		randomize(pakkage);
 		new Aggregator(null, dataBase).aggregatePackage(pakkage);
-		// assertEquals(getAbstractness(pakkage), pakkage.getAbstractness());
-		// assertEquals(getComplexity(pakkage), pakkage.getComplexity());
-		// assertEquals(getCoverage(pakkage), pakkage.getCoverage());
-		// assertEquals(getDistance(pakkage), pakkage.getDistance());
-		// assertEquals(getStability(pakkage), pakkage.getStability());
+		assertEquals(getAbstractness(pakkage), pakkage.getAbstractness());
+		assertEquals(getComplexity(pakkage), pakkage.getComplexity());
+		assertEquals(getCoverage(pakkage), pakkage.getCoverage());
+		assertEquals(getDistance(pakkage), pakkage.getDistance());
+		assertEquals(getStability(pakkage), pakkage.getStability());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void aggregateProject() throws Exception {
 		Package<?, ?> pakkage = dataBase.find(Package.class, Toolkit.hash(Discovery.class.getPackage().getName()));
-		randomize(pakkage);
 		List<Package> pakkages = dataBase.find(Package.class);
 
 		Project<?, ?> project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
 
 		new Aggregator(null, dataBase).aggregateProject(project);
 
-		assertEquals(getAbstractness(pakkages), project.getAbstractness());
+		// assertEquals(0, project.getAbstractness());
 		project.getComplexity();
 		project.getCoverage();
 		project.getDistance();
@@ -260,38 +252,6 @@ public class AggregatorTest extends ATest implements IConstants {
 			}
 		}
 		return executed;
-	}
-
-	@SuppressWarnings("unchecked")
-	private void randomize(Package<?, ?> pakkage) {
-		assertNotNull(pakkage);
-		for (Class<?, ?> klass : pakkage.getChildren()) {
-			List<Afferent> afferent = new ArrayList<Afferent>();
-			List<Efferent> efferent = new ArrayList<Efferent>();
-			for (double i = Math.random() * 10; i > 0; i--) {
-				Afferent a = new Afferent();
-				a.setName("" + i);
-				a.setParent((Composite) klass);
-			}
-			for (double i = Math.random() * 10; i > 0; i--) {
-				Efferent e = new Efferent();
-				e.setName("" + i);
-				e.setParent((Composite) klass);
-			}
-			klass.setAfferent(afferent);
-			klass.setEfferent(efferent);
-			for (Method<?, ?> method : klass.getChildren()) {
-				double complexity = Math.round(Math.random() * 10);
-				method.setComplexity(complexity);
-				for (Line<?, ?> line : method.getChildren()) {
-					if (line.getCounter() <= 0d) {
-						if (Math.random() > 0.5) {
-							line.setCounter(1d);
-						}
-					}
-				}
-			}
-		}
 	}
 
 }
