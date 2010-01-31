@@ -23,7 +23,7 @@ import com.ikokoon.toolkit.Toolkit;
 /**
  * This class looks through the classpath and collects metrics on the classes that were not instanciated by the classloader during the unit tests and
  * creates a visitor chain for the class that will collect the complexity and dependency metrics for the class.
- * 
+ *
  * @author Michael Couck
  * @since 24.07.09
  * @version 01.00
@@ -38,7 +38,7 @@ public class Accumulator extends AProcess {
 	private java.lang.Class<ClassVisitor>[] CLASS_ADAPTER_CLASSES;
 
 	/**
-	 * @inheritDoc
+	 * Constructor takes the parent process.
 	 */
 	@SuppressWarnings("unchecked")
 	public Accumulator(IProcess parent) {
@@ -93,7 +93,7 @@ public class Accumulator extends AProcess {
 	/**
 	 * Processes a directory on a file system, looks for class files and feeds the byte code into the adapter chain for collecting the metrics for the
 	 * class.
-	 * 
+	 *
 	 * @param file
 	 *            the directory or file to look in for the class data
 	 */
@@ -144,7 +144,7 @@ public class Accumulator extends AProcess {
 	/**
 	 * Processes a jar or zip file or something like it, looks for class and feeds the byte code into the adapter chain for collecting the metrics for
 	 * the class.
-	 * 
+	 *
 	 * @param file
 	 *            the file to look in for the class data
 	 */

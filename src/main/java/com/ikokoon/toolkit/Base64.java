@@ -78,7 +78,7 @@ public class Base64 {
 	 *            The byte array to encode
 	 * @param start
 	 *            The starting index
-	 * @param len
+	 * @param length
 	 *            The number of bytes
 	 * @return The base64 encoded result
 	 */
