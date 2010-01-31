@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>serenity</artifactId>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.2-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 	<name>Hudson Serenity plugin</name>
 	<url>http://wiki.hudson-ci.org/display/HUDSON/Serenity+Plugin</url>
