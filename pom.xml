@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>serenity</artifactId>
-	<version>0.2</version>
+	<version>0.3-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 	<name>Hudson Serenity plugin</name>
 	<url>http://wiki.hudson-ci.org/display/HUDSON/Serenity+Plugin</url>
@@ -170,10 +170,4 @@
 			<url>http://maven.glassfish.org/content/groups/public/</url>
 		</pluginRepository>
 	</pluginRepositories>
-
-  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/serenity-0.2</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/serenity-0.2</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/tags/serenity-0.2</url>
-  </scm>
 </project>
