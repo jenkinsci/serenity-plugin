@@ -1,0 +1,17 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<html>
+		<head>
+			<script type="text/javascript">
+				${it.getFile("excanvas.compiled.js")}
+				${it.getFile("jquery.min.js")}
+				${it.getFile("highcharts.js")}
+			</script>
+		</head>
+		<body>
+			<div id="container" style="width: 100%; height: 140px"></div>
+			<script type="text/javascript">
+				var chart = new Highcharts.Chart(${it.model});
+			</script>
+		</body>
+	</html>
+</j:jelly>

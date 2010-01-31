@@ -1,0 +1,18 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+	xmlns:i="jelly:fmt" xmlns:local="local">
+	<j:choose>
+		<j:when test="${from.hasResult()}">
+			<script type="text/javascript">
+				${from.lastResult.getFile("excanvas.compiled.js")}
+				${from.lastResult.getFile("jquery.min.js")}
+				${from.lastResult.getFile("highcharts.js")}
+			</script>
+			<div id="container" style="width: 500px; height: 140px"></div>
+			<script type="text/javascript">
+				// alert('Creating chart : ');
+				var chart = new Highcharts.Chart(${from.lastResult.projectModel});
+				// alert('Chart : ' + chart);
+			</script>
+		</j:when>
+	</j:choose>
+</j:jelly>

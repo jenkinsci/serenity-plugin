@@ -1,0 +1,137 @@
+{
+				chart: {
+				renderTo: 'container',
+				margin: [20, 20, 20, 20],
+				zoomType: 'xy'
+			},
+			title: {
+				text: 'Serenity',
+				style: {
+					margin: '3px 0 0 0' // center it
+				}
+			},
+			xAxis: [{
+				categories: categoryData
+			}],
+			yAxis: [
+				{ // Primary yAxis
+					title: {
+						// Coverage
+						text: '',
+						style: {
+							color: '#89A54E'
+						},
+						margin: 0
+					},
+					labels: {
+						formatter: function() {
+							return ' '; // this.value.toFixed(0) +'%';
+						},
+						style: {
+							color: '#89A54E'
+						}
+					},
+					opposite: false
+				}, { // Secondary yAxis
+					title: {
+						// Complexity
+						text: '',
+						margin: 0,
+						style: {
+							color: '#4572A7'
+						}
+					},
+					labels: {
+						formatter: function() {
+							return ' '; // this.value.toFixed(2);
+						},
+						style: {
+							color: '#4572A7'
+						}
+					},
+					opposite: true
+				}, { // Tertiary yAxis
+					title: {
+						// Stability
+						text: '',
+						margin: 0,
+						style: {
+							color: '#AA4643'
+						}
+					},
+					labels: {
+						formatter: function() {
+							return ''; // this.value.toFixed(2);
+						},
+						style: {
+							color: '#AA4643'
+						}
+					},
+					opposite: true,
+					offset: 0
+				}
+			],
+			tooltip: {
+				formatter: function() {
+					var unit = {
+						'Coverage': '%',
+						'Complexity': 'units',
+						'Stability': ' < 1',
+						'Abstractness': ' < 1',
+						'Distance': ' < 1'
+					}[this.series.name];
+					return '<b>'+ this.series.name +'</b><br/>'+
+						this.x +': '+ this.y.toFixed(2) +' '+ unit;
+				}
+			},
+			plotOptions: {
+		      line: {
+		         dataLabels: {
+		            enabled: true
+		         }
+		      }
+		   },
+		   legend: {
+				layout: 'vertical',
+				style: {
+					left: '10px',
+					bottom: 'auto',
+					right: 'auto',
+					top: '10px'
+				},
+				backgroundColor: '#FFFFFF'
+			},
+			series: [
+				{
+					name: 'Coverage',
+					color: '#89A54E',
+					type: 'column',
+					yAxis: 0,
+					data: coverageData
+				}, {
+					name: 'Complexity',
+					type: 'spline',
+					color: '#4572A7',
+					yAxis: 1,
+					data: complexityData
+				}, {
+					name: 'Stability',
+					color: '#AA4643',
+					type: 'spline',
+					yAxis: 2,
+					data: stabilityData
+				}, {
+					name: 'Abstractness',
+					color: '#CDCD00',
+					type: 'spline',
+					yAxis: 2,
+					data: abstractnessData
+				}, {
+					name: 'Distance',
+					color: '#EE7600',
+					type: 'spline',
+					yAxis: 2,
+					data: distanceData
+				}
+			]
+		}
