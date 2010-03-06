@@ -3,15 +3,14 @@ package com.ikokoon.serenity.process;
 import java.util.List;
 
 import com.ikokoon.serenity.IConstants;
-import com.ikokoon.serenity.model.Class;
+import com.ikokoon.serenity.model.Afferent;
+import com.ikokoon.serenity.model.Efferent;
 import com.ikokoon.serenity.model.Line;
-import com.ikokoon.serenity.model.Method;
-import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.persistence.IDataBase;
 
 /**
- * This class removes the methods and lines from the model as we will not need them further and they form a very large part of the model which hogs
- * memory.
+ * This class removes the lines and the efferent and afferent from the model as we will not need them further and they form a very large part of the
+ * model which hogs memory.
  *
  * @author Michael Couck
  * @since 10.01.10
@@ -39,24 +38,17 @@ public class Pruner extends AProcess implements IConstants {
 	@SuppressWarnings("unchecked")
 	public void execute() {
 		super.execute();
-		List<Package> packages = dataBase.find(Package.class);
-		for (Package<?, ?> pakkage : packages.toArray(new Package[packages.size()])) {
-			for (Class<?, ?> klass : pakkage.getChildren()) {
-				for (Method<?, ?> method : klass.getChildren()) {
-					for (Line<?, ?> line : method.getChildren()) {
-						line.setParent(null);
-					}
-					method.setParent(null);
-					method.setChildren(null);
-				}
-				klass.setAfferent(null);
-				klass.setEfferent(null);
-				// klass.setChildren(null);
-			}
-			pakkage.setAfferent(null);
-			pakkage.setEfferent(null);
-			pakkage.setParent(null);
+		List<Line> lines = dataBase.find(Line.class);
+		for (Line line : lines) {
+			dataBase.remove(Line.class, line.getId());
+		}
+		List<Efferent> efferents = dataBase.find(Efferent.class);
+		for (Efferent efferent : efferents) {
+			dataBase.remove(Efferent.class, efferent.getId());
+		}
+		List<Afferent> afferents = dataBase.find(Afferent.class);
+		for (Afferent afferent : afferents) {
+			dataBase.remove(Afferent.class, afferent.getId());
 		}
 	}
-
 }

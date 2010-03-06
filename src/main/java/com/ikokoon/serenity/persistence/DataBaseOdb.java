@@ -47,22 +47,15 @@ public class DataBaseOdb extends DataBase {
 	 *            whether to create a new database essentially deleting the database file and creating a new one or to use the data in the existing
 	 *            database file
 	 */
-	DataBaseOdb(IDataBaseListener dataBaseListener, String dataBaseFile, Boolean create) {
+	public DataBaseOdb(IDataBaseListener dataBaseListener, String dataBaseFile) {
 		this.dataBaseListener = dataBaseListener;
 		this.dataBaseFile = dataBaseFile;
-		logger.info("Opening ODB database on file : " + dataBaseFile);
+		logger.info("Opening ODB database on file : " + new File(dataBaseFile).getAbsolutePath());
 		try {
-			if (create) {
-				File file = new File(this.dataBaseFile);
-				if (!file.delete()) {
-					logger.warn("Couldn't delete old database file");
-				}
-				logger.info("Database file : " + file.getAbsolutePath());
-			}
 			odb = ODBFactory.open(this.dataBaseFile);
 			closed = false;
 		} catch (Exception e) {
-			logger.error("Exception initialising the database", e);
+			logger.error("Exception initialising the database : " + dataBaseFile, e);
 		}
 		commit();
 	}
@@ -150,8 +143,10 @@ public class DataBaseOdb extends DataBase {
 			setIds(composite);
 			E duplicate = (E) find(composite.getClass(), composite.getId());
 			if (duplicate != null) {
-				logger.warn("Attempted to persist a duplicate composite : " + composite);
-				return composite;
+				if (duplicate != composite) {
+					logger.warn("Attempted to persist a duplicate composite : " + composite);
+					return composite;
+				}
 			}
 			logger.debug("Persisting composite : " + composite);
 			odb.store(composite);

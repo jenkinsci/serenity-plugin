@@ -1,22 +1,29 @@
 package com.ikokoon.toolkit;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 import java.beans.XMLDecoder;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.ikokoon.serenity.ATest;
 import com.ikokoon.serenity.IConstants;
+import com.ikokoon.serenity.LoggingConfigurator;
 import com.ikokoon.serenity.persistence.DataBaseOdb;
 import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.IDataBase;
-import com.ikokoon.serenity.persistence.IDataBaseEvent;
 import com.ikokoon.serenity.persistence.IDataBaseListener;
 
-public class ObjectFactoryTest extends ATest {
+public class ObjectFactoryTest {
+
+	@BeforeClass
+	public static void setup() {
+		LoggingConfigurator.configure();
+	}
 
 	@Test
 	@SuppressWarnings("unchecked")
@@ -30,21 +37,32 @@ public class ObjectFactoryTest extends ATest {
 		String string = ObjectFactory.getObject(String.class, parameters);
 		assertNotNull(string);
 
-		IDataBaseListener dataBaseListener = new IDataBaseListener() {
-			public void fireDataBaseEvent(IDataBaseEvent dataBaseEvent) {
-			}
-		};
-		dataBase.close();
-		IDataBase iDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, true, null);
-		IDataBase dataBase = ObjectFactory.getObject(DataBaseRam.class, iDataBase, dataBaseListener, true);
+		IDataBaseListener dataBaseListener = mock(IDataBaseListener.class);
+
+		IDataBase internalDataBase = mock(IDataBase.class);
+		IDataBase dataBase = ObjectFactory.getObject(DataBaseRam.class, internalDataBase, dataBaseListener, true);
 		assertNotNull(dataBase);
 
-		dataBase.close();
-		iDataBase.close();
-		iDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, true, null);
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, true, iDataBase);
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, internalDataBase);
 		Object dataBaseField = Toolkit.getValue(dataBase.getClass(), dataBase, "dataBase");
 		assertNotNull(dataBaseField);
+
+		dataBase.close();
+
+		dataBase = new DataBaseOdb(dataBaseListener, "./serenity/dummy.odb");
+		assertFalse(dataBase.isClosed());
+		dataBase.close();
+
+		dataBase = new DataBaseOdb(dataBaseListener, "./serenity/dummy.odb");
+		assertFalse(dataBase.isClosed());
+		dataBase.close();
+
+		dataBase = new DataBaseOdb(dataBaseListener, "./serenity/dummy.odb");
+		assertFalse(dataBase.isClosed());
+		dataBase.close();
+
+		dataBase = ObjectFactory.getObject(DataBaseOdb.class, new Object[] { dataBaseListener, "./serenity/dummy.odb", false });
+		assertFalse(dataBase.isClosed());
 	}
 
 }

@@ -1,7 +1,6 @@
 package com.ikokoon.serenity;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,7 +17,6 @@ import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.model.Project;
-import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.toolkit.Toolkit;
 
@@ -26,13 +24,13 @@ import com.ikokoon.toolkit.Toolkit;
  * TODO - make this class non static? Is this a better option? More OO? Better performance? Will it be easier to understand? In the case of
  * distributing the collector class by putting it in the constant pool of the classes and then calling the instance variable from inside the classes,
  * will this be more difficult to understand?
- * 
+ *
  * In this static class all the real collection logic is in one place and is called statically. The generation of the instructions to call this class
  * is simple and seemingly not much less performant than an instance variable.
- * 
+ *
  * This class collects the data from the processing. It adds the metrics to the packages, classes, methods and lines and persists the data in the
  * database. This is the central collection class for the coverage and dependency functionality.
- * 
+ *
  * @author Michael Couck
  * @since 12.07.09
  * @version 01.00
@@ -42,11 +40,15 @@ public class Collector implements IConstants {
 	/** The logger. */
 	private static final Logger LOGGER = Logger.getLogger(Collector.class);
 	/** The database/persistence object. */
-	private static IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, false, null);
+	private static IDataBase dataBase;
+
+	public static void setDataBase(IDataBase dataBase) {
+		Collector.dataBase = dataBase;
+	}
 
 	/**
 	 * This method accumulates the number of times a thread goes through each line in a method.
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class that is calling this method
 	 * @param methodName
@@ -62,8 +64,8 @@ public class Collector implements IConstants {
 	}
 
 	/**
-	 * This method just collects all the lines in the project.
-	 * 
+	 * This method just collect the line specified in the parameter list.
+	 *
 	 * @param className
 	 *            the name of the class that is calling this method
 	 * @param lineNumber
@@ -73,13 +75,13 @@ public class Collector implements IConstants {
 	 * @param methodDescription
 	 *            the description of the method
 	 */
-	public static final void collectLines(String className, String methodName, String methodDescription, Integer lineNumber) {
+	public static final void collectLine(String className, String methodName, String methodDescription, Integer lineNumber) {
 		getLine(className, methodName, methodDescription, lineNumber);
 	}
 
 	/**
 	 * This method collects the Java source for the class.
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class
 	 * @param source
@@ -92,10 +94,8 @@ public class Collector implements IConstants {
 			file.getParentFile().mkdirs();
 		}
 		if (!file.exists()) {
-			try {
-				file.createNewFile();
-			} catch (IOException e) {
-				LOGGER.error("Exception creating the source HTML file", e);
+			if (!Toolkit.createFile(file)) {
+				LOGGER.info("Couldn't create new source file : " + file);
 			}
 		}
 		if (file.exists()) {
@@ -108,7 +108,7 @@ public class Collector implements IConstants {
 	/**
 	 * This method is called after each jumps in the method graph. Every time there is a jump the complexity goes up one point. Jumps include if else
 	 * statements, or just if, throws statements, switch and so on.
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class the method is in
 	 * @param methodName
@@ -125,7 +125,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * Collects the packages that the class references and adds them to the document.
-	 * 
+	 *
 	 * @param className
 	 *            the name of the classes
 	 * @param targetClassNames
@@ -164,7 +164,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * Adds the access attribute to the method object.
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class
 	 * @param methodName
@@ -181,7 +181,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * Adds the access attribute to the class object.
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class
 	 * @param access
@@ -197,7 +197,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * Collects the inner class for a class.
-	 * 
+	 *
 	 * @param innerName
 	 *            the name of the inner class
 	 * @param outerName
@@ -216,7 +216,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * Collects the outer class of an inner class.
-	 * 
+	 *
 	 * @param innerName
 	 *            the name of the inner class
 	 * @param outerName

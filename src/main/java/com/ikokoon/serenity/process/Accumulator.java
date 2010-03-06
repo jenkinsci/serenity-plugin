@@ -21,7 +21,7 @@ import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
- * This class looks through the classpath and collects metrics on the classes that were not instanciated by the classloader during the unit tests and
+ * This class looks through the classpath and collects metrics on the classes that were not instantiated by the classloader during the unit tests and
  * creates a visitor chain for the class that will collect the complexity and dependency metrics for the class.
  *
  * @author Michael Couck

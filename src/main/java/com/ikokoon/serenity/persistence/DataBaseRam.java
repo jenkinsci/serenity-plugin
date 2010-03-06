@@ -38,13 +38,23 @@ public final class DataBaseRam extends DataBase {
 	 * release the resources and whether to create a new database or open an old one.
 	 *
 	 * @param dataBase
+	 *            the underlying database that will actually persist the objects to the file system
 	 * @param dataBaseListener
+	 *            the listener to close the database and release resources
 	 */
+	@SuppressWarnings("unchecked")
 	DataBaseRam(IDataBase dataBase, IDataBaseListener dataBaseListener) {
 		logger.info("Opening RAM database with " + dataBase + " underneath.");
 		this.dataBase = dataBase;
 		this.dataBaseListener = dataBaseListener;
 		index.clear();
+		// Insert all the underlying database objects into the index
+		if (this.dataBase != null) {
+			List<Composite> composites = this.dataBase.find(Composite.class);
+			for (Composite composite : composites) {
+				insert(index, composite);
+			}
+		}
 		closed = false;
 	}
 
@@ -61,7 +71,7 @@ public final class DataBaseRam extends DataBase {
 	 */
 	@SuppressWarnings("unchecked")
 	public synchronized final <E extends Composite<?, ?>> E find(Class<E> klass, Long id) {
-		return (E) search(index, id);
+		return (E) search(klass, index, id);
 	}
 
 	/**
@@ -70,7 +80,7 @@ public final class DataBaseRam extends DataBase {
 	@SuppressWarnings("unchecked")
 	public synchronized final <E extends Composite<?, ?>> E find(Class<E> klass, List<Object> parameters) {
 		Long id = Toolkit.hash(parameters.toArray());
-		return (E) search(index, id);
+		return (E) search(klass, index, id);
 	}
 
 	/**
@@ -163,16 +173,14 @@ public final class DataBaseRam extends DataBase {
 	}
 
 	/**
-	 * This method sets the ids in a graph of objects. The objects need to be stored, perhaps using the top level object in the heirachy, then the
+	 * This method sets the ids in a graph of objects. The objects need to be stored, perhaps using the top level object in the hierarchy, then the
 	 * database is consulted for it's uid for the object. The uid is set in the field that has the Identifier annotation on the setter method for the
 	 * field.
 	 *
 	 * @param <T>
 	 *            the type of object
-	 * @param object
+	 * @param composite
 	 *            the object to set the id for
-	 * @param list
-	 *            a list of already set id fields
 	 */
 	@SuppressWarnings("unchecked")
 	synchronized final <T> void setIds(Composite<?, ?> composite) {
@@ -197,14 +205,20 @@ public final class DataBaseRam extends DataBase {
 	}
 
 	/**
-	 * Binary search through the index of composite objects.
+	 * A binary search through the index of composites.
 	 *
+	 * @param <E>
+	 *            the type of composite
+	 * @param klass
+	 *            the class to search for
 	 * @param index
+	 *            the index of composites
 	 * @param id
-	 * @return
+	 *            the id of the composite to get
+	 * @return the composite from the index, or the underlying database, or null if no such composites exists
 	 */
 	@SuppressWarnings("unchecked")
-	final <E extends Composite<?, ?>> E search(List<Composite<?, ?>> index, long id) {
+	final <E extends Composite<?, ?>> E search(Class klass, List<Composite<?, ?>> index, long id) {
 		int low = 0;
 		int high = index.size() - 1;
 		while (low <= high) {
@@ -219,6 +233,14 @@ public final class DataBaseRam extends DataBase {
 				return (E) composite;
 			}
 		}
+		// Look for the object in the underlying database
+		if (this.dataBase != null) {
+			Composite composite = this.dataBase.find(klass, id);
+			if (composite != null) {
+				insert(index, composite);
+			}
+			return (E) composite;
+		}
 		return null;
 	}
 
@@ -226,7 +248,9 @@ public final class DataBaseRam extends DataBase {
 	 * Insert the composite into the index at the correct index.
 	 *
 	 * @param index
+	 *            the index of composites
 	 * @param toInsert
+	 *            the composite to insert into the index
 	 */
 	final void insert(List<Composite<?, ?>> index, Composite<?, ?> toInsert) {
 		boolean inserted = false;

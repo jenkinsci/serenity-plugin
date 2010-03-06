@@ -1,5 +1,7 @@
 package com.ikokoon.toolkit;
 
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -11,6 +13,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +25,7 @@ import com.ikokoon.serenity.model.Unique;
 /**
  * This class contains methods for changing a string to the byte code representation and visa versa. Also some other nifty functions like stripping a
  * string of white space etc.
- * 
+ *
  * @author Michael Couck
  * @since 12.07.09
  * @version 01.00
@@ -34,7 +37,7 @@ public class Toolkit {
 
 	/**
 	 * Simple, fast hash function to generate quite unique hashes from strings(i.e. toCharArray()).
-	 * 
+	 *
 	 * @param string
 	 *            the string to generate the hash from
 	 * @return the integer representation of the hash of the string characters, typically quite unique for strings less than 10 characters
@@ -52,7 +55,7 @@ public class Toolkit {
 
 	/**
 	 * Builds a hash from an array of objects.
-	 * 
+	 *
 	 * @param objects
 	 *            the objects to build the hash from
 	 * @return the hash of the objects
@@ -68,7 +71,7 @@ public class Toolkit {
 
 	/**
 	 * This method replaces the / in the byte code name with . which is XML friendly.
-	 * 
+	 *
 	 * @param name
 	 *            the byte code name of a class
 	 * @return the Java name of the class
@@ -84,7 +87,7 @@ public class Toolkit {
 
 	/**
 	 * This method replaces the . in the byte code name with / which is what we expect from byte code.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the class or package
 	 * @return the byte code name of the class or package
@@ -99,7 +102,7 @@ public class Toolkit {
 
 	/**
 	 * Takes the name of a class and returns the package name for the class.
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class fully qualified
 	 * @return the package name of the class
@@ -117,7 +120,7 @@ public class Toolkit {
 
 	/**
 	 * Removes any whitespace from the string.
-	 * 
+	 *
 	 * @param string
 	 *            the string to remove whitespace from
 	 * @return the string without any whitespace that includes carrige returns etc.
@@ -147,7 +150,7 @@ public class Toolkit {
 
 	/**
 	 * Gets a field in the class or in the heirachy of the class.
-	 * 
+	 *
 	 * @param klass
 	 *            the original class
 	 * @param name
@@ -175,7 +178,7 @@ public class Toolkit {
 
 	/**
 	 * Returns the value of the field specified from the object specified.
-	 * 
+	 *
 	 * @param object
 	 *            the object to get the field value from
 	 * @param name
@@ -201,11 +204,17 @@ public class Toolkit {
 
 	/**
 	 * Deletes all the files recursively and then the directories recursively.
-	 * 
+	 *
 	 * @param file
 	 *            the directory or file to delete
+	 * @param the
+	 *            number of times to retry to delete the file
 	 */
-	public static void deleteFile(File file, int maxRetryCount, int retryCount) {
+	public static void deleteFile(File file, int maxRetryCount) {
+		deleteFile(file, maxRetryCount, 0);
+	}
+
+	private static void deleteFile(File file, int maxRetryCount, int retryCount) {
 		if (file == null || !file.exists()) {
 			return;
 		}
@@ -216,16 +225,16 @@ public class Toolkit {
 				deleteFile(child, maxRetryCount, 0);
 			}
 		}
-		logger.warn("File : " + file);
+		logger.info("File : " + file);
 		if (file.delete()) {
-			logger.warn("Deleted file : " + file);
+			logger.info("Deleted file : " + file);
 		} else {
 			if (retryCount >= maxRetryCount) {
 				if (file.exists()) {
-					logger.warn("Couldn't delete file : " + file);
+					logger.info("Couldn't delete file : " + file);
 				}
 			} else {
-				logger.warn("Retrying count : " + retryCount + ", file : " + file);
+				logger.info("Retrying count : " + retryCount + ", file : " + file);
 				deleteFile(file, maxRetryCount, ++retryCount);
 			}
 		}
@@ -233,7 +242,7 @@ public class Toolkit {
 
 	/**
 	 * Deletes all the files in a directory with one of the specified extensions.
-	 * 
+	 *
 	 * @param file
 	 *            the file to delete or the directory to delete files in
 	 * @param extensions
@@ -266,7 +275,7 @@ public class Toolkit {
 
 	/**
 	 * This is the interface to select files with below.
-	 * 
+	 *
 	 * @author Michael Couck
 	 * @since 10.01.10
 	 * @version 01.00
@@ -277,7 +286,7 @@ public class Toolkit {
 
 	/**
 	 * Finds files on the file system below the directory specified recursively using the selection criteria supplied in the IFileFilter parameter.
-	 * 
+	 *
 	 * @param file
 	 *            the file to start looking from
 	 * @param filter
@@ -302,7 +311,7 @@ public class Toolkit {
 
 	/**
 	 * Reads the contents of the file and returns the contents in a byte array form.
-	 * 
+	 *
 	 * @param file
 	 *            the file to read the contents from
 	 * @return the file contents in a byte array output stream
@@ -322,7 +331,7 @@ public class Toolkit {
 
 	/**
 	 * Reads the contents of the file and returns the contents in a byte array form.
-	 * 
+	 *
 	 * @param inputStream
 	 *            the file to read the contents from
 	 * @return the file contents in a byte array output stream
@@ -354,7 +363,7 @@ public class Toolkit {
 
 	/**
 	 * Writes the contents of a byte array to a file.
-	 * 
+	 *
 	 * @param file
 	 *            the file to write to
 	 * @param bytes
@@ -382,7 +391,7 @@ public class Toolkit {
 
 	/**
 	 * Formats a double to the required precision.
-	 * 
+	 *
 	 * @param d
 	 *            the double to format
 	 * @param precision
@@ -402,7 +411,7 @@ public class Toolkit {
 
 	/**
 	 * Formats a string to the desired precision.
-	 * 
+	 *
 	 * @param string
 	 *            the string to format to a precision
 	 * @param precision
@@ -440,7 +449,7 @@ public class Toolkit {
 
 	/**
 	 * Serializes an object to a byte array then to a base 64 string of the byte array.
-	 * 
+	 *
 	 * @param object
 	 *            the object to serialise to base 64
 	 * @return the string representation of the object in serialised base 64
@@ -464,7 +473,7 @@ public class Toolkit {
 
 	/**
 	 * De-serializes an object from a base 64 string to an object.
-	 * 
+	 *
 	 * @param base64
 	 *            the base 64 string representation of the object
 	 * @return the object de-serialised from the string or null if an exception is thrown
@@ -483,7 +492,7 @@ public class Toolkit {
 
 	/**
 	 * Returns an array of values that are defined as being a unique combination for the entity by using the Unique annotation for the class.
-	 * 
+	 *
 	 * @param <T>
 	 *            the type of object to be inspected for unique fields
 	 * @param t
@@ -508,17 +517,44 @@ public class Toolkit {
 		return (T[]) values.toArray(new Object[values.size()]);
 	}
 
+	public static void copyFile(File in, File out) {
+		FileChannel inChannel = null;
+		FileChannel outChannel = null;
+		try {
+			inChannel = new FileInputStream(in).getChannel();
+			outChannel = new FileOutputStream(out).getChannel();
+			inChannel.transferTo(0, inChannel.size(), outChannel);
+		} catch (Exception e) {
+			logger.error("Exception copying file : " + in + ", to : " + out, e);
+		} finally {
+			if (inChannel != null) {
+				try {
+					inChannel.close();
+				} catch (Exception e) {
+					logger.error("", e);
+				}
+			}
+			if (outChannel != null) {
+				try {
+					outChannel.close();
+				} catch (Exception e) {
+					logger.error("", e);
+				}
+			}
+		}
+	}
+
 	/**
 	 * This function will copy files or directories from one location to another. note that the source and the destination must be mutually exclusive.
 	 * This function can not be used to copy a directory to a sub directory of itself. The function will also have problems if the destination files
 	 * already exist.
-	 * 
+	 *
 	 * @param src
 	 *            A File object that represents the source for the copy
 	 * @param dest
 	 *            A File object that represents the destination for the copy.
 	 */
-	public static void copyFile(File src, File dest) {
+	public static void copyFiles(File src, File dest) {
 		// Check to ensure that the source is valid...
 		if (!src.exists()) {
 			logger.warn("Source file/directory does not exist : " + src);
@@ -536,51 +572,22 @@ public class Toolkit {
 				}
 			}
 			// get a listing of files...
-			String list[] = src.list();
+			String children[] = src.list();
 			// copy all the files in the list.
-			for (int i = 0; i < list.length; i++) {
-				File dest1 = new File(dest, list[i]);
-				File src1 = new File(src, list[i]);
-				copyFile(src1, dest1);
+			for (int i = 0; i < children.length; i++) {
+				File childSrc = new File(src, children[i]);
+				File childDest = new File(dest, children[i]);
+				copyFiles(childSrc, childDest);
 			}
 		} else {
 			// This was not a directory, so lets just copy the file
-			FileInputStream fin = null;
-			FileOutputStream fout = null;
-			byte[] buffer = new byte[4096]; // Buffer 4K at a time (you can change this).
-			int bytesRead;
-			try {
-				// open the files for input and output
-				fin = new FileInputStream(src);
-				fout = new FileOutputStream(dest);
-				// while bytesRead indicates a successful read, lets write...
-				while ((bytesRead = fin.read(buffer)) >= 0) {
-					fout.write(buffer, 0, bytesRead);
-				}
-			} catch (IOException e) { // Error copying file...
-				logger.error("Exception copying the source " + src + ", to destination : " + dest, e);
-			} finally { // Ensure that the files are closed (if they were open).
-				if (fin != null) {
-					try {
-						fin.close();
-					} catch (Exception e) {
-						logger.error("Exception closing the source input stream : " + fin, e);
-					}
-				}
-				if (fout != null) {
-					try {
-						fout.close();
-					} catch (Exception e) {
-						logger.error("Exception closing the destination output stream : " + fout, e);
-					}
-				}
-			}
+			copyFile(src, dest);
 		}
 	}
 
 	/**
 	 * If Java 1.4 is unavailable, the following technique may be used.
-	 * 
+	 *
 	 * @param aInput
 	 *            is the original String which may contain substring aOldPattern
 	 * @param aOldPattern
@@ -609,6 +616,47 @@ public class Toolkit {
 		// the final chunk will go to the end of aInput
 		result.append(aInput.substring(startIdx));
 		return result.toString();
+	}
+
+	public static boolean createFile(File file) {
+		boolean allCreated = file == null;
+		if (file != null && file.getParentFile() != null && !file.getParentFile().exists()) {
+			if (!file.getParentFile().mkdirs()) {
+				logger.warn("Directory : " + file.getParent() + ", not created.");
+				allCreated = false;
+			}
+		}
+		if (file != null && !file.exists()) {
+			try {
+				if (!file.createNewFile()) {
+					logger.warn("Didn't create file : " + file.getAbsolutePath());
+					allCreated = false;
+				}
+			} catch (Exception e) {
+				logger.error("Exception creating file : " + file, e);
+			}
+		}
+		if (file.exists()) {
+			allCreated = true;
+		}
+		return allCreated;
+	}
+
+	public static String serialize(Object object) {
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		XMLEncoder xmlEncoder = new XMLEncoder(byteArrayOutputStream);
+		xmlEncoder.writeObject(object);
+		xmlEncoder.flush();
+		xmlEncoder.close();
+		return byteArrayOutputStream.toString();
+	}
+
+	public static Object deserialize(String xml) {
+		InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
+		XMLDecoder decoder = new XMLDecoder(inputStream);
+		Object object = decoder.readObject();
+		decoder.close();
+		return object;
 	}
 
 }

@@ -17,7 +17,7 @@ import com.ikokoon.target.Target;
 
 /**
  * This class tests that the transformer adds the Collector instructions to the class byte code.
- * 
+ *
  * @author Michael Couck
  * @since 12.07.09
  * @version 01.00
@@ -32,6 +32,7 @@ public class TransformerTest extends ATest {
 	public void setUp() {
 		// Call the premain to load stuff we need
 		Transformer.premain(null, instrumentation);
+		Transformer.removeShutdownHook();
 	}
 
 	@Test

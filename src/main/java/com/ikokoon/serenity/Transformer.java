@@ -21,13 +21,12 @@ import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.serenity.process.Accumulator;
 import com.ikokoon.serenity.process.Aggregator;
 import com.ikokoon.serenity.process.Cleaner;
-import com.ikokoon.serenity.process.Pruner;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
  * This class is the entry point for the Serenity code coverage/complexity/dependency/profiling functionality. This class is called by the JVM on
  * startup. The agent then has first access to the byte code for all classes that are loaded. During this loading the byte code can be enhanced.
- * 
+ *
  * @author Michael Couck
  * @since 12.07.09
  * @version 01.00
@@ -41,19 +40,23 @@ public class Transformer implements ClassFileTransformer, IConstants {
 	/** The chain of adapters for analysing the classes. */
 	private static Class<ClassVisitor>[] CLASS_ADAPTER_CLASSES;
 
+	private static Thread shutdownHook = new Thread() {
+
+	};
+
 	/**
 	 * This method is called by the JVM at startup. This method will only be called if the command line for starting the JVM has the following on it:
 	 * -javaagent:serenity/serenity.jar. This instruction tells the JVM that there is an agent that must be used. In the META-INF directory of the jar
 	 * specified there must be a MANIFEST.MF file. In this file the instructions must be something like the following:
-	 * 
+	 *
 	 * Manifest-Version: 1.0 <br>
 	 * Boot-Class-Path: asm-3.1.jar and so on..., in the case that the required libraries are not on the classpath, which they should be<br>
 	 * Premain-Class: com.ikokoon.serenity.Transformer
-	 * 
+	 *
 	 * Another line in the manifest can start an agent after the JVM has been started, but not for all JVMs. So not very useful.
-	 * 
+	 *
 	 * These instructions tell the JVM to call this method when loading class files.
-	 * 
+	 *
 	 * @param args
 	 *            a set of arguments that the JVM will call the method with
 	 * @param instrumentation
@@ -71,45 +74,6 @@ public class Transformer implements ClassFileTransformer, IConstants {
 					.size()]);
 			LOGGER = Logger.getLogger(Transformer.class);
 
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-				public void run() {
-					Date start = new Date();
-					LOGGER.info("Starting accumulation : " + start);
-					IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, false, null);
-
-					long processStart = System.currentTimeMillis();
-					new Accumulator(null).execute();
-					LOGGER.info("Accumlulator : " + (System.currentTimeMillis() - processStart));
-
-					processStart = System.currentTimeMillis();
-					new Cleaner(null, dataBase).execute();
-					LOGGER.info("Cleaner : " + (System.currentTimeMillis() - processStart));
-
-					processStart = System.currentTimeMillis();
-					new Aggregator(null, dataBase).execute();
-					LOGGER.info("Aggregator : " + (System.currentTimeMillis() - processStart));
-
-					// DataBaseToolkit.dump(dataBase, null, "Transformer database dump before pruning");
-
-					processStart = System.currentTimeMillis();
-					new Pruner(null, dataBase).execute();
-					LOGGER.info("Pruner : " + (System.currentTimeMillis() - processStart));
-
-					processStart = System.currentTimeMillis();
-					if (!dataBase.isClosed()) {
-						dataBase.close();
-					}
-					LOGGER.info("Close database : " + (System.currentTimeMillis() - processStart));
-
-					Date end = new Date();
-					long million = 1000 * 1000;
-					long duration = end.getTime() - start.getTime();
-					LOGGER.info("Finished accumulation : " + end + ", duration : " + duration + " millis");
-					LOGGER.info("Total memory : " + (Runtime.getRuntime().totalMemory() / million) + ", max memory : "
-							+ (Runtime.getRuntime().maxMemory() / million) + ", free memory : " + (Runtime.getRuntime().freeMemory() / million));
-				}
-			});
-
 			if (instrumentation != null) {
 				instrumentation.addTransformer(new Transformer());
 			}
@@ -123,15 +87,56 @@ public class Transformer implements ClassFileTransformer, IConstants {
 					}
 				}
 			}
+			File file = new File(IConstants.DATABASE_FILE_ODB);
+			Toolkit.deleteFile(file, 3);
 			// This is the underlying database that will persist the data to the file system
-			IDataBase odbDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, true, null);
-			// And we try the JPA database for the activation depth
-			// IDataBase jpaDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseJpa.class, IConstants.DATABASE_FILE_JPA, true, null);
+			IDataBase odbDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, null);
+			DataBaseToolkit.clear(odbDataBase);
 			// This is the ram database that will hold all the data in memory for better performance
-			IDataBase ramDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, true, odbDataBase);
-			// Just in case the database is opened on a file that is not empty
+			IDataBase ramDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, odbDataBase);
 			DataBaseToolkit.clear(ramDataBase);
+
+			addShutdownHook(ramDataBase);
+
+			Collector.setDataBase(ramDataBase);
 		}
+	}
+
+	private static void addShutdownHook(final IDataBase dataBase) {
+		shutdownHook = new Thread() {
+			public void run() {
+				Date start = new Date();
+				LOGGER.info("Starting accumulation : " + start);
+
+				long processStart = System.currentTimeMillis();
+				new Accumulator(null).execute();
+				LOGGER.info("Accumlulator : " + (System.currentTimeMillis() - processStart));
+
+				processStart = System.currentTimeMillis();
+				new Cleaner(null, dataBase).execute();
+				LOGGER.info("Cleaner : " + (System.currentTimeMillis() - processStart));
+
+				processStart = System.currentTimeMillis();
+				new Aggregator(null, dataBase).execute();
+				LOGGER.info("Aggregator : " + (System.currentTimeMillis() - processStart));
+
+				processStart = System.currentTimeMillis();
+				dataBase.close();
+				LOGGER.info("Close database : " + (System.currentTimeMillis() - processStart));
+
+				Date end = new Date();
+				long million = 1000 * 1000;
+				long duration = end.getTime() - start.getTime();
+				LOGGER.info("Finished accumulation : " + end + ", duration : " + duration + " millis");
+				LOGGER.info("Total memory : " + (Runtime.getRuntime().totalMemory() / million) + ", max memory : "
+						+ (Runtime.getRuntime().maxMemory() / million) + ", free memory : " + (Runtime.getRuntime().freeMemory() / million));
+			}
+		};
+		Runtime.getRuntime().addShutdownHook(shutdownHook);
+	}
+
+	protected static void removeShutdownHook() {
+		Runtime.getRuntime().removeShutdownHook(shutdownHook);
 	}
 
 	protected static void printSystemProperties() {

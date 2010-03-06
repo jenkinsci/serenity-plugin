@@ -3,15 +3,18 @@ package com.ikokoon.serenity.process;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
+import com.ikokoon.serenity.Collector;
 import com.ikokoon.serenity.Configuration;
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapter;
@@ -20,7 +23,12 @@ import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.model.Project;
+import com.ikokoon.serenity.persistence.DataBaseOdb;
+import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.DataBaseToolkit;
+import com.ikokoon.serenity.persistence.IDataBase;
+import com.ikokoon.serenity.process.aggregator.MethodAggregator;
+import com.ikokoon.serenity.process.aggregator.PackageAggregator;
 import com.ikokoon.target.discovery.Discovery;
 import com.ikokoon.target.discovery.IDiscovery;
 import com.ikokoon.toolkit.Toolkit;
@@ -35,15 +43,46 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class AggregatorTest extends ATest implements IConstants {
 
-	static {
+	private IDataBase dataBase;
+
+	@Before
+	public void clear() {
 		Configuration.getConfiguration().includedPackages.clear();
 		Configuration.getConfiguration().includedPackages.add(Discovery.class.getPackage().getName());
 		Configuration.getConfiguration().includedPackages.add("edu.umd.cs.findbugs");
+
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, internalDataBase);
+		DataBaseToolkit.clear(dataBase);
+		Collector.setDataBase(dataBase);
+	}
+
+	@After
+	public void close() {
+		dataBase.close();
 	}
 
 	@Test
+	public void aggregate() {
+		// D:/Eclipse/workspace/serenity/work/jobs/Discovery/builds/2010-02-27_19-28-14/serenity
+		String filePath = "D:/Eclipse/workspace/Findbugs/serenity/serenity.odb";
+		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, filePath, internalDataBase);
+		new Aggregator(null, dataBase).execute();
+
+		Project<?, ?> project = (Project<?, ?>) dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
+		logger.warn(ToStringBuilder.reflectionToString(project));
+
+		dataBase.close();
+
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, filePath, internalDataBase);
+		project = (Project<?, ?>) dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
+		logger.warn(ToStringBuilder.reflectionToString(project));
+
+		dataBase.close();
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
 	public void innerClasses() {
-		DataBaseToolkit.clear(dataBase);
 		visitClass(DependencyClassAdapter.class, IDiscovery.class.getName());
 		visitClass(DependencyClassAdapter.class, Discovery.class.getName());
 
@@ -68,7 +107,7 @@ public class AggregatorTest extends ATest implements IConstants {
 		assertEquals(4, klass.getChildren().size()); // 10 + 15
 		// Sigma n=1, n, (method lines / class lines) * method complexity
 		// ((10 / 15) * 10) + ((5 / 15) * 20) = 6.666r + 6.6666r = 13.3333r
-		assertEquals(0d, klass.getComplexity());
+		assertEquals(1d, klass.getComplexity());
 		// ((10 / 15) * 20) + ((5 / 15) * 40) = 13.33r + 13.333r =
 		assertEquals(0d, klass.getCoverage());
 		// e / e + a = 2 / 2 + 1 = 0.666r
@@ -80,7 +119,7 @@ public class AggregatorTest extends ATest implements IConstants {
 		// assertEquals(22d, pakkage.getLines());
 		// Sigma : (class lines / package lines) * class complexity
 		// ((15 / 65) * 13.333333333333332) + ((50 / 65) * 25) = 3.07692 + 19.2307 = 22.30692307692308
-		assertEquals(0d, pakkage.getComplexity());
+		assertEquals(1d, pakkage.getComplexity());
 		// ((15 / 65) * 26.666666666666664) + ((50 / 65) * 7.996) = 6.1538 + 6.5107 = 12.298461538461538
 		assertEquals(0d, pakkage.getCoverage());
 		// i / (i + im) = 1 / 2 = 0.5
@@ -98,6 +137,9 @@ public class AggregatorTest extends ATest implements IConstants {
 
 	@Test
 	public void aggregateMethods() throws Exception {
+		visitClass(DependencyClassAdapter.class, IDiscovery.class.getName());
+		visitClass(DependencyClassAdapter.class, Discovery.class.getName());
+
 		Package<?, ?> pakkage = dataBase.find(Package.class, Toolkit.hash(Discovery.class.getPackage().getName()));
 
 		Set<Class<?, ?>> classes = new TreeSet<Class<?, ?>>();
@@ -105,8 +147,8 @@ public class AggregatorTest extends ATest implements IConstants {
 		Set<Line<?, ?>> lines = new TreeSet<Line<?, ?>>();
 		getClassesMethodsAndLines(pakkage, classes, methods, lines);
 
-		new Aggregator(null, dataBase).aggregateMethods(Arrays.asList(methods.toArray(new Method<?, ?>[methods.size()])));
 		for (Method<?, ?> method : methods) {
+			new MethodAggregator(dataBase, method).aggregate();
 			double executed = getExecuted(method);
 			double coverage = (executed / (double) method.getChildren().size()) * 100d;
 			assertEquals(Math.round(coverage), Math.round(method.getCoverage()));
@@ -115,6 +157,9 @@ public class AggregatorTest extends ATest implements IConstants {
 
 	@Test
 	public void aggregateClass() throws Exception {
+		visitClass(DependencyClassAdapter.class, IDiscovery.class.getName());
+		visitClass(DependencyClassAdapter.class, Discovery.class.getName());
+
 		Class<?, ?> klass = dataBase.find(Class.class, Toolkit.hash(Discovery.class.getName()));
 		assertEquals(getComplexity(klass), klass.getComplexity());
 		assertEquals(getCoverage(klass), klass.getCoverage());
@@ -123,8 +168,13 @@ public class AggregatorTest extends ATest implements IConstants {
 
 	@Test
 	public void aggregatePackage() throws Exception {
+		visitClass(DependencyClassAdapter.class, IDiscovery.class.getName());
+		visitClass(DependencyClassAdapter.class, Discovery.class.getName());
+
 		Package<?, ?> pakkage = dataBase.find(Package.class, Toolkit.hash(Discovery.class.getPackage().getName()));
-		new Aggregator(null, dataBase).aggregatePackage(pakkage);
+
+		new PackageAggregator(dataBase, pakkage).aggregate();
+
 		assertEquals(getAbstractness(pakkage), pakkage.getAbstractness());
 		assertEquals(getComplexity(pakkage), pakkage.getComplexity());
 		assertEquals(getCoverage(pakkage), pakkage.getCoverage());
@@ -132,15 +182,17 @@ public class AggregatorTest extends ATest implements IConstants {
 		assertEquals(getStability(pakkage), pakkage.getStability());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void aggregateProject() throws Exception {
-		Package<?, ?> pakkage = dataBase.find(Package.class, Toolkit.hash(Discovery.class.getPackage().getName()));
-		List<Package> pakkages = dataBase.find(Package.class);
+		visitClass(DependencyClassAdapter.class, IDiscovery.class.getName());
+		visitClass(DependencyClassAdapter.class, Discovery.class.getName());
 
 		Project<?, ?> project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
+		if (project == null) {
+			project = new Project<Object, Package<?, ?>>();
+		}
 
-		new Aggregator(null, dataBase).aggregateProject(project);
+		// new Aggregator(null, dataBase).aggregateProject(project);
 
 		// assertEquals(0, project.getAbstractness());
 		project.getComplexity();
@@ -158,7 +210,7 @@ public class AggregatorTest extends ATest implements IConstants {
 		return 0d;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( { "unchecked", "unused" })
 	private double getAbstractness(List<Package> pakkages) {
 		double interfaces = 0d;
 		double implementations = 0d;
@@ -200,7 +252,8 @@ public class AggregatorTest extends ATest implements IConstants {
 		for (Class<?, ?> klass : pakkage.getChildren()) {
 			complexity += klass.getComplexity();
 		}
-		return complexity / pakkage.getChildren().size();
+		complexity = complexity / pakkage.getChildren().size();
+		return complexity;
 	}
 
 	protected double getAbstractness(Package<?, ?> pakkage) {
@@ -210,7 +263,7 @@ public class AggregatorTest extends ATest implements IConstants {
 	protected double getStability(Class<?, ?> klass) {
 		double numerator = klass.getEfferent().size();
 		double denominator = klass.getEfferent().size() + klass.getAfferent().size();
-		return denominator > 0 ? numerator / denominator : 1d;
+		return denominator > 0 ? numerator / denominator : 0d;
 	}
 
 	protected double getCoverage(Class<?, ?> klass) {
@@ -228,7 +281,7 @@ public class AggregatorTest extends ATest implements IConstants {
 			complexity += method.getComplexity();
 		}
 		complexity = complexity / klass.getChildren().size();
-		return complexity;
+		return Math.max(1, complexity);
 	}
 
 	private void getClassesMethodsAndLines(Package<?, ?> pakkage, Set<Class<?, ?>> classes, Set<Method<?, ?>> methods, Set<Line<?, ?>> lines) {

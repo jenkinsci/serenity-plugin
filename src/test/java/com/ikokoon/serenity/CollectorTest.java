@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,7 +18,9 @@ import com.ikokoon.serenity.model.Composite;
 import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
+import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.DataBaseToolkit;
+import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.target.consumer.TargetConsumer;
 import com.ikokoon.toolkit.PerformanceTester;
 import com.ikokoon.toolkit.Toolkit;
@@ -25,24 +28,32 @@ import com.ikokoon.toolkit.Toolkit;
 /**
  * This just tests that the coverage collector doesn't blow up. The tests are for executing the collector for the line that is executed and checking
  * that the package, class, method and line are added to the data model.
- * 
+ *
  * @author Michael Couck
  * @since 12.07.09
  * @version 01.00
  */
 public class CollectorTest extends ATest implements IConstants {
 
+	private IDataBase dataBase;
+
 	@Before
-	public void before() {
+	public void open() {
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, internalDataBase);
 		DataBaseToolkit.clear(dataBase);
 		Configuration.getConfiguration().includedPackages.add(packageName);
 		Configuration.getConfiguration().includedPackages.add(Toolkit.dotToSlash(packageName));
+		Collector.setDataBase(dataBase);
+	}
+
+	@After
+	public void close() {
+		dataBase.close();
 	}
 
 	@Test
 	@SuppressWarnings("unchecked")
 	public void collectCoverageLineExecutor() {
-		before();
 		// After this we expect a package, a class, a method and a line element
 		// dataBase.close();
 		// dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, true, null);
@@ -82,7 +93,6 @@ public class CollectorTest extends ATest implements IConstants {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void collectMetricsInterface() {
-		before();
 		Collector.collectAccess(className, access);
 		Class klass = (Class) dataBase.find(Class.class, Toolkit.hash(className));
 		assertNotNull(klass);
@@ -92,7 +102,6 @@ public class CollectorTest extends ATest implements IConstants {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void collectComplexity() {
-		before();
 		Collector.collectComplexity(className, methodName, methodSignature, complexity/* , 1000 */);
 		Collector.collectComplexity(className, methodName, methodSignature, complexity/* , 1000 */);
 
@@ -106,7 +115,6 @@ public class CollectorTest extends ATest implements IConstants {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void collectMetricsAfferentEfferent() {
-		before();
 		Collector.collectCoverage(className, methodName, methodSignature, (int) lineNumber);
 
 		Class toDelete = (Class) dataBase.find(Class.class, Toolkit.hash(className));
@@ -132,15 +140,14 @@ public class CollectorTest extends ATest implements IConstants {
 
 	@Test
 	public void collectLinePerformance() {
-		before();
-		int iterations = 100000;
+		int iterations = 10000;
 		double executionsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
 			public void execute() {
 				double lineNumber = System.currentTimeMillis() * Math.random();
 				Collector.collectCoverage(className, methodName, methodSignature, (int) lineNumber);
 			}
 		}, "line collections for collector new line", iterations);
-		assertTrue(executionsPerSecond > 10000);
+		assertTrue(executionsPerSecond > 1000);
 
 		final double lineNumber = System.currentTimeMillis() * Math.random();
 		executionsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
@@ -148,7 +155,7 @@ public class CollectorTest extends ATest implements IConstants {
 				Collector.collectCoverage(className, methodName, methodSignature, (int) lineNumber);
 			}
 		}, "line counter collections", iterations);
-		assertTrue(executionsPerSecond > 10000);
+		assertTrue(executionsPerSecond > 1000);
 	}
 
 }

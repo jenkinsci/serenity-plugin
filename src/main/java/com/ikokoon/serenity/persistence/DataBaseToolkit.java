@@ -1,9 +1,12 @@
 package com.ikokoon.serenity.persistence;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
+import com.ikokoon.serenity.Collector;
 import com.ikokoon.serenity.LoggingConfigurator;
 import com.ikokoon.serenity.model.Afferent;
 import com.ikokoon.serenity.model.Class;
@@ -17,7 +20,7 @@ import com.ikokoon.toolkit.Toolkit;
 
 /**
  * Just some useful methods to dump the database and clean it.
- * 
+ *
  * @author Michael Couck
  * @since 09.12.09
  * @version 01.00
@@ -31,7 +34,7 @@ public class DataBaseToolkit {
 
 	/**
 	 * Clears the data in the database.
-	 * 
+	 *
 	 * @param dataBase
 	 *            the database to truncate
 	 */
@@ -59,9 +62,69 @@ public class DataBaseToolkit {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public static void copyDataBase(IDataBase sourceDataBase, IDataBase targetDataBase) {
+		Collector.setDataBase(targetDataBase);
+		List<Package> sourcePackages = sourceDataBase.find(Package.class);
+		for (Package sourcePackage : sourcePackages) {
+			List<Class> sourceClasses = sourcePackage.getChildren();
+			for (Class sourceClass : sourceClasses) {
+				Collector.collectAccess(sourceClass.getName(), sourceClass.getAccess());
+				collectEfferentAndAfferent(sourceClass, sourcePackages);
+				List<Class> sourceInnerClasses = sourceClass.getInnerClasses();
+				for (Class sourceInnerClass : sourceInnerClasses) {
+					Collector.collectInnerClass(sourceInnerClass.getName(), sourceClass.getName());
+					Method sourceOuterMethod = sourceClass.getOuterMethod();
+					if (sourceOuterMethod != null) {
+						Collector.collectOuterClass(sourceInnerClass.getName(), sourceClass.getName(), sourceOuterMethod.getName(), sourceOuterMethod
+								.getDescription());
+					}
+				}
+				// Collector.collectSource(sourceClass.getName(), "source");
+				List<Method> sourceMethods = sourceClass.getChildren();
+				for (Method sourceMethod : sourceMethods) {
+					Collector.collectComplexity(sourceClass.getName(), sourceMethod.getName(), sourceMethod.getDescription(), sourceMethod
+							.getComplexity());
+					Collector.collectAccess(sourceClass.getName(), sourceMethod.getName(), sourceMethod.getDescription(), sourceMethod.getAccess());
+					List<Line> sourceLines = sourceMethod.getChildren();
+					for (Line sourceLine : sourceLines) {
+						Collector.collectLine(sourceClass.getName(), sourceMethod.getName(), sourceMethod.getDescription(), Integer
+								.valueOf((int) sourceLine.getNumber()));
+						for (int i = 0; i < sourceLine.getCounter(); i++) {
+							Collector.collectCoverage(sourceClass.getName(), sourceMethod.getName(), sourceMethod.getDescription(), (int) sourceLine
+									.getNumber());
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static void collectEfferentAndAfferent(Class klass, List<Package> packages) {
+		List<Efferent> efferents = klass.getEfferent();
+		for (Efferent efferent : efferents) {
+			String efferentPackage = Toolkit.replaceAll(efferent.getName(), "<e:", "");
+			efferentPackage = Toolkit.replaceAll(efferent.getName(), ">", "");
+			for (Package pakkage : packages) {
+				List<Class> children = pakkage.getChildren();
+				for (Class child : children) {
+					List<Afferent> afferents = child.getAfferent();
+					for (Afferent afferent : afferents) {
+						String afferentPackage = Toolkit.replaceAll(afferent.getName(), "<a:", "");
+						afferentPackage = Toolkit.replaceAll(afferent.getName(), ">", "");
+						if (efferentPackage.equals(afferentPackage)) {
+							Collector.collectEfferentAndAfferent(klass.getName(), child.getName());
+						}
+					}
+				}
+			}
+		}
+	}
+
 	/**
 	 * Dumps the database to the output stream.
-	 * 
+	 *
 	 * @param dataBase
 	 *            the database to dump
 	 * @param criteria
@@ -132,20 +195,46 @@ public class DataBaseToolkit {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		// C:/Eclipse/workspace/serenity/work/jobs/Findbugs/builds/2009-12-12_21-08-50/serenity/serenity.odb
 		// C:/Eclipse/workspace/Findbugs/serenity
-		// C:/Eclipse/workspace/Search/modules/Ejb/serenity
 		// C:/Eclipse/workspace/Discovery/serenity
-		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, "C:/Eclipse/workspace/Discovery/serenity/serenity.odb", false,
-				null);
+		// D:/Eclipse/workspace/serenity/work/jobs/Discovery/builds/2010-02-27_17-09-33/serenity
+		// D:/Eclipse/workspace/serenity/src/test/resources
+		// D:/Eclipse/workspace/serenity/work/jobs/Isearch/builds/2010-03-02_12-22-04/serenity
+		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class,
+				"D:/Eclipse/workspace/serenity/src/test/resources/serenity.odb", null);
+		final Set<Long> ids = new TreeSet<Long>();
+		final Set<Package> packages = new TreeSet<Package>();
+		final Set<Class> classes = new TreeSet<Class>();
+		final Set<Method> methods = new TreeSet<Method>();
+		final Set<Line> lines = new TreeSet<Line>();
+
 		DataBaseToolkit.dump(dataBase, new ICriteria() {
 			public boolean satisfied(Composite<?, ?> composite) {
+				// logger.warn("Children : " + composite.getChildren());
+				if (!ids.add(composite.getId())) {
+					logger.warn("Duplicate composite : " + composite);
+				}
+				if (Package.class.isAssignableFrom(composite.getClass())) {
+					packages.add((Package) composite);
+				} else if (Class.class.isAssignableFrom(composite.getClass())) {
+					classes.add((Class) composite);
+				} else if (Method.class.isAssignableFrom(composite.getClass())) {
+					methods.add((Method) composite);
+				} else if (Line.class.isAssignableFrom(composite.getClass())) {
+					lines.add((Line) composite);
+				}
 				return true;
 			}
 		}, "Data base toolkit dump : ");
-		Project<?, ?> project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
-		logger.info("Project : " + project.getCoverage());
+
+		logger.error("Packages : " + packages.size() + ", classes : " + classes.size() + ", methods : " + methods.size() + ", lines : "
+				+ lines.size());
+
+		logger.warn("Class : " + dataBase.find(Class.class, Toolkit.hash("com.ikokoon.search.Search")));
+
 		dataBase.close();
 	}
 

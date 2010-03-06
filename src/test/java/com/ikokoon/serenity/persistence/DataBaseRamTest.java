@@ -8,9 +8,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
+import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Composite;
 import com.ikokoon.serenity.model.Line;
@@ -20,6 +23,18 @@ import com.ikokoon.toolkit.PerformanceTester;
 import com.ikokoon.toolkit.Toolkit;
 
 public class DataBaseRamTest extends ATest {
+
+	private IDataBase dataBase;
+
+	@Before
+	public void open() {
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, internalDataBase);
+	}
+
+	@After
+	public void close() {
+		dataBase.close();
+	}
 
 	@Test
 	@SuppressWarnings("unchecked")
@@ -72,7 +87,7 @@ public class DataBaseRamTest extends ATest {
 		DataBaseRam dataBase = (DataBaseRam) this.dataBase;
 		LinkedList<Composite<?, ?>> list = getList();
 		Long id = Toolkit.hash("b");
-		Object object = dataBase.search(list, id);
+		Object object = dataBase.search(Class.class, list, id);
 		assertNotNull(object);
 	}
 
@@ -195,12 +210,13 @@ public class DataBaseRamTest extends ATest {
 		lineParameters.add(methodName + "." + 26);
 		lineParameters.add(26d);
 
+		final Long packageId = Toolkit.hash(packageName + "." + 233);
+		final Long classId = Toolkit.hash(className + "." + 871);
+		final Long methodId = Toolkit.hash(className + "." + 441 + methodName + "." + 441 + methodSignature + "." + 441);
+		final Long lineId = Toolkit.hash(className + "." + 359 + methodName + "." + 359 + "" + 359d);
+
 		double selectsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
 			public void execute() {
-				Long packageId = Toolkit.hash(packageName + "." + 233);
-				Long classId = Toolkit.hash(className + "." + 871);
-				Long methodId = Toolkit.hash(className + "." + 441 + methodName + "." + 441 + methodSignature + "." + 441);
-				Long lineId = Toolkit.hash(className + "." + 359 + methodName + "." + 359 + "" + 359d);
 
 				dataBase.find(Package.class, packageId);
 				dataBase.find(Class.class, classId);

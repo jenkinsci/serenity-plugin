@@ -26,8 +26,10 @@ import com.ikokoon.serenity.instrumentation.complexity.ComplexityTest;
 import com.ikokoon.serenity.instrumentation.coverage.CoverageTest;
 import com.ikokoon.serenity.instrumentation.dependency.DependencyTest;
 import com.ikokoon.serenity.persistence.DataBaseJpaTest;
+import com.ikokoon.serenity.persistence.DataBaseManagerTest;
 import com.ikokoon.serenity.persistence.DataBaseOdbTest;
 import com.ikokoon.serenity.persistence.DataBaseRamTest;
+import com.ikokoon.serenity.persistence.DataBaseToolkitTest;
 import com.ikokoon.serenity.process.AccumulatorTest;
 import com.ikokoon.serenity.process.AggregatorTest;
 import com.ikokoon.toolkit.MatrixTest;
@@ -61,6 +63,8 @@ import com.ikokoon.toolkit.ToolkitTest;
 		ToolkitTest.class, ModellerTest.class, PermutationsTest.class, MatrixTest.class, CoverageSourceCodeTest.class,
 
 		// Some of the many database/persistence tests
+		DataBaseManagerTest.class, // The test for opening and closing the databases
+		DataBaseToolkitTest.class, // Testing the clear and copy functions
 		DataBaseRamTest.class, // The in memory database
 		DataBaseOdbTest.class, // The Neodatis database
 		DataBaseJpaTest.class // The JPA database(experimental)

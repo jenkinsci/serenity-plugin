@@ -11,11 +11,11 @@ import com.ikokoon.toolkit.ObjectFactory;
 
 /**
  * This is the persistence interface for the Serenity code coverage and dependency functionality.
- * 
+ *
  * @author Michael Couck
  * @since 12.08.09
  * @version 01.00
- * 
+ *
  *          -------------------------------------------------------------<br>
  * @version 01.1 <br>
  *          Removed the JPA oriented methods in favour of in memory as JPA was hopelessly too slow.
@@ -32,7 +32,7 @@ public interface IDataBase {
 
 	/**
 	 * This class manages the databases if there are more than one. It also listens to events that the databases might throw like a close and so on.
-	 * 
+	 *
 	 * @author Michael Couck
 	 * @since 12.08.09
 	 * @version 01.00
@@ -45,7 +45,7 @@ public interface IDataBase {
 
 		/**
 		 * Access to all the databases in the current VM.
-		 * 
+		 *
 		 * @return all the databases
 		 */
 		public static synchronized Map<String, IDataBase> getDataBases() {
@@ -53,10 +53,10 @@ public interface IDataBase {
 		}
 
 		/**
-		 * Accesses a database. In the case the database is not open one will be instanciated on the database file specified. In the case the database
+		 * Accesses a database. In the case the database is not open one will be instantiated on the database file specified. In the case the database
 		 * is open but not the right type of database, the old one will be closed and the new one will be opened on the database file, otherwise the
 		 * database is returned.
-		 * 
+		 *
 		 * @param <E>
 		 *            the database type
 		 * @param klass
@@ -67,23 +67,15 @@ public interface IDataBase {
 		 *            whether to create a new database, i.e. deleting the old database file and creating a new one
 		 * @return the database
 		 */
-		public static synchronized final <E extends IDataBase> IDataBase getDataBase(Class<E> klass, String dataBaseFile, boolean create,
-				IDataBase internalDataBase) {
+		public static synchronized final <E extends IDataBase> IDataBase getDataBase(Class<E> klass, String dataBaseFile, IDataBase internalDataBase) {
 			IDataBase dataBase = dataBases.get(dataBaseFile);
-			IDataBaseListener dataBaseListener = getDataBaseListener();
-
 			if (dataBase == null || dataBase.isClosed()) {
-				dataBase = ObjectFactory.getObject(klass, internalDataBase, dataBaseListener, dataBaseFile, create);
+				IDataBaseListener dataBaseListener = getDataBaseListener();
+				dataBase = ObjectFactory.getObject(klass, internalDataBase, dataBaseListener, dataBaseFile);
 				logger.debug("Adding database : " + dataBase);
 				dataBases.put(dataBaseFile, dataBase);
-			} else {
-				if (!klass.isAssignableFrom(dataBase.getClass())) {
-					dataBase.close();
-					dataBase = ObjectFactory.getObject(klass, internalDataBase, dataBaseListener, dataBaseFile, create);
-					logger.debug("Adding database : " + dataBase);
-					dataBases.put(dataBaseFile, dataBase);
-				}
 			}
+			logger.info("Opened database : " + klass + ", data base : " + dataBase + ", file : " + dataBaseFile);
 			return dataBase;
 		}
 
@@ -93,7 +85,7 @@ public interface IDataBase {
 					if (dataBaseEvent.getEventType().equals(IDataBaseEvent.Type.DATABASE_CLOSE)) {
 						IDataBase dataBase = dataBaseEvent.getDataBase();
 						if (!dataBases.values().remove(dataBase)) {
-							logger.warn("Database not removed : " + dataBase);
+							logger.info("Database not removed : " + dataBase);
 						} else {
 							logger.info("Removed database : " + dataBase);
 						}
@@ -107,7 +99,7 @@ public interface IDataBase {
 
 	/**
 	 * Persists an object to a persistent store.
-	 * 
+	 *
 	 * @param composite
 	 *            the composite to persist
 	 * @return the composite that is persisted, typically the id will be set by the underlying implementation
@@ -116,7 +108,7 @@ public interface IDataBase {
 
 	/**
 	 * Selects a composite based on the class type and the id of the class.
-	 * 
+	 *
 	 * @param <E>
 	 *            the return type of the class
 	 * @param klass
@@ -129,7 +121,7 @@ public interface IDataBase {
 
 	/**
 	 * Selects a class based on the combination of field values in the parameter list.
-	 * 
+	 *
 	 * @param <E>
 	 *            the return type of the class
 	 * @param klass
@@ -143,7 +135,7 @@ public interface IDataBase {
 	/**
 	 * Selects a list of objects based on the values in the objects and the class of the object. The implementations can implement multiple search
 	 * criteria including fuzzy selection etc.
-	 * 
+	 *
 	 * @param <E>
 	 *            the return type of the class
 	 * @param klass
@@ -156,7 +148,7 @@ public interface IDataBase {
 
 	/**
 	 * Selects all the classes of a particular type. Note this could potentially return the whole database.
-	 * 
+	 *
 	 * @param <E>
 	 *            the return type of the class
 	 * @param klass
@@ -167,7 +159,7 @@ public interface IDataBase {
 
 	/**
 	 * Removes an object from the database and returns the removed object as a convenience.
-	 * 
+	 *
 	 * @param <E>
 	 *            the return type of the class
 	 * @param klass
@@ -180,7 +172,7 @@ public interface IDataBase {
 
 	/**
 	 * Checks the open status of the database.
-	 * 
+	 *
 	 * @return whether the database is open or closed
 	 */
 	public boolean isClosed();

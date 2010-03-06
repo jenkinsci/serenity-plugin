@@ -1,12 +1,13 @@
 package com.ikokoon.serenity;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
@@ -18,15 +19,13 @@ import com.ikokoon.serenity.model.Efferent;
 import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
-import com.ikokoon.serenity.persistence.DataBaseOdb;
-import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.target.Target;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
  * Base class for the tests.
- * 
+ *
  * @author Michael Couck
  * @since 30.07.09
  * @version 01.00
@@ -35,7 +34,7 @@ public abstract class ATest implements IConstants {
 
 	protected static Logger logger;
 
-	protected IDataBase dataBase;
+	protected IDataBase internalDataBase = mock(IDataBase.class);
 
 	protected String packageName = Target.class.getPackage().getName();
 	protected String className = Target.class.getName();
@@ -59,14 +58,6 @@ public abstract class ATest implements IConstants {
 		Configuration.getConfiguration().includedPackages.add(IConstants.class.getPackage().getName());
 		Configuration.getConfiguration().includedPackages.add(Target.class.getPackage().getName());
 		Configuration.getConfiguration().includedPackages.add(Configuration.class.getPackage().getName());
-	}
-
-	@Before
-	public synchronized void initilize() {
-		if (dataBase == null) {
-			IDataBase iDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, false, null);
-			dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, true, iDataBase);
-		}
 	}
 
 	protected void visitClass(java.lang.Class<?> visitorClass, String className) {

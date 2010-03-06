@@ -17,7 +17,7 @@ import com.ikokoon.target.Target;
 
 /**
  * This is the test for the utility class.
- * 
+ *
  * @author Michael Couck
  * @since 12.07.09
  * @version 01.00
@@ -99,7 +99,7 @@ public class ToolkitTest extends ATest {
 	@Test
 	public void deleteFile() throws Exception {
 		File folder = createFolderAndOneFile("target/folder", "file.txt");
-		Toolkit.deleteFile(folder, 5, 0);
+		Toolkit.deleteFile(folder, 3);
 		logger.debug("Deleted folder and file : " + folder.exists());
 	}
 
@@ -117,13 +117,13 @@ public class ToolkitTest extends ATest {
 
 	@Test
 	public void copyFiles() throws Exception {
-		File source = createFolderAndOneFile("target/folder", "file.txt");
-		File destination = new File(".", "target/folderCopy");
+		File source = createFolderAndOneFile("target/folder", "serenity.odb");
+		File destination = new File("D:\\Eclipse\\workspace\\serenity\\work\\jobs\\Discovery\\builds\\2010-02-26_16-12-15\\serenity");
 		if (destination.exists()) {
-			Toolkit.deleteFile(destination, 5, 0);
+			Toolkit.deleteFile(destination, 3);
 		}
 		logger.debug("Deleted destination : " + destination.exists());
-		Toolkit.copyFile(source, destination);
+		Toolkit.copyFiles(source, destination);
 		logger.debug("Copied file exists : " + new File(destination, "file.txt").exists());
 	}
 

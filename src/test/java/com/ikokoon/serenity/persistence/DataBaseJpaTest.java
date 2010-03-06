@@ -19,21 +19,19 @@ import com.ikokoon.toolkit.Toolkit;
 
 public class DataBaseJpaTest extends ATest {
 
+	private IDataBase dataBase;
+
 	@Test
 	public void dummy() {
-		// And nothing
-		DataBaseToolkit.clear(dataBase);
 	}
 
 	@SuppressWarnings("unchecked")
 	public void memoryUsage() {
-		dataBase.close();
-
 		long million = 1000000;
 		long freeMemoryStart = Runtime.getRuntime().freeMemory() / million;
 		logger.info("Free memory start : " + freeMemoryStart);
 
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseJpa.class, "./serenity/serenity.db", false, null);
+		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseJpa.class, IConstants.DATABASE_FILE_JPA, internalDataBase);
 
 		long freeMemoryEnd = Runtime.getRuntime().freeMemory() / million;
 		logger.info("Free memory difference after initialise : " + (freeMemoryEnd - freeMemoryStart));
@@ -63,17 +61,13 @@ public class DataBaseJpaTest extends ATest {
 		freeMemoryEnd = Runtime.getRuntime().freeMemory() / million;
 		logger.info("Free memory difference after null all the packges : " + (freeMemoryEnd - freeMemoryStart));
 		logger.info("Free memory end : " + freeMemoryEnd);
-		
+
 		dataBase.close();
 	}
 
 	// @Test
 	@SuppressWarnings("unchecked")
 	public void persist() {
-		DataBaseToolkit.clear(dataBase);
-		dataBase.close();
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseJpa.class, IConstants.DATABASE_FILE_JPA, true, null);
-
 		Package<?, ?> pakkage = getPackage();
 
 		// dataBase.persist(klass);
@@ -90,7 +84,6 @@ public class DataBaseJpaTest extends ATest {
 	// @Test
 	@SuppressWarnings("unchecked")
 	public void findId() {
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseJpa.class, IConstants.DATABASE_FILE_JPA, true, null);
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
 		// 7873017250689681547, 437917821655607927
@@ -101,7 +94,6 @@ public class DataBaseJpaTest extends ATest {
 	// @Test
 	@SuppressWarnings("unchecked")
 	public void findParameters() {
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseJpa.class, IConstants.DATABASE_FILE_JPA, true, null);
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
 
@@ -133,7 +125,6 @@ public class DataBaseJpaTest extends ATest {
 	// @Test
 	@SuppressWarnings("unchecked")
 	public void removeId() throws Exception {
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseJpa.class, IConstants.DATABASE_FILE_JPA, true, null);
 		// java.lang.Class<T> klass, Long id
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
@@ -143,8 +134,6 @@ public class DataBaseJpaTest extends ATest {
 		dataBase.remove(Class.class, klass.getId());
 		klass = (Class) dataBase.find(Class.class, klass.getId());
 		assertNull(klass);
-		dataBase.close();
-		dataBase = null;
 	}
 
 }

@@ -9,17 +9,37 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
 
 import com.ikokoon.serenity.ATest;
+import com.ikokoon.serenity.Collector;
+import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import com.ikokoon.serenity.model.Line;
-import com.ikokoon.toolkit.Toolkit;
+import com.ikokoon.serenity.persistence.DataBaseRam;
+import com.ikokoon.serenity.persistence.DataBaseToolkit;
+import com.ikokoon.serenity.persistence.IDataBase;
 
 public class CoverageTest extends ATest {
+
+	private IDataBase dataBase;
+
+	@Before
+	public void clear() {
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, internalDataBase);
+		DataBaseToolkit.clear(dataBase);
+		Collector.setDataBase(dataBase);
+	}
+
+	@After
+	public void close() {
+		dataBase.close();
+	}
 
 	@Test
 	@SuppressWarnings("unchecked")
@@ -71,8 +91,6 @@ public class CoverageTest extends ATest {
 		Line<?, ?> line = (Line) dataBase.find(Line.class, parameters);
 		assertNotNull(line);
 		assertTrue(line.getCounter() > 0);
-
-		dataBase.remove(com.ikokoon.serenity.model.Class.class, Toolkit.hash(className));
 	}
 
 }

@@ -7,10 +7,13 @@ import java.util.List;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
+import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
+import com.ikokoon.serenity.persistence.DataBaseRam;
+import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.toolkit.PerformanceTester;
 
 public class CoverageSourceCodeTest extends ATest {
@@ -20,6 +23,7 @@ public class CoverageSourceCodeTest extends ATest {
 	@Test
 	public void getSource() {
 		Package<?, ?> pakkage = getPackage();
+		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, internalDataBase);
 		dataBase.persist(pakkage);
 
 		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Class.class, pakkage.getChildren().get(0).getId());
@@ -35,6 +39,7 @@ public class CoverageSourceCodeTest extends ATest {
 		}, "highlight source", 10);
 		assertTrue(executionsPerSecond > 10);
 		dataBase.remove(pakkage.getClass(), pakkage.getId());
+		dataBase.close();
 	}
 
 	private void setCovered(Class<?, ?> klass) {

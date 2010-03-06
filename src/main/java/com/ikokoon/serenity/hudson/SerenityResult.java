@@ -74,8 +74,6 @@ public class SerenityResult implements ISerenityResult {
 	public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) throws Exception {
 		logger.debug("getDynamic:" + token);
 
-		// printParameters(req);
-
 		String klass = req.getParameter("class");
 		String id = req.getParameter("id");
 
@@ -138,6 +136,7 @@ public class SerenityResult implements ISerenityResult {
 				closeDataBase(dataBase);
 			}
 		}
+		// logger.debug("Project : " + ToStringBuilder.reflectionToString(project));
 		return project;
 	}
 
@@ -171,7 +170,7 @@ public class SerenityResult implements ISerenityResult {
 					}
 				}
 			}
-			// Remove the inner classes from the packages, and set the precision
+			// Remove the inner classes from the packages
 			for (Package<?, ?> pakkage : packages) {
 				Iterator<Class<?, ?>> iterator = pakkage.getChildren().iterator();
 				while (iterator.hasNext()) {
@@ -196,6 +195,7 @@ public class SerenityResult implements ISerenityResult {
 	}
 
 	public String getProjectModel() {
+		logger.debug("getProjectModel");
 		IDataBase dataBase = getDataBase(abstractBuild);
 		Project<?, ?> project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
 		// Move the build forward to the last build because Hudson will go to the last stable build
@@ -302,7 +302,7 @@ public class SerenityResult implements ISerenityResult {
 
 	private IDataBase getDataBase(AbstractBuild<?, ?> abstractBuild) {
 		String dataBaseFile = abstractBuild.getRootDir().getAbsolutePath() + File.separator + IConstants.DATABASE_FILE_ODB;
-		return IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, false, null);
+		return IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, null);
 	}
 
 	private void closeDataBase(IDataBase dataBase) {
