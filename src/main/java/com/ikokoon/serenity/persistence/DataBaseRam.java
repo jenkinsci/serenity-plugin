@@ -42,19 +42,11 @@ public final class DataBaseRam extends DataBase {
 	 * @param dataBaseListener
 	 *            the listener to close the database and release resources
 	 */
-	@SuppressWarnings("unchecked")
 	DataBaseRam(IDataBase dataBase, IDataBaseListener dataBaseListener) {
 		logger.info("Opening RAM database with " + dataBase + " underneath.");
 		this.dataBase = dataBase;
 		this.dataBaseListener = dataBaseListener;
 		index.clear();
-		// Insert all the underlying database objects into the index
-		if (this.dataBase != null) {
-			List<Composite> composites = this.dataBase.find(Composite.class);
-			for (Composite composite : composites) {
-				insert(index, composite);
-			}
-		}
 		closed = false;
 	}
 
@@ -86,12 +78,34 @@ public final class DataBaseRam extends DataBase {
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
 	public synchronized final <E extends Composite<?, ?>> List<E> find(Class<E> klass) {
+		return find(klass, 0, Integer.MAX_VALUE);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, int start, int end) {
 		List<E> list = new ArrayList<E>();
+		int counter = 0;
 		for (Composite<?, ?> composite : index) {
 			if (klass.isInstance(composite)) {
 				list.add((E) composite);
+				if (counter++ >= end) {
+					break;
+				}
+			}
+		}
+		if (list == null || list.size() == 0) {
+			// Try to find some in the underlying database
+			if (this.dataBase != null) {
+				list = this.dataBase.find(klass, start, end);
+				if (list != null && list.size() > 0) {
+					for (Composite composite : list) {
+						insert(index, composite);
+					}
+				}
 			}
 		}
 		return list;
@@ -115,6 +129,9 @@ public final class DataBaseRam extends DataBase {
 			if (!index.remove(composite)) {
 				logger.warn("Didn't remove composite with id : " + id + ", because it wasn't in the index.");
 			}
+		}
+		if (this.dataBase != null) {
+			this.dataBase.remove(klass, id);
 		}
 		return (E) composite;
 	}

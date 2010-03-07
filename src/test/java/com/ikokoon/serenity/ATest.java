@@ -34,7 +34,7 @@ public abstract class ATest implements IConstants {
 
 	protected static Logger logger;
 
-	protected IDataBase internalDataBase = mock(IDataBase.class);
+	protected IDataBase mockInternalDataBase = mock(IDataBase.class);
 
 	protected String packageName = Target.class.getPackage().getName();
 	protected String className = Target.class.getName();

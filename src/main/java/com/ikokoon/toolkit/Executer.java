@@ -1,8 +1,10 @@
 package com.ikokoon.toolkit;
 
-import com.ikokoon.serenity.ATest;
+import org.apache.log4j.Logger;
 
-public class PerformanceTester extends ATest {
+public class Executer {
+
+	private static Logger logger = Logger.getLogger(Executer.class);
 
 	public interface IPerform {
 		public void execute();

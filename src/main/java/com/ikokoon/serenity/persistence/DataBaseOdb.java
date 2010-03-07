@@ -80,11 +80,18 @@ public class DataBaseOdb extends DataBase {
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
 	public synchronized <E extends Composite<?, ?>> List<E> find(Class<E> klass) {
+		return find(klass, 0, Integer.MAX_VALUE);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, int start, int end) {
 		List<E> list = new ArrayList<E>();
 		try {
-			Objects objects = odb.getObjects(klass);
+			Objects objects = odb.getObjects(klass, false, start, end);
 			while (objects.hasNext()) {
 				list.add((E) objects.next());
 			}

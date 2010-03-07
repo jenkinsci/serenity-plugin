@@ -36,7 +36,7 @@ public class DependencyTest extends ATest {
 
 	@Before
 	public void clear() {
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, internalDataBase);
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, mockInternalDataBase);
 		DataBaseToolkit.clear(dataBase);
 		Collector.setDataBase(dataBase);
 	}

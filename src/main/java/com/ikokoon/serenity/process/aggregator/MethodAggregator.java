@@ -4,6 +4,11 @@ import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.persistence.IDataBase;
 
+/**
+ * @author Michael Couck
+ * @since 07.03.10
+ * @version 01.00
+ */
 public class MethodAggregator extends AAggregator {
 
 	private Method<?, ?> method;
@@ -15,6 +20,8 @@ public class MethodAggregator extends AAggregator {
 
 	public void aggregate() {
 		aggregate(method);
+		setPrecision(method);
+		dataBase.persist(method);
 	}
 
 	protected void aggregate(Method<?, ?> method) {
@@ -38,7 +45,6 @@ public class MethodAggregator extends AAggregator {
 		} catch (Exception e) {
 			logger.error("Exception peocessing the method element : " + method.getName(), e);
 		}
-		dataBase.persist(method);
 	}
 
 }

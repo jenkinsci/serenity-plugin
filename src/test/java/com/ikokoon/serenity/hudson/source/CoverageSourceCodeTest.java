@@ -14,7 +14,7 @@ import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.IDataBase;
-import com.ikokoon.toolkit.PerformanceTester;
+import com.ikokoon.toolkit.Executer;
 
 public class CoverageSourceCodeTest extends ATest {
 
@@ -23,7 +23,7 @@ public class CoverageSourceCodeTest extends ATest {
 	@Test
 	public void getSource() {
 		Package<?, ?> pakkage = getPackage();
-		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, internalDataBase);
+		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, mockInternalDataBase);
 		dataBase.persist(pakkage);
 
 		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Class.class, pakkage.getChildren().get(0).getId());
@@ -32,7 +32,7 @@ public class CoverageSourceCodeTest extends ATest {
 		String html = coverageSourceCode.getSource();
 		logger.info(html);
 
-		double executionsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
+		double executionsPerSecond = Executer.execute(new Executer.IPerform() {
 			public void execute() {
 				coverageSourceCode.getSource();
 			}

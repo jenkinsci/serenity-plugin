@@ -12,6 +12,11 @@ import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.persistence.IDataBase;
 
+/**
+ * @author Michael Couck
+ * @since 07.03.10
+ * @version 01.00
+ */
 public class PackageAggregator extends AAggregator {
 
 	private Package<?, ?> pakkage;
@@ -30,6 +35,8 @@ public class PackageAggregator extends AAggregator {
 			aggregator.aggregate();
 		}
 		aggregate(pakkage);
+		setPrecision(pakkage);
+		dataBase.persist(pakkage);
 	}
 
 	@SuppressWarnings("unchecked")

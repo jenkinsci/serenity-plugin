@@ -1,8 +1,6 @@
 package com.ikokoon.serenity.persistence;
 
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
@@ -101,6 +99,18 @@ public class DataBaseToolkit {
 	}
 
 	@SuppressWarnings("unchecked")
+	public static void execute(IDataBase dataBase, Composite composite, Executer executer) {
+		List list = dataBase.find(composite.getClass());
+		for (Object object : list) {
+			executer.execute(object);
+		}
+	}
+
+	public interface Executer {
+		public void execute(Object object);
+	}
+
+	@SuppressWarnings("unchecked")
 	private static void collectEfferentAndAfferent(Class klass, List<Package> packages) {
 		List<Efferent> efferents = klass.getEfferent();
 		for (Efferent efferent : efferents) {
@@ -180,7 +190,7 @@ public class DataBaseToolkit {
 		if (criteria == null || (criteria != null && criteria.satisfied(composite))) {
 			StringBuilder builder = new StringBuilder();
 			for (int i = 0; i < tabs; i++) {
-				builder.append("\t");
+				builder.append("    ");
 			}
 			builder.append(composite.getClass().getSimpleName());
 			builder.append(" : ");
@@ -197,44 +207,19 @@ public class DataBaseToolkit {
 
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
-		// C:/Eclipse/workspace/serenity/work/jobs/Findbugs/builds/2009-12-12_21-08-50/serenity/serenity.odb
-		// C:/Eclipse/workspace/Findbugs/serenity
-		// C:/Eclipse/workspace/Discovery/serenity
-		// D:/Eclipse/workspace/serenity/work/jobs/Discovery/builds/2010-02-27_17-09-33/serenity
-		// D:/Eclipse/workspace/serenity/src/test/resources
-		// D:/Eclipse/workspace/serenity/work/jobs/Isearch/builds/2010-03-02_12-22-04/serenity
 		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class,
-				"D:/Eclipse/workspace/serenity/src/test/resources/serenity.odb", null);
-		final Set<Long> ids = new TreeSet<Long>();
-		final Set<Package> packages = new TreeSet<Package>();
-		final Set<Class> classes = new TreeSet<Class>();
-		final Set<Method> methods = new TreeSet<Method>();
-		final Set<Line> lines = new TreeSet<Line>();
-
+				"D:/Eclipse/workspace/serenity/work/jobs/Isearch/workspace/isearch/modules/Jar/serenity/serenity.odb", null);
 		DataBaseToolkit.dump(dataBase, new ICriteria() {
 			public boolean satisfied(Composite<?, ?> composite) {
-				// logger.warn("Children : " + composite.getChildren());
-				if (!ids.add(composite.getId())) {
-					logger.warn("Duplicate composite : " + composite);
+				if (Class.class.isAssignableFrom(composite.getClass())) {
+					if (((Class) composite).getName().equals("com.ikokoon.search.action.index.crawler.IEvent")) {
+						logger.warn("Composite : " + composite);
+					}
 				}
-				if (Package.class.isAssignableFrom(composite.getClass())) {
-					packages.add((Package) composite);
-				} else if (Class.class.isAssignableFrom(composite.getClass())) {
-					classes.add((Class) composite);
-				} else if (Method.class.isAssignableFrom(composite.getClass())) {
-					methods.add((Method) composite);
-				} else if (Line.class.isAssignableFrom(composite.getClass())) {
-					lines.add((Line) composite);
-				}
-				return true;
+				return false;
 			}
 		}, "Data base toolkit dump : ");
-
-		logger.error("Packages : " + packages.size() + ", classes : " + classes.size() + ", methods : " + methods.size() + ", lines : "
-				+ lines.size());
-
 		logger.warn("Class : " + dataBase.find(Class.class, Toolkit.hash("com.ikokoon.search.Search")));
-
 		dataBase.close();
 	}
 

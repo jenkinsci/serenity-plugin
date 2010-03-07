@@ -17,7 +17,7 @@ public class DataBaseManagerTest extends ATest {
 
 	@Test
 	public void getDataBase() {
-		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, "./serenity/dummy/dummy.odb", internalDataBase);
+		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, "./serenity/dummy/dummy.odb", mockInternalDataBase);
 		assertNotNull(dataBase);
 		dataBase.close();
 

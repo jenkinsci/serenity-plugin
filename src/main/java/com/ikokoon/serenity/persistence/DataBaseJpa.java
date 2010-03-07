@@ -20,7 +20,7 @@ import com.ikokoon.toolkit.Toolkit;
  * This is the JPA database implementation. This class could be used in the future if so desired by a user of the Serenity plugin. The issue with the
  * JPA database is the speed of persistence and where the database will be. This could be configurable of course, but then the user has to do some
  * serious configuration which will require technical knowledge, and of course set up a database. Too much effort I thinks.
- * 
+ *
  * @author Michael Couck
  * @since 20.12.09
  * @version 01.00
@@ -167,6 +167,10 @@ public class DataBaseJpa extends DataBase {
 			}
 		}
 		return entityManager;
+	}
+
+	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, int start, int end) {
+		return null;
 	}
 
 }

@@ -31,7 +31,7 @@ public class DataBaseJpaTest extends ATest {
 		long freeMemoryStart = Runtime.getRuntime().freeMemory() / million;
 		logger.info("Free memory start : " + freeMemoryStart);
 
-		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseJpa.class, IConstants.DATABASE_FILE_JPA, internalDataBase);
+		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseJpa.class, IConstants.DATABASE_FILE_JPA, mockInternalDataBase);
 
 		long freeMemoryEnd = Runtime.getRuntime().freeMemory() / million;
 		logger.info("Free memory difference after initialise : " + (freeMemoryEnd - freeMemoryStart));

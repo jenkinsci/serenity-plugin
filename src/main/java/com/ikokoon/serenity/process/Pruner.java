@@ -2,10 +2,12 @@ package com.ikokoon.serenity.process;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.ikokoon.serenity.IConstants;
-import com.ikokoon.serenity.model.Afferent;
-import com.ikokoon.serenity.model.Efferent;
-import com.ikokoon.serenity.model.Line;
+import com.ikokoon.serenity.model.Class;
+import com.ikokoon.serenity.model.Method;
+import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.persistence.IDataBase;
 
 /**
@@ -18,6 +20,7 @@ import com.ikokoon.serenity.persistence.IDataBase;
  */
 public class Pruner extends AProcess implements IConstants {
 
+	private Logger logger = Logger.getLogger(this.getClass());
 	/** The database to prune. */
 	private IDataBase dataBase;
 
@@ -38,17 +41,24 @@ public class Pruner extends AProcess implements IConstants {
 	@SuppressWarnings("unchecked")
 	public void execute() {
 		super.execute();
-		List<Line> lines = dataBase.find(Line.class);
-		for (Line line : lines) {
-			dataBase.remove(Line.class, line.getId());
+		List<Package> packages = dataBase.find(Package.class);
+		for (Package pakkage : packages) {
+			logger.debug("Cleaning package : " + pakkage);
+			pakkage.getAfferent().clear();
+			pakkage.getEfferent().clear();
+			List<Class> classes = pakkage.getChildren();
+			for (Class klass : classes) {
+				logger.debug("Cleaning class : " + klass);
+				klass.getAfferent().clear();
+				klass.getEfferent().clear();
+				List<Method> methods = klass.getChildren();
+				for (Method method : methods) {
+					logger.debug("Cleaning method : " + method);
+					method.getChildren().clear();
+				}
+			}
+			dataBase.persist(pakkage);
 		}
-		List<Efferent> efferents = dataBase.find(Efferent.class);
-		for (Efferent efferent : efferents) {
-			dataBase.remove(Efferent.class, efferent.getId());
-		}
-		List<Afferent> afferents = dataBase.find(Afferent.class);
-		for (Afferent afferent : afferents) {
-			dataBase.remove(Afferent.class, afferent.getId());
-		}
+
 	}
 }

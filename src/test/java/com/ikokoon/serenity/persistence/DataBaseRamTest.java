@@ -19,7 +19,7 @@ import com.ikokoon.serenity.model.Composite;
 import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
-import com.ikokoon.toolkit.PerformanceTester;
+import com.ikokoon.toolkit.Executer;
 import com.ikokoon.toolkit.Toolkit;
 
 public class DataBaseRamTest extends ATest {
@@ -28,7 +28,7 @@ public class DataBaseRamTest extends ATest {
 
 	@Before
 	public void open() {
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, internalDataBase);
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, mockInternalDataBase);
 	}
 
 	@After
@@ -44,7 +44,7 @@ public class DataBaseRamTest extends ATest {
 		// Check the performance
 		list.clear();
 		double inserts = 100000;
-		double insertsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
+		double insertsPerSecond = Executer.execute(new Executer.IPerform() {
 			public void execute() {
 				long currentTime = System.currentTimeMillis();
 				Class<?, ?> klass = new Class();
@@ -166,7 +166,7 @@ public class DataBaseRamTest extends ATest {
 	public void persistPerformance() throws Exception {
 		// Test the insert performance
 		double inserts = 10000;
-		double insertsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
+		double insertsPerSecond = Executer.execute(new Executer.IPerform() {
 			public void execute() {
 				Package pakkage = getPackage();
 				pakkage.setName(pakkage.getName() + System.currentTimeMillis());
@@ -215,7 +215,7 @@ public class DataBaseRamTest extends ATest {
 		final Long methodId = Toolkit.hash(className + "." + 441 + methodName + "." + 441 + methodSignature + "." + 441);
 		final Long lineId = Toolkit.hash(className + "." + 359 + methodName + "." + 359 + "" + 359d);
 
-		double selectsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
+		double selectsPerSecond = Executer.execute(new Executer.IPerform() {
 			public void execute() {
 
 				dataBase.find(Package.class, packageId);
@@ -234,7 +234,7 @@ public class DataBaseRamTest extends ATest {
 		double minimumSelectsPerSecond = 10000;
 		assertTrue(selectsPerSecond > minimumSelectsPerSecond);
 
-		selectsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
+		selectsPerSecond = Executer.execute(new Executer.IPerform() {
 			public void execute() {
 				dataBase.find(Line.class, lineParameters);
 			}

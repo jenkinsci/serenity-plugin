@@ -3,8 +3,6 @@ package com.ikokoon.serenity.instrumentation.complexity;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +30,7 @@ public class ComplexityTest extends ATest {
 
 	@Before
 	public void clear() {
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, internalDataBase);
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, mockInternalDataBase);
 		DataBaseToolkit.clear(dataBase);
 	}
 

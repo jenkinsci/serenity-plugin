@@ -13,7 +13,6 @@ import com.ikokoon.serenity.ATest;
 import com.ikokoon.serenity.Collector;
 import com.ikokoon.serenity.Configuration;
 import com.ikokoon.serenity.IConstants;
-import com.ikokoon.serenity.Transformer;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.DataBaseToolkit;
@@ -35,7 +34,6 @@ public class AccumulatorTest extends ATest implements IConstants {
 
 	@Before
 	public void initilize() {
-		Transformer.premain(null, null);
 		String classPath = System.getProperty("java.class.path");
 		classPath += ";" + new File(".", "/target/serenity.jar").getAbsolutePath() + ";";
 		classPath = Toolkit.replaceAll(classPath, "\\.\\", "\\");
@@ -46,14 +44,14 @@ public class AccumulatorTest extends ATest implements IConstants {
 			logger.debug(stringTokenizer.nextToken());
 		}
 
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, internalDataBase);
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, mockInternalDataBase);
 		DataBaseToolkit.clear(dataBase);
 		Collector.setDataBase(dataBase);
 	}
 
 	@After
 	public void close() {
-		dataBase.close();
+		// dataBase.close();
 	}
 
 	@Test

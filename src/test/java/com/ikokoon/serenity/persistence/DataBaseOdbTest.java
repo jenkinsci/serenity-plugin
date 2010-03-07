@@ -32,7 +32,7 @@ public class DataBaseOdbTest extends ATest {
 	public void clear() {
 		File dataBaseFile = new File(IConstants.DATABASE_FILE_ODB);
 		Toolkit.deleteFile(dataBaseFile, 3);
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile.getAbsolutePath(), internalDataBase);
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile.getAbsolutePath(), mockInternalDataBase);
 		DataBaseToolkit.clear(dataBase);
 	}
 
@@ -122,6 +122,21 @@ public class DataBaseOdbTest extends ATest {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("name", pakkage.getName());
 		List<Class> classes = dataBase.find(Class.class, parameters);
+		assertEquals(1, classes.size());
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void findStartEnd() {
+		Package pakkage = getPackage();
+		dataBase.persist(pakkage);
+		List<Class> classes = dataBase.find(Class.class, 0, Integer.MAX_VALUE);
+		assertEquals(1, classes.size());
+
+		pakkage = getPackage();
+		dataBase.persist(pakkage);
+
+		classes = dataBase.find(Class.class, 0, 1);
 		assertEquals(1, classes.size());
 	}
 

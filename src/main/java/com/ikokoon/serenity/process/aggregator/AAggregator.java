@@ -17,6 +17,11 @@ import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.toolkit.Toolkit;
 
+/**
+ * @author Michael Couck
+ * @since 07.03.10
+ * @version 01.00
+ */
 public abstract class AAggregator implements IAggregator {
 
 	private static final int PRECISION = 2;

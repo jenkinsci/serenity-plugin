@@ -74,7 +74,8 @@ public class HighchartsModeller implements IModeller {
         }
     }
 
-    private String getName(Composite<?, ?>... composites) {
+    @SuppressWarnings("unchecked")
+	private String getName(Composite<?, ?>... composites) {
         for (Composite<?, ?> composite : composites) {
             if (composite instanceof Project) {
                 return ((Project<?, ?>) composite).getName();
@@ -106,6 +107,7 @@ public class HighchartsModeller implements IModeller {
         return builder.toString();
     }
 
+    @SuppressWarnings("unchecked")
     private void addConstructors() {
         constructors.put("coverageData", new IConstructor() {
             public void construct(StringBuilder builder, Composite<?, ?> composite) {

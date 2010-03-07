@@ -22,7 +22,7 @@ import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.DataBaseToolkit;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.target.consumer.TargetConsumer;
-import com.ikokoon.toolkit.PerformanceTester;
+import com.ikokoon.toolkit.Executer;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -39,7 +39,7 @@ public class CollectorTest extends ATest implements IConstants {
 
 	@Before
 	public void open() {
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, internalDataBase);
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, mockInternalDataBase);
 		DataBaseToolkit.clear(dataBase);
 		Configuration.getConfiguration().includedPackages.add(packageName);
 		Configuration.getConfiguration().includedPackages.add(Toolkit.dotToSlash(packageName));
@@ -141,7 +141,7 @@ public class CollectorTest extends ATest implements IConstants {
 	@Test
 	public void collectLinePerformance() {
 		int iterations = 10000;
-		double executionsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
+		double executionsPerSecond = Executer.execute(new Executer.IPerform() {
 			public void execute() {
 				double lineNumber = System.currentTimeMillis() * Math.random();
 				Collector.collectCoverage(className, methodName, methodSignature, (int) lineNumber);
@@ -150,7 +150,7 @@ public class CollectorTest extends ATest implements IConstants {
 		assertTrue(executionsPerSecond > 1000);
 
 		final double lineNumber = System.currentTimeMillis() * Math.random();
-		executionsPerSecond = PerformanceTester.execute(new PerformanceTester.IPerform() {
+		executionsPerSecond = Executer.execute(new Executer.IPerform() {
 			public void execute() {
 				Collector.collectCoverage(className, methodName, methodSignature, (int) lineNumber);
 			}

@@ -158,6 +158,21 @@ public interface IDataBase {
 	public <E extends Composite<?, ?>> List<E> find(Class<E> klass);
 
 	/**
+	 * Selects all the classes of a particular type starting from an index and going to an index.
+	 *
+	 * @param <E>
+	 *            the return type of the class
+	 * @param klass
+	 *            the type of class to select
+	 * @param start
+	 *            the beginning index to retrieve objects from
+	 * @param end
+	 *            the end index for the list of objects
+	 * @return a list of all the objects in the database that have the specified class type
+	 */
+	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, int start, int end);
+
+	/**
 	 * Removes an object from the database and returns the removed object as a convenience.
 	 *
 	 * @param <E>

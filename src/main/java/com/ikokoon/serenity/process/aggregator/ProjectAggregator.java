@@ -14,6 +14,11 @@ import com.ikokoon.serenity.model.Project;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.toolkit.Toolkit;
 
+/**
+ * @author Michael Couck
+ * @since 07.03.10
+ * @version 01.00
+ */
 public class ProjectAggregator extends AAggregator {
 
 	public ProjectAggregator(IDataBase dataBase) {
@@ -34,6 +39,7 @@ public class ProjectAggregator extends AAggregator {
 			project.setName(Project.class.getName());
 		}
 		aggregate(project);
+		setPrecision(project);
 		dataBase.persist(project);
 	}
 
@@ -106,7 +112,5 @@ public class ProjectAggregator extends AAggregator {
 		project.setPackages(packages.size());
 
 		setPrecision(project);
-
-		dataBase.persist(project);
 	}
 }

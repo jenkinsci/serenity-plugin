@@ -518,6 +518,18 @@ public class Toolkit {
 	}
 
 	public static void copyFile(File in, File out) {
+		if (!out.getParentFile().exists()) {
+			if (!out.getParentFile().mkdirs()) {
+				logger.info("Didn't create parent directories : " + out.getParentFile().getAbsolutePath());
+			}
+		}
+		if (!out.exists()) {
+			try {
+				out.createNewFile();
+			} catch (IOException e) {
+				logger.error("Exception creating new file : " + out.getAbsolutePath(), e);
+			}
+		}
 		FileChannel inChannel = null;
 		FileChannel outChannel = null;
 		try {

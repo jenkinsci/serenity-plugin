@@ -21,14 +21,12 @@ import java.util.List;
 
 import net.sf.json.JSONObject;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.LoggingConfigurator;
-import com.ikokoon.serenity.model.Project;
 import com.ikokoon.serenity.persistence.DataBaseOdb;
 import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.DataBaseToolkit;
@@ -77,12 +75,36 @@ public class SerenityPublisher extends Recorder {
 		copyDataBaseToBuildDirectory(build, buildListener);
 		copySourceToBuildDirectory(build, buildListener);
 
+		aggregate(build, buildListener);
+		prune(build, buildListener);
+
 		buildListener.getLogger().println("Accessing Serenity results...");
 		ISerenityResult result = new SerenityResult(build);
 		SerenityBuildAction buildAction = new SerenityBuildAction(build, result);
 		build.getActions().add(buildAction);
 
 		return true;
+	}
+
+	private void prune(AbstractBuild<?, ?> build, BuildListener buildListener) {
+		File buildDirectory = build.getRootDir();
+		File targetDataBaseFile = new File(buildDirectory, IConstants.DATABASE_FILE_ODB);
+		IDataBase targetDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, targetDataBaseFile.getAbsolutePath(), null);
+		buildListener.getLogger().println("Pruning : ");
+		new Pruner(null, targetDataBase).execute();
+		targetDataBase.close();
+	}
+
+	private void aggregate(AbstractBuild<?, ?> build, BuildListener buildListener) {
+		File buildDirectory = build.getRootDir();
+		File dataBaseFile = new File(buildDirectory, IConstants.DATABASE_FILE_ODB);
+
+		IDataBase odbDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile.getAbsolutePath(), null);
+		IDataBase ramDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, odbDataBase);
+
+		buildListener.getLogger().println("Aggregating : ");
+		new Aggregator(null, ramDataBase).execute();
+		ramDataBase.close();
 	}
 
 	private boolean copySourceToBuildDirectory(AbstractBuild<?, ?> build, final BuildListener buildListener) throws InterruptedException, IOException {
@@ -148,22 +170,10 @@ public class SerenityPublisher extends Recorder {
 		logger.warn("Build directory : uri : " + buildDirectory.getAbsolutePath());
 		File targetDataBaseFile = new File(buildDirectory, IConstants.DATABASE_FILE_ODB);
 		logger.warn("Target database file path : " + targetDataBaseFile.getAbsolutePath() + ", " + targetDataBaseFile.exists());
-		boolean first = true;
 		for (File sourceDataBaseFile : dataBaseFiles) {
 			String sourcePath = sourceDataBaseFile.getAbsolutePath();
 			String targetPath = targetDataBaseFile.getAbsolutePath();
 			buildListener.getLogger().println("Publishing serenity db from : " + sourcePath + ", to : " + targetPath);
-			if (first) {
-				first = false;
-				// If there is only one database file then just copy it the the build directory
-				buildListener.getLogger().println("Copying file : " + sourcePath + ", " + sourceDataBaseFile.length());
-				Toolkit.createFile(targetDataBaseFile);
-				Toolkit.copyFiles(sourceDataBaseFile, targetDataBaseFile);
-				buildListener.getLogger().println(
-						"Copied file : " + sourcePath + ", " + sourceDataBaseFile.length() + ", to : " + targetPath + ", "
-								+ targetDataBaseFile.length());
-				continue;
-			}
 			IDataBase odbDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, targetPath, null);
 			IDataBase targetDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, odbDataBase);
 			IDataBase sourceDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, sourcePath, null);
@@ -180,18 +190,6 @@ public class SerenityPublisher extends Recorder {
 				targetDataBase.close();
 			}
 		}
-
-		IDataBase targetDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, targetDataBaseFile.getAbsolutePath(), null);
-		buildListener.getLogger().println("Aggregating : ");
-		new Aggregator(null, targetDataBase).execute();
-		buildListener.getLogger().println("Pruning : ");
-		new Pruner(null, targetDataBase).execute();
-
-		Project<?, ?> project = (Project<?, ?>) targetDataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
-		logger.warn(ToStringBuilder.reflectionToString(project));
-		buildListener.getLogger().println("Closing : " + ToStringBuilder.reflectionToString(project));
-		targetDataBase.close();
-
 		return true;
 	}
 

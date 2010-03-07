@@ -8,6 +8,11 @@ import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.persistence.IDataBase;
 
+/**
+ * @author Michael Couck
+ * @since 07.03.10
+ * @version 01.00
+ */
 public class ClassAggregator extends AAggregator {
 
 	private Class<?, ?> klass;
@@ -26,6 +31,8 @@ public class ClassAggregator extends AAggregator {
 			aggregator.aggregate();
 		}
 		aggregate(klass);
+		setPrecision(klass);
+		dataBase.persist(klass);
 	}
 
 	protected void aggregate(Class<?, ?> klass) {

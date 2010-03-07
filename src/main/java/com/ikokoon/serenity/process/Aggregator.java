@@ -47,46 +47,4 @@ public class Aggregator extends AProcess implements IConstants {
 		aggregator.aggregate();
 	}
 
-	// @SuppressWarnings("unchecked")
-	// protected void aggregatePackages(List<Package> children) {
-	// for (Package<?, ?> pakkage : children) {
-	// List<Class<?, ?>> classes = pakkage.getChildren();
-	// aggregateClasses(classes);
-	// aggregatePackage(pakkage);
-	// setPrecision(pakkage);
-	// dataBase.persist(pakkage);
-	// }
-	// }
-	//
-	//
-	//
-	// protected void aggregateClasses(List<Class<?, ?>> classes) {
-	// for (Class<?, ?> klass : classes) {
-	// List<Method<?, ?>> methods = klass.getChildren();
-	// aggregateMethods(methods);
-	// aggregateClass(klass);
-	// setPrecision(klass);
-	// dataBase.persist(klass);
-	// }
-	// }
-
-	// protected Set<Method<?, ?>> getMethods(Class<?, ?> klass, Set<Method<?, ?>> methods) {
-	// for (Class<?, ?> innerKlass : klass.getInnerClasses()) {
-	// getMethods(innerKlass, methods);
-	// }
-	// for (Method<?, ?> method : klass.getChildren()) {
-	// methods.add(method);
-	// }
-	// return methods;
-	// }
-	//
-	// private boolean containsLine(Set<Line<?, ?>> lines, Line<?, ?> line) {
-	// for (Line<?, ?> setLine : lines) {
-	// if (setLine.getNumber() == line.getNumber()) {
-	// return true;
-	// }
-	// }
-	// return false;
-	// }
-
 }
