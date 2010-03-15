@@ -12,6 +12,7 @@ public abstract class TargetAccess {
 	protected class ProtectedInnerClass {
 	}
 
+	@SuppressWarnings("unused")
 	private class PrivateInnerClass {
 	}
 
@@ -24,6 +25,7 @@ public abstract class TargetAccess {
 	static class DefaultStaticInnerClass {
 	}
 
+	@SuppressWarnings("unused")
 	private static class PrivateStaticInnerClass {
 	}
 
@@ -37,6 +39,7 @@ public abstract class TargetAccess {
 	protected void protectedMethod() {
 	}
 
+	@SuppressWarnings("unused")
 	private void privateMethod() {
 	}
 
@@ -49,6 +52,7 @@ public abstract class TargetAccess {
 	protected static void protectedStaticMethod() {
 	}
 
+	@SuppressWarnings("unused")
 	private static void privateStaticMethod() {
 	}
 

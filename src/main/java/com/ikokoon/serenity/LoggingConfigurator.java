@@ -2,14 +2,14 @@ package com.ikokoon.serenity;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.log4j.PropertyConfigurator;
 
 /**
  * This is a central class for initialising the Log4j logging parameters.
- * 
+ *
  * @author Michael Couck
  * @since 09.12.09
  * @version 01.00
@@ -31,13 +31,21 @@ public class LoggingConfigurator {
 	public static void configure() {
 		if (!initilised) {
 			checkLogFolder(SERENITY_LOG_FILE);
-			URL url = LoggingConfigurator.class.getResource(IConstants.LOG_4_J_PROPERTIES);
-			if (url != null) {
-				PropertyConfigurator.configure(url);
+			InputStream inputStream = LoggingConfigurator.class.getResourceAsStream(IConstants.LOG_4_J_PROPERTIES);
+			System.out.println("Log4j stream : " + inputStream);
+			Properties properties = null;
+			if (inputStream != null) {
+				try {
+					properties = new Properties();
+					properties.load(inputStream);
+				} catch (Exception e) {
+					e.printStackTrace();
+					properties = getProperties();
+				}
 			} else {
-				Properties properties = getProperties();
-				PropertyConfigurator.configure(properties);
+				properties = getProperties();
 			}
+			PropertyConfigurator.configure(properties);
 			initilised = true;
 		}
 	}
@@ -52,6 +60,7 @@ public class LoggingConfigurator {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("Log file : " + file.getAbsolutePath());
 	}
 
 	private static Properties getProperties() {

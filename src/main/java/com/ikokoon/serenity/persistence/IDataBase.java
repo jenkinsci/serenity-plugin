@@ -1,5 +1,6 @@
 package com.ikokoon.serenity.persistence;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,8 @@ public interface IDataBase {
 		private static Logger logger = Logger.getLogger(DataBaseManager.class);
 		/** The map of open databases keyed on the database file name. */
 		private static Map<String, IDataBase> dataBases = new HashMap<String, IDataBase>();
+		/** The map of database listeners keyed on the database file name. */
+		private static Map<String, List<IDataBaseListener>> dataBaseListeners = new HashMap<String, List<IDataBaseListener>>();
 
 		/**
 		 * Access to all the databases in the current VM.
@@ -70,17 +73,48 @@ public interface IDataBase {
 		public static synchronized final <E extends IDataBase> IDataBase getDataBase(Class<E> klass, String dataBaseFile, IDataBase internalDataBase) {
 			IDataBase dataBase = dataBases.get(dataBaseFile);
 			if (dataBase == null || dataBase.isClosed()) {
-				IDataBaseListener dataBaseListener = getDataBaseListener();
-				dataBase = ObjectFactory.getObject(klass, internalDataBase, dataBaseListener, dataBaseFile);
-				logger.debug("Adding database : " + dataBase);
+				getDataBaseListener(dataBaseFile);
+				dataBase = ObjectFactory.getObject(klass, dataBaseFile, internalDataBase);
+				logger.info("Adding database : " + dataBase);
 				dataBases.put(dataBaseFile, dataBase);
 			}
-			logger.info("Opened database : " + klass + ", data base : " + dataBase + ", file : " + dataBaseFile);
+			logger.info("Returned database : " + klass + ", data base : " + dataBase + ", file : " + dataBaseFile);
 			return dataBase;
 		}
 
-		private static IDataBaseListener getDataBaseListener() {
+		public static synchronized void addDataBaseListener(String dataBaseFile, IDataBaseListener dataBaseListener) {
+			List<IDataBaseListener> dataBaseListeners = DataBaseManager.dataBaseListeners.get(dataBaseFile);
+			if (dataBaseListeners == null) {
+				dataBaseListeners = new ArrayList<IDataBaseListener>();
+				DataBaseManager.dataBaseListeners.put(dataBaseFile, dataBaseListeners);
+			}
+			dataBaseListeners.add(dataBaseListener);
+		}
+
+		public static synchronized void removeDataBaseListener(String dataBaseFile, IDataBaseListener dataBaseListener) {
+			List<IDataBaseListener> dataBaseListeners = DataBaseManager.dataBaseListeners.get(dataBaseFile);
+			if (dataBaseListeners != null) {
+				dataBaseListeners.remove(dataBaseListener);
+			}
+		}
+
+		public static synchronized void fireDataBaseEvent(String dataBaseFile, IDataBaseEvent dataBaseEvent) {
+			List<IDataBaseListener> dataBaseListeners = DataBaseManager.dataBaseListeners.get(dataBaseFile);
+			if (dataBaseListeners != null) {
+				IDataBaseListener[] array = dataBaseListeners.toArray(new IDataBaseListener[dataBaseListeners.size()]);
+				for (IDataBaseListener dataBaseListener : array) {
+					dataBaseListener.fireDataBaseEvent(dataBaseEvent);
+				}
+			}
+		}
+
+		private synchronized static IDataBaseListener getDataBaseListener(final String dataBaseFile) {
 			IDataBaseListener dataBaseListener = new IDataBaseListener() {
+
+				{
+					DataBaseManager.addDataBaseListener(dataBaseFile, this);
+				}
+
 				public void fireDataBaseEvent(IDataBaseEvent dataBaseEvent) {
 					if (dataBaseEvent.getEventType().equals(IDataBaseEvent.Type.DATABASE_CLOSE)) {
 						IDataBase dataBase = dataBaseEvent.getDataBase();
@@ -89,6 +123,7 @@ public interface IDataBase {
 						} else {
 							logger.info("Removed database : " + dataBase);
 						}
+						DataBaseManager.removeDataBaseListener(dataBaseFile, this);
 					}
 				}
 			};

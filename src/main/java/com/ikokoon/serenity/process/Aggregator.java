@@ -33,7 +33,6 @@ public class Aggregator extends AProcess implements IConstants {
 	 */
 	public Aggregator(IProcess parent, IDataBase dataBase) {
 		super(parent);
-		logger.warn("Aggregator");
 		this.dataBase = dataBase;
 	}
 
@@ -42,7 +41,7 @@ public class Aggregator extends AProcess implements IConstants {
 	 */
 	public void execute() {
 		super.execute();
-		logger.info("Running Aggregator: ");
+		logger.info("Running Aggregator : ");
 		IAggregator aggregator = new ProjectAggregator(dataBase);
 		aggregator.aggregate();
 	}

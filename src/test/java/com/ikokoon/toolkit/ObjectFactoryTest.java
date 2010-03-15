@@ -40,24 +40,23 @@ public class ObjectFactoryTest {
 		IDataBaseListener dataBaseListener = mock(IDataBaseListener.class);
 
 		IDataBase internalDataBase = mock(IDataBase.class);
-		IDataBase dataBase = ObjectFactory.getObject(DataBaseRam.class, internalDataBase, dataBaseListener, true);
+		IDataBase dataBase = ObjectFactory.getObject(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, internalDataBase);
 		assertNotNull(dataBase);
 
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, internalDataBase);
 		Object dataBaseField = Toolkit.getValue(dataBase.getClass(), dataBase, "dataBase");
 		assertNotNull(dataBaseField);
 
 		dataBase.close();
 
-		dataBase = new DataBaseOdb(dataBaseListener, "./serenity/dummy.odb");
+		dataBase = new DataBaseOdb("./serenity/dummy.odb");
 		assertFalse(dataBase.isClosed());
 		dataBase.close();
 
-		dataBase = new DataBaseOdb(dataBaseListener, "./serenity/dummy.odb");
+		dataBase = new DataBaseOdb("./serenity/dummy.odb");
 		assertFalse(dataBase.isClosed());
 		dataBase.close();
 
-		dataBase = new DataBaseOdb(dataBaseListener, "./serenity/dummy.odb");
+		dataBase = new DataBaseOdb("./serenity/dummy.odb");
 		assertFalse(dataBase.isClosed());
 		dataBase.close();
 

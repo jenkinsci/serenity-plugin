@@ -40,10 +40,6 @@ public class ToolkitTest extends ATest {
 
 	@Test
 	public void classNameToPackageName() {
-		Type type = Type.getObjectType(className);
-		logger.debug("Type : " + type.getClassName() + ", " + type.getDescriptor() + ", " + type.getInternalName() + ", " + type.getSize() + ", "
-				+ type.getSort());
-
 		Type[] types = Type.getArgumentTypes("(Ljava/lang/Integer;Ljava/math/BigDecimal;)Ljava/lang/String;");
 		for (Type argumentType : types) {
 			logger.debug("Type : " + argumentType.getClassName() + ", " + argumentType.getDescriptor() + ", " + argumentType.getInternalName() + ", "

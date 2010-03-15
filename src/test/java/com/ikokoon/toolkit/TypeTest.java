@@ -22,13 +22,13 @@ public class TypeTest extends ATest {
 		type = Type.getType("Ljava/util/Map<Ljava/lang/String;Lcom/ikokoon/serenity/persistence/IDataBase;>;");
 		printType(type);
 
-		type = Type.getObjectType("Lcom/ikokoon/target/Target<**>;");
+		type = Type.getType("Lcom/ikokoon/target/Target<**>;");
 		printType(type);
-		type = Type.getObjectType("Ljava/util/Set<Ljava/lang/String;>;");
+		type = Type.getType("Ljava/util/Set<Ljava/lang/String;>;");
 		printType(type);
-		type = Type.getObjectType("Ljava/util/List<Ljava/lang/Class<Lorg/objectweb/asm/ClassVisitor;>;>;");
+		type = Type.getType("Ljava/util/List<Ljava/lang/Class<Lorg/objectweb/asm/ClassVisitor;>;>;");
 		printType(type);
-		type = Type.getObjectType("Ljava/util/Map<Ljava/lang/String;Lcom/ikokoon/serenity/persistence/IDataBase;>;");
+		type = Type.getType("Ljava/util/Map<Ljava/lang/String;Lcom/ikokoon/serenity/persistence/IDataBase;>;");
 		printType(type);
 
 		Type[] argumentTypes = Type.getArgumentTypes("(Ljava/util/Map<Ljava/lang/String;Lcom/ikokoon/serenity/persistence/IDataBase;>;)"

@@ -36,13 +36,14 @@ import com.ikokoon.toolkit.MatrixTest;
 import com.ikokoon.toolkit.ObjectFactoryTest;
 import com.ikokoon.toolkit.PermutationsTest;
 import com.ikokoon.toolkit.ToolkitTest;
+import com.ikokoon.toolkit.TypeTest;
 
 /**
  * @author Michael Couck
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses( {
-// Adapter functionality tests
+		// Adapter functionality tests
 		ComplexityTest.class, // Tests the complexity functionality
 		CoverageTest.class, // Tests that the coverage instructions have been added
 		DependencyTest.class, // Tests that the dependency adapters are collecting the dependency data correctly
@@ -60,7 +61,7 @@ import com.ikokoon.toolkit.ToolkitTest;
 		VisitorFactoryTest.class, // Instantiates the visitors
 
 		// Toolkit and assorted common functionality tests
-		ToolkitTest.class, ModellerTest.class, PermutationsTest.class, MatrixTest.class, CoverageSourceCodeTest.class,
+		TypeTest.class, ToolkitTest.class, ModellerTest.class, PermutationsTest.class, MatrixTest.class, CoverageSourceCodeTest.class,
 
 		// Some of the many database/persistence tests
 		DataBaseManagerTest.class, // The test for opening and closing the databases

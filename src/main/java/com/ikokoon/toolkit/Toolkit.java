@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.objectweb.asm.Type;
 
 import com.ikokoon.serenity.model.Unique;
 
@@ -108,8 +107,8 @@ public class Toolkit {
 	 * @return the package name of the class
 	 */
 	public static String classNameToPackageName(String className) {
-		Type type = Type.getObjectType(className);
-		className = type.getClassName();
+		// Type type = Type.getType(className);
+		className = Toolkit.slashToDot(className); // type.getClassName();
 		int index = className.lastIndexOf('.');
 		if (index > -1) {
 			return className.substring(0, index);
@@ -123,7 +122,7 @@ public class Toolkit {
 	 *
 	 * @param string
 	 *            the string to remove whitespace from
-	 * @return the string without any whitespace that includes carrige returns etc.
+	 * @return the string without any whitespace that includes carriage returns etc.
 	 */
 	public static String stripWhitespace(String string) {
 		if (string == null) {

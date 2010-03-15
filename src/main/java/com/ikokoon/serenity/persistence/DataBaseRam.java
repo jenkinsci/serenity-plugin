@@ -23,10 +23,10 @@ import com.ikokoon.toolkit.Toolkit;
 public final class DataBaseRam extends DataBase {
 
 	private Logger logger = Logger.getLogger(this.getClass());
+	/** The database file for access. */
+	private String dataBaseFile;
 	/** The underlying persistence database to the file system. */
 	private IDataBase dataBase;
-	/** The listener that catches events. */
-	private IDataBaseListener dataBaseListener;
 	/** The closed flag. */
 	private boolean closed = true;
 
@@ -42,10 +42,10 @@ public final class DataBaseRam extends DataBase {
 	 * @param dataBaseListener
 	 *            the listener to close the database and release resources
 	 */
-	DataBaseRam(IDataBase dataBase, IDataBaseListener dataBaseListener) {
+	DataBaseRam(String dataBaseFile, IDataBase dataBase) {
 		logger.info("Opening RAM database with " + dataBase + " underneath.");
+		this.dataBaseFile = dataBaseFile;
 		this.dataBase = dataBase;
-		this.dataBaseListener = dataBaseListener;
 		index.clear();
 		closed = false;
 	}
@@ -172,17 +172,9 @@ public final class DataBaseRam extends DataBase {
 				logger.warn("Persistence database was null : " + this);
 			}
 			index.clear();
-			final IDataBase dataBase = this;
-			IDataBaseEvent dataBaseEvent = new IDataBaseEvent() {
-				public IDataBase getDataBase() {
-					return dataBase;
-				}
 
-				public Type getEventType() {
-					return IDataBaseEvent.Type.DATABASE_CLOSE;
-				}
-			};
-			dataBaseListener.fireDataBaseEvent(dataBaseEvent);
+			IDataBaseEvent dataBaseEvent = new DataBaseEvent(this, IDataBaseEvent.Type.DATABASE_CLOSE);
+			IDataBase.DataBaseManager.fireDataBaseEvent(dataBaseFile, dataBaseEvent);
 		} catch (Exception e) {
 			logger.error("Exception comitting and closing the database", e);
 		}

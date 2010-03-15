@@ -2,12 +2,9 @@ package com.ikokoon.serenity.instrumentation.coverage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintWriter;
 
 import org.junit.Test;
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.util.CheckClassAdapter;
 
 import com.ikokoon.serenity.ATest;
 import com.ikokoon.serenity.IConstants;
@@ -43,7 +40,7 @@ public class CoverageClassAdapterExtTest extends ATest {
 		writeClass(className, classBytes);
 
 		// Verify the byte code is valid
-		CheckClassAdapter.verify(new ClassReader(classBytes), false, new PrintWriter(System.out));
+		// CheckClassAdapter.verify(new ClassReader(classBytes), false, new PrintWriter(System.out));
 	}
 
 	private void writeClass(String className, byte[] classBytes) {

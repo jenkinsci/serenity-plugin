@@ -37,7 +37,7 @@ public class DataBaseToolkit {
 	 *            the database to truncate
 	 */
 	@SuppressWarnings("unchecked")
-	public static void clear(IDataBase dataBase) {
+	public static synchronized void clear(IDataBase dataBase) {
 		Project<?, ?> project = (Project<?, ?>) dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
 		if (project != null) {
 			dataBase.remove(Project.class, project.getId());
@@ -61,7 +61,7 @@ public class DataBaseToolkit {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void copyDataBase(IDataBase sourceDataBase, IDataBase targetDataBase) {
+	public static synchronized void copyDataBase(IDataBase sourceDataBase, IDataBase targetDataBase) {
 		Collector.setDataBase(targetDataBase);
 		List<Package> sourcePackages = sourceDataBase.find(Package.class);
 		for (Package sourcePackage : sourcePackages) {
@@ -99,7 +99,7 @@ public class DataBaseToolkit {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void execute(IDataBase dataBase, Composite composite, Executer executer) {
+	public static synchronized void execute(IDataBase dataBase, Composite composite, Executer executer) {
 		List list = dataBase.find(composite.getClass());
 		for (Object object : list) {
 			executer.execute(object);
@@ -111,7 +111,7 @@ public class DataBaseToolkit {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void collectEfferentAndAfferent(Class klass, List<Package> packages) {
+	private static synchronized void collectEfferentAndAfferent(Class klass, List<Package> packages) {
 		List<Efferent> efferents = klass.getEfferent();
 		for (Efferent efferent : efferents) {
 			String efferentPackage = Toolkit.replaceAll(efferent.getName(), "<e:", "");
@@ -141,7 +141,7 @@ public class DataBaseToolkit {
 	 *            the criteria to match if the data for the composite must be written to the output
 	 */
 	@SuppressWarnings("unchecked")
-	public static void dump(IDataBase dataBase, ICriteria criteria, String message) {
+	public static synchronized void dump(IDataBase dataBase, ICriteria criteria, String message) {
 		if (message != null) {
 			logger.warn(message);
 		}
@@ -186,7 +186,7 @@ public class DataBaseToolkit {
 		}
 	}
 
-	private static void log(ICriteria criteria, Composite<?, ?> composite, int tabs, String data) {
+	private static synchronized void log(ICriteria criteria, Composite<?, ?> composite, int tabs, String data) {
 		if (criteria == null || (criteria != null && criteria.satisfied(composite))) {
 			StringBuilder builder = new StringBuilder();
 			for (int i = 0; i < tabs; i++) {

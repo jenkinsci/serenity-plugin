@@ -23,10 +23,10 @@ public class ProfilingMethodAdapter extends MethodAdapter implements Opcodes {
 	@SuppressWarnings("unused")
 	private String className;
 	/** The name of the method that is being enhanced. */
-	private String name;
+	private String methodName;
 	/** The description of the method being enhanced. */
 	@SuppressWarnings("unused")
-	private String desc;
+	private String methodDescription;
 
 	/**
 	 * The constructor takes all the interesting items for the method that is to be enhanced.
@@ -35,17 +35,17 @@ public class ProfilingMethodAdapter extends MethodAdapter implements Opcodes {
 	 *            the parent method visitor
 	 * @param className
 	 *            the name of the class to enhance
-	 * @param name
+	 * @param methodName
 	 *            the name of the method to enhance
-	 * @param desc
+	 * @param methodDescription
 	 *            the method description
 	 */
-	public ProfilingMethodAdapter(MethodVisitor methodVisitor, Integer access, String className, String name, String desc) {
+	public ProfilingMethodAdapter(MethodVisitor methodVisitor, Integer access, String className, String methodName, String methodDescription) {
 		super(methodVisitor);
 		this.className = Toolkit.slashToDot(className);
-		this.name = name;
-		this.desc = desc;
-		logger.debug("Class name : " + className + ", name : " + name + ", desc : " + desc);
+		this.methodName = methodName;
+		this.methodDescription = methodDescription;
+		logger.debug("Class name : " + className + ", name : " + methodName + ", desc : " + methodDescription);
 		// TODO - the method starts here I guess, so add the start instruction to the method here
 	}
 
@@ -64,7 +64,7 @@ public class ProfilingMethodAdapter extends MethodAdapter implements Opcodes {
 	 * {@inheritDoc}
 	 */
 	public void visitEnd() {
-		logger.debug("visitEnd - " + name);
+		logger.debug("visitEnd - " + methodName);
 		// In the case that the method reaches the end of the method instructions then gather the start time and duration and end time
 		super.visitEnd();
 	}

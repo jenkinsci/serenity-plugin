@@ -196,11 +196,12 @@ public class SerenityResult implements ISerenityResult {
 
 	public String getProjectModel() {
 		logger.debug("getProjectModel");
-		IDataBase dataBase = getDataBase(abstractBuild);
-		Project<?, ?> project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
 		// Move the build forward to the last build because Hudson will go to the last stable build
 		// which we don't want, we want the last build
-		abstractBuild = getLastBuild(abstractBuild);
+		AbstractBuild<?, ?> abstractBuild = getLastBuild(this.abstractBuild);
+
+		IDataBase dataBase = getDataBase(abstractBuild);
+		Project<?, ?> project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
 
 		Object object = abstractBuild.getProject();
 		if (object instanceof hudson.model.Project<?, ?>) {
@@ -215,6 +216,10 @@ public class SerenityResult implements ISerenityResult {
 
 	private AbstractBuild<?, ?> getLastBuild(AbstractBuild<?, ?> abstractBuild) {
 		if (abstractBuild.getNextBuild() == null) {
+			return abstractBuild;
+		}
+		AbstractBuild<?, ?> nextAbstractBuild = getLastBuild(abstractBuild.getNextBuild());
+		if (nextAbstractBuild.isBuilding()) {
 			return abstractBuild;
 		}
 		return getLastBuild(abstractBuild.getNextBuild());

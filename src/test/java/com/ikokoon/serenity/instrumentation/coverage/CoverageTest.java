@@ -4,7 +4,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +12,7 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.util.CheckClassAdapter;
 
 import com.ikokoon.serenity.ATest;
 import com.ikokoon.serenity.Collector;
@@ -24,6 +22,7 @@ import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.DataBaseToolkit;
 import com.ikokoon.serenity.persistence.IDataBase;
+import com.ikokoon.toolkit.Toolkit;
 
 public class CoverageTest extends ATest {
 
@@ -49,8 +48,9 @@ public class CoverageTest extends ATest {
 		// Verify that the coverage instructions are not in the byte code
 		Exception exception = null;
 		try {
-			visitClass(CoverageMethodAdapterChecker.class, className, classBytes, sourceBytes);
+			visitClass(CoverageClassAdapterChecker.class, className, classBytes, sourceBytes);
 		} catch (Exception e) {
+			logger.error("Expected exception : " + e.getMessage() + ", " + e);
 			exception = e;
 		}
 		assertNotNull(exception);
@@ -58,11 +58,18 @@ public class CoverageTest extends ATest {
 		// Add the coverage instructions
 		ByteArrayOutputStream source = new ByteArrayOutputStream();
 		source.write(sourceBytes);
+		logger.warn("Source : " + new String(classBytes));
 		ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(new Class[] { CoverageClassAdapter.class }, className, classBytes, source);
 		classBytes = writer.toByteArray();
 
-		// Verify the byte code is valid
-		CheckClassAdapter.verify(new ClassReader(classBytes), false, new PrintWriter(System.out));
+		// File file = new File(className + ".class");
+		// if (!file.exists()) {
+		// file.createNewFile();
+		// }
+		// Toolkit.setContents(file, classBytes);
+
+		// Verify the byte code is valid, only for ASM 3++
+		// CheckClassAdapter.verify(new ClassReader(classBytes), false, new PrintWriter(System.out));
 
 		// Verify each line has a call to collect the coverage
 		visitClass(CoverageClassAdapterChecker.class, className, classBytes, sourceBytes);
