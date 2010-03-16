@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>serenity</artifactId>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.3</version>
 	<packaging>hpi</packaging>
 	<name>Hudson Serenity plugin</name>
 	<url>http://wiki.hudson-ci.org/display/HUDSON/Serenity+Plugin</url>
@@ -83,9 +83,10 @@
 				<configuration>
 					<!-- pertest -->
 					<forkMode>once</forkMode>
+					<argLine>-Xms512m -Xmx1024m</argLine>
 					<excludes>
-						<exclude>**/CollectorTest.java</exclude>
-						<exclude>**/DependencyTest.java</exclude>
+						<!-- exclude>**/CollectorTest.java</exclude>
+						<exclude>**/DependencyTest.java</exclude -->
 					</excludes>
 				</configuration>
 			</plugin>
@@ -185,4 +186,10 @@
 			<url>http://maven.glassfish.org/content/groups/public/</url>
 		</pluginRepository>
 	</pluginRepositories>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/serenity-0.3</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/serenity-0.3</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/tags/serenity-0.3</url>
+  </scm>
 </project>
