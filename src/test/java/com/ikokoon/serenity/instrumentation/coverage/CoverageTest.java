@@ -4,7 +4,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,6 @@ import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.DataBaseToolkit;
 import com.ikokoon.serenity.persistence.IDataBase;
-import com.ikokoon.toolkit.Toolkit;
 
 public class CoverageTest extends ATest {
 
@@ -58,7 +56,6 @@ public class CoverageTest extends ATest {
 		// Add the coverage instructions
 		ByteArrayOutputStream source = new ByteArrayOutputStream();
 		source.write(sourceBytes);
-		logger.warn("Source : " + new String(classBytes));
 		ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(new Class[] { CoverageClassAdapter.class }, className, classBytes, source);
 		classBytes = writer.toByteArray();
 

@@ -44,14 +44,14 @@ public class VisitorFactory {
 	public static ClassVisitor getClassVisitor(Class<ClassVisitor>[] classAdapterClasses, String className, byte[] classBytes,
 			ByteArrayOutputStream source) {
 		ClassReader reader = new ClassReader(classBytes);
-		ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS); // 'true' for ASM 2.2, 'ClassWriter.COMPUTE_MAXS' for ASM 3++
+		ClassWriter writer = new ClassWriter(reader, true); // 'true' for ASM 2.2, 'ClassWriter.COMPUTE_MAXS' for ASM 3++
 		ClassVisitor visitor = writer;
 		for (Class<ClassVisitor> klass : classAdapterClasses) {
 			Object[] parameters = new Object[] { visitor, className, classBytes, source };
 			visitor = ObjectFactory.getObject(klass, parameters);
 			LOGGER.debug("Adding class visitor : " + visitor);
 		}
-		reader.accept(visitor, 0); // 'false' for ASM 2.2, '0' for ASM 3++
+		reader.accept(visitor, false); // 'false' for ASM 2.2, '0' for ASM 3++
 		return writer;
 	}
 
