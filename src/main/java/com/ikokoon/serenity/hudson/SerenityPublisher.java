@@ -15,7 +15,9 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +47,7 @@ import com.ikokoon.toolkit.Toolkit;
  * @version 01.00
  */
 @SuppressWarnings("unchecked")
-public class SerenityPublisher extends Recorder {
+public class SerenityPublisher extends Recorder implements Serializable {
 
 	static {
 		LoggingConfigurator.configure();
@@ -93,15 +95,16 @@ public class SerenityPublisher extends Recorder {
 
 	private IDataBase copyDataBasesToBuildDirectory(AbstractBuild<?, ?> build, BuildListener buildListener) throws InterruptedException, IOException {
 		// Find all the database files
-		List<File> sourceDataBaseFiles = new ArrayList<File>();
-		Toolkit.findFiles(new File(build.getWorkspace().toURI().getRawPath()), new Toolkit.IFileFilter() {
-			public boolean matches(File file) {
-				if (file != null && file.getAbsolutePath().contains("serenity.odb")) {
-					return true;
-				}
-				return false;
-			}
-		}, sourceDataBaseFiles);
+		final String serenityOdb = "serenity.odb";
+		// List<File> sourceDataBaseFiles = new ArrayList<File>();
+		// Toolkit.findFiles(new File(build.getWorkspace().toURI().getRawPath()), new Toolkit.IFileFilter() {
+		// public boolean matches(File file) {
+		// if (file != null && file.getAbsolutePath().contains(serenityOdb)) {
+		// return true;
+		// }
+		// return false;
+		// }
+		// }, sourceDataBaseFiles);
 		File buildDirectory = build.getRootDir();
 		File targetDataBaseFile = new File(buildDirectory, IConstants.DATABASE_FILE_ODB);
 
@@ -114,8 +117,43 @@ public class SerenityPublisher extends Recorder {
 		String projectName = abstractProject.getName();
 		logger.info("Target database : " + projectName + ", " + targetPath);
 
-		for (File sourceDataBaseFile : sourceDataBaseFiles) {
-			String sourcePath = sourceDataBaseFile.getAbsolutePath();
+		// for (File sourceDataBaseFile : sourceDataBaseFiles) {
+		// String sourcePath = sourceDataBaseFile.getAbsolutePath();
+		// buildListener.getLogger().println("Publishing serenity db from... " + sourcePath + ", to... " + targetPath);
+		// IDataBase sourceDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, sourcePath, null);
+		// try {
+		// // Copy the data from the source into the target, then close the source
+		// buildListener.getLogger().println("Copying database... " + sourcePath);
+		// DataBaseToolkit.copyDataBase(sourceDataBase, targetDataBase);
+		// buildListener.getLogger().println("Copied database... " + sourcePath);
+		// } catch (Exception e) {
+		// e.printStackTrace(buildListener.fatalError("Unable to copy Serenity database file from : " + sourcePath + ", to : " + targetPath));
+		// build.setResult(Result.UNSTABLE);
+		// } finally {
+		// sourceDataBase.close();
+		// }
+		// }
+
+		class FileFilterImpl implements FileFilter, Serializable {
+			public boolean accept(File pathname) {
+				return pathname.getAbsolutePath().contains(serenityOdb);
+			}
+		}
+
+		FilePath[] moduleRoots = build.getModuleRoots();
+		List<FilePath> serenityOdbs = new ArrayList<FilePath>();
+		for (FilePath moduleRoot : moduleRoots) {
+			List<FilePath> list = moduleRoot.list(new FileFilterImpl());
+			serenityOdbs.addAll(list);
+		}
+		for (FilePath serenityDataBaseFile : serenityOdbs) {
+			buildListener.getLogger().println("File path... " + serenityDataBaseFile.toURI().toString());
+
+			File sourceFile = File.createTempFile("serenity", ".odb");
+			FilePath sourceFilePath = new FilePath(sourceFile);
+			serenityDataBaseFile.copyTo(sourceFilePath);
+
+			String sourcePath = sourceFile.getAbsolutePath();
 			buildListener.getLogger().println("Publishing serenity db from... " + sourcePath + ", to... " + targetPath);
 			IDataBase sourceDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, sourcePath, null);
 			try {
@@ -125,11 +163,12 @@ public class SerenityPublisher extends Recorder {
 				buildListener.getLogger().println("Copied database... " + sourcePath);
 			} catch (Exception e) {
 				e.printStackTrace(buildListener.fatalError("Unable to copy Serenity database file from : " + sourcePath + ", to : " + targetPath));
-				build.setResult(Result.FAILURE);
+				build.setResult(Result.UNSTABLE);
 			} finally {
 				sourceDataBase.close();
 			}
 		}
+
 		return targetDataBase;
 	}
 

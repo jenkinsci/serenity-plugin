@@ -165,10 +165,11 @@ public class Accumulator extends AProcess {
 		while (jarEntries.hasMoreElements()) {
 			JarEntry jarEntry = jarEntries.nextElement();
 			String entryName = jarEntry.getName();
-			if (excluded(Toolkit.slashToDot(entryName))) {
+			String className = Toolkit.slashToDot(entryName);
+			if (excluded(className)) {
 				continue;
 			}
-			// logger.debug("Processsing entry : " + entryName);
+			logger.info("Processsing entry : " + className);
 			try {
 				InputStream inputStream = jarFile.getInputStream(jarEntry);
 				byte[] classFileBytes = Toolkit.getContents(inputStream).toByteArray();
@@ -214,22 +215,22 @@ public class Accumulator extends AProcess {
 	private boolean excluded(String name) {
 		// Don't process anything that is not a class file or a Java file
 		if (!name.endsWith(".class")) {
-			logger.debug("Not processing file : " + name);
+			logger.info("Not processing file : " + name);
 			return true;
 		}
 		// Check that the class is included in the included packages
 		if (!Configuration.getConfiguration().included(name)) {
-			logger.debug("File not included : " + name);
+			logger.info("File not included : " + name);
 			return true;
 		}
 		// Don't do excluded classes and packages
 		if (Configuration.getConfiguration().excluded(name)) {
-			logger.debug("Excluded file : " + name);
+			logger.info("Excluded file : " + name);
 			return true;
 		}
 		// Don't process the same class twice
 		if (!filesProcessed.add(name)) {
-			logger.debug("Already done file : " + name);
+			logger.info("Already done file : " + name);
 			return true;
 		}
 		return false;
