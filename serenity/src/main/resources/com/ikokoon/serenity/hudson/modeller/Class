@@ -1,0 +1,120 @@
+{
+				chart: {
+				renderTo: 'container',
+				margin: [20, 200, 20, 200],
+				zoomType: 'xy'
+			},
+			title: {
+				text: 'compositeName',
+				style: {
+					margin: '3px 0 0 0' // center it
+				}
+			},
+			xAxis: [{
+				categories: categoryData
+			}],
+			yAxis: [
+				{ // Primary yAxis
+					title: {
+						text: 'Coverage',
+						style: {
+							color: '#89A54E'
+						},
+						margin: 60
+					},
+					labels: {
+						formatter: function() {
+							return this.value.toFixed(0) +'%';
+						},
+						style: {
+							color: '#89A54E'
+						}
+					},
+					opposite: false
+				}, { // Secondary yAxis
+					title: {
+						text: 'Complexity',
+						margin: 50,
+						style: {
+							color: '#4572A7'
+						}
+					},
+					labels: {
+						formatter: function() {
+							return this.value.toFixed(2);
+						},
+						style: {
+							color: '#4572A7'
+						}
+					},
+					opposite: true
+				}, { // Tertiary yAxis
+					title: {
+						text: 'Stability',
+						margin: 50,
+						style: {
+							color: '#AA4643'
+						}
+					},
+					labels: {
+						formatter: function() {
+							return this.value.toFixed(2);
+						},
+						style: {
+							color: '#AA4643'
+						}
+					},
+					opposite: true,
+					offset: 80
+				}
+			],
+			tooltip: {
+				formatter: function() {
+					var unit = {
+						'Coverage': '%',
+						'Complexity': 'units',
+						'Stability': ' < 1'
+					}[this.series.name];
+					return '<b>'+ this.series.name +'</b><br/>'+
+						this.x +': '+ this.y.toFixed(2) +' '+ unit;
+				}
+			},
+			plotOptions: {
+		      line: {
+		         dataLabels: {
+		            enabled: true
+		         }
+		      }
+		   },
+		   legend: {
+				layout: 'vertical',
+				style: {
+					left: '10px',
+					bottom: 'auto',
+					right: 'auto',
+					top: '10px'
+				},
+				backgroundColor: '#FFFFFF'
+			},
+			series: [
+				{
+					name: 'Coverage',
+					color: '#89A54E',
+					type: 'column',
+					yAxis: 0,
+					data: coverageData		
+				}, {
+					name: 'Complexity',
+					type: 'spline',
+					color: '#4572A7',
+					yAxis: 1,
+					data: complexityData
+				}, {
+					name: 'Stability',
+					color: '#AA4643',
+					type: 'spline',
+					yAxis: 2,
+					data: stabilityData
+				}
+			]
+		}
