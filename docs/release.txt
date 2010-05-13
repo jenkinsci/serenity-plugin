@@ -3430,3 +3430,1897 @@ get\temp
 [INFO] Final Memory: 25M/508M
 [INFO] ------------------------------------------------------------------------
 D:\Eclipse\workspace\serenity>
+
+
+
+
+
+
+
+4: Date 13.05.10
+
+D:\Eclipse\workspace\serenity>release
+
+D:\Eclipse\workspace\serenity>set MAVEN_OPTS=-Xms512m -Xmx1024m -XX:MaxPermSize=256m
+
+D:\Eclipse\workspace\serenity>rem mvn -DskipTests=true package -DdryRun=true
+
+D:\Eclipse\workspace\serenity>rem -B -Dresume=false -Dusername=michaelcouck -Dpassword=suineg
+
+D:\Eclipse\workspace\serenity>rem mvn release:rollback
+
+D:\Eclipse\workspace\serenity>rem svn --non-interactive
+
+D:\Eclipse\workspace\serenity>mvn -DskipTests=true -Dresume=false -Dusername=michaelcouck -Dpassword=suineg -DXms512m -DXmx1024m -DXX:MaxPermSize=256m
+ release:clean release:prepare release:perform
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Hudson Serenity plugin
+[INFO]    task-segment: [release:clean, release:prepare, release:perform] (aggregator-style)
+[INFO] ------------------------------------------------------------------------
+[INFO] [release:clean {execution: default-cli}]
+[INFO] Cleaning up after release...
+[INFO] [release:prepare {execution: default-cli}]
+[INFO] Verifying that there are no local modifications...
+[INFO] Executing: cmd.exe /X /C "svn --username michaelcouck --password ***** --non-interactive status"
+[INFO] Working directory: D:\Eclipse\workspace\serenity
+[INFO] Checking dependencies and plugins for snapshots ...
+What is the release version for "Hudson Serenity plugin"? (org.jvnet.hudson.plugins:serenity) 0.4: : 0.4
+What is SCM release tag or label for "Hudson Serenity plugin"? (org.jvnet.hudson.plugins:serenity) serenity-0.4: : serenity-0.4
+What is the new development version for "Hudson Serenity plugin"? (org.jvnet.hudson.plugins:serenity) 0.5-SNAPSHOT: : 0.5-SNAPSHOT
+[INFO] Transforming 'Hudson Serenity plugin'...
+[INFO] Not generating release POMs
+[INFO] Executing goals 'clean verify'...
+[WARNING] Maven will be executed in interactive mode, but no input stream has been configured for this MavenInvoker instance.
+[INFO] [INFO] Scanning for projects...
+[INFO] [INFO] ------------------------------------------------------------------------
+[INFO] [INFO] Building Hudson Serenity plugin
+[INFO] [INFO]    task-segment: [clean, verify]
+[INFO] [INFO] ------------------------------------------------------------------------
+[INFO] [INFO] [clean:clean {execution: default-clean}]
+[INFO] [INFO] [enforcer:display-info {execution: default}]
+[INFO] [INFO] Maven Version: 2.2.0
+[INFO] [INFO] JDK Version: 1.6.0_14 normalized as: 1.6.0-14
+[INFO] [INFO] OS Info: Arch: x86 Family: windows Name: windows vista Version: 6.0
+[INFO] [INFO] [localizer:generate {execution: default}]
+[INFO] [INFO] [resources:resources {execution: default-resources}]
+[INFO] [INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] [INFO] Copying 74 resources
+[INFO] [INFO] Copying 16 resources
+[INFO] [INFO] [hpi:apt-compile {execution: default-apt-compile}]
+[INFO] [INFO] Compiling 71 source files to D:\Eclipse\workspace\serenity\target\classes
+[INFO] Note: Generating com\ikokoon\serenity\hudson\SerenityPublisher.stapler
+[INFO] Note: com.ikokoon.serenity.hudson.SerenityPublisher.DESCRIPTOR indexed under hudson.Extension
+[INFO] [INFO] [hpi:insert-test {execution: default-insert-test}]
+[INFO] [INFO] [groovy:generateTestStubs {execution: test-in-groovy}]
+[INFO] [INFO]  No sources found for Java stub generation
+[INFO] [INFO] [resources:testResources {execution: default-testResources}]
+[INFO] [INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] [INFO] Copying 6 resources
+[INFO] [INFO] [compiler:testCompile {execution: default-testCompile}]
+[INFO] [INFO] Compiling 36 source files to D:\Eclipse\workspace\serenity\target\test-classes
+[INFO] [INFO] [hpi:test-hpl {execution: default-test-hpl}]
+[INFO] [INFO] Generating D:\Eclipse\workspace\serenity\target\test-classes\the.hpl
+[INFO] [INFO] [groovy:testCompile {execution: test-in-groovy}]
+[INFO] [INFO]  No sources found to compile
+[INFO] [INFO] [surefire:test {execution: default-test}]
+[INFO] [INFO] Surefire report directory: D:\Eclipse\workspace\serenity\target\surefire-reports
+[INFO]
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.ikokoon.toolkit.MatrixTest
+[INFO] Log file : D:\Eclipse\workspace\serenity\.\serenity\serenity.log
+[INFO] Log4j stream : java.io.BufferedInputStream@14c1103
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.375 sec
+[INFO] Running com.ikokoon.serenity.TransformerTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.407 sec
+[INFO] Running com.ikokoon.serenity.process.AggregatorTest
+[INFO] 12:46:32,054 WARN  AggregatorTest$1.execute(82) - com.ikokoon.serenity.model.Project@1097102[name=com.ikokoon.serenity.model.Project,timestamp=
+Thu May 13 12:46:31 CEST 2010,coverage=7.66,complexity=2.96,abstractness=0.06,stability=0.31,distance=0.43,lines=68223.0,methods=14203.0,classes=1744.
+0,packages=53.0,id=8720669836632739014,parent=<null>,children=[]]
+[INFO] 12:46:39,164 WARN  AggregatorTest$1.execute(91) - com.ikokoon.serenity.model.Project@1a0c00[name=com.ikokoon.serenity.model.Project,timestamp=T
+hu May 13 12:46:31 CEST 2010,coverage=7.66,complexity=2.96,abstractness=0.06,stability=0.31,distance=0.43,lines=68223.0,methods=14203.0,classes=1744.0
+,packages=53.0,id=8720669836632739014,parent=<null>,children=[]]
+[INFO] 12:46:39,164 WARN  AggregatorTest.aggregate(96) - Aggregation took : 0.04938271604938271
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 60.156 sec
+[INFO] Running com.ikokoon.serenity.process.AccumulatorTest
+[INFO] 12:47:21,320 WARN  Accumulator.execute(63) - Can't read file : D:\Eclipse\workspace\serenity\target\serenity.jar
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.047 sec
+[INFO] Running com.ikokoon.serenity.instrumentation.coverage.CoverageClassAdapterExtTest
+[INFO] 12:47:25,023 WARN  CoverageClassAdapterExtTest.writeClass(51) - Directory path : com/ikokoon/target, file name : Simple.class
+[INFO] 12:47:25,023 WARN  CoverageClassAdapterExtTest.writeClass(56) - Absolute directory : D:\Eclipse\workspace\serenity\.\serenity\com\ikokoon\targe
+t
+[INFO] 12:47:25,039 WARN  CoverageClassAdapterExtTest.writeClass(51) - Directory path : com/ikokoon/target, file name : Simple.class
+[INFO] 12:47:25,039 WARN  CoverageClassAdapterExtTest.writeClass(56) - Absolute directory : D:\Eclipse\workspace\serenity\.\serenity\com\ikokoon\targe
+t
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.031 sec
+[INFO] Running com.ikokoon.serenity.instrumentation.coverage.CoverageTest
+[INFO] 12:47:25,367 ERROR CoverageTest.visit(51) - Expected exception : Class not covered : , java.lang.RuntimeException: Class not covered :
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.375 sec
+[INFO] Running InjectedTest
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.016 sec
+[INFO] Running com.ikokoon.serenity.process.PrunerTest
+[INFO] 12:47:31,789 WARN  PrunerTest.execute(55) - Prune duration : 0.17250301880282906
+[INFO] 12:47:31,804 WARN  DataBaseToolkit.dump(146) - Pruner test :
+[INFO] 12:47:31,804 WARN  DataBaseToolkit.dump(153) - Project : com.ikokoon.serenity.model.Project
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 17.765 sec
+[INFO] Running com.ikokoon.serenity.instrumentation.VisitorFactoryTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.047 sec
+[INFO] Running com.ikokoon.serenity.persistence.DataBaseManagerTest
+[INFO] 12:47:43,289 WARN  DataBaseOdb.close(196) - Attempted to close the database again : com.ikokoon.serenity.persistence.DataBaseOdb@1ce16e
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.031 sec
+[INFO] Running com.ikokoon.serenity.instrumentation.complexity.ComplexityTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.016 sec
+[INFO] Running com.ikokoon.toolkit.ObjectFactoryTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.031 sec
+[INFO] Running com.ikokoon.serenity.CollectorTest
+[INFO] 12:47:43,367 WARN  DataBaseToolkit.dump(146) - CollectorTest database dump
+[INFO] 12:47:43,367 WARN  DataBaseToolkit.log(198) -     Package : 4066396674983717548 : com.ikokoon.target, coverage : 0.0, complexity : 1.0, stabili
+ty : 0.0
+[INFO] 12:47:43,367 WARN  DataBaseToolkit.log(198) -         Class :  : id : 5009479381399852905 : name : com.ikokoon.target.Target : coverage : 0.0,
+complexity : 1.0, outer class : null, outer method : null, lines : 1, inner classes : []
+[INFO] 12:47:43,367 WARN  DataBaseToolkit.log(198) -             Method : 378290142975990743 : name : complexMethod : coverage : 0.0, complexity : 0.0
+
+[INFO] 12:47:43,367 WARN  DataBaseToolkit.log(198) -                 Line : 7873017250689681547 : number : 70.0, counter : 1.0
+[INFO] 12:47:43,367 WARN  CollectorTest.collectCoverageLineExecutor(69) - Looking for package with id : 4066396674983717548, com.ikokoon.target
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.141 sec
+[INFO] Running com.ikokoon.serenity.persistence.DataBaseRamTest
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.125 sec
+[INFO] Running com.ikokoon.serenity.persistence.DataBaseToolkitTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 17.313 sec
+[INFO] Running com.ikokoon.serenity.hudson.source.CoverageSourceCodeTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.015 sec
+[INFO] Running com.ikokoon.toolkit.ToolkitTest
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.079 sec
+[INFO] Running com.ikokoon.serenity.instrumentation.dependency.DependencyTest
+[INFO] 12:48:06,054 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$PrivateStaticInnerClass, 10
+[INFO] 12:48:06,054 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$DefaultStaticInnerClass, 8
+[INFO] 12:48:06,054 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$ProtectedStaticInnerClass, 12
+[INFO] 12:48:06,054 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$PublicStaticInnerClass, 9
+[INFO] 12:48:06,054 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$PrivateInnerClass, 2
+[INFO] 12:48:06,054 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$ProtectedInnerClass, 4
+[INFO] 12:48:06,054 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$DefaultInnerClass, 0
+[INFO] 12:48:06,054 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$PublicInnerClass, 1
+[INFO] 12:48:06,054 WARN  DependencyTest.access(103) - Method : init, 1
+[INFO] 12:48:06,054 WARN  DependencyTest.access(103) - Method : publicMethod, 1
+[INFO] 12:48:06,054 WARN  DependencyTest.access(103) - Method : defaultMethod, 0
+[INFO] 12:48:06,070 WARN  DependencyTest.access(103) - Method : protectedMethod, 4
+[INFO] 12:48:06,070 WARN  DependencyTest.access(103) - Method : privateMethod, 2
+[INFO] 12:48:06,070 WARN  DependencyTest.access(103) - Method : publicStaticMethod, 9
+[INFO] 12:48:06,070 WARN  DependencyTest.access(103) - Method : defaultStaticMEthod, 8
+[INFO] 12:48:06,070 WARN  DependencyTest.access(103) - Method : protectedStaticMethod, 12
+[INFO] 12:48:06,070 WARN  DependencyTest.access(103) - Method : privateStaticMethod, 10
+[INFO] 12:48:06,070 WARN  DependencyTest.access(103) - Method : synchronizedMethod, 33
+[INFO] 12:48:06,070 WARN  DependencyTest.access(103) - Method : abstractMethod, 1025
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.093 sec
+[INFO] Running com.ikokoon.serenity.persistence.DataBaseJpaTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 sec
+[INFO] Running com.ikokoon.serenity.persistence.DataBaseOdbTest
+[INFO] 12:48:06,195 WARN  DataBaseToolkit.dump(146) - DataBaseOdbTest database dump :
+[INFO] 12:48:06,242 WARN  DataBaseOdb.persist(154) - Attempted to persist a duplicate composite : 4066396674983717548:com.ikokoon.target, com.ikokoon.
+serenity.persistence.DataBaseOdb@3e3871
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.109 sec
+[INFO] Running com.ikokoon.toolkit.TypeTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 sec
+[INFO] Running com.ikokoon.toolkit.PermutationsTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 sec
+[INFO] Running com.ikokoon.serenity.hudson.modeller.ModellerTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.047 sec
+[INFO]
+[INFO] Results :
+[INFO]
+[INFO] Tests run: 58, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
+[INFO] [INFO] [hpi:hpi {execution: default-hpi}]
+[INFO] [INFO] Exploding webapp...
+[INFO] [INFO] Copy webapp webResources to D:\Eclipse\workspace\serenity\target\serenity
+[INFO] [INFO] Assembling webapp serenity in D:\Eclipse\workspace\serenity\target\serenity
+[INFO] [INFO] Generating hpi D:\Eclipse\workspace\serenity\target\serenity.hpi
+[INFO] [INFO] Generating D:\Eclipse\workspace\serenity\target\serenity\META-INF\MANIFEST.MF
+[INFO] [INFO] Building jar: D:\Eclipse\workspace\serenity\target\serenity.hpi
+[INFO] [INFO] Building jar: D:\Eclipse\workspace\serenity\target\serenity.jar
+[INFO] [INFO] [antrun:run {execution: copy.hpi.task}]
+[INFO] [INFO] Executing tasks
+[INFO]      [echo] Unpacking and repacking serenity.jar with the agent manifest and the source
+[INFO] [repack.serenity.with.manifest] Expanding: D:\Eclipse\workspace\serenity\target\serenity.jar into D:\Eclipse\workspace\serenity\target\temp
+[INFO]       [jar] Building jar: D:\Eclipse\workspace\serenity\target\serenity.jar
+[INFO] [INFO] Executed tasks
+[INFO] [INFO] ------------------------------------------------------------------------
+[INFO] [INFO] BUILD SUCCESSFUL
+[INFO] [INFO] ------------------------------------------------------------------------
+[INFO] [INFO] Total time: 2 minutes 31 seconds
+[INFO] [INFO] Finished at: Thu May 13 12:48:12 CEST 2010
+[INFO] [INFO] Final Memory: 73M/508M
+[INFO] [INFO] ------------------------------------------------------------------------
+[INFO] Checking in modified POMs...
+[INFO] Executing: cmd.exe /X /C "svn --username michaelcouck --password ***** --non-interactive commit --file C:\Users\Michael\AppData\Local\Temp\mave
+n-scm-588637394.commit --targets C:\Users\Michael\AppData\Local\Temp\maven-scm-1084309856897218250-targets"
+[INFO] Working directory: D:\Eclipse\workspace\serenity
+[INFO] Tagging release with the label serenity-0.4...
+[INFO] Executing: cmd.exe /X /C "svn --username michaelcouck --password ***** --non-interactive copy --file C:\Users\Michael\AppData\Local\Temp\maven-
+scm-339625953.commit --revision 31009 https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/serenity https://svn.dev.java.net/svn/hudson/tags/seren
+ity-0.4"
+[INFO] Working directory: D:\Eclipse\workspace\serenity
+[INFO] Transforming 'Hudson Serenity plugin'...
+[INFO] Not removing release POMs
+[INFO] Checking in modified POMs...
+[INFO] Executing: cmd.exe /X /C "svn --username michaelcouck --password ***** --non-interactive commit --file C:\Users\Michael\AppData\Local\Temp\mave
+n-scm-385642424.commit --targets C:\Users\Michael\AppData\Local\Temp\maven-scm-1785128031587865303-targets"
+[INFO] Working directory: D:\Eclipse\workspace\serenity
+[INFO] Release preparation complete.
+[INFO] [release:perform {execution: default-cli}]
+[INFO] Checking out the project to perform the release ...
+[INFO] Executing: cmd.exe /X /C "svn --username michaelcouck --password ***** --non-interactive checkout https://svn.dev.java.net/svn/hudson/tags/sere
+nity-0.4 D:\Eclipse\workspace\serenity\target\checkout"
+[INFO] Working directory: D:\Eclipse\workspace\serenity\target
+[INFO] Executing goals 'deploy hpi:upload hpi:announce'...
+[WARNING] Maven will be executed in interactive mode, but no input stream has been configured for this MavenInvoker instance.
+[INFO] [INFO] Scanning for projects...
+[INFO] [INFO] ------------------------------------------------------------------------
+[INFO] [INFO] Building Hudson Serenity plugin
+[INFO] [INFO]    task-segment: [deploy, hpi:upload, hpi:announce]
+[INFO] [INFO] ------------------------------------------------------------------------
+[INFO] [INFO] [enforcer:display-info {execution: default}]
+[INFO] [INFO] Maven Version: 2.2.0
+[INFO] [INFO] JDK Version: 1.6.0_14 normalized as: 1.6.0-14
+[INFO] [INFO] OS Info: Arch: x86 Family: windows Name: windows vista Version: 6.0
+[INFO] [INFO] [localizer:generate {execution: default}]
+[INFO] [INFO] [resources:resources {execution: default-resources}]
+[INFO] [INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] [INFO] Copying 74 resources
+[INFO] [INFO] Copying 16 resources
+[INFO] [INFO] [hpi:apt-compile {execution: default-apt-compile}]
+[INFO] [INFO] Compiling 71 source files to D:\Eclipse\workspace\serenity\target\checkout\target\classes
+[INFO] Note: Generating com\ikokoon\serenity\hudson\SerenityPublisher.stapler
+[INFO] Note: com.ikokoon.serenity.hudson.SerenityPublisher.DESCRIPTOR indexed under hudson.Extension
+[INFO] [INFO] [hpi:insert-test {execution: default-insert-test}]
+[INFO] [INFO] [groovy:generateTestStubs {execution: test-in-groovy}]
+[INFO] [INFO]  No sources found for Java stub generation
+[INFO] [INFO] [resources:testResources {execution: default-testResources}]
+[INFO] [INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] [INFO] Copying 6 resources
+[INFO] [INFO] [compiler:testCompile {execution: default-testCompile}]
+[INFO] [INFO] Compiling 36 source files to D:\Eclipse\workspace\serenity\target\checkout\target\test-classes
+[INFO] [INFO] [hpi:test-hpl {execution: default-test-hpl}]
+[INFO] [INFO] Generating D:\Eclipse\workspace\serenity\target\checkout\target\test-classes\the.hpl
+[INFO] [INFO] [groovy:testCompile {execution: test-in-groovy}]
+[INFO] [INFO]  No sources found to compile
+[INFO] [INFO] [surefire:test {execution: default-test}]
+[INFO] [INFO] Surefire report directory: D:\Eclipse\workspace\serenity\target\checkout\target\surefire-reports
+[INFO]
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.ikokoon.toolkit.MatrixTest
+[INFO] Log file : D:\Eclipse\workspace\serenity\target\checkout\.\serenity\serenity.log
+[INFO] Log4j stream : java.io.BufferedInputStream@14c1103
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.375 sec
+[INFO] Running com.ikokoon.serenity.TransformerTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.453 sec
+[INFO] Running com.ikokoon.serenity.process.AggregatorTest
+[INFO] 12:54:56,210 WARN  AggregatorTest$1.execute(82) - com.ikokoon.serenity.model.Project@da7b76[name=com.ikokoon.serenity.model.Project,timestamp=T
+hu May 13 12:54:55 CEST 2010,coverage=7.66,complexity=2.96,abstractness=0.06,stability=0.31,distance=0.43,lines=68223.0,methods=14203.0,classes=1744.0
+,packages=53.0,id=8720669836632739014,parent=<null>,children=[]]
+[INFO] 12:55:03,289 WARN  AggregatorTest$1.execute(91) - com.ikokoon.serenity.model.Project@9d40d[name=com.ikokoon.serenity.model.Project,timestamp=Th
+u May 13 12:54:55 CEST 2010,coverage=7.66,complexity=2.96,abstractness=0.06,stability=0.31,distance=0.43,lines=68223.0,methods=14203.0,classes=1744.0,
+packages=53.0,id=8720669836632739014,parent=<null>,children=[]]
+[INFO] 12:55:03,289 WARN  AggregatorTest.aggregate(96) - Aggregation took : 0.049304802287742824
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 59.297 sec
+[INFO] Running com.ikokoon.serenity.process.AccumulatorTest
+[INFO] 12:55:44,507 WARN  Accumulator.execute(63) - Can't read file : D:\Eclipse\workspace\serenity\target\checkout\target\serenity.jar
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.593 sec
+[INFO] Running com.ikokoon.serenity.instrumentation.coverage.CoverageClassAdapterExtTest
+[INFO] 12:55:47,757 WARN  CoverageClassAdapterExtTest.writeClass(51) - Directory path : com/ikokoon/target, file name : Simple.class
+[INFO] 12:55:47,773 WARN  CoverageClassAdapterExtTest.writeClass(56) - Absolute directory : D:\Eclipse\workspace\serenity\target\checkout\.\serenity\c
+om\ikokoon\target
+[INFO] 12:55:47,773 WARN  CoverageClassAdapterExtTest.writeClass(51) - Directory path : com/ikokoon/target, file name : Simple.class
+[INFO] 12:55:47,773 WARN  CoverageClassAdapterExtTest.writeClass(56) - Absolute directory : D:\Eclipse\workspace\serenity\target\checkout\.\serenity\c
+om\ikokoon\target
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.032 sec
+[INFO] Running com.ikokoon.serenity.instrumentation.coverage.CoverageTest
+[INFO] 12:55:48,195 ERROR CoverageTest.visit(51) - Expected exception : Class not covered : , java.lang.RuntimeException: Class not covered :
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.468 sec
+[INFO] Running InjectedTest
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.016 sec
+[INFO] Running com.ikokoon.serenity.process.PrunerTest
+[INFO] 12:55:54,898 WARN  PrunerTest.execute(55) - Prune duration : 0.1702127659574468
+[INFO] 12:55:54,898 WARN  DataBaseToolkit.dump(146) - Pruner test :
+[INFO] 12:55:54,898 WARN  DataBaseToolkit.dump(153) - Project : com.ikokoon.serenity.model.Project
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 18.016 sec
+[INFO] Running com.ikokoon.serenity.instrumentation.VisitorFactoryTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.063 sec
+[INFO] Running com.ikokoon.serenity.persistence.DataBaseManagerTest
+[INFO] .\serenity\dummy does not exist, creating it.
+[INFO] 12:56:06,382 WARN  DataBaseOdb.close(196) - Attempted to close the database again : com.ikokoon.serenity.persistence.DataBaseOdb@33254d
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.015 sec
+[INFO] Running com.ikokoon.serenity.instrumentation.complexity.ComplexityTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.016 sec
+[INFO] Running com.ikokoon.toolkit.ObjectFactoryTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.031 sec
+[INFO] Running com.ikokoon.serenity.CollectorTest
+[INFO] 12:56:06,460 WARN  DataBaseToolkit.dump(146) - CollectorTest database dump
+[INFO] 12:56:06,460 WARN  DataBaseToolkit.log(198) -     Package : 4066396674983717548 : com.ikokoon.target, coverage : 0.0, complexity : 1.0, stabili
+ty : 0.0
+[INFO] 12:56:06,476 WARN  DataBaseToolkit.log(198) -         Class :  : id : 5009479381399852905 : name : com.ikokoon.target.Target : coverage : 0.0,
+complexity : 1.0, outer class : null, outer method : null, lines : 1, inner classes : []
+[INFO] 12:56:06,476 WARN  DataBaseToolkit.log(198) -             Method : 378290142975990743 : name : complexMethod : coverage : 0.0, complexity : 0.0
+
+[INFO] 12:56:06,476 WARN  DataBaseToolkit.log(198) -                 Line : 7873017250689681547 : number : 70.0, counter : 1.0
+[INFO] 12:56:06,476 WARN  CollectorTest.collectCoverageLineExecutor(69) - Looking for package with id : 4066396674983717548, com.ikokoon.target
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.14 sec
+[INFO] Running com.ikokoon.serenity.persistence.DataBaseRamTest
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.047 sec
+[INFO] Running com.ikokoon.serenity.persistence.DataBaseToolkitTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 17.563 sec
+[INFO] Running com.ikokoon.serenity.hudson.source.CoverageSourceCodeTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.015 sec
+[INFO] Running com.ikokoon.toolkit.ToolkitTest
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.078 sec
+[INFO] Running com.ikokoon.serenity.instrumentation.dependency.DependencyTest
+[INFO] 12:56:29,320 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$PrivateStaticInnerClass, 10
+[INFO] 12:56:29,320 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$DefaultStaticInnerClass, 8
+[INFO] 12:56:29,320 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$ProtectedStaticInnerClass, 12
+[INFO] 12:56:29,335 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$PublicStaticInnerClass, 9
+[INFO] 12:56:29,335 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$PrivateInnerClass, 2
+[INFO] 12:56:29,335 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$ProtectedInnerClass, 4
+[INFO] 12:56:29,335 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$DefaultInnerClass, 0
+[INFO] 12:56:29,335 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$PublicInnerClass, 1
+[INFO] 12:56:29,335 WARN  DependencyTest.access(103) - Method : init, 1
+[INFO] 12:56:29,335 WARN  DependencyTest.access(103) - Method : publicMethod, 1
+[INFO] 12:56:29,335 WARN  DependencyTest.access(103) - Method : defaultMethod, 0
+[INFO] 12:56:29,335 WARN  DependencyTest.access(103) - Method : protectedMethod, 4
+[INFO] 12:56:29,335 WARN  DependencyTest.access(103) - Method : privateMethod, 2
+[INFO] 12:56:29,335 WARN  DependencyTest.access(103) - Method : publicStaticMethod, 9
+[INFO] 12:56:29,335 WARN  DependencyTest.access(103) - Method : defaultStaticMEthod, 8
+[INFO] 12:56:29,335 WARN  DependencyTest.access(103) - Method : protectedStaticMethod, 12
+[INFO] 12:56:29,335 WARN  DependencyTest.access(103) - Method : privateStaticMethod, 10
+[INFO] 12:56:29,335 WARN  DependencyTest.access(103) - Method : synchronizedMethod, 33
+[INFO] 12:56:29,335 WARN  DependencyTest.access(103) - Method : abstractMethod, 1025
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.11 sec
+[INFO] Running com.ikokoon.serenity.persistence.DataBaseJpaTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 sec
+[INFO] Running com.ikokoon.serenity.persistence.DataBaseOdbTest
+[INFO] 12:56:29,460 WARN  DataBaseToolkit.dump(146) - DataBaseOdbTest database dump :
+[INFO] 12:56:29,523 WARN  DataBaseOdb.persist(154) - Attempted to persist a duplicate composite : 4066396674983717548:com.ikokoon.target, com.ikokoon.
+serenity.persistence.DataBaseOdb@54d36e
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.125 sec
+[INFO] Running com.ikokoon.toolkit.TypeTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.015 sec
+[INFO] Running com.ikokoon.toolkit.PermutationsTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 sec
+[INFO] Running com.ikokoon.serenity.hudson.modeller.ModellerTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.031 sec
+[INFO]
+[INFO] Results :
+[INFO]
+[INFO] Tests run: 58, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
+[INFO] [INFO] [hpi:hpi {execution: default-hpi}]
+[INFO] [INFO] Exploding webapp...
+[INFO] [INFO] Copy webapp webResources to D:\Eclipse\workspace\serenity\target\checkout\target\serenity
+[INFO] [INFO] Assembling webapp serenity in D:\Eclipse\workspace\serenity\target\checkout\target\serenity
+[INFO] [INFO] Generating hpi D:\Eclipse\workspace\serenity\target\checkout\target\serenity.hpi
+[INFO] [INFO] Generating D:\Eclipse\workspace\serenity\target\checkout\target\serenity\META-INF\MANIFEST.MF
+[INFO] [INFO] Building jar: D:\Eclipse\workspace\serenity\target\checkout\target\serenity.hpi
+[INFO] [INFO] Building jar: D:\Eclipse\workspace\serenity\target\checkout\target\serenity.jar
+[INFO] [INFO] Preparing source:jar
+[INFO] [WARNING] Removing: jar from forked lifecycle, to prevent recursive invocation.
+[INFO] [INFO] [enforcer:display-info {execution: default}]
+[INFO] [INFO] Maven Version: 2.2.0
+[INFO] [INFO] JDK Version: 1.6.0_14 normalized as: 1.6.0-14
+[INFO] [INFO] OS Info: Arch: x86 Family: windows Name: windows vista Version: 6.0
+[INFO] [INFO] [localizer:generate {execution: default}]
+[INFO] [INFO] [source:jar {execution: attach-sources}]
+[INFO] [INFO] Building jar: D:\Eclipse\workspace\serenity\target\checkout\target\serenity-sources.jar
+[INFO] [INFO] Preparing javadoc:jar
+[INFO] [WARNING] Removing: jar from forked lifecycle, to prevent recursive invocation.
+[INFO] [WARNING] Removing: jar from forked lifecycle, to prevent recursive invocation.
+[INFO] [INFO] [enforcer:display-info {execution: default}]
+[INFO] [INFO] Maven Version: 2.2.0
+[INFO] [INFO] JDK Version: 1.6.0_14 normalized as: 1.6.0-14
+[INFO] [INFO] OS Info: Arch: x86 Family: windows Name: windows vista Version: 6.0
+[INFO] [INFO] [localizer:generate {execution: default}]
+[INFO] [INFO] [javadoc:jar {execution: attach-javadocs}]
+[INFO] Loading source files for package com.ikokoon.serenity...
+[INFO] Loading source files for package com.ikokoon.serenity.hudson...
+[INFO] Loading source files for package com.ikokoon.serenity.hudson.modeller...
+[INFO] Loading source files for package com.ikokoon.serenity.hudson.source...
+[INFO] Loading source files for package com.ikokoon.serenity.instrumentation.complexity...
+[INFO] Loading source files for package com.ikokoon.serenity.instrumentation.coverage...
+[INFO] Loading source files for package com.ikokoon.serenity.instrumentation.dependency...
+[INFO] Loading source files for package com.ikokoon.serenity.instrumentation.profiling...
+[INFO] Loading source files for package com.ikokoon.serenity.instrumentation...
+[INFO] Loading source files for package com.ikokoon.serenity.model...
+[INFO] Loading source files for package com.ikokoon.serenity.persistence...
+[INFO] Loading source files for package com.ikokoon.serenity.process...
+[INFO] Loading source files for package com.ikokoon.serenity.process.aggregator...
+[INFO] Loading source files for package com.ikokoon.toolkit...
+[INFO] Constructing Javadoc information...
+[INFO] Standard Doclet version 1.6.0_14
+[INFO] Building tree for all the packages and classes...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\Collector.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\Configuration.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\IConstants.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\LoggingConfigurator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\Transformer.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\ISerenityResult.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\SerenityBuildAction.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\SerenityPlugin.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\SerenityProjectAction.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\SerenityPublisher.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\SerenityPublisher.DescriptorImpl.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\SerenityResult.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\HighchartsModeller.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\HighchartsModeller.IConstructor.h
+tml...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\IModeller.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\JetChartModeller.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\CoverageSourceCode.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\ISourceCode.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\JavaSource2HTMLConverterExt.html...
+
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/complexity/\ComplexityClassAdapter
+.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/complexity/\ComplexityMethodAdapte
+r.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\CoverageClassAdapter.htm
+l...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\CoverageClassAdapterExt.
+html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\CoverageMethodAdapter.ht
+ml...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\CoverageMethodAdapterExt
+.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\DependencyAnnotationAd
+apter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\DependencyClassAdapter
+.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\DependencyFieldAdapter
+.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\DependencyMethodAdapte
+r.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\DependencySignatureAda
+pter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/profiling/\ProfilingClassAdapter.h
+tml...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/profiling/\ProfilingMethodAdapter.
+html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/\VisitorFactory.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Afferent.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Class.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Composite.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Efferent.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\IModel.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Line.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Method.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Model.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Package.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Project.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Unique.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\DataBase.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\DataBaseEvent.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\DataBaseJpa.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\DataBaseOdb.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\DataBaseRam.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\DataBaseToolkit.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\DataBaseToolkit.Executer.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\DataBaseToolkit.ICriteria.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\IDataBase.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\IDataBase.DataBaseManager.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\IDataBaseEvent.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\IDataBaseEvent.Type.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\IDataBaseListener.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\Accumulator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\Aggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\AProcess.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\Cleaner.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\IProcess.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\Pruner.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\AAggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\ClassAggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\IAggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\MethodAggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\PackageAggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\ProjectAggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\Base64.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\ClassLoader.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\Executer.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\Executer.IPerform.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\Matrix.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\ObjectFactory.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\Permutations.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\ThreadDeadLockDetector.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\Toolkit.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\Toolkit.IFileFilter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\overview-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/complexity/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/complexity/\package-summary.html..
+.
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/complexity/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\package-summary.html..
+.
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/profiling/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/profiling/\package-summary.html...
+
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/profiling/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\constant-values.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\serialized-form.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\class-use\Transformer.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\class-use\LoggingConfigurator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\class-use\IConstants.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\class-use\Configuration.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\class-use\Collector.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\class-use\SerenityResult.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\class-use\SerenityPublisher.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\class-use\SerenityPublisher.DescriptorImpl
+.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\class-use\SerenityProjectAction.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\class-use\SerenityPlugin.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\class-use\SerenityBuildAction.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\class-use\ISerenityResult.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\class-use\JetChartModeller.html..
+.
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\class-use\IModeller.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\class-use\HighchartsModeller.html
+...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\class-use\HighchartsModeller.ICon
+structor.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\class-use\JavaSource2HTMLConverterE
+xt.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\class-use\ISourceCode.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\class-use\CoverageSourceCode.html..
+.
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/complexity/\class-use\ComplexityMe
+thodAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/complexity/\class-use\ComplexityCl
+assAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\class-use\CoverageMethod
+AdapterExt.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\class-use\CoverageMethod
+Adapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\class-use\CoverageClassA
+dapterExt.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\class-use\CoverageClassA
+dapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\class-use\DependencySi
+gnatureAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\class-use\DependencyMe
+thodAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\class-use\DependencyFi
+eldAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\class-use\DependencyCl
+assAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\class-use\DependencyAn
+notationAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/profiling/\class-use\ProfilingMeth
+odAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/profiling/\class-use\ProfilingClas
+sAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/\class-use\VisitorFactory.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Unique.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Project.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Package.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Model.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Method.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Line.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\IModel.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Efferent.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Composite.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Class.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Afferent.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\IDataBaseListener.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\IDataBaseEvent.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\IDataBaseEvent.Type.html...
+
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\IDataBase.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\IDataBase.DataBaseManager.h
+tml...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\DataBaseToolkit.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\DataBaseToolkit.Executer.ht
+ml...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\DataBaseToolkit.ICriteria.h
+tml...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\DataBaseRam.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\DataBaseOdb.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\DataBaseJpa.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\DataBaseEvent.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\DataBase.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\class-use\Pruner.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\class-use\IProcess.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\class-use\Cleaner.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\class-use\AProcess.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\class-use\Aggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\class-use\Accumulator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\class-use\ProjectAggregator.ht
+ml...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\class-use\PackageAggregator.ht
+ml...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\class-use\MethodAggregator.htm
+l...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\class-use\IAggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\class-use\ClassAggregator.html
+...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\class-use\AAggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\Toolkit.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\Toolkit.IFileFilter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\ThreadDeadLockDetector.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\Permutations.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\ObjectFactory.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\Matrix.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\Executer.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\Executer.IPerform.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\ClassLoader.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\Base64.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/complexity/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/profiling/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\package-use.html...
+[INFO] Building index for all the packages and classes...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\overview-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\index-all.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\deprecated-list.html...
+[INFO] Building index for all classes...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\allclasses-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\allclasses-noframe.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\index.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\overview-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\help-doc.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\stylesheet.css...
+[INFO] 12 warnings
+[INFO] [INFO] Javadoc Warnings
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\persistence\DataBaseOdb.java:50: warning - @param ar
+gument "create" is not a parameter name.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\persistence\IDataBase.java:73: warning - @param argu
+ment "create" is not a parameter name.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:207: warning - @
+return tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:233: warning - @
+return tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:245: warning - @
+return tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:192: warning - @
+return tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:84: warning - @r
+eturn tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:45: warning - @r
+eturn tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:64: warning - @r
+eturn tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:126: warning - @
+return tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:221: warning - @
+return tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\toolkit\Toolkit.java:212: warning - @param argument "the" is
+not a parameter name.
+[INFO] [INFO] Building jar: D:\Eclipse\workspace\serenity\target\checkout\target\serenity-javadoc.jar
+[INFO] [INFO] [antrun:run {execution: copy.hpi.task}]
+[INFO] [INFO] Executing tasks
+[INFO]      [echo] Unpacking and repacking serenity.jar with the agent manifest and the source
+[INFO] [repack.serenity.with.manifest] Expanding: D:\Eclipse\workspace\serenity\target\checkout\target\serenity.jar into D:\Eclipse\workspace\serenity
+\target\checkout\target\temp
+[INFO]       [jar] Building jar: D:\Eclipse\workspace\serenity\target\checkout\target\serenity.jar
+[INFO] [INFO] Executed tasks
+[INFO] [INFO] [install:install {execution: default-install}]
+[INFO] [INFO] Installing D:\Eclipse\workspace\serenity\target\checkout\target\serenity.hpi to C:\Users\Michael\.m2\repository\org\jvnet\hudson\plugins
+\serenity\0.4\serenity-0.4.hpi
+[INFO] [INFO] Installing D:\Eclipse\workspace\serenity\target\checkout\target\serenity.jar to C:\Users\Michael\.m2\repository\org\jvnet\hudson\plugins
+\serenity\0.4\serenity-0.4.jar
+[INFO] [INFO] Installing D:\Eclipse\workspace\serenity\target\checkout\target\serenity-sources.jar to C:\Users\Michael\.m2\repository\org\jvnet\hudson
+\plugins\serenity\0.4\serenity-0.4-sources.jar
+[INFO] [INFO] Installing D:\Eclipse\workspace\serenity\target\checkout\target\serenity-javadoc.jar to C:\Users\Michael\.m2\repository\org\jvnet\hudson
+\plugins\serenity\0.4\serenity-0.4-javadoc.jar
+[INFO] [INFO] [deploy:deploy {execution: default-deploy}]
+[INFO] Uploading: java-net:/maven2-repository/trunk/repository//trunk/repository/org/jvnet/hudson/plugins/serenity/0.4/serenity-0.4.hpi
+[INFO] 4096/?
+[INFO] 8192/?
+[INFO] 12288/?
+[INFO] 16384/?
+[INFO] 20480/?
+[INFO] 24576/?
+[INFO] 28672/?
+[INFO] 32768/?
+[INFO] 36864/?
+[INFO] 40960/?
+[INFO] 45056/?
+[INFO] 49152/?
+[INFO] 53248/?
+[INFO] 57344/?
+[INFO] 61440/?
+[INFO] 65536/?
+[INFO] 69632/?
+[INFO] 73728/?
+[INFO] 77824/?
+[INFO] 81920/?
+[INFO] 86016/?
+[INFO] 90112/?
+[INFO] 94208/?
+[INFO] 98304/?
+[INFO] 102400/?
+[INFO] 106496/?
+[INFO] 110592/?
+[INFO] 114688/?
+[INFO] 118784/?
+[INFO] 122880/?
+[INFO] 126976/?
+[INFO] 131072/?
+[INFO] 135168/?
+[INFO] 139264/?
+[INFO] 143360/?
+[INFO] 147456/?
+[INFO] 151552/?
+[INFO] 155648/?
+[INFO] 159744/?
+[INFO] 163840/?
+[INFO] 167936/?
+[INFO] 172032/?
+[INFO] 176128/?
+[INFO] 180224/?
+[INFO] 184320/?
+[INFO] 188416/?
+[INFO] 192512/?
+[INFO] 196608/?
+[INFO] 200704/?
+[INFO] 204800/?
+[INFO] 208896/?
+[INFO] 212992/?
+[INFO] 217088/?
+[INFO] 221184/?
+[INFO] 225280/?
+[INFO] 229376/?
+[INFO] 233472/?
+[INFO] 237568/?
+[INFO] 241664/?
+[INFO] 245760/?
+[INFO] 249856/?
+[INFO] 253952/?
+[INFO] 258048/?
+[INFO] 262144/?
+[INFO] 266240/?
+[INFO] 270336/?
+[INFO] 274432/?
+[INFO] 278528/?
+[INFO] 282624/?
+[INFO] 286720/?
+[INFO] 290816/?
+[INFO] 294912/?
+[INFO] 299008/?
+[INFO] 303104/?
+[INFO] 307200/?
+[INFO] 311296/?
+[INFO] 315392/?
+[INFO] 319488/?
+[INFO] 323584/?
+[INFO] 327680/?
+[INFO] 331776/?
+[INFO] 335872/?
+[INFO] 339968/?
+[INFO] 344064/?
+[INFO] 348160/?
+[INFO] 352256/?
+[INFO] 356352/?
+[INFO] 360448/?
+[INFO] 364544/?
+[INFO] 368640/?
+[INFO] 372736/?
+[INFO] 376832/?
+[INFO] 380928/?
+[INFO] 385024/?
+[INFO] 389120/?
+[INFO] 393216/?
+[INFO] 397312/?
+[INFO] 401408/?
+[INFO] 405504/?
+[INFO] 409600/?
+[INFO] 413696/?
+[INFO] 417792/?
+[INFO] 421888/?
+[INFO] 425984/?
+[INFO] 430080/?
+[INFO] 434176/?
+[INFO] 438272/?
+[INFO] 442368/?
+[INFO] 446464/?
+[INFO] 450560/?
+[INFO] 454656/?
+[INFO] 458752/?
+[INFO] 462848/?
+[INFO] 466944/?
+[INFO] 471040/?
+[INFO] 475136/?
+[INFO] 479232/?
+[INFO] 483328/?
+[INFO] 487424/?
+[INFO] 491520/?
+[INFO] 495616/?
+[INFO] 499712/?
+[INFO] 503808/?
+[INFO] 507904/?
+[INFO] 512000/?
+[INFO] 516096/?
+[INFO] 520192/?
+[INFO] 524288/?
+[INFO] 528384/?
+[INFO] 532480/?
+[INFO] 536576/?
+[INFO] 540672/?
+[INFO] 544768/?
+[INFO] 548864/?
+[INFO] 552960/?
+[INFO] 557056/?
+[INFO] 561152/?
+[INFO] 565248/?
+[INFO] 569344/?
+[INFO] 573440/?
+[INFO] 577536/?
+[INFO] 581632/?
+[INFO] 585728/?
+[INFO] 589824/?
+[INFO] 593920/?
+[INFO] 598016/?
+[INFO] 602112/?
+[INFO] 606208/?
+[INFO] 610304/?
+[INFO] 614400/?
+[INFO] 618496/?
+[INFO] 622592/?
+[INFO] 626688/?
+[INFO] 630784/?
+[INFO] 634880/?
+[INFO] 638976/?
+[INFO] 643072/?
+[INFO] 647168/?
+[INFO] 651264/?
+[INFO] 655360/?
+[INFO] 659456/?
+[INFO] 663552/?
+[INFO] 667648/?
+[INFO] 671744/?
+[INFO] 675840/?
+[INFO] 679936/?
+[INFO] 684032/?
+[INFO] 688128/?
+[INFO] 692224/?
+[INFO] 696320/?
+[INFO] 700416/?
+[INFO] 704512/?
+[INFO] 708608/?
+[INFO] 712704/?
+[INFO] 716800/?
+[INFO] 720896/?
+[INFO] 724992/?
+[INFO] 729088/?
+[INFO] 733184/?
+[INFO] 737280/?
+[INFO] 741376/?
+[INFO] 745472/?
+[INFO] 749568/?
+[INFO] 753664/?
+[INFO] 757760/?
+[INFO] 761856/?
+[INFO] 765952/?
+[INFO] 770048/?
+[INFO] 774144/?
+[INFO] 778240/?
+[INFO] 782336/?
+[INFO] 786432/?
+[INFO] 790528/?
+[INFO] 794624/?
+[INFO] 798720/?
+[INFO] 802816/?
+[INFO] 806912/?
+[INFO] 811008/?
+[INFO] 815104/?
+[INFO] 819200/?
+[INFO] 823296/?
+[INFO] 827392/?
+[INFO] 831488/?
+[INFO] 835584/?
+[INFO] 839680/?
+[INFO] 843776/?
+[INFO] 847872/?
+[INFO] 851968/?
+[INFO] 856064/?
+[INFO] 860160/?
+[INFO] 864256/?
+[INFO] 868352/?
+[INFO] 872448/?
+[INFO] 876544/?
+[INFO] 880640/?
+[INFO] 884736/?
+[INFO] 888832/?
+[INFO] 892928/?
+[INFO] 897024/?
+[INFO] 901120/?
+[INFO] 905216/?
+[INFO] 909312/?
+[INFO] 913408/?
+[INFO] 917504/?
+[INFO] 921600/?
+[INFO] 925696/?
+[INFO] 929792/?
+[INFO] 933888/?
+[INFO] 937984/?
+[INFO] 942080/?
+[INFO] 946176/?
+[INFO] 950272/?
+[INFO] 954368/?
+[INFO] 958464/?
+[INFO] 962560/?
+[INFO] 966656/?
+[INFO] 970752/?
+[INFO] 974848/?
+[INFO] 978944/?
+[INFO] 983040/?
+[INFO] 987136/?
+[INFO] 991232/?
+[INFO] 995328/?
+[INFO] 999424/?
+[INFO] 1003520/?
+[INFO] 1007616/?
+[INFO] 1011712/?
+[INFO] 1015808/?
+[INFO] 1019904/?
+[INFO] 1024000/?
+[INFO] 1028096/?
+[INFO] 1032192/?
+[INFO] 1036288/?
+[INFO] 1040384/?
+[INFO] 1044480/?
+[INFO] 1048576/?
+[INFO] 1052672/?
+[INFO] 1056768/?
+[INFO] 1060864/?
+[INFO] 1064960/?
+[INFO] 1069056/?
+[INFO] 1073152/?
+[INFO] 1077248/?
+[INFO] 1081344/?
+[INFO] 1085440/?
+[INFO] 1089536/?
+[INFO] 1093632/?
+[INFO] 1097728/?
+[INFO] 1101824/?
+[INFO] 1105920/?
+[INFO] 1110016/?
+[INFO] 1114112/?
+[INFO] 1118208/?
+[INFO] 1122304/?
+[INFO] 1126400/?
+[INFO] 1130496/?
+[INFO] 1134592/?
+[INFO] 1138688/?
+[INFO] 1142784/?
+[INFO] 1146880/?
+[INFO] 1150976/?
+[INFO] 1155072/?
+[INFO] 1159168/?
+[INFO] 1163264/?
+[INFO] 1167360/?
+[INFO] 1171456/?
+[INFO] 1175552/?
+[INFO] 1179648/?
+[INFO] 1183744/?
+[INFO] 1187840/?
+[INFO] 1191936/?
+[INFO] 1196032/?
+[INFO] 1200128/?
+[INFO] 1204224/?
+[INFO] 1208320/?
+[INFO] 1212416/?
+[INFO] 1216512/?
+[INFO] 1220608/?
+[INFO] 1224704/?
+[INFO] 1228800/?
+[INFO] 1232896/?
+[INFO] 1236992/?
+[INFO] 1241088/?
+[INFO] 1245184/?
+[INFO] 1249280/?
+[INFO] 1253376/?
+[INFO] 1257472/?
+[INFO] 1261568/?
+[INFO] 1265664/?
+[INFO] 1269760/?
+[INFO] 1273856/?
+[INFO] 1277952/?
+[INFO] 1282048/?
+[INFO] 1286144/?
+[INFO] 1290240/?
+[INFO] 1294336/?
+[INFO] 1298432/?
+[INFO] 1302528/?
+[INFO] 1306624/?
+[INFO] 1310720/?
+[INFO] 1314816/?
+[INFO] 1318912/?
+[INFO] 1323008/?
+[INFO] 1327104/?
+[INFO] 1331200/?
+[INFO] 1335296/?
+[INFO] 1339392/?
+[INFO] 1343488/?
+[INFO] 1347584/?
+[INFO] 1351680/?
+[INFO] 1355776/?
+[INFO] 1359872/?
+[INFO] 1363968/?
+[INFO] 1368064/?
+[INFO] 1372160/?
+[INFO] 1376256/?
+[INFO] 1380352/?
+[INFO] 1384448/?
+[INFO] 1388544/?
+[INFO] 1392640/?
+[INFO] 1396736/?
+[INFO] 1400832/?
+[INFO] 1404928/?
+[INFO] 1409024/?
+[INFO] 1413120/?
+[INFO] 1417216/?
+[INFO] 1421312/?
+[INFO] 1425408/?
+[INFO] 1429504/?
+[INFO] 1433600/?
+[INFO] 1437696/?
+[INFO] 1441792/?
+[INFO] 1445888/?
+[INFO] 1449984/?
+[INFO] 1454080/?
+[INFO] 1458176/?
+[INFO] 1462272/?
+[INFO] 1466368/?
+[INFO] 1470464/?
+[INFO] 1474560/?
+[INFO] 1478656/?
+[INFO] 1482752/?
+[INFO] 1486848/?
+[INFO] 1490944/?
+[INFO] 1495040/?
+[INFO] 1499136/?
+[INFO] 1503232/?
+[INFO] 1507328/?
+[INFO] 1511424/?
+[INFO] 1515520/?
+[INFO] 1519616/?
+[INFO] 1523712/?
+[INFO] 1527808/?
+[INFO] 1531904/?
+[INFO] 1536000/?
+[INFO] 1540096/?
+[INFO] 1544192/?
+[INFO] 1548288/?
+[INFO] 1552384/?
+[INFO] 1556480/?
+[INFO] 1560576/?
+[INFO] 1561205/?
+[INFO]
+[INFO] [INFO] Retrieving previous metadata from java.net-m2-repository
+[INFO] [INFO] Uploading repository metadata for: 'artifact org.jvnet.hudson.plugins:serenity'
+[INFO] [INFO] Uploading project information for serenity 0.4
+[INFO] Uploading: java-net:/maven2-repository/trunk/repository//trunk/repository/org/jvnet/hudson/plugins/serenity/0.4/serenity-0.4.jar
+[INFO] 4096/?
+[INFO] 8192/?
+[INFO] 12288/?
+[INFO] 16384/?
+[INFO] 20480/?
+[INFO] 24576/?
+[INFO] 28672/?
+[INFO] 32768/?
+[INFO] 36864/?
+[INFO] 40960/?
+[INFO] 45056/?
+[INFO] 49152/?
+[INFO] 53248/?
+[INFO] 57344/?
+[INFO] 61440/?
+[INFO] 65536/?
+[INFO] 69632/?
+[INFO] 73728/?
+[INFO] 77824/?
+[INFO] 81920/?
+[INFO] 86016/?
+[INFO] 90112/?
+[INFO] 94208/?
+[INFO] 98304/?
+[INFO] 102400/?
+[INFO] 106496/?
+[INFO] 110592/?
+[INFO] 114688/?
+[INFO] 118784/?
+[INFO] 122880/?
+[INFO] 126976/?
+[INFO] 131072/?
+[INFO] 135168/?
+[INFO] 139264/?
+[INFO] 143360/?
+[INFO] 147456/?
+[INFO] 151552/?
+[INFO] 155648/?
+[INFO] 159744/?
+[INFO] 163840/?
+[INFO] 167936/?
+[INFO] 172032/?
+[INFO] 176128/?
+[INFO] 180224/?
+[INFO] 184320/?
+[INFO] 188416/?
+[INFO] 192512/?
+[INFO] 196608/?
+[INFO] 200704/?
+[INFO] 204800/?
+[INFO] 208896/?
+[INFO] 212992/?
+[INFO] 217088/?
+[INFO] 221184/?
+[INFO] 225280/?
+[INFO] 229376/?
+[INFO] 233472/?
+[INFO] 237568/?
+[INFO] 241664/?
+[INFO] 245760/?
+[INFO] 249856/?
+[INFO] 253952/?
+[INFO] 258048/?
+[INFO] 262144/?
+[INFO] 266240/?
+[INFO] 270336/?
+[INFO] 274432/?
+[INFO] 278528/?
+[INFO] 282624/?
+[INFO] 286720/?
+[INFO] 290816/?
+[INFO] 294912/?
+[INFO] 299008/?
+[INFO] 303104/?
+[INFO] 307200/?
+[INFO] 311296/?
+[INFO] 315392/?
+[INFO] 319488/?
+[INFO] 323584/?
+[INFO] 327680/?
+[INFO] 331776/?
+[INFO] 335872/?
+[INFO] 339968/?
+[INFO] 344064/?
+[INFO] 348160/?
+[INFO] 352256/?
+[INFO] 356352/?
+[INFO] 360448/?
+[INFO] 364544/?
+[INFO] 368640/?
+[INFO] 372736/?
+[INFO] 376832/?
+[INFO] 380928/?
+[INFO] 385024/?
+[INFO] 389120/?
+[INFO] 393216/?
+[INFO] 397312/?
+[INFO] 401408/?
+[INFO] 405504/?
+[INFO] 409600/?
+[INFO] 413696/?
+[INFO] 417792/?
+[INFO] 421888/?
+[INFO] 425984/?
+[INFO] 430080/?
+[INFO] 431599/?
+[INFO]
+[INFO] Uploading: java-net:/maven2-repository/trunk/repository//trunk/repository/org/jvnet/hudson/plugins/serenity/0.4/serenity-0.4-sources.jar
+[INFO] 4096/?
+[INFO] 8192/?
+[INFO] 12288/?
+[INFO] 16384/?
+[INFO] 20480/?
+[INFO] 24576/?
+[INFO] 28672/?
+[INFO] 32768/?
+[INFO] 36864/?
+[INFO] 40960/?
+[INFO] 45056/?
+[INFO] 49152/?
+[INFO] 53248/?
+[INFO] 57344/?
+[INFO] 61440/?
+[INFO] 65536/?
+[INFO] 69632/?
+[INFO] 73728/?
+[INFO] 77824/?
+[INFO] 81920/?
+[INFO] 86016/?
+[INFO] 90112/?
+[INFO] 94208/?
+[INFO] 98304/?
+[INFO] 102400/?
+[INFO] 106496/?
+[INFO] 110592/?
+[INFO] 114688/?
+[INFO] 118784/?
+[INFO] 122880/?
+[INFO] 126976/?
+[INFO] 131072/?
+[INFO] 135168/?
+[INFO] 139264/?
+[INFO] 143360/?
+[INFO] 147456/?
+[INFO] 151552/?
+[INFO] 155648/?
+[INFO] 159744/?
+[INFO] 163840/?
+[INFO] 167936/?
+[INFO] 172032/?
+[INFO] 176128/?
+[INFO] 177523/?
+[INFO]
+[INFO] Uploading: java-net:/maven2-repository/trunk/repository//trunk/repository/org/jvnet/hudson/plugins/serenity/0.4/serenity-0.4-javadoc.jar
+[INFO] 4096/?
+[INFO] 8192/?
+[INFO] 12288/?
+[INFO] 16384/?
+[INFO] 20480/?
+[INFO] 24576/?
+[INFO] 28672/?
+[INFO] 32768/?
+[INFO] 36864/?
+[INFO] 40960/?
+[INFO] 45056/?
+[INFO] 49152/?
+[INFO] 53248/?
+[INFO] 57344/?
+[INFO] 61440/?
+[INFO] 65536/?
+[INFO] 69632/?
+[INFO] 73728/?
+[INFO] 77824/?
+[INFO] 81920/?
+[INFO] 86016/?
+[INFO] 90112/?
+[INFO] 94208/?
+[INFO] 98304/?
+[INFO] 102400/?
+[INFO] 106496/?
+[INFO] 110592/?
+[INFO] 114688/?
+[INFO] 118784/?
+[INFO] 122880/?
+[INFO] 126976/?
+[INFO] 131072/?
+[INFO] 135168/?
+[INFO] 139264/?
+[INFO] 143360/?
+[INFO] 147456/?
+[INFO] 151552/?
+[INFO] 155648/?
+[INFO] 159744/?
+[INFO] 163840/?
+[INFO] 167936/?
+[INFO] 172032/?
+[INFO] 176128/?
+[INFO] 180224/?
+[INFO] 184320/?
+[INFO] 188416/?
+[INFO] 192512/?
+[INFO] 196608/?
+[INFO] 200704/?
+[INFO] 204800/?
+[INFO] 208896/?
+[INFO] 212992/?
+[INFO] 217088/?
+[INFO] 221184/?
+[INFO] 225280/?
+[INFO] 229376/?
+[INFO] 233472/?
+[INFO] 237568/?
+[INFO] 241664/?
+[INFO] 245760/?
+[INFO] 249856/?
+[INFO] 253952/?
+[INFO] 258048/?
+[INFO] 262144/?
+[INFO] 266240/?
+[INFO] 270336/?
+[INFO] 274432/?
+[INFO] 278528/?
+[INFO] 282624/?
+[INFO] 286720/?
+[INFO] 290816/?
+[INFO] 294912/?
+[INFO] 299008/?
+[INFO] 303104/?
+[INFO] 307200/?
+[INFO] 311296/?
+[INFO] 315392/?
+[INFO] 319488/?
+[INFO] 323584/?
+[INFO] 327680/?
+[INFO] 331776/?
+[INFO] 335872/?
+[INFO] 339968/?
+[INFO] 344064/?
+[INFO] 348160/?
+[INFO] 352256/?
+[INFO] 356352/?
+[INFO] 360448/?
+[INFO] 364544/?
+[INFO] 368640/?
+[INFO] 372736/?
+[INFO] 376832/?
+[INFO] 380928/?
+[INFO] 385024/?
+[INFO] 389120/?
+[INFO] 393216/?
+[INFO] 397312/?
+[INFO] 401408/?
+[INFO] 405504/?
+[INFO] 409600/?
+[INFO] 413696/?
+[INFO] 417792/?
+[INFO] 421888/?
+[INFO] 425984/?
+[INFO] 430080/?
+[INFO] 434176/?
+[INFO] 438272/?
+[INFO] 442368/?
+[INFO] 446464/?
+[INFO] 450560/?
+[INFO] 454656/?
+[INFO] 458752/?
+[INFO] 462848/?
+[INFO] 466944/?
+[INFO] 471040/?
+[INFO] 475136/?
+[INFO] 479232/?
+[INFO] 483328/?
+[INFO] 487424/?
+[INFO] 491520/?
+[INFO] 495616/?
+[INFO] 499712/?
+[INFO] 503808/?
+[INFO] 507904/?
+[INFO] 509568/?
+[INFO]
+[INFO] [INFO] Preparing hpi:upload
+[INFO] [INFO] [enforcer:display-info {execution: default}]
+[INFO] [INFO] Maven Version: 2.2.0
+[INFO] [INFO] JDK Version: 1.6.0_14 normalized as: 1.6.0-14
+[INFO] [INFO] OS Info: Arch: x86 Family: windows Name: windows vista Version: 6.0
+[INFO] [INFO] [localizer:generate {execution: default}]
+[INFO] [INFO] [resources:resources {execution: default-resources}]
+[INFO] [INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] [INFO] Copying 74 resources
+[INFO] [INFO] Copying 16 resources
+[INFO] [INFO] [hpi:apt-compile {execution: default-apt-compile}]
+[INFO] [INFO] Nothing to compile - all classes are up to date
+[INFO] [INFO] [hpi:insert-test {execution: default-insert-test}]
+[INFO] [INFO] [groovy:generateTestStubs {execution: test-in-groovy}]
+[INFO] [INFO]  No sources found for Java stub generation
+[INFO] [INFO] [resources:testResources {execution: default-testResources}]
+[INFO] [INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] [INFO] Copying 6 resources
+[INFO] [INFO] [compiler:testCompile {execution: default-testCompile}]
+[INFO] [INFO] Nothing to compile - all classes are up to date
+[INFO] [INFO] [hpi:test-hpl {execution: default-test-hpl}]
+[INFO] [INFO] Generating D:\Eclipse\workspace\serenity\target\checkout\target\test-classes\the.hpl
+[INFO] [INFO] [groovy:testCompile {execution: test-in-groovy}]
+[INFO] [INFO]  No sources found to compile
+[INFO] [INFO] [surefire:test {execution: default-test}]
+[INFO] [INFO] Surefire report directory: D:\Eclipse\workspace\serenity\target\checkout\target\surefire-reports
+[INFO]
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.ikokoon.toolkit.MatrixTest
+[INFO] Log file : D:\Eclipse\workspace\serenity\target\checkout\.\serenity\serenity.log
+[INFO] Log4j stream : java.io.BufferedInputStream@14c1103
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.39 sec
+[INFO] Running com.ikokoon.serenity.TransformerTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.531 sec
+[INFO] Running com.ikokoon.serenity.process.AggregatorTest
+[INFO] 13:00:02,277 WARN  AggregatorTest$1.execute(82) - com.ikokoon.serenity.model.Project@10e804d[name=com.ikokoon.serenity.model.Project,timestamp=
+Thu May 13 13:00:01 CEST 2010,coverage=7.66,complexity=2.96,abstractness=0.06,stability=0.31,distance=0.43,lines=68223.0,methods=14203.0,classes=1744.
+0,packages=53.0,id=8720669836632739014,parent=<null>,children=[]]
+[INFO] 13:00:09,542 WARN  AggregatorTest$1.execute(91) - com.ikokoon.serenity.model.Project@bc72e0[name=com.ikokoon.serenity.model.Project,timestamp=T
+hu May 13 13:00:01 CEST 2010,coverage=7.66,complexity=2.96,abstractness=0.06,stability=0.31,distance=0.43,lines=68223.0,methods=14203.0,classes=1744.0
+,packages=53.0,id=8720669836632739014,parent=<null>,children=[]]
+[INFO] 13:00:09,542 WARN  AggregatorTest.aggregate(96) - Aggregation took : 0.048376953219486235
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 62.078 sec
+[INFO] Running com.ikokoon.serenity.process.AccumulatorTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.735 sec
+[INFO] Running com.ikokoon.serenity.instrumentation.coverage.CoverageClassAdapterExtTest
+[INFO] 13:00:56,589 WARN  CoverageClassAdapterExtTest.writeClass(51) - Directory path : com/ikokoon/target, file name : Simple.class
+[INFO] 13:00:56,589 WARN  CoverageClassAdapterExtTest.writeClass(56) - Absolute directory : D:\Eclipse\workspace\serenity\target\checkout\.\serenity\c
+om\ikokoon\target
+[INFO] 13:00:56,589 WARN  CoverageClassAdapterExtTest.writeClass(51) - Directory path : com/ikokoon/target, file name : Simple.class
+[INFO] 13:00:56,589 WARN  CoverageClassAdapterExtTest.writeClass(56) - Absolute directory : D:\Eclipse\workspace\serenity\target\checkout\.\serenity\c
+om\ikokoon\target
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.031 sec
+[INFO] Running com.ikokoon.serenity.instrumentation.coverage.CoverageTest
+[INFO] 13:00:56,917 ERROR CoverageTest.visit(51) - Expected exception : Class not covered : , java.lang.RuntimeException: Class not covered :
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.375 sec
+[INFO] Running InjectedTest
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 sec
+[INFO] Running com.ikokoon.serenity.process.PrunerTest
+[INFO] 13:01:04,058 WARN  PrunerTest.execute(55) - Prune duration : 0.16711229946524064
+[INFO] 13:01:04,058 WARN  DataBaseToolkit.dump(146) - Pruner test :
+[INFO] 13:01:04,074 WARN  DataBaseToolkit.dump(153) - Project : com.ikokoon.serenity.model.Project
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 18.641 sec
+[INFO] Running com.ikokoon.serenity.instrumentation.VisitorFactoryTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.062 sec
+[INFO] Running com.ikokoon.serenity.persistence.DataBaseManagerTest
+[INFO] 13:01:15,699 WARN  DataBaseOdb.close(196) - Attempted to close the database again : com.ikokoon.serenity.persistence.DataBaseOdb@4b9ea5
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.016 sec
+[INFO] Running com.ikokoon.serenity.instrumentation.complexity.ComplexityTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.031 sec
+[INFO] Running com.ikokoon.toolkit.ObjectFactoryTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.016 sec
+[INFO] Running com.ikokoon.serenity.CollectorTest
+[INFO] 13:01:15,761 WARN  DataBaseToolkit.dump(146) - CollectorTest database dump
+[INFO] 13:01:15,761 WARN  DataBaseToolkit.log(198) -     Package : 4066396674983717548 : com.ikokoon.target, coverage : 0.0, complexity : 1.0, stabili
+ty : 0.0
+[INFO] 13:01:15,761 WARN  DataBaseToolkit.log(198) -         Class :  : id : 5009479381399852905 : name : com.ikokoon.target.Target : coverage : 0.0,
+complexity : 1.0, outer class : null, outer method : null, lines : 1, inner classes : []
+[INFO] 13:01:15,761 WARN  DataBaseToolkit.log(198) -             Method : 378290142975990743 : name : complexMethod : coverage : 0.0, complexity : 0.0
+
+[INFO] 13:01:15,761 WARN  DataBaseToolkit.log(198) -                 Line : 7873017250689681547 : number : 70.0, counter : 1.0
+[INFO] 13:01:15,761 WARN  CollectorTest.collectCoverageLineExecutor(69) - Looking for package with id : 4066396674983717548, com.ikokoon.target
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.125 sec
+[INFO] Running com.ikokoon.serenity.persistence.DataBaseRamTest
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.078 sec
+[INFO] Running com.ikokoon.serenity.persistence.DataBaseToolkitTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 17.235 sec
+[INFO] Running com.ikokoon.serenity.hudson.source.CoverageSourceCodeTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.015 sec
+[INFO] Running com.ikokoon.toolkit.ToolkitTest
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.078 sec
+[INFO] Running com.ikokoon.serenity.instrumentation.dependency.DependencyTest
+[INFO] 13:01:38,308 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$PrivateStaticInnerClass, 10
+[INFO] 13:01:38,308 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$DefaultStaticInnerClass, 8
+[INFO] 13:01:38,308 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$ProtectedStaticInnerClass, 12
+[INFO] 13:01:38,308 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$PublicStaticInnerClass, 9
+[INFO] 13:01:38,308 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$PrivateInnerClass, 2
+[INFO] 13:01:38,308 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$ProtectedInnerClass, 4
+[INFO] 13:01:38,308 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$DefaultInnerClass, 0
+[INFO] 13:01:38,308 WARN  DependencyTest.access(98) - Inner class : com.ikokoon.target.TargetAccess$PublicInnerClass, 1
+[INFO] 13:01:38,308 WARN  DependencyTest.access(103) - Method : init, 1
+[INFO] 13:01:38,308 WARN  DependencyTest.access(103) - Method : publicMethod, 1
+[INFO] 13:01:38,308 WARN  DependencyTest.access(103) - Method : defaultMethod, 0
+[INFO] 13:01:38,308 WARN  DependencyTest.access(103) - Method : protectedMethod, 4
+[INFO] 13:01:38,308 WARN  DependencyTest.access(103) - Method : privateMethod, 2
+[INFO] 13:01:38,308 WARN  DependencyTest.access(103) - Method : publicStaticMethod, 9
+[INFO] 13:01:38,308 WARN  DependencyTest.access(103) - Method : defaultStaticMEthod, 8
+[INFO] 13:01:38,308 WARN  DependencyTest.access(103) - Method : protectedStaticMethod, 12
+[INFO] 13:01:38,308 WARN  DependencyTest.access(103) - Method : privateStaticMethod, 10
+[INFO] 13:01:38,308 WARN  DependencyTest.access(103) - Method : synchronizedMethod, 33
+[INFO] 13:01:38,308 WARN  DependencyTest.access(103) - Method : abstractMethod, 1025
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.094 sec
+[INFO] Running com.ikokoon.serenity.persistence.DataBaseJpaTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 sec
+[INFO] Running com.ikokoon.serenity.persistence.DataBaseOdbTest
+[INFO] 13:01:38,449 WARN  DataBaseToolkit.dump(146) - DataBaseOdbTest database dump :
+[INFO] 13:01:38,496 WARN  DataBaseOdb.persist(154) - Attempted to persist a duplicate composite : 4066396674983717548:com.ikokoon.target, com.ikokoon.
+serenity.persistence.DataBaseOdb@a09046
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.11 sec
+[INFO] Running com.ikokoon.toolkit.TypeTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.015 sec
+[INFO] Running com.ikokoon.toolkit.PermutationsTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.016 sec
+[INFO] Running com.ikokoon.serenity.hudson.modeller.ModellerTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.031 sec
+[INFO]
+[INFO] Results :
+[INFO]
+[INFO] Tests run: 58, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
+[INFO] [INFO] [hpi:hpi {execution: default-hpi}]
+[INFO] [INFO] Exploding webapp...
+[INFO] [INFO] Copy webapp webResources to D:\Eclipse\workspace\serenity\target\checkout\target\serenity
+[INFO] [INFO] Assembling webapp serenity in D:\Eclipse\workspace\serenity\target\checkout\target\serenity
+[INFO] [INFO] Generating hpi D:\Eclipse\workspace\serenity\target\checkout\target\serenity.hpi
+[INFO] [INFO] Generating D:\Eclipse\workspace\serenity\target\checkout\target\serenity\META-INF\MANIFEST.MF
+[INFO] [INFO] Building jar: D:\Eclipse\workspace\serenity\target\checkout\target\serenity.hpi
+[INFO] [INFO] Building jar: D:\Eclipse\workspace\serenity\target\checkout\target\serenity.jar
+[INFO] [INFO] Preparing source:jar
+[INFO] [WARNING] Removing: jar from forked lifecycle, to prevent recursive invocation.
+[INFO] [INFO] [enforcer:display-info {execution: default}]
+[INFO] [INFO] Maven Version: 2.2.0
+[INFO] [INFO] JDK Version: 1.6.0_14 normalized as: 1.6.0-14
+[INFO] [INFO] OS Info: Arch: x86 Family: windows Name: windows vista Version: 6.0
+[INFO] [INFO] [localizer:generate {execution: default}]
+[INFO] [INFO] [source:jar {execution: attach-sources}]
+[INFO] [INFO] Building jar: D:\Eclipse\workspace\serenity\target\checkout\target\serenity-sources.jar
+[INFO] [INFO] Preparing javadoc:jar
+[INFO] [WARNING] Removing: jar from forked lifecycle, to prevent recursive invocation.
+[INFO] [WARNING] Removing: jar from forked lifecycle, to prevent recursive invocation.
+[INFO] [INFO] [enforcer:display-info {execution: default}]
+[INFO] [INFO] Maven Version: 2.2.0
+[INFO] [INFO] JDK Version: 1.6.0_14 normalized as: 1.6.0-14
+[INFO] [INFO] OS Info: Arch: x86 Family: windows Name: windows vista Version: 6.0
+[INFO] [INFO] [localizer:generate {execution: default}]
+[INFO] [INFO] [javadoc:jar {execution: attach-javadocs}]
+[INFO] Loading source files for package com.ikokoon.serenity...
+[INFO] Loading source files for package com.ikokoon.serenity.hudson...
+[INFO] Loading source files for package com.ikokoon.serenity.hudson.modeller...
+[INFO] Loading source files for package com.ikokoon.serenity.hudson.source...
+[INFO] Loading source files for package com.ikokoon.serenity.instrumentation.complexity...
+[INFO] Loading source files for package com.ikokoon.serenity.instrumentation.coverage...
+[INFO] Loading source files for package com.ikokoon.serenity.instrumentation.dependency...
+[INFO] Loading source files for package com.ikokoon.serenity.instrumentation.profiling...
+[INFO] Loading source files for package com.ikokoon.serenity.instrumentation...
+[INFO] Loading source files for package com.ikokoon.serenity.model...
+[INFO] Loading source files for package com.ikokoon.serenity.persistence...
+[INFO] Loading source files for package com.ikokoon.serenity.process...
+[INFO] Loading source files for package com.ikokoon.serenity.process.aggregator...
+[INFO] Loading source files for package com.ikokoon.toolkit...
+[INFO] Constructing Javadoc information...
+[INFO] Standard Doclet version 1.6.0_14
+[INFO] Building tree for all the packages and classes...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\Collector.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\Configuration.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\IConstants.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\LoggingConfigurator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\Transformer.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\ISerenityResult.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\SerenityBuildAction.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\SerenityPlugin.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\SerenityProjectAction.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\SerenityPublisher.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\SerenityPublisher.DescriptorImpl.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\SerenityResult.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\HighchartsModeller.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\HighchartsModeller.IConstructor.h
+tml...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\IModeller.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\JetChartModeller.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\CoverageSourceCode.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\ISourceCode.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\JavaSource2HTMLConverterExt.html...
+
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/complexity/\ComplexityClassAdapter
+.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/complexity/\ComplexityMethodAdapte
+r.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\CoverageClassAdapter.htm
+l...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\CoverageClassAdapterExt.
+html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\CoverageMethodAdapter.ht
+ml...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\CoverageMethodAdapterExt
+.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\DependencyAnnotationAd
+apter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\DependencyClassAdapter
+.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\DependencyFieldAdapter
+.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\DependencyMethodAdapte
+r.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\DependencySignatureAda
+pter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/profiling/\ProfilingClassAdapter.h
+tml...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/profiling/\ProfilingMethodAdapter.
+html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/\VisitorFactory.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Afferent.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Class.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Composite.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Efferent.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\IModel.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Line.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Method.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Model.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Package.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Project.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\Unique.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\DataBase.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\DataBaseEvent.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\DataBaseJpa.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\DataBaseOdb.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\DataBaseRam.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\DataBaseToolkit.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\DataBaseToolkit.Executer.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\DataBaseToolkit.ICriteria.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\IDataBase.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\IDataBase.DataBaseManager.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\IDataBaseEvent.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\IDataBaseEvent.Type.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\IDataBaseListener.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\Accumulator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\Aggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\AProcess.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\Cleaner.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\IProcess.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\Pruner.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\AAggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\ClassAggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\IAggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\MethodAggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\PackageAggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\ProjectAggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\Base64.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\ClassLoader.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\Executer.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\Executer.IPerform.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\Matrix.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\ObjectFactory.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\Permutations.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\ThreadDeadLockDetector.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\Toolkit.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\Toolkit.IFileFilter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\overview-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/complexity/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/complexity/\package-summary.html..
+.
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/complexity/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\package-summary.html..
+.
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/profiling/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/profiling/\package-summary.html...
+
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/profiling/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\package-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\package-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\package-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\constant-values.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\serialized-form.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\class-use\Transformer.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\class-use\LoggingConfigurator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\class-use\IConstants.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\class-use\Configuration.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\class-use\Collector.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\class-use\SerenityResult.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\class-use\SerenityPublisher.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\class-use\SerenityPublisher.DescriptorImpl
+.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\class-use\SerenityProjectAction.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\class-use\SerenityPlugin.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\class-use\SerenityBuildAction.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\class-use\ISerenityResult.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\class-use\JetChartModeller.html..
+.
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\class-use\IModeller.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\class-use\HighchartsModeller.html
+...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\class-use\HighchartsModeller.ICon
+structor.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\class-use\JavaSource2HTMLConverterE
+xt.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\class-use\ISourceCode.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\class-use\CoverageSourceCode.html..
+.
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/complexity/\class-use\ComplexityMe
+thodAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/complexity/\class-use\ComplexityCl
+assAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\class-use\CoverageMethod
+AdapterExt.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\class-use\CoverageMethod
+Adapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\class-use\CoverageClassA
+dapterExt.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\class-use\CoverageClassA
+dapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\class-use\DependencySi
+gnatureAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\class-use\DependencyMe
+thodAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\class-use\DependencyFi
+eldAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\class-use\DependencyCl
+assAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\class-use\DependencyAn
+notationAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/profiling/\class-use\ProfilingMeth
+odAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/profiling/\class-use\ProfilingClas
+sAdapter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/\class-use\VisitorFactory.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Unique.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Project.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Package.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Model.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Method.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Line.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\IModel.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Efferent.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Composite.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Class.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\class-use\Afferent.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\IDataBaseListener.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\IDataBaseEvent.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\IDataBaseEvent.Type.html...
+
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\IDataBase.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\IDataBase.DataBaseManager.h
+tml...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\DataBaseToolkit.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\DataBaseToolkit.Executer.ht
+ml...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\DataBaseToolkit.ICriteria.h
+tml...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\DataBaseRam.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\DataBaseOdb.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\DataBaseJpa.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\DataBaseEvent.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\class-use\DataBase.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\class-use\Pruner.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\class-use\IProcess.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\class-use\Cleaner.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\class-use\AProcess.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\class-use\Aggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\class-use\Accumulator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\class-use\ProjectAggregator.ht
+ml...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\class-use\PackageAggregator.ht
+ml...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\class-use\MethodAggregator.htm
+l...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\class-use\IAggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\class-use\ClassAggregator.html
+...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\class-use\AAggregator.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\Toolkit.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\Toolkit.IFileFilter.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\ThreadDeadLockDetector.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\Permutations.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\ObjectFactory.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\Matrix.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\Executer.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\Executer.IPerform.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\ClassLoader.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\class-use\Base64.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/modeller/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/hudson/source/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/complexity/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/coverage/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/dependency/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/instrumentation/profiling/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/model/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/persistence/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/serenity/process/aggregator/\package-use.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\com/ikokoon/toolkit/\package-use.html...
+[INFO] Building index for all the packages and classes...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\overview-tree.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\index-all.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\deprecated-list.html...
+[INFO] Building index for all classes...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\allclasses-frame.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\allclasses-noframe.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\index.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\overview-summary.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\help-doc.html...
+[INFO] Generating D:/Eclipse/workspace/serenity/target/checkout/target/apidocs\stylesheet.css...
+[INFO] 12 warnings
+[INFO] [INFO] Javadoc Warnings
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\persistence\DataBaseOdb.java:50: warning - @param ar
+gument "create" is not a parameter name.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\persistence\IDataBase.java:73: warning - @param argu
+ment "create" is not a parameter name.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:207: warning - @
+return tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:233: warning - @
+return tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:245: warning - @
+return tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:192: warning - @
+return tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:84: warning - @r
+eturn tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:45: warning - @r
+eturn tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:64: warning - @r
+eturn tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:126: warning - @
+return tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\serenity\process\aggregator\AAggregator.java:221: warning - @
+return tag has no arguments.
+[INFO] [WARNING] D:\Eclipse\workspace\serenity\target\checkout\src\main\java\com\ikokoon\toolkit\Toolkit.java:212: warning - @param argument "the" is
+not a parameter name.
+[INFO] [INFO] Building jar: D:\Eclipse\workspace\serenity\target\checkout\target\serenity-javadoc.jar
+[INFO] [INFO] [antrun:run {execution: copy.hpi.task}]
+[INFO] [INFO] Executing tasks
+[INFO]      [echo] Unpacking and repacking serenity.jar with the agent manifest and the source
+[INFO] [repack.serenity.with.manifest] Expanding: D:\Eclipse\workspace\serenity\target\checkout\target\serenity.jar into D:\Eclipse\workspace\serenity
+\target\checkout\target\temp
+[INFO]       [jar] Building jar: D:\Eclipse\workspace\serenity\target\checkout\target\serenity.jar
+[INFO] [INFO] Executed tasks
+[INFO] [INFO] [hpi:upload {execution: default-cli}]
+[INFO] [INFO] [hpi:announce {execution: default-cli}]
+[INFO] [INFO] ------------------------------------------------------------------------
+[INFO] [INFO] BUILD SUCCESSFUL
+[INFO] [INFO] ------------------------------------------------------------------------
+[INFO] [INFO] Total time: 8 minutes 51 seconds
+[INFO] [INFO] Finished at: Thu May 13 13:02:55 CEST 2010
+[INFO] [INFO] Final Memory: 68M/508M
+[INFO] [INFO] ------------------------------------------------------------------------
+[INFO] Cleaning up after release...
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 17 minutes 46 seconds
+[INFO] Finished at: Thu May 13 13:02:55 CEST 2010
+[INFO] Final Memory: 24M/508M
+[INFO] ------------------------------------------------------------------------
+D:\Eclipse\workspace\serenity>
