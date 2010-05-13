@@ -1,5 +1,7 @@
 package com.ikokoon.serenity;
 
+import java.io.File;
+
 /**
  * This is a constants class for database names and system property names.
  *
@@ -9,16 +11,24 @@ package com.ikokoon.serenity;
  */
 public interface IConstants {
 
-	/** The file separator. */
-	public String SEPARATOR = "/";
+	public String SERENITY = "serenity";
+	public String SOURCE = "source";
 	/** The Serenity directory for work and output data, i.e. the database. './serenity'. */
-	public String SERENITY_DIRECTORY = "." + SEPARATOR + "serenity";
+	public String SERENITY_DIRECTORY = "." + File.separatorChar + SERENITY;
 	/** The Serenity directory for the source to HTML. */
-	public String SERENITY_SOURCE = SERENITY_DIRECTORY + SEPARATOR + "source";
+	public String SERENITY_SOURCE = SERENITY_DIRECTORY + File.separatorChar + SOURCE;
+
+	/** Value : 'serenity/source/' or 'serenity\source\' */
+	public String SERENITY_SOURCE_DIRECTORY = SERENITY + File.separatorChar + SOURCE + File.separatorChar;
+
+	public String SERENITY_ODB = "serenity.odb";
+	public String SERENITY_RAM = "serenity.ram";
+	public String SERENITY_JPA = "serenity.jpa";
+
 	/** The database file, 'serenity.ram', 'serenity.odb', 'serenity.jpa'. */
-	public String DATABASE_FILE_RAM = SERENITY_DIRECTORY + SEPARATOR + "serenity.ram";
-	public String DATABASE_FILE_ODB = SERENITY_DIRECTORY + SEPARATOR + "serenity.odb";
-	public String DATABASE_FILE_JPA = SERENITY_DIRECTORY + SEPARATOR + "serenity.jpa";
+	public String DATABASE_FILE_RAM = SERENITY_DIRECTORY + File.separatorChar + SERENITY_RAM;
+	public String DATABASE_FILE_ODB = SERENITY_DIRECTORY + File.separatorChar + SERENITY_ODB;
+	public String DATABASE_FILE_JPA = SERENITY_DIRECTORY + File.separatorChar + SERENITY_JPA;
 	/** The JPA persistence unit name, 'SerenityPersistenceUnit'. */
 	public String SERENITY_PERSISTENCE_UNIT = "SerenityPersistenceUnit";
 	/** The logging configuration file, '/META-INF/log4j.properties'. */
