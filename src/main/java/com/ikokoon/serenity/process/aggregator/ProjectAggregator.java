@@ -30,8 +30,7 @@ public class ProjectAggregator extends AAggregator {
 		// First do the packages
 		List<Package> packages = dataBase.find(Package.class);
 		for (Package pakkage : packages) {
-			IAggregator aggregator = new PackageAggregator(dataBase, pakkage);
-			aggregator.aggregate();
+			new PackageAggregator(dataBase, pakkage).aggregate();
 		}
 		Project<?, ?> project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
 		if (project == null) {

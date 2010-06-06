@@ -46,6 +46,40 @@ public class Collector implements IConstants {
 		Collector.dataBase = dataBase;
 	}
 
+	public static final void collectAllocation(String className, String methodName, String methodDescription) {
+		Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
+		double allocations = klass.getAllocations();
+		allocations++;
+		klass.setAllocations(allocations);
+	}
+
+	public static final void collectStart(String className, String methodName, String methodDescription) {
+		Method<?, ?> method = getMethod(className, methodName, methodDescription);
+		method.setStartTime(System.nanoTime());
+	}
+
+	public static final void collectEnd(String className, String methodName, String methodDescription) {
+		Method<?, ?> method = getMethod(className, methodName, methodDescription);
+		method.setEndTime(System.nanoTime());
+		long executionTime = method.getEndTime() - method.getStartTime();
+		long totalTime = method.getTotalTime() + executionTime;
+		method.setTotalTime(totalTime);
+		long netTime = totalTime - method.getWaitTime();
+		method.setNetTime(netTime);
+	}
+
+	public static final void collectStartWait(String className, String methodName, String methodDescription) {
+		Method<?, ?> method = getMethod(className, methodName, methodDescription);
+		method.setStartWait(System.nanoTime());
+	}
+
+	public static final void collectEndWait(String className, String methodName, String methodDescription) {
+		Method<?, ?> method = getMethod(className, methodName, methodDescription);
+		method.setEndWait(System.nanoTime());
+		long waitTime = (method.getEndWait() - method.getStartWait()) + method.getWaitTime();
+		method.setWaitTime(waitTime);
+	}
+
 	/**
 	 * This method accumulates the number of times a thread goes through each line in a method.
 	 *

@@ -1,5 +1,7 @@
 package com.ikokoon.serenity.persistence;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -14,6 +16,7 @@ import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.model.Project;
+import com.ikokoon.serenity.model.Snapshot;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -174,7 +177,8 @@ public class DataBaseToolkit {
 					}
 					for (Method<?, ?> method : ((List<Method<?, ?>>) klass.getChildren())) {
 						log(criteria, method, 3, method.getId() + " : name : " + method.getName() + " : coverage : " + method.getCoverage()
-								+ ", complexity : " + method.getComplexity());
+								+ ", complexity : " + method.getComplexity() + ", start time : " + method.getStartTime() + ", end time : "
+								+ method.getEndTime());
 						for (Line<?, ?> line : ((List<Line<?, ?>>) method.getChildren())) {
 							log(criteria, line, 4, line.getId() + " : number : " + line.getNumber() + ", counter : " + line.getCounter());
 						}
@@ -207,19 +211,44 @@ public class DataBaseToolkit {
 
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
+		// D:/Eclipse/workspace/search/modules/Jar/serenity
+		// D:/Eclipse/workspace/Discovery/modules/Jar/serenity
 		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class,
-				"D:/Eclipse/workspace/serenity/work/jobs/Isearch/workspace/isearch/modules/Jar/serenity/serenity.odb", null);
-		DataBaseToolkit.dump(dataBase, new ICriteria() {
-			public boolean satisfied(Composite<?, ?> composite) {
-				if (Class.class.isAssignableFrom(composite.getClass())) {
-					if (((Class) composite).getName().equals("com.ikokoon.search.action.index.crawler.IEvent")) {
-						logger.warn("Composite : " + composite);
-					}
+				"D:/Eclipse/workspace/search/modules/Jar/serenity/serenity.odb", null);
+		List<Method> methods = dataBase.find(Method.class);
+		Collections.sort(methods, new Comparator<Method>() {
+			public int compare(Method o1, Method o2) {
+				List<Snapshot> o1Snapshots = o1.getSnapshots();
+				List<Snapshot> o2Snapshots = o2.getSnapshots();
+				if (o1Snapshots.size() == 0 || o2Snapshots.size() == 0) {
+					return 0;
 				}
-				return false;
+				Long o1Total = new Long(o1Snapshots.get(o1Snapshots.size() - 1).getTotal());
+				Long o2Total = new Long(o2Snapshots.get(o2Snapshots.size() - 1).getTotal());
+				return o2Total.compareTo(o1Total);
 			}
-		}, "Data base toolkit dump : ");
-		logger.warn("Class : " + dataBase.find(Class.class, Toolkit.hash("com.ikokoon.search.Search")));
+		});
+		for (Method method : methods) {
+			logger.error("Method : " + method);
+			List<Snapshot> snapshots = method.getSnapshots();
+			Collections.sort(snapshots, new Comparator<Snapshot>() {
+				public int compare(Snapshot o1, Snapshot o2) {
+					Long o1Total = new Long(o1.getTotal());
+					Long o2Total = new Long(o2.getTotal());
+					return o1Total.compareTo(o2Total);
+				}
+			});
+			long million = 100000;
+			for (Snapshot snapshot : snapshots) {
+				if (snapshot.getNet() != 0 || snapshot.getTotal() != 0) {
+					logger.error("        : Snap : " + snapshot);
+					logger.error("                : start : " + snapshot.getStart().getTime());
+					logger.error("                : finish : " + snapshot.getEnd().getTime());
+					logger.error("                : net : " + snapshot.getNet() / million);
+					logger.error("                : total : " + snapshot.getTotal() / million);
+				}
+			}
+		}
 		dataBase.close();
 	}
 

@@ -46,7 +46,7 @@ public class ComplexityTest extends ATest {
 		visitClass(ComplexityClassAdapter.class, className);
 		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(className));
 		assertNotNull(klass);
-		Method<?, ?> method = (Method<?, ?>) dataBase.find(Method.class, Toolkit.hash(className, methodName, methodSignature));
+		Method<?, ?> method = (Method<?, ?>) dataBase.find(Method.class, Toolkit.hash(className, methodName, methodDescription));
 		assertNotNull(method);
 		// This assertion depends on the compiler, in some cases the compiler will optimise the code removing
 		// a jump instruction

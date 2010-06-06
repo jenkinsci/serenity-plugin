@@ -36,13 +36,14 @@ public abstract class ATest implements IConstants {
 
 	protected IDataBase mockInternalDataBase = mock(IDataBase.class);
 
-	protected String packageName = Target.class.getPackage().getName();
-	protected String className = Target.class.getName();
-	protected String methodName = "complexMethod";
 	protected Type stringType = Type.getType(String.class);
 	protected Type integerType = Type.getType(Integer.class);
 	protected Type[] types = new Type[] { stringType, stringType, stringType, integerType, integerType };
-	protected String methodSignature = Type.getMethodDescriptor(Type.VOID_TYPE, types);
+
+	protected String packageName = Target.class.getPackage().getName();
+	protected String className = Target.class.getName();
+	protected String methodName = "complexMethod";
+	protected String methodDescription = Type.getMethodDescriptor(Type.VOID_TYPE, types);
 	protected double lineNumber = 70;
 	protected double complexity = 10d;
 	protected int access = 1537;
@@ -144,7 +145,7 @@ public abstract class ATest implements IConstants {
 		klass.getChildren().add(method);
 		method.setComplexity(1d);
 		method.setCoverage(1d);
-		method.setDescription(methodSignature);
+		method.setDescription(methodDescription);
 		method.setName(methodName);
 		getLine(method);
 		return method;

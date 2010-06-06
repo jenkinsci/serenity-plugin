@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
@@ -197,6 +199,31 @@ public class Toolkit {
 			} catch (Exception e) {
 				logger.error("Exception accessing the field's value", e);
 			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <E> E executeMethod(Object object, String methodName, Object[] parameters) {
+		Class<?>[] parameterTypes = new Class[parameters.length];
+		int index = 0;
+		for (Object parameter : parameters) {
+			parameterTypes[index++] = parameter.getClass();
+		}
+		try {
+			Method method = object.getClass().getDeclaredMethod(methodName, parameterTypes);
+			method.setAccessible(true);
+			return (E) method.invoke(object, parameters);
+		} catch (SecurityException e) {
+			logger.error("Security exception", e);
+		} catch (NoSuchMethodException e) {
+			logger.error("No such method exception", e);
+		} catch (IllegalArgumentException e) {
+			logger.error("Illegal argument exception", e);
+		} catch (IllegalAccessException e) {
+			logger.error("Illegal access exception", e);
+		} catch (InvocationTargetException e) {
+			logger.error("Target invocation exception", e);
 		}
 		return null;
 	}
@@ -668,6 +695,26 @@ public class Toolkit {
 		Object object = decoder.readObject();
 		decoder.close();
 		return object;
+	}
+
+	/**
+	 * Verifies that all the characters in a string are digits, ie. the string is a number.
+	 *
+	 * @param string
+	 *            the string to verify for digit data
+	 * @return whether every character in a string is a digit
+	 */
+	public static boolean isDigits(String string) {
+		if (string == null || string.trim().equals("")) {
+			return false;
+		}
+		char[] chars = string.toCharArray();
+		for (char c : chars) {
+			if (!Character.isDigit(c)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

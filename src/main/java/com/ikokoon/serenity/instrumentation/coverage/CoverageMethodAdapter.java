@@ -23,18 +23,18 @@ public class CoverageMethodAdapter extends MethodAdapter {
 	private Logger logger = Logger.getLogger(CoverageMethodAdapter.class);
 
 	/** The type of parameters that the {@link Collector} takes in the coverage collection method. */
-	private Type stringType = Type.getType(String.class);
+	protected Type stringType = Type.getType(String.class);
 	/** The type parameter for the line number in the {@link Collector} collect coverage method. */
-	private Type intType = Type.getType(int.class);
+	protected Type intType = Type.getType(int.class);
 	/** The array of type parameters for the {@link Collector} for the coverage method. */
-	private Type[] types = new Type[] { stringType, stringType, stringType, intType };
+	protected Type[] types = new Type[] { stringType, stringType, stringType, intType };
 
 	/** The name of the class ({@link Collector}) that will be the collector for the method adapter. */
-	private String collectorClassName = Type.getInternalName(Collector.class);
+	protected String collectorClassName = Type.getInternalName(Collector.class);
 	/** The coverage method that is called on the {@link Collector} by the added instructions. */
-	private String collectorMethodName = "collectCoverage";
+	protected String collectorMethodName = "collectCoverage";
 	/** The byte code signature of the coverage method in the {@link Collector}. */
-	private String collectorMethodDescription = Type.getMethodDescriptor(Type.VOID_TYPE, types);
+	protected String collectorMethodDescription = Type.getMethodDescriptor(Type.VOID_TYPE, types);
 
 	/** The name of the class that this method adapter is enhancing the methods for. */
 	private String className;

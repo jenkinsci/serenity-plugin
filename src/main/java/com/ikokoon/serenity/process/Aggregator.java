@@ -2,7 +2,6 @@ package com.ikokoon.serenity.process;
 
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.persistence.IDataBase;
-import com.ikokoon.serenity.process.aggregator.IAggregator;
 import com.ikokoon.serenity.process.aggregator.ProjectAggregator;
 
 /**
@@ -42,8 +41,7 @@ public class Aggregator extends AProcess implements IConstants {
 	public void execute() {
 		super.execute();
 		logger.info("Running Aggregator : ");
-		IAggregator aggregator = new ProjectAggregator(dataBase);
-		aggregator.aggregate();
+		new ProjectAggregator(dataBase).aggregate();
 	}
 
 }

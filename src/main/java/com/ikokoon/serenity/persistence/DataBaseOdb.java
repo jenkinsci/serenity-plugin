@@ -72,7 +72,7 @@ public class DataBaseOdb extends DataBase {
 	/**
 	 * {@inheritDoc}
 	 */
-	public synchronized <E extends Composite<?, ?>> E find(Class<E> klass, List<Object> parameters) {
+	public synchronized <E extends Composite<?, ?>> E find(Class<E> klass, List<?> parameters) {
 		Long id = Toolkit.hash(parameters.toArray());
 		return find(klass, id);
 	}
@@ -93,7 +93,8 @@ public class DataBaseOdb extends DataBase {
 		try {
 			Objects objects = odb.getObjects(klass, false, start, end);
 			while (objects.hasNext()) {
-				list.add((E) objects.next());
+				Object object = objects.next();
+				list.add((E) object);
 			}
 		} catch (Exception e) {
 			logger.error("Exception selecting objects with class : " + klass + ", " + this, e);
@@ -105,7 +106,7 @@ public class DataBaseOdb extends DataBase {
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public <E extends Composite<?, ?>> List<E> find(final Class<E> klass, final Map<String, Object> parameters) {
+	public <E extends Composite<?, ?>> List<E> find(final Class<E> klass, final Map<String, ?> parameters) {
 		Set<E> set = new TreeSet<E>();
 		for (String field : parameters.keySet()) {
 			Object value = parameters.get(field);

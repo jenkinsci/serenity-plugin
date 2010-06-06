@@ -27,8 +27,7 @@ public class ClassAggregator extends AAggregator {
 		// First do the methods
 		List<Method<?, ?>> methods = klass.getChildren();
 		for (Method method : methods) {
-			IAggregator aggregator = new MethodAggregator(dataBase, method);
-			aggregator.aggregate();
+			new MethodAggregator(dataBase, method).aggregate();
 		}
 		aggregate(klass);
 		setPrecision(klass);

@@ -165,7 +165,7 @@ public interface IDataBase {
 	 *            the unique combination of field values to select the class with
 	 * @return the composite with the specified unique field combination
 	 */
-	public <E extends Composite<?, ?>> E find(Class<E> klass, List<Object> parameters);
+	public <E extends Composite<?, ?>> E find(Class<E> klass, List<?> parameters);
 
 	/**
 	 * Selects a list of objects based on the values in the objects and the class of the object. The implementations can implement multiple search
@@ -179,7 +179,7 @@ public interface IDataBase {
 	 *            the parameters to do the selection with. These are the fields in the objects and the values
 	 * @return the list of composites that match the selection criteria
 	 */
-	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, Map<String, Object> parameters);
+	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, Map<String, ?> parameters);
 
 	/**
 	 * Selects all the classes of a particular type. Note this could potentially return the whole database.

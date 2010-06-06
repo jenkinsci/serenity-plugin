@@ -1,21 +1,16 @@
 package com.ikokoon.serenity.hudson.modeller;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
 import com.ikokoon.serenity.model.Class;
-import com.ikokoon.serenity.model.IModel;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.model.Project;
 import com.ikokoon.target.Target;
-import com.ikokoon.toolkit.Toolkit;
 
 /**
  * Tests the modeller that takes a composite and builds a model for it that can be displayed in the graph applet.
- * 
+ *
  * @author Michael Couck
  * @since 17.11.09
  * @version 01.00
@@ -49,18 +44,10 @@ public class ModellerTest extends ATest {
 		projectTwo.setClasses(854);
 		projectTwo.setPackages(25);
 
+		@SuppressWarnings("unused")
 		Project projectThree = null;
 
-		JetChartModeller jetChartModeller = new JetChartModeller();
-		jetChartModeller.visit(Project.class, projectOne, projectTwo, projectThree);
-
-		String string = jetChartModeller.getModel();
-		assertNotNull(string);
-
-		// This is what we expect from the model
-		IModel model = (IModel) Toolkit.deserializeFromBase64(string);
-		// Coverage, complexity, abstractness, stability, distance
-		assertEquals("[[24.0, 89.0, 0.0], [17.0, 5.0, 0.0], [25.0, 65.0, 0.0], [36.0, 93.0, 0.0], [65.0, 33.0, 0.0]]", model.getMetrics().toString());
+		// TODO implement me
 	}
 
 	@Test
@@ -92,17 +79,10 @@ public class ModellerTest extends ATest {
 		pakkageTwo.setStability(0.05);
 		pakkageTwo.setExecuted(5233658);
 
+		@SuppressWarnings("unused")
 		Package<?, ?> pakkageThree = null;
 
-		JetChartModeller jetChartModeller = new JetChartModeller();
-		jetChartModeller.visit(Package.class, pakkageOne, pakkageTwo, pakkageThree);
-
-		String string = jetChartModeller.getModel();
-		assertNotNull(string);
-
-		// This is what we expect from the model
-		IModel model = (IModel) Toolkit.deserializeFromBase64(string);
-		assertEquals("[[63.0, 23.0, 0.0], [17.0, 59.0, 0.0], [25.0, 36.0, 0.0], [66.0, 5.0, 0.0], [68.0, 21.0, 0.0]]", model.getMetrics().toString());
+		// TODO implement me
 	}
 
 	@Test
@@ -123,17 +103,10 @@ public class ModellerTest extends ATest {
 		klassTwo.setInterfaze(false);
 		klassTwo.setStability(0.885);
 
+		@SuppressWarnings("unused")
 		Class<?, ?> klassThree = null;
 
-		JetChartModeller jetChartModeller = new JetChartModeller();
-		jetChartModeller.visit(Class.class, klassOne, klassTwo, klassThree);
-
-		String string = jetChartModeller.getModel();
-		assertNotNull(string);
-
-		// This is what we expect from the model
-		IModel model = (IModel) Toolkit.deserializeFromBase64(string);
-		assertEquals("[[81.0, 5.0, 0.0], [19.0, 21.0, 0.0], [23.5, 88.5, 0.0]]", model.getMetrics().toString());
+		// TODO implement me
 	}
 
 }

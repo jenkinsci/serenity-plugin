@@ -2,6 +2,8 @@ package com.ikokoon.serenity;
 
 import java.io.File;
 
+import org.objectweb.asm.Type;
+
 /**
  * This is a constants class for database names and system property names.
  *
@@ -50,10 +52,28 @@ public interface IConstants {
 	public String WRITE_CLASSES = "write.classes";
 	/** Whether to delete the old class files before writing the new enhanced class files, 'clean.classes'. */
 	public String CLEAN_CLASSES = "clean.classes";
+	/** The interval between snapshots for the profiler. */
+	public String SNAPSHOT_INTERVAL = "snapshotInterval";
 
 	public String COVERAGE = "coverage";
 	public String COMPLEXITY = "complexity";
 	public String DEPENDENCY = "dependency";
 	public String PROFILING = "profiling";
+
+	/** The type of parameters that the {@link Collector} takes in the profiling collection method. */
+	public Type stringType = Type.getType(String.class);
+	/** The name of the class ({@link Collector}) that will be the collector for the method adapter. */
+	public String collectorClassName = Type.getInternalName(Collector.class);
+	/** The array of type parameters for the {@link Collector} for the profiling method. */
+	public Type[] profilingTypes = new Type[] { stringType, stringType, stringType };
+
+	/** The profiling methods that are called on the {@link Collector} by the added instructions. */
+	public String collectAllocation = "collectAllocation";
+	public String collectStart = "collectStart";
+	public String collectEnd = "collectEnd";
+	public String collectStartWait = "collectStartWait";
+	public String collectEndWait = "collectEndWait";
+	/** The byte code signature of the profiling methods in the {@link Collector}. */
+	public String profilingMethodDescription = Type.getMethodDescriptor(Type.VOID_TYPE, profilingTypes);
 
 }

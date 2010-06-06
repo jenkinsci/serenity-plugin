@@ -110,7 +110,7 @@ public class DataBaseJpaTest extends ATest {
 		parameters.clear();
 		parameters.add(klass.getName());
 		parameters.add(methodName);
-		parameters.add(methodSignature);
+		parameters.add(methodDescription);
 		Method method = (Method) dataBase.find(Method.class, parameters);
 		assertNotNull(method);
 

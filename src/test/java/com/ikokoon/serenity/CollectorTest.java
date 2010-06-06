@@ -57,7 +57,7 @@ public class CollectorTest extends ATest implements IConstants {
 		// After this we expect a package, a class, a method and a line element
 		// dataBase.close();
 		// dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, true, null);
-		Collector.collectCoverage(className, methodName, methodSignature, (int) lineNumber);
+		Collector.collectCoverage(className, methodName, methodDescription, (int) lineNumber);
 		DataBaseToolkit.dump(dataBase, new DataBaseToolkit.ICriteria() {
 			public boolean satisfied(Composite<?, ?> composite) {
 				return true;
@@ -85,7 +85,7 @@ public class CollectorTest extends ATest implements IConstants {
 
 		assertEquals(1.0, line.getCounter());
 
-		Collector.collectCoverage(className, methodName, methodSignature, (int) lineNumber);
+		Collector.collectCoverage(className, methodName, methodDescription, (int) lineNumber);
 
 		assertEquals(2.0, line.getCounter());
 	}
@@ -102,20 +102,20 @@ public class CollectorTest extends ATest implements IConstants {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void collectComplexity() {
-		Collector.collectComplexity(className, methodName, methodSignature, complexity/* , 1000 */);
-		Collector.collectComplexity(className, methodName, methodSignature, complexity/* , 1000 */);
+		Collector.collectComplexity(className, methodName, methodDescription, complexity/* , 1000 */);
+		Collector.collectComplexity(className, methodName, methodDescription, complexity/* , 1000 */);
 
-		Method method = (Method) dataBase.find(Method.class, Toolkit.hash(className, methodName, methodSignature));
+		Method method = (Method) dataBase.find(Method.class, Toolkit.hash(className, methodName, methodDescription));
 		assertNotNull(method);
 		assertTrue(complexity == method.getComplexity());
 
-		Collector.collectComplexity(TargetConsumer.class.getName(), methodName + ":1", methodSignature + ":1", complexity/* , 1000 */);
+		Collector.collectComplexity(TargetConsumer.class.getName(), methodName + ":1", methodDescription + ":1", complexity/* , 1000 */);
 	}
 
 	@Test
 	@SuppressWarnings("unchecked")
 	public void collectMetricsAfferentEfferent() {
-		Collector.collectCoverage(className, methodName, methodSignature, (int) lineNumber);
+		Collector.collectCoverage(className, methodName, methodDescription, (int) lineNumber);
 
 		Class toDelete = (Class) dataBase.find(Class.class, Toolkit.hash(className));
 		dataBase.remove(Class.class, toDelete.getId());
@@ -144,7 +144,7 @@ public class CollectorTest extends ATest implements IConstants {
 		double executionsPerSecond = Executer.execute(new Executer.IPerform() {
 			public void execute() {
 				double lineNumber = System.currentTimeMillis() * Math.random();
-				Collector.collectCoverage(className, methodName, methodSignature, (int) lineNumber);
+				Collector.collectCoverage(className, methodName, methodDescription, (int) lineNumber);
 			}
 		}, "line collections for collector new line", iterations);
 		assertTrue(executionsPerSecond > 1000);
@@ -152,7 +152,7 @@ public class CollectorTest extends ATest implements IConstants {
 		final double lineNumber = System.currentTimeMillis() * Math.random();
 		executionsPerSecond = Executer.execute(new Executer.IPerform() {
 			public void execute() {
-				Collector.collectCoverage(className, methodName, methodSignature, (int) lineNumber);
+				Collector.collectCoverage(className, methodName, methodDescription, (int) lineNumber);
 			}
 		}, "line counter collections", iterations);
 		assertTrue(executionsPerSecond > 1000);

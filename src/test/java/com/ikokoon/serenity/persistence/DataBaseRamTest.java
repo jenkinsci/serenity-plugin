@@ -135,7 +135,7 @@ public class DataBaseRamTest extends ATest {
 		parameters.clear();
 		parameters.add(klass.getName());
 		parameters.add(methodName);
-		parameters.add(methodSignature);
+		parameters.add(methodDescription);
 		Method method = (Method) dataBase.find(Method.class, parameters);
 		assertNotNull(method);
 
@@ -212,7 +212,7 @@ public class DataBaseRamTest extends ATest {
 
 		final Long packageId = Toolkit.hash(packageName + "." + 233);
 		final Long classId = Toolkit.hash(className + "." + 871);
-		final Long methodId = Toolkit.hash(className + "." + 441 + methodName + "." + 441 + methodSignature + "." + 441);
+		final Long methodId = Toolkit.hash(className + "." + 441 + methodName + "." + 441 + methodDescription + "." + 441);
 		final Long lineId = Toolkit.hash(className + "." + 359 + methodName + "." + 359 + "" + 359d);
 
 		double selectsPerSecond = Executer.execute(new Executer.IPerform() {

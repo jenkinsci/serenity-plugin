@@ -70,7 +70,7 @@ public final class DataBaseRam extends DataBase {
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public synchronized final <E extends Composite<?, ?>> E find(Class<E> klass, List<Object> parameters) {
+	public synchronized final <E extends Composite<?, ?>> E find(Class<E> klass, List<?> parameters) {
 		Long id = Toolkit.hash(parameters.toArray());
 		return (E) search(klass, index, id);
 	}
@@ -315,7 +315,7 @@ public final class DataBaseRam extends DataBase {
 		logger.debug("Inserted : " + toInsert + " - " + inserted);
 	}
 
-	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, Map<String, Object> parameters) {
+	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, Map<String, ?> parameters) {
 		throw new RuntimeException("Not implempented.");
 	}
 

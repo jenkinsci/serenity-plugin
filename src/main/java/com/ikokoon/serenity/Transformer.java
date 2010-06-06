@@ -40,9 +40,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 	/** The chain of adapters for analysing the classes. */
 	private static Class<ClassVisitor>[] CLASS_ADAPTER_CLASSES;
 
-	private static Thread shutdownHook = new Thread() {
-
-	};
+	private static Thread shutdownHook;
 
 	/**
 	 * This method is called by the JVM at startup. This method will only be called if the command line for starting the JVM has the following on it:
@@ -99,6 +97,9 @@ public class Transformer implements ClassFileTransformer, IConstants {
 			addShutdownHook(ramDataBase);
 
 			Collector.setDataBase(ramDataBase);
+
+			// Start the profiler snapshots
+			Profiler.initialize(ramDataBase);
 		}
 	}
 

@@ -57,7 +57,7 @@ public class DataBaseJpa extends DataBase {
 		return null;
 	}
 
-	public synchronized <E extends Composite<?, ?>> E find(Class<E> klass, List<Object> parameters) {
+	public synchronized <E extends Composite<?, ?>> E find(Class<E> klass, List<?> parameters) {
 		Long id = Toolkit.hash(parameters.toArray());
 		return find(klass, id);
 	}
@@ -73,7 +73,7 @@ public class DataBaseJpa extends DataBase {
 	/**
 	 * {@inheritDoc}
 	 */
-	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, Map<String, Object> parameters) {
+	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, Map<String, ?> parameters) {
 		throw new RuntimeException("Not implempented.");
 	}
 

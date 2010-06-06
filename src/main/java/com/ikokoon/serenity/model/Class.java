@@ -33,8 +33,12 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 
 	private boolean interfaze;
 
+	private double allocations;
+
 	private List<Efferent> efferent = new ArrayList<Efferent>();
 	private List<Afferent> afferent = new ArrayList<Afferent>();
+
+	private List<Snapshot> snapshots = new ArrayList<Snapshot>();
 
 	public String getName() {
 		return name;
@@ -124,6 +128,14 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 		this.interfaze = interfaze;
 	}
 
+	public double getAllocations() {
+		return allocations;
+	}
+
+	public void setAllocations(double allocations) {
+		this.allocations = allocations;
+	}
+
 	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public List<Efferent> getEfferent() {
 		return efferent;
@@ -140,6 +152,14 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 
 	public void setAfferent(List<Afferent> afferent) {
 		this.afferent = afferent;
+	}
+
+	public List<Snapshot> getSnapshots() {
+		return snapshots;
+	}
+
+	public void setSnapshots(List<Snapshot> snapshots) {
+		this.snapshots = snapshots;
 	}
 
 	public String toString() {

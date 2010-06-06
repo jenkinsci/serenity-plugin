@@ -223,7 +223,7 @@ public class Accumulator extends AProcess {
 			logger.info("File not included : " + name);
 			return true;
 		}
-		// Don't do excluded classes and packages
+		// Check that the class is not excluded in the excluded packages
 		if (Configuration.getConfiguration().excluded(name)) {
 			logger.info("Excluded file : " + name);
 			return true;

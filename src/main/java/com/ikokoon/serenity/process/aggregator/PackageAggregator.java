@@ -31,8 +31,7 @@ public class PackageAggregator extends AAggregator {
 		// First do the classes
 		List<Class<?, ?>> classes = pakkage.getChildren();
 		for (Class klass : classes) {
-			IAggregator aggregator = new ClassAggregator(dataBase, klass);
-			aggregator.aggregate();
+			new ClassAggregator(dataBase, klass).aggregate();
 		}
 		aggregate(pakkage);
 		setPrecision(pakkage);

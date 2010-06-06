@@ -141,6 +141,14 @@ public class Configuration {
 		return builder.toString();
 	}
 
+	public long getSnapshotInterval() {
+		String snapshotInterval = System.getProperty(IConstants.SNAPSHOT_INTERVAL);
+		if (snapshotInterval != null && Toolkit.isDigits(snapshotInterval)) {
+			return Long.parseLong(snapshotInterval);
+		}
+		return -1;
+	}
+
 	private void addIncludedPackages() {
 		String packageNames = System.getProperty(IConstants.INCLUDED_PACKAGES_PROPERTY);
 		logger.debug("Package names : " + packageNames);
