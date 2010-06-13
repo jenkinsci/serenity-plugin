@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,7 +18,6 @@ import com.ikokoon.serenity.ATest;
 import com.ikokoon.serenity.Collector;
 import com.ikokoon.serenity.Configuration;
 import com.ikokoon.serenity.IConstants;
-import com.ikokoon.serenity.LoggingConfigurator;
 import com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapter;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Line;
@@ -47,22 +45,13 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class AggregatorTest extends ATest implements IConstants {
 
-	private IDataBase dataBase;
-
 	@Before
 	public void clear() {
 		Configuration.getConfiguration().includedPackages.clear();
 		Configuration.getConfiguration().includedPackages.add(Discovery.class.getPackage().getName());
 		Configuration.getConfiguration().includedPackages.add("edu.umd.cs.findbugs");
-
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, mockInternalDataBase);
 		DataBaseToolkit.clear(dataBase);
-		Collector.setDataBase(dataBase);
-	}
-
-	@After
-	public void close() {
-		dataBase.close();
+		Collector.initialize(dataBase);
 	}
 
 	@Test
@@ -201,16 +190,14 @@ public class AggregatorTest extends ATest implements IConstants {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void aggregateProject() throws Exception {
-		visitClass(DependencyClassAdapter.class, IDiscovery.class.getName());
-		visitClass(DependencyClassAdapter.class, Discovery.class.getName());
+		// new Accumulator(null).execute();
+		// visitClass(DependencyClassAdapter.class, IDiscovery.class.getName());
+		// visitClass(DependencyClassAdapter.class, Discovery.class.getName());
 
 		File odbDataBaseFile = new File("./src/test/resources/isearch/serenity.odb");
 		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, odbDataBaseFile.getAbsolutePath(), null);
 
 		Project<?, ?> project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
-		if (project == null) {
-			project = new Project<Object, Package<?, ?>>();
-		}
 		project.setAbstractness(0);
 		project.setClasses(0);
 		project.setComplexity(0);
@@ -362,12 +349,6 @@ public class AggregatorTest extends ATest implements IConstants {
 			}
 		}
 		return executed;
-	}
-
-	public static void main(String[] args) {
-		LoggingConfigurator.configure();
-		AggregatorTest aggregatorTest = new AggregatorTest();
-		aggregatorTest.aggregate();
 	}
 
 }

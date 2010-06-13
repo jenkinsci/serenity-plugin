@@ -61,19 +61,42 @@ public interface IConstants {
 	public String PROFILING = "profiling";
 
 	/** The type of parameters that the {@link Collector} takes in the profiling collection method. */
-	public Type stringType = Type.getType(String.class);
+	public Type STRING_TYPE = Type.getType(String.class);
 	/** The name of the class ({@link Collector}) that will be the collector for the method adapter. */
-	public String collectorClassName = Type.getInternalName(Collector.class);
+	public String COLLECTOR_CLASS_NAME = Type.getInternalName(Collector.class);
 	/** The array of type parameters for the {@link Collector} for the profiling method. */
-	public Type[] profilingTypes = new Type[] { stringType, stringType, stringType };
+	public Type[] PROFILING_TYPES = new Type[] { STRING_TYPE, STRING_TYPE, STRING_TYPE };
 
 	/** The profiling methods that are called on the {@link Collector} by the added instructions. */
-	public String collectAllocation = "collectAllocation";
-	public String collectStart = "collectStart";
-	public String collectEnd = "collectEnd";
-	public String collectStartWait = "collectStartWait";
-	public String collectEndWait = "collectEndWait";
+	public String COLLECT_ALLOCATION = "collectAllocation";
+	public String COLLECT_START = "collectStart";
+	public String COLLECT_END = "collectEnd";
+	public String COLLECT_START_WAIT = "collectStartWait";
+	public String COLLECT_END_WAIT = "collectEndWait";
 	/** The byte code signature of the profiling methods in the {@link Collector}. */
-	public String profilingMethodDescription = Type.getMethodDescriptor(Type.VOID_TYPE, profilingTypes);
+	public String PROFILING_METHOD_DESCRIPTION = Type.getMethodDescriptor(Type.VOID_TYPE, PROFILING_TYPES);
+
+	public Type[] noTypes = new Type[] {};
+	public Type[] longTypes = new Type[] { Type.LONG_TYPE };
+	public Type[] longIntTypes = new Type[] { Type.LONG_TYPE, Type.INT_TYPE };
+
+	/** The sleep(long) method description in byte code. */
+	public String sleepLongMethodDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, IConstants.longTypes);
+	/** The sleep(long, int) method description in byte code. */
+	public String sleepLongIntMethodDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, IConstants.longIntTypes);
+	/** The yield() method description in byte code. */
+	public String yieldMethodDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, IConstants.noTypes);
+	/** The wait() method description in byte code. */
+	public String waitMethodDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, IConstants.noTypes);
+	/** The wait(long) method description in byte code. */
+	public String waitLongMethodDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, IConstants.longTypes);
+	/** The wait(long, int) method description in byte code. */
+	public String waitLongIntMethodDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, IConstants.longIntTypes);
+	/** The join() method description in byte code. */
+	public String joinMethodDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, IConstants.noTypes);
+	/** The join(long) method description in byte code. */
+	public String joinLongMethodDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, IConstants.longTypes);
+	/** The join(long, int) method description in byte code. */
+	public String joinLongIntMethodDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, IConstants.longIntTypes);
 
 }

@@ -39,7 +39,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 	private static boolean INITIALISED = false;
 	/** The chain of adapters for analysing the classes. */
 	private static Class<ClassVisitor>[] CLASS_ADAPTER_CLASSES;
-
+	/** The shutdown hook will clean, accumulate and aggregate the data. */
 	private static Thread shutdownHook;
 
 	/**
@@ -96,10 +96,8 @@ public class Transformer implements ClassFileTransformer, IConstants {
 
 			addShutdownHook(ramDataBase);
 
-			Collector.setDataBase(ramDataBase);
-
-			// Start the profiler snapshots
-			Profiler.initialize(ramDataBase);
+			// Initialise the collector and the snapshot taker for the profiler
+			Collector.initialize(ramDataBase);
 		}
 	}
 
@@ -107,33 +105,60 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		shutdownHook = new Thread() {
 			public void run() {
 				Date start = new Date();
-				LOGGER.info("Starting accumulation : " + start);
+				LOGGER.warn("Starting accumulation : " + start);
 
 				long processStart = System.currentTimeMillis();
 				new Accumulator(null).execute();
-				LOGGER.info("Accumlulator : " + (System.currentTimeMillis() - processStart));
+				LOGGER.warn("Accumlulator : " + (System.currentTimeMillis() - processStart));
 
 				processStart = System.currentTimeMillis();
 				new Cleaner(null, dataBase).execute();
-				LOGGER.info("Cleaner : " + (System.currentTimeMillis() - processStart));
+				LOGGER.warn("Cleaner : " + (System.currentTimeMillis() - processStart));
 
 				processStart = System.currentTimeMillis();
 				new Aggregator(null, dataBase).execute();
-				LOGGER.info("Aggregator : " + (System.currentTimeMillis() - processStart));
+				LOGGER.warn("Aggregator : " + (System.currentTimeMillis() - processStart));
+
+				processStart = System.currentTimeMillis();
+				String methodSeries = Reporter.methodSeries(dataBase);
+				writeReport("./serenity/methodSeries.html", methodSeries);
+				methodSeries = Reporter.methodNetSeries(dataBase);
+				writeReport("./serenity/methodNetSeries.html", methodSeries);
+				methodSeries = Reporter.methodChangeSeries(dataBase);
+				writeReport("./serenity/methodChangeSeries.html", methodSeries);
+				methodSeries = Reporter.methodNetChangeSeries(dataBase);
+				writeReport("./serenity/methodNetChangeSeries.html", methodSeries);
+				LOGGER.warn("Reporter : " + (System.currentTimeMillis() - processStart));
 
 				processStart = System.currentTimeMillis();
 				dataBase.close();
-				LOGGER.info("Close database : " + (System.currentTimeMillis() - processStart));
+				LOGGER.warn("Close database : " + (System.currentTimeMillis() - processStart));
 
 				Date end = new Date();
 				long million = 1000 * 1000;
 				long duration = end.getTime() - start.getTime();
-				LOGGER.info("Finished accumulation : " + end + ", duration : " + duration + " millis");
-				LOGGER.info("Total memory : " + (Runtime.getRuntime().totalMemory() / million) + ", max memory : "
+				LOGGER.warn("Finished accumulation : " + end + ", duration : " + duration + " millis");
+				LOGGER.warn("Total memory : " + (Runtime.getRuntime().totalMemory() / million) + ", max memory : "
 						+ (Runtime.getRuntime().maxMemory() / million) + ", free memory : " + (Runtime.getRuntime().freeMemory() / million));
 			}
 		};
 		Runtime.getRuntime().addShutdownHook(shutdownHook);
+	}
+
+	private static void writeReport(String name, String html) {
+		try {
+			File file = new File(name);
+			if (!file.getParentFile().exists()) {
+				file.getParentFile().mkdirs();
+			}
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			LOGGER.warn("Writing report : " + file.getAbsolutePath());
+			Toolkit.setContents(file, html.getBytes());
+		} catch (Exception e) {
+			LOGGER.error("Exception writing report : " + name, e);
+		}
 	}
 
 	protected static void removeShutdownHook() {

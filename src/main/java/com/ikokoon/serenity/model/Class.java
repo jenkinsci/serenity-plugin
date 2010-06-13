@@ -38,7 +38,7 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 	private List<Efferent> efferent = new ArrayList<Efferent>();
 	private List<Afferent> afferent = new ArrayList<Afferent>();
 
-	private List<Snapshot> snapshots = new ArrayList<Snapshot>();
+	private List<Snapshot<?, ?>> snapshots = new ArrayList<Snapshot<?, ?>>();
 
 	public String getName() {
 		return name;
@@ -154,11 +154,11 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 		this.afferent = afferent;
 	}
 
-	public List<Snapshot> getSnapshots() {
+	public List<Snapshot<?, ?>> getSnapshots() {
 		return snapshots;
 	}
 
-	public void setSnapshots(List<Snapshot> snapshots) {
+	public void setSnapshots(List<Snapshot<?, ?>> snapshots) {
 		this.snapshots = snapshots;
 	}
 

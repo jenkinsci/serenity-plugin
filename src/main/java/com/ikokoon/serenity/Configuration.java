@@ -13,7 +13,7 @@ import org.objectweb.asm.ClassVisitor;
 import com.ikokoon.serenity.instrumentation.complexity.ComplexityClassAdapter;
 import com.ikokoon.serenity.instrumentation.coverage.CoverageClassAdapter;
 import com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapter;
-import com.ikokoon.serenity.instrumentation.profiling.ProfilingClassAdapter;
+import com.ikokoon.serenity.instrumentation.profiling.ProfilingClassAdviceAdapter;
 import com.ikokoon.serenity.model.Project;
 import com.ikokoon.toolkit.Toolkit;
 
@@ -193,7 +193,7 @@ public class Configuration {
 						classAdapters.add((Class<ClassVisitor>) Class.forName(DependencyClassAdapter.class.getName()));
 					}
 					if (adapterName.equals(IConstants.PROFILING)) {
-						classAdapters.add((Class<ClassVisitor>) Class.forName(ProfilingClassAdapter.class.getName()));
+						classAdapters.add((Class<ClassVisitor>) Class.forName(ProfilingClassAdviceAdapter.class.getName()));
 					}
 				} catch (ClassNotFoundException e) {
 					logger.error("Class : " + adapterName + " not found", e);

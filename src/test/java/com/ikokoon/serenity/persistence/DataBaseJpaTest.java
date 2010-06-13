@@ -19,8 +19,6 @@ import com.ikokoon.toolkit.Toolkit;
 
 public class DataBaseJpaTest extends ATest {
 
-	private IDataBase dataBase;
-
 	@Test
 	public void dummy() {
 	}

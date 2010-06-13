@@ -1,11 +1,13 @@
 package com.ikokoon.serenity.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Snapshot {
+public class Snapshot<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implements Comparable<Class<?, ?>>, Serializable {
 
 	private long net;
 	private long total;
+	private long wait;
 	private Date start;
 	private Date end;
 
@@ -39,6 +41,22 @@ public class Snapshot {
 
 	public void setEnd(Date end) {
 		this.end = end;
+	}
+
+	public long getWait() {
+		return wait;
+	}
+
+	public void setWait(long wait) {
+		this.wait = wait;
+	}
+
+	public int compareTo(Class<?, ?> o) {
+		int comparison = 0;
+		if (this.getId() != null && o.getId() != null) {
+			comparison = this.getId().compareTo(o.getId());
+		}
+		return comparison;
 	}
 
 }

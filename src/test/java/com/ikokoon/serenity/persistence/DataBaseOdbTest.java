@@ -16,7 +16,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
-import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Composite;
 import com.ikokoon.serenity.model.Line;
@@ -30,8 +29,7 @@ public class DataBaseOdbTest extends ATest {
 
 	@Before
 	public void clear() {
-		File dataBaseFile = new File(IConstants.DATABASE_FILE_ODB);
-		Toolkit.deleteFile(dataBaseFile, 3);
+		File dataBaseFile = new File("./src/test/resources/DataBaseOdbTest.odb");
 		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile.getAbsolutePath(), mockInternalDataBase);
 		DataBaseToolkit.clear(dataBase);
 	}

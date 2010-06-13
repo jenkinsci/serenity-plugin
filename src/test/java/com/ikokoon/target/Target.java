@@ -178,7 +178,7 @@ public class Target<E, F> implements ITarget<E, F>, Serializable {
 		}
 	}
 
-	public static void sleep(long d) {
+	public static void sleep(Long d) {
 		try {
 			Thread.sleep(d);
 		} catch (InterruptedException e) {
@@ -186,8 +186,74 @@ public class Target<E, F> implements ITarget<E, F>, Serializable {
 		}
 	}
 
+	public void sleep(Long l, Integer i) {
+		try {
+			Thread.sleep(l, i);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void waitMethod() {
+		try {
+			wait();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void waitMethod(Long l) {
+		try {
+			wait(l);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void waitMethod(Long l, Integer i) {
+		try {
+			wait(l, i);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void join() {
+		try {
+			Thread.currentThread().join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void join(Long l) {
+		try {
+			Thread.currentThread().join(l);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void join(Long l, Integer i) {
+		try {
+			Thread.currentThread().join(l, i);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void yield() {
+		try {
+			Thread.yield();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
+
 	@SuppressWarnings("unused")
-	private void privy() {}
+	private void privy() {
+	}
 
 	/**
 	 * An inner class for shits and giggles.

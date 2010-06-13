@@ -3,18 +3,13 @@ package com.ikokoon.serenity.instrumentation.complexity;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
 import com.ikokoon.serenity.Collector;
-import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Method;
-import com.ikokoon.serenity.persistence.DataBaseRam;
-import com.ikokoon.serenity.persistence.DataBaseToolkit;
-import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -26,22 +21,17 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class ComplexityTest extends ATest {
 
-	private IDataBase dataBase;
+	// private IDataBase dataBase;
 
 	@Before
 	public void clear() {
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, mockInternalDataBase);
-		DataBaseToolkit.clear(dataBase);
-	}
-
-	@After
-	public void close() {
-		dataBase.close();
+		// dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, mockInternalDataBase);
+		// DataBaseToolkit.clear(dataBase);
 	}
 
 	@Test
 	public void visit() throws Exception {
-		Collector.setDataBase(dataBase);
+		Collector.initialize(dataBase);
 
 		visitClass(ComplexityClassAdapter.class, className);
 		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(className));

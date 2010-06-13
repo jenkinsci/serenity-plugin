@@ -69,7 +69,8 @@ public class DataBaseToolkitTest extends ATest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void clear() {
-		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, "./serenity/dummy/database.odb", null);
+		String dataBaseFile = "./src/main/resources/dummy.odb";
+		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, null);
 		Class<?, ?> klass = new Class<Package, Method>();
 		klass.setId(Long.MAX_VALUE);
 		dataBase.persist(klass);
@@ -79,7 +80,7 @@ public class DataBaseToolkitTest extends ATest {
 		DataBaseToolkit.clear(dataBase);
 		dataBase.close();
 
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, "./serenity/dummy/database.odb", null);
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, null);
 
 		klass = dataBase.find(Class.class, klass.getId());
 		assertNull(klass);

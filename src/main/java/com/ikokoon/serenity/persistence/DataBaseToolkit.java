@@ -1,7 +1,5 @@
 package com.ikokoon.serenity.persistence;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -61,11 +59,15 @@ public class DataBaseToolkit {
 		for (Composite composite : lines) {
 			dataBase.remove(composite.getClass(), composite.getId());
 		}
+		List<Snapshot> snapshots = dataBase.find(Snapshot.class);
+		for (Snapshot snapshot : snapshots) {
+			dataBase.remove(Snapshot.class, snapshot.getId());
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public static synchronized void copyDataBase(IDataBase sourceDataBase, IDataBase targetDataBase) {
-		Collector.setDataBase(targetDataBase);
+		Collector.initialize(targetDataBase);
 		List<Package> sourcePackages = sourceDataBase.find(Package.class);
 		for (Package sourcePackage : sourcePackages) {
 			List<Class> sourceClasses = sourcePackage.getChildren();
@@ -176,9 +178,9 @@ public class DataBaseToolkit {
 						log(criteria, afferent, 4, afferent.getName());
 					}
 					for (Method<?, ?> method : ((List<Method<?, ?>>) klass.getChildren())) {
-						log(criteria, method, 3, method.getId() + " : name : " + method.getName() + " : coverage : " + method.getCoverage()
-								+ ", complexity : " + method.getComplexity() + ", start time : " + method.getStartTime() + ", end time : "
-								+ method.getEndTime());
+						log(criteria, method, 3, method.getId() + " : name : " + method.getName() + " : description : " + method.getDescription()
+								+ " : coverage : " + method.getCoverage() + ", complexity : " + method.getComplexity() + ", start time : "
+								+ method.getStartTime() + ", end time : " + method.getEndTime());
 						for (Line<?, ?> line : ((List<Line<?, ?>>) method.getChildren())) {
 							log(criteria, line, 4, line.getId() + " : number : " + line.getNumber() + ", counter : " + line.getCounter());
 						}
@@ -209,46 +211,12 @@ public class DataBaseToolkit {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		// D:/Eclipse/workspace/search/modules/Jar/serenity
 		// D:/Eclipse/workspace/Discovery/modules/Jar/serenity
 		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class,
 				"D:/Eclipse/workspace/search/modules/Jar/serenity/serenity.odb", null);
-		List<Method> methods = dataBase.find(Method.class);
-		Collections.sort(methods, new Comparator<Method>() {
-			public int compare(Method o1, Method o2) {
-				List<Snapshot> o1Snapshots = o1.getSnapshots();
-				List<Snapshot> o2Snapshots = o2.getSnapshots();
-				if (o1Snapshots.size() == 0 || o2Snapshots.size() == 0) {
-					return 0;
-				}
-				Long o1Total = new Long(o1Snapshots.get(o1Snapshots.size() - 1).getTotal());
-				Long o2Total = new Long(o2Snapshots.get(o2Snapshots.size() - 1).getTotal());
-				return o2Total.compareTo(o1Total);
-			}
-		});
-		for (Method method : methods) {
-			logger.error("Method : " + method);
-			List<Snapshot> snapshots = method.getSnapshots();
-			Collections.sort(snapshots, new Comparator<Snapshot>() {
-				public int compare(Snapshot o1, Snapshot o2) {
-					Long o1Total = new Long(o1.getTotal());
-					Long o2Total = new Long(o2.getTotal());
-					return o1Total.compareTo(o2Total);
-				}
-			});
-			long million = 100000;
-			for (Snapshot snapshot : snapshots) {
-				if (snapshot.getNet() != 0 || snapshot.getTotal() != 0) {
-					logger.error("        : Snap : " + snapshot);
-					logger.error("                : start : " + snapshot.getStart().getTime());
-					logger.error("                : finish : " + snapshot.getEnd().getTime());
-					logger.error("                : net : " + snapshot.getNet() / million);
-					logger.error("                : total : " + snapshot.getTotal() / million);
-				}
-			}
-		}
+		DataBaseToolkit.dump(dataBase, null, "Database dump : ");
 		dataBase.close();
 	}
 

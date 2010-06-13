@@ -44,7 +44,7 @@ import com.ikokoon.toolkit.TypeTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses( {
-		// Adapter functionality tests
+// Adapter functionality tests
 		ComplexityTest.class, // Tests the complexity functionality
 		CoverageTest.class, // Tests that the coverage instructions have been added
 		DependencyTest.class, // Tests that the dependency adapters are collecting the dependency data correctly

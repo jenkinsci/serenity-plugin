@@ -43,7 +43,7 @@ public class CollectorTest extends ATest implements IConstants {
 		DataBaseToolkit.clear(dataBase);
 		Configuration.getConfiguration().includedPackages.add(packageName);
 		Configuration.getConfiguration().includedPackages.add(Toolkit.dotToSlash(packageName));
-		Collector.setDataBase(dataBase);
+		Collector.initialize(dataBase);
 	}
 
 	@After

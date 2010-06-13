@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
@@ -19,6 +20,7 @@ import com.ikokoon.serenity.model.Efferent;
 import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
+import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.target.Target;
 import com.ikokoon.toolkit.Toolkit;
@@ -34,7 +36,8 @@ public abstract class ATest implements IConstants {
 
 	protected static Logger logger;
 
-	protected IDataBase mockInternalDataBase = mock(IDataBase.class);
+	protected static IDataBase mockInternalDataBase = mock(IDataBase.class);
+	protected static IDataBase dataBase;
 
 	protected Type stringType = Type.getType(String.class);
 	protected Type integerType = Type.getType(Integer.class);
@@ -52,13 +55,21 @@ public abstract class ATest implements IConstants {
 	protected String afferentName = "afferentName";
 
 	@BeforeClass
-	public static void setup() {
+	public static void beforeClass() {
 		LoggingConfigurator.configure();
 		logger = Logger.getLogger(ATest.class);
-		System.setProperty(IConstants.INCLUDED_ADAPTERS_PROPERTY, "coverage;complexity;dependency");
+		System.setProperty(IConstants.INCLUDED_ADAPTERS_PROPERTY, "profiling;coverage;complexity;dependency");
 		Configuration.getConfiguration().includedPackages.add(IConstants.class.getPackage().getName());
 		Configuration.getConfiguration().includedPackages.add(Target.class.getPackage().getName());
 		Configuration.getConfiguration().includedPackages.add(Configuration.class.getPackage().getName());
+
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, mockInternalDataBase);
+		Collector.initialize(dataBase);
+	}
+
+	@AfterClass
+	public static void afterClass() {
+		dataBase.close();
 	}
 
 	protected void visitClass(java.lang.Class<?> visitorClass, String className) {

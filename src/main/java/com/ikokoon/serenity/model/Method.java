@@ -34,8 +34,12 @@ public class Method<E, F> extends Composite<Class<?, ?>, Line<?, ?>> implements 
 	private long startWait;
 	private long endWait;
 	private long waitTime;
+	private List<Long> seriesTotalTime = new ArrayList<Long>();
+	private List<Long> seriesNetTime = new ArrayList<Long>();
+	private List<Long> seriesChangeTotalTime = new ArrayList<Long>();
+	private List<Long> seriesChangeNetTime = new ArrayList<Long>();
 
-	private List<Snapshot> snapshots = new ArrayList<Snapshot>();
+	private List<Snapshot<?, ?>> snapshots = new ArrayList<Snapshot<?, ?>>();
 
 	public String getName() {
 		return name;
@@ -151,12 +155,44 @@ public class Method<E, F> extends Composite<Class<?, ?>, Line<?, ?>> implements 
 		this.waitTime = waitTime;
 	}
 
-	public List<Snapshot> getSnapshots() {
+	public List<Snapshot<?, ?>> getSnapshots() {
 		return snapshots;
 	}
 
-	public void setSnapshots(List<Snapshot> snapshots) {
+	public void setSnapshots(List<Snapshot<?, ?>> snapshots) {
 		this.snapshots = snapshots;
+	}
+
+	public List<Long> getSeries() {
+		return seriesTotalTime;
+	}
+
+	public void setSeries(List<Long> seriesTotalTime) {
+		this.seriesTotalTime = seriesTotalTime;
+	}
+
+	public List<Long> getNetSeries() {
+		return seriesNetTime;
+	}
+
+	public void setNetSeries(List<Long> seriesNetTime) {
+		this.seriesNetTime = seriesNetTime;
+	}
+
+	public List<Long> getSeriesChange() {
+		return seriesChangeTotalTime;
+	}
+
+	public void setSeriesChange(List<Long> seriesChangeTotalTime) {
+		this.seriesChangeTotalTime = seriesChangeTotalTime;
+	}
+
+	public List<Long> getSeriesChangeNet() {
+		return seriesChangeNetTime;
+	}
+
+	public void setSeriesChangeNet(List<Long> seriesChangeNetTime) {
+		this.seriesChangeNetTime = seriesChangeNetTime;
 	}
 
 	public String toString() {

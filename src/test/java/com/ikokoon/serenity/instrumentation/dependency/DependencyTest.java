@@ -8,23 +8,17 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.objectweb.asm.Opcodes;
 
 import com.ikokoon.serenity.ATest;
-import com.ikokoon.serenity.Collector;
 import com.ikokoon.serenity.Configuration;
-import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.model.Afferent;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Efferent;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
-import com.ikokoon.serenity.persistence.DataBaseRam;
-import com.ikokoon.serenity.persistence.DataBaseToolkit;
-import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.target.TargetAccess;
 import com.ikokoon.target.consumer.Annotation;
 import com.ikokoon.target.consumer.TargetConsumer;
@@ -32,18 +26,13 @@ import com.ikokoon.toolkit.Toolkit;
 
 public class DependencyTest extends ATest {
 
-	private IDataBase dataBase;
+	// private IDataBase dataBase;
 
 	@Before
 	public void clear() {
-		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, mockInternalDataBase);
-		DataBaseToolkit.clear(dataBase);
-		Collector.setDataBase(dataBase);
-	}
-
-	@After
-	public void close() {
-		dataBase.close();
+		// dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, mockInternalDataBase);
+		// DataBaseToolkit.clear(dataBase);
+		// Collector.initialize(dataBase);
 	}
 
 	@Test

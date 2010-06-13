@@ -7,6 +7,7 @@
 		<version>1.350</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
+	<groupId>org.jvnet.hudson.plugins</groupId>
 
 	<artifactId>serenity</artifactId>
 	<version>0.5-SNAPSHOT</version>
@@ -29,6 +30,7 @@
 
 	<build>
 		<resources>
+			<!--
 			<resource>
 				<directory>src/main/java</directory>
 				<includes>
@@ -43,6 +45,7 @@
 					<include>**/**</include>
 				</includes>
 			</resource>
+			-->
 		</resources>
 		<filters>
 		</filters>
@@ -56,7 +59,7 @@
 						<phase>package</phase>
 						<configuration>
 							<tasks verbose="true">
-								<property name="src" value="src/main/java" />
+								<property name="src" value="src/main/resources" />
 								<property name="temp" value="target/temp" />
 								<property name="serenity.jar" value="target/serenity.jar" />
 								<property name="serenity.hpi" value="target/serenity.hpi" />

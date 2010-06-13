@@ -10,6 +10,8 @@ import com.ikokoon.serenity.IConstants;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
+ * Not used, to be removed.
+ *
  * @see {@link ProfilingClassAdapter}
  *
  * @author Michael Couck
@@ -63,6 +65,7 @@ public class ProfilingMethodAdapter extends MethodAdapter implements Opcodes {
 	}
 
 	public void visitCode() {
+		logger.warn("Class name : " + className + ", name : " + methodName + ", desc : " + methodDescription);
 		if (clinit) {
 			// super.visitCode()
 			this.mv.visitCode();
@@ -71,12 +74,15 @@ public class ProfilingMethodAdapter extends MethodAdapter implements Opcodes {
 		if (init) {
 			// Because the collectAllocation method looks at the class + method
 			// of the caller this call needs to come before the call to
-			insertInstruction(IConstants.collectorClassName, IConstants.collectAllocation, IConstants.profilingMethodDescription);
+			insertInstruction(IConstants.COLLECTOR_CLASS_NAME, IConstants.COLLECT_ALLOCATION, IConstants.PROFILING_METHOD_DESCRIPTION);
 			// this.visitLdcInsn(className);
-			// this.mv.visitMethodInsn(Opcodes.INVOKESTATIC, collectorClassName, allocationMethodName, collectorMethodDescription);
+			// this.visitLdcInsn(methodName);
+			// this.visitLdcInsn(methodDescription);
+			// this.visitMethodInsn(Opcodes.INVOKESTATIC, IConstants.collectorClassName, IConstants.collectAllocation,
+			// IConstants.profilingMethodDescription);
 			// this.visitMethodInsn(INVOKESTATIC, collectorClassName, "collectAllocation", "(Ljava/lang/String;)V");
 		}
-		insertInstruction(IConstants.collectorClassName, IConstants.collectStart, IConstants.profilingMethodDescription);
+		insertInstruction(IConstants.COLLECTOR_CLASS_NAME, IConstants.COLLECT_START, IConstants.PROFILING_METHOD_DESCRIPTION);
 		// this.visitLdcInsn(className);
 		// this.visitLdcInsn(methodName);
 		// this.visitMethodInsn(INVOKESTATIC, collectorClassName, "collectStart", "(Ljava/lang/String;Ljava/lang/String;)V");
@@ -86,8 +92,8 @@ public class ProfilingMethodAdapter extends MethodAdapter implements Opcodes {
 
 	public void visitInsn(int inst) {
 		if (clinit) {
-			// super.visitInsn(inst);
-			this.mv.visitInsn(inst);
+			super.visitInsn(inst);
+			// this.mv.visitInsn(inst);
 			return;
 		}
 		switch (inst) {
@@ -98,7 +104,7 @@ public class ProfilingMethodAdapter extends MethodAdapter implements Opcodes {
 		case Opcodes.LRETURN:
 		case Opcodes.RETURN:
 		case Opcodes.ATHROW:
-			insertInstruction(IConstants.collectorClassName, IConstants.collectEnd, IConstants.profilingMethodDescription);
+			insertInstruction(IConstants.COLLECTOR_CLASS_NAME, IConstants.COLLECT_END, IConstants.PROFILING_METHOD_DESCRIPTION);
 			// this.visitLdcInsn(className);
 			// this.visitLdcInsn(methodName);
 			// this.visitMethodInsn(INVOKESTATIC, collectorClassName, "collectEnd", "(Ljava/lang/String;Ljava/lang/String;)V");
@@ -106,33 +112,34 @@ public class ProfilingMethodAdapter extends MethodAdapter implements Opcodes {
 		default:
 			break;
 		}
+		this.mv.visitInsn(inst);
 		if (Opcodes.MONITORENTER == inst) {
-			insertInstruction(IConstants.collectorClassName, IConstants.collectStartWait, IConstants.profilingMethodDescription);
+			insertInstruction(IConstants.COLLECTOR_CLASS_NAME, IConstants.COLLECT_START_WAIT, IConstants.PROFILING_METHOD_DESCRIPTION);
 			// this.visitLdcInsn(className);
 			// this.visitLdcInsn(methodName);
 			// this.visitMethodInsn(INVOKESTATIC, collectorClassName, "beginWait", "(Ljava/lang/String;Ljava/lang/String;)V");
 			// super.visitInsn(inst);
-			this.mv.visitInsn(inst);
-			insertInstruction(IConstants.collectorClassName, IConstants.collectEndWait, IConstants.profilingMethodDescription);
+
+			insertInstruction(IConstants.COLLECTOR_CLASS_NAME, IConstants.COLLECT_END_WAIT, IConstants.PROFILING_METHOD_DESCRIPTION);
 			// this.visitLdcInsn(className);
 			// this.visitLdcInsn(methodName);
 			// this.visitMethodInsn(INVOKESTATIC, collectorClassName, "endWait", "(Ljava/lang/String;Ljava/lang/String;)V");
 		} else {
 			// super.visitInsn(inst);
-			this.mv.visitInsn(inst);
+			// this.mv.visitInsn(inst);
 		}
 	}
 
 	@Override
 	public void visitMethodInsn(int opcode, String owner, String name, String desc) {
 		if (isWaitInsn(opcode, owner, name, desc)) {
-			insertInstruction(IConstants.collectorClassName, IConstants.collectStartWait, IConstants.profilingMethodDescription);
+			insertInstruction(IConstants.COLLECTOR_CLASS_NAME, IConstants.COLLECT_START_WAIT, IConstants.PROFILING_METHOD_DESCRIPTION);
 			// this.visitLdcInsn(className);
 			// this.visitLdcInsn(methodName);
 			// this.visitMethodInsn(INVOKESTATIC, collectorClassName, "beginWait", "(Ljava/lang/String;Ljava/lang/String;)V");
 			// super.visitMethodInsn(opcode, owner, name, desc);
 			this.mv.visitMethodInsn(opcode, owner, name, desc);
-			insertInstruction(IConstants.collectorClassName, IConstants.collectEndWait, IConstants.profilingMethodDescription);
+			insertInstruction(IConstants.COLLECTOR_CLASS_NAME, IConstants.COLLECT_END_WAIT, IConstants.PROFILING_METHOD_DESCRIPTION);
 			// this.visitLdcInsn(className);
 			// this.visitLdcInsn(methodName);
 			// this.visitMethodInsn(INVOKESTATIC, collectorClassName, "endWait", "(Ljava/lang/String;Ljava/lang/String;)V");
@@ -184,7 +191,6 @@ public class ProfilingMethodAdapter extends MethodAdapter implements Opcodes {
 	// }
 
 	private boolean isWaitInsn(int opcode, String owner, String name, String desc) {
-
 		switch (opcode) {
 		case Opcodes.INVOKESTATIC: {
 			if (threadName.equals(owner)) {
@@ -220,29 +226,6 @@ public class ProfilingMethodAdapter extends MethodAdapter implements Opcodes {
 		}
 		}
 		return false;
-
-		// boolean isWait = (opcode == Opcodes.INVOKESTATIC && threadName.equals(owner) && "sleep".equals(name) && ("(J)V".equals(desc) || "(JI)V"
-		// .equals(desc)));
-		// if (isWait) {
-		// return true;
-		// }
-		// isWait = (opcode == Opcodes.INVOKEVIRTUAL && objectName.equals(owner) && "wait".equals(name) && ("()V".equals(desc) || "(J)V".equals(desc)
-		// || "(JI)V"
-		// .equals(desc)));
-		// if (isWait) {
-		// return true;
-		// }
-		// isWait = (opcode == Opcodes.INVOKEVIRTUAL && threadName.equals(owner) && "join".equals(name) && ("()V".equals(desc) || "(J)V".equals(desc)
-		// || "(JI)V"
-		// .equals(desc)));
-		// if (isWait) {
-		// return true;
-		// }
-		// isWait = (opcode == Opcodes.INVOKESTATIC && threadName.equals(owner) && "yield".equals(name) && "()V".equals(desc));
-		// if (isWait) {
-		// return true;
-		// }
-		// return isWait;
 	}
 
 }
