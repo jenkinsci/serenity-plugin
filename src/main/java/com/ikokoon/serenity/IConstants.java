@@ -99,4 +99,10 @@ public interface IConstants {
 	/** The join(long, int) method description in byte code. */
 	public String joinLongIntMethodDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, IConstants.longIntTypes);
 
+	public String START = "start";
+	public String END = "end";
+	public String REPORT = "report";
+
+	public int PORT = 50005;
+
 }

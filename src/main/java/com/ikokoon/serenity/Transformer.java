@@ -94,6 +94,8 @@ public class Transformer implements ClassFileTransformer, IConstants {
 			IDataBase ramDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, odbDataBase);
 			DataBaseToolkit.clear(ramDataBase);
 
+			Listener.listen(ramDataBase);
+
 			addShutdownHook(ramDataBase);
 
 			// Initialise the collector and the snapshot taker for the profiler
@@ -101,6 +103,12 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		}
 	}
 
+	/**
+	 * This method adds the shutdown hook that will clean and accumulate the data when the Jvm shuts down.
+	 *
+	 * @param dataBase
+	 *            the database to get the data from
+	 */
 	private static void addShutdownHook(final IDataBase dataBase) {
 		shutdownHook = new Thread() {
 			public void run() {
@@ -120,14 +128,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 				LOGGER.warn("Aggregator : " + (System.currentTimeMillis() - processStart));
 
 				processStart = System.currentTimeMillis();
-				String methodSeries = Reporter.methodSeries(dataBase);
-				writeReport("./serenity/methodSeries.html", methodSeries);
-				methodSeries = Reporter.methodNetSeries(dataBase);
-				writeReport("./serenity/methodNetSeries.html", methodSeries);
-				methodSeries = Reporter.methodChangeSeries(dataBase);
-				writeReport("./serenity/methodChangeSeries.html", methodSeries);
-				methodSeries = Reporter.methodNetChangeSeries(dataBase);
-				writeReport("./serenity/methodNetChangeSeries.html", methodSeries);
+				Reporter.report(dataBase);
 				LOGGER.warn("Reporter : " + (System.currentTimeMillis() - processStart));
 
 				processStart = System.currentTimeMillis();
@@ -143,22 +144,6 @@ public class Transformer implements ClassFileTransformer, IConstants {
 			}
 		};
 		Runtime.getRuntime().addShutdownHook(shutdownHook);
-	}
-
-	private static void writeReport(String name, String html) {
-		try {
-			File file = new File(name);
-			if (!file.getParentFile().exists()) {
-				file.getParentFile().mkdirs();
-			}
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-			LOGGER.warn("Writing report : " + file.getAbsolutePath());
-			Toolkit.setContents(file, html.getBytes());
-		} catch (Exception e) {
-			LOGGER.error("Exception writing report : " + name, e);
-		}
 	}
 
 	protected static void removeShutdownHook() {
@@ -185,10 +170,11 @@ public class Transformer implements ClassFileTransformer, IConstants {
 			throws IllegalClassFormatException {
 		// Can we implement a classloader here? Would it make things simpler/more robust/faster?
 		// Thread.currentThread().setContextClassLoader(and the custom classloader);
-		if (loader != ClassLoader.getSystemClassLoader()) {
-			LOGGER.debug("No system classloader : " + className);
-			return classBytes;
-		}
+		// We don't need this anymore as we will be profiling servers and they have their own classloaders
+		// if (loader != ClassLoader.getSystemClassLoader()) {
+		// LOGGER.debug("No system classloader : " + className);
+		// return classBytes;
+		// }
 		if (Configuration.getConfiguration().excluded(className)) {
 			LOGGER.debug("Excluded class : " + className);
 			return classBytes;
@@ -209,6 +195,14 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		return classBytes;
 	}
 
+	/**
+	 * This method writes the transformed classes to the file system so they can be viewed later.
+	 *
+	 * @param className
+	 *            the name of the class file
+	 * @param classBytes
+	 *            the bytes of byte code to write
+	 */
 	private void writeClass(String className, byte[] classBytes) {
 		// Write the class so we can check it with JD decompiler visually
 		String directoryPath = Toolkit.dotToSlash(Toolkit.classNameToPackageName(className));

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Archiver-Version: Plexus Archiver
 Created-By: Apache Maven
-Built-By: Michael
+Built-By: Michael Couck
 Build-Jdk: 1.6.0_14
 Extension-Name: serenity
 Implementation-Title: serenity
@@ -14,3 +14,4 @@ Plugin-Class: com.ikokoon.serenity.hudson.SerenityPlugin
 Hudson-Version: 1.350
 Boot-Class-Path: serenity.jar lib/log4j-1.2.15.jar lib/asm-all-2.2.jar lib/neodatis-odb-1.9-beta-1.jar lib/java2html.jar lib/dom4j-1.6.1.jar
 Premain-Class: com.ikokoon.serenity.Transformer
+Main-Class: com.ikokoon.serenity.Messenger

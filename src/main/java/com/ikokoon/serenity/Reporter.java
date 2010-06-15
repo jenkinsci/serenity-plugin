@@ -1,6 +1,7 @@
 package com.ikokoon.serenity;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +17,7 @@ import org.dom4j.io.XMLWriter;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.persistence.IDataBase;
+import com.ikokoon.toolkit.Toolkit;
 
 public class Reporter {
 
@@ -23,6 +25,53 @@ public class Reporter {
 	private static String BORDER_1PX_BLACK = "border : 1px solid black; border-collapse : collapse;";
 	private static String TEXT_ALIGN_LEFT = "text-align: left;";
 	private static String BORDER_AND_TEXT_ALIGN = BORDER_1PX_BLACK + TEXT_ALIGN_LEFT;
+
+	protected static String METHOD_SERIES = "methodSeries.html";
+	protected static String METHOD_NET_SERIES = "methodNetSeries.html";
+	protected static String METHOD_CHANGE_SERIES = "methodChangeSeries.html";
+	protected static String METHOD_NET_CHANGE_SERIES = "methodNetChangeSeries.html";
+
+	protected static String METHOD_SERIES_FILE = IConstants.SERENITY_DIRECTORY + File.separatorChar + METHOD_SERIES;
+	protected static String METHOD_NET_SERIES_FILE = IConstants.SERENITY_DIRECTORY + File.separatorChar + METHOD_NET_SERIES;
+	protected static String METHOD_CHANGE_SERIES_FILE = IConstants.SERENITY_DIRECTORY + File.separatorChar + METHOD_CHANGE_SERIES;
+	protected static String METHOD_NET_CHANGE_SERIES_FILE = IConstants.SERENITY_DIRECTORY + File.separatorChar + METHOD_NET_CHANGE_SERIES;
+
+	public static void report(IDataBase dataBase) {
+		String html = Reporter.methodSeries(dataBase);
+		writeReport(METHOD_SERIES_FILE, html);
+		html = Reporter.methodNetSeries(dataBase);
+		writeReport(METHOD_NET_SERIES_FILE, html);
+		html = Reporter.methodChangeSeries(dataBase);
+		writeReport(METHOD_CHANGE_SERIES_FILE, html);
+		html = Reporter.methodNetChangeSeries(dataBase);
+		writeReport(METHOD_NET_CHANGE_SERIES_FILE, html);
+	}
+
+	/**
+	 * Writes the report data to the file system.
+	 *
+	 * @param name
+	 *            the name of the report
+	 * @param html
+	 *            the html to write in the file
+	 */
+	private static void writeReport(String name, String html) {
+		try {
+			File file = new File(name);
+			if (!file.getParentFile().exists()) {
+				file.getParentFile().mkdirs();
+			}
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			if (LOGGER.isInfoEnabled()) {
+				LOGGER.info("Writing report : " + file.getAbsolutePath());
+			}
+			Toolkit.setContents(file, html.getBytes());
+		} catch (Exception e) {
+			LOGGER.error("Exception writing report : " + name, e);
+		}
+	}
 
 	/**
 	 * This method generates the time series for the methods and puts it in an HTML string. The methods are sorted according to the greatest average
