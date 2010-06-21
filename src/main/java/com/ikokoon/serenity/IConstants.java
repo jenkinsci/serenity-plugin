@@ -102,6 +102,7 @@ public interface IConstants {
 	public String START = "start";
 	public String END = "end";
 	public String REPORT = "report";
+	public String LISTENING = "listening";
 
 	public int PORT = 50005;
 

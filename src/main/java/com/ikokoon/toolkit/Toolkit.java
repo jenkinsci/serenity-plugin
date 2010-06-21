@@ -398,12 +398,20 @@ public class Toolkit {
 	public static void setContents(File file, byte[] bytes) {
 		FileOutputStream fileOutputStream = null;
 		try {
+			if (!file.getParentFile().exists()) {
+				file.getParentFile().mkdirs();
+			}
+			if (!file.exists()) {
+				file.createNewFile();
+			}
 			fileOutputStream = new FileOutputStream(file);
 			fileOutputStream.write(bytes, 0, bytes.length);
 		} catch (FileNotFoundException e) {
 			logger.error("File " + file + " not found", e);
 		} catch (IOException e) {
 			logger.error("IO exception writing file contents", e);
+		} catch (Exception e) {
+			logger.error("General exception setting the file contents", e);
 		} finally {
 			if (fileOutputStream != null) {
 				try {

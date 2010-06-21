@@ -11,16 +11,32 @@ import org.objectweb.asm.Opcodes;
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.toolkit.Toolkit;
 
-public class ProfilingClassAdviceAdapter extends ClassAdapter implements Opcodes {
+/**
+ * @author Michael Couck
+ * @since 06.06.10
+ * @version 01.00
+ */
+public class ProfilingClassAdviceAdapter extends ClassAdapter {
 
 	protected Logger logger = Logger.getLogger(this.getClass());
 	private String className;
 
+	/**
+	 * Constructor takes the class that will be profiled and the original visitor . *
+	 *
+	 * @param visitor
+	 *            the visitor from ASM
+	 * @param className
+	 *            the name of the class to be profiled
+	 */
 	public ProfilingClassAdviceAdapter(ClassVisitor visitor, String className) {
 		super(visitor);
 		this.className = Toolkit.slashToDot(className);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public MethodVisitor visitMethod(int access, final String methodName, final String methodDescription, String methodSignature, String[] exceptions) {
 		MethodVisitor methodVisitor = super.visitMethod(access, methodName, methodDescription, methodSignature, exceptions);
 		MethodVisitor methodAdapter = getMethodAdapter(methodVisitor, access, methodName, methodDescription);
@@ -29,6 +45,9 @@ public class ProfilingClassAdviceAdapter extends ClassAdapter implements Opcodes
 
 	private MethodVisitor getMethodAdapter(MethodVisitor methodVisitor, int access, final String methodName, final String methodDescription) {
 		// logger.warn("Access : " + access + ", " + Opcodes.ACC_ABSTRACT + ", " + Opcodes.ACC_INTERFACE);
+		// We test for interfaces and abstract classes, of course these methods do
+		// not have bodies so we can't add instructions to these methods or the Jvm
+		// will not like it, class format exceptions
 		if (access == Opcodes.ACC_ABSTRACT + Opcodes.ACC_PUBLIC) {
 			return methodVisitor;
 		} else if (access == Opcodes.ACC_ABSTRACT + Opcodes.ACC_PRIVATE) {
@@ -92,9 +111,10 @@ public class ProfilingClassAdviceAdapter extends ClassAdapter implements Opcodes
 			private void insertInstruction(String collectorClassName, String collectorMethodName, String collectorMethodDescription) {
 				super.visitLdcInsn(className);
 				super.visitLdcInsn(methodName);
-				super.visitLdcInsn(methodDescription);
+				super.visitLdcInsn(methodDesc);
 				super.visitMethodInsn(Opcodes.INVOKESTATIC, collectorClassName, collectorMethodName, collectorMethodDescription);
 			}
+
 		};
 		return methodAdapter;
 	}

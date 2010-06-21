@@ -44,7 +44,7 @@ import com.ikokoon.toolkit.TypeTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses( {
-// Adapter functionality tests
+		// Adapter functionality tests
 		ComplexityTest.class, // Tests the complexity functionality
 		CoverageTest.class, // Tests that the coverage instructions have been added
 		DependencyTest.class, // Tests that the dependency adapters are collecting the dependency data correctly
@@ -57,6 +57,9 @@ import com.ikokoon.toolkit.TypeTest;
 		// Top level tests, functional rather than unit
 		CollectorTest.class, // Tests that the collector is collecting the data
 		TransformerTest.class, // Tests that the transformer is transforming the classes
+		ListenerTest.class, // For the listener that listens to dump the reports
+		ProfilerTest.class, // Tests the profiler in a couple of ways
+		ReporterTest.class, // Tests the reporting functionality
 
 		// The factory tests
 		ObjectFactoryTest.class, // Instantiates objects based on the class and parameters
@@ -64,6 +67,7 @@ import com.ikokoon.toolkit.TypeTest;
 
 		// Toolkit and assorted common functionality tests
 		TypeTest.class, ToolkitTest.class, ModellerTest.class, PermutationsTest.class, MatrixTest.class, CoverageSourceCodeTest.class,
+		InstrumentationTest.class,
 
 		// Some of the many database/persistence tests
 		DataBaseManagerTest.class, // The test for opening and closing the databases

@@ -241,12 +241,14 @@ public class AggregatorTest extends ATest implements IConstants {
 		assertTrue(project.getAbstractness() != 0);
 		assertTrue(project.getClasses() != 0);
 		assertTrue(project.getComplexity() != 0);
-		assertTrue(project.getCoverage() != 0);
+		// assertTrue(project.getCoverage() != 0);
 		assertTrue(project.getDistance() != 0);
 		assertTrue(project.getLines() != 0);
 		assertTrue(project.getMethods() != 0);
 		assertTrue(project.getPackages() != 0);
 		assertTrue(project.getStability() != 0);
+
+		dataBase.close();
 	}
 
 	@SuppressWarnings( { "unused", "unchecked" })

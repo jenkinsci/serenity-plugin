@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -24,13 +25,20 @@ public class ListenerTest extends ATest {
 		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, mockInternalDataBase);
 	}
 
+	@AfterClass
+	public static void afterClass() {
+		ATest.afterClass();
+		dataBase.close();
+	}
+
 	@Test
 	public void listen() throws Exception {
+		String localhost = "127.0.0.1";
 		Listener.listen(dataBase);
-		Messenger.main(new String[] { "127.0.0.1", "report" });
+		Messenger.main(new String[] { localhost, IConstants.REPORT });
 		Thread.sleep(10000);
 		// Verify that the reports are written
-		File file = new File("./serenity");
+		File file = new File(IConstants.SERENITY_DIRECTORY);
 		logger.warn("Searching directory : " + file.getAbsolutePath());
 		List<File> files = new ArrayList<File>();
 		Toolkit.findFiles(file, new Toolkit.IFileFilter() {

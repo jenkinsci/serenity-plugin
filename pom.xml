@@ -1,4 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -15,7 +19,7 @@
 	<name>Hudson Serenity plugin</name>
 	<url>http://wiki.hudson-ci.org/display/HUDSON/Serenity+Plugin</url>
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.sourceEncoding>UTF8</project.build.sourceEncoding>
 	</properties>
 
 	<developers>
@@ -29,26 +33,6 @@
 	</developers>
 
 	<build>
-		<resources>
-			<!--
-			<resource>
-				<directory>src/main/java</directory>
-				<includes>
-					<include>META-INF/*.xml</include>
-					<include>META-INF/*.properties</include>
-					<include>**/*.java</include>
-				</includes>
-			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>**/**</include>
-				</includes>
-			</resource>
-			-->
-		</resources>
-		<filters>
-		</filters>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -59,19 +43,13 @@
 						<phase>package</phase>
 						<configuration>
 							<tasks verbose="true">
-								<property name="src" value="src/main/resources" />
 								<property name="temp" value="target/temp" />
 								<property name="serenity.jar" value="target/serenity.jar" />
-								<property name="serenity.hpi" value="target/serenity.hpi" />
-								<property name="manifest" value="${src}/META-INF/MANIFEST.MF" />
+								<property name="manifest" value="src/main/resources/META-INF/MANIFEST.MF" />
 
-								<echo message="Unpacking and repacking serenity.jar with the agent manifest and the source" />
-								<unjar src="${serenity.jar}" dest="${temp}" overwrite="true" taskname="repack.serenity.with.manifest" />
-								<jar destfile="${serenity.jar}" basedir="${temp}" manifest="${manifest}">
-									<fileset dir="${src}">
-										<include name="**" />
-									</fileset>
-								</jar>
+								<echo message="Unpacking and repacking serenity.jar with the agent manifest" />
+								<unjar src="${serenity.jar}" dest="${temp}" overwrite="true" />
+								<jar destfile="${serenity.jar}" basedir="${temp}" manifest="${manifest}" />
 							</tasks>
 						</configuration>
 						<goals>
@@ -144,9 +122,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<profiles>
-	</profiles>
 
 	<repositories>
 		<repository>

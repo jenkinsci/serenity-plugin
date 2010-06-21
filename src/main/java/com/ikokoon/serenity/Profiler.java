@@ -103,6 +103,8 @@ public class Profiler {
 		if (method.getNetSeries().size() == 0) {
 			List<Snapshot<?, ?>> snapshots = method.getSnapshots();
 			for (Snapshot<?, ?> snapshot : snapshots) {
+				long netTime = snapshot.getTotal() - snapshot.getWait();
+				snapshot.setNet(netTime);
 				method.getNetSeries().add(snapshot.getNet());
 			}
 		}

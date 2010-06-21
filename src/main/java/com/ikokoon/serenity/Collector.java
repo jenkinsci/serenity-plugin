@@ -57,20 +57,34 @@ public class Collector implements IConstants {
 	public static void initialize(final IDataBase dataBase) {
 		Collector.dataBase = dataBase;
 		long snapshptInterval = Configuration.getConfiguration().getSnapshotInterval();
-		LOGGER.warn("Profiler initialize : " + dataBase + ", " + snapshptInterval);
+		LOGGER.info("Profiler initialize : " + dataBase + ", " + snapshptInterval);
 		if (snapshptInterval > 0) {
 			Timer timer = new Timer();
 			TimerTask timerTask = new TimerTask() {
 				@Override
 				public void run() {
-					LOGGER.warn("Taking snapshot at : " + new Date());
-					takeSnapshot();
+					try {
+						LOGGER.info("Taking snapshot at : " + new Date());
+						takeSnapshot();
+					} catch (Exception e) {
+						LOGGER.error("Exception taking the snapshot : ", e);
+					}
 				}
 			};
 			timer.schedule(timerTask, snapshptInterval, snapshptInterval);
 		}
 	}
 
+	/**
+	 * This class is called by the byte code injection to increment the allocations of classes on the heap, i.e. when their constructors are called.
+	 *
+	 * @param className
+	 *            the name of the class being instantiated
+	 * @param methodName
+	 *            the name of the method, typically this will be 'init'
+	 * @param methodDescription
+	 *            the byte code description of the method
+	 */
 	public static final void collectAllocation(String className, String methodName, String methodDescription) {
 		Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
 		double allocations = klass.getAllocations();
@@ -78,27 +92,66 @@ public class Collector implements IConstants {
 		klass.setAllocations(allocations);
 	}
 
+	/**
+	 * This method is called by the byte code injection at the start of a method, i.e. when a thread enters a method.
+	 *
+	 * @param className
+	 *            the name of the class where the thread is entering the method
+	 * @param methodName
+	 *            the name of the method in the class that is being executed
+	 * @param methodDescription
+	 *            the byte code description of the method
+	 */
 	public static final void collectStart(String className, String methodName, String methodDescription) {
 		Method<?, ?> method = getMethod(className, methodName, methodDescription);
 		method.setInvocations(method.getInvocations() + 1);
 		method.setStartTime(System.nanoTime());
 	}
 
+	/**
+	 * This method is called by the byte code injection at the end of a method, i.e. when a thread returns from a method. This can happen in a return,
+	 * or when an exception is thrown.
+	 *
+	 * @param className
+	 *            the name of the class where the thread is entering the method
+	 * @param methodName
+	 *            the name of the method in the class that is being executed
+	 * @param methodDescription
+	 *            the byte code description of the method
+	 */
 	public static final void collectEnd(String className, String methodName, String methodDescription) {
 		Method<?, ?> method = getMethod(className, methodName, methodDescription);
 		method.setEndTime(System.nanoTime());
 		long executionTime = method.getEndTime() - method.getStartTime();
 		long totalTime = method.getTotalTime() + executionTime;
 		method.setTotalTime(totalTime);
-		long netTime = totalTime - method.getWaitTime();
-		method.setNetTime(netTime);
 	}
 
+	/**
+	 * This method is called by the byte code injection when there is wait, join, sleep or yield called in a method.
+	 *
+	 * @param className
+	 *            the name of the class where the thread is entering the method
+	 * @param methodName
+	 *            the name of the method in the class that is being executed
+	 * @param methodDescription
+	 *            the byte code description of the method
+	 */
 	public static final void collectStartWait(String className, String methodName, String methodDescription) {
 		Method<?, ?> method = getMethod(className, methodName, methodDescription);
 		method.setStartWait(System.nanoTime());
 	}
 
+	/**
+	 * This method is called by the byte code injection when there is wait, join, sleep or yield that exits in a method.
+	 *
+	 * @param className
+	 *            the name of the class where the thread is entering the method
+	 * @param methodName
+	 *            the name of the method in the class that is being executed
+	 * @param methodDescription
+	 *            the byte code description of the method
+	 */
 	public static final void collectEndWait(String className, String methodName, String methodDescription) {
 		Method<?, ?> method = getMethod(className, methodName, methodDescription);
 		method.setEndWait(System.nanoTime());

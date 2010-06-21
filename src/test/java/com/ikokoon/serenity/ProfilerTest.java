@@ -3,6 +3,7 @@ package com.ikokoon.serenity;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -11,6 +12,13 @@ import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.persistence.DataBaseOdb;
 import com.ikokoon.serenity.persistence.IDataBase;
 
+/**
+ * This test needs to have assertions. TODO implement the real tests.
+ *
+ * @author Michael Couck
+ * @since 19.06.10
+ * @version 01.00
+ */
 public class ProfilerTest extends ATest implements IConstants {
 
 	private Logger logger = Logger.getLogger(this.getClass());
@@ -23,26 +31,11 @@ public class ProfilerTest extends ATest implements IConstants {
 		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, mockInternalDataBase);
 	}
 
-	// @Test
-	// @SuppressWarnings("unchecked")
-	// public void averageMethodChange() {
-	// String className = "com.ikokoon.search.action.parse.html.JerichoParser";
-	// String methodName = "parse";
-	// String methodDescription = "([B)Ljava/lang/String;";
-	//
-	// Method parseMethod = dataBase.find(Method.class, Arrays.asList(className, methodName, methodDescription));
-	// long methodChange = Profiler.averageMethodChange(parseMethod);
-	// logger.error("Average change : method : " + parseMethod.getName() + " - " + methodChange);
-	//
-	// List<Class> classes = dataBase.find(Class.class);
-	// for (Class klass : classes) {
-	// List<Method<?, ?>> methods = klass.getChildren();
-	// for (Method<?, ?> method : methods) {
-	// long averageMethodChange = Profiler.averageMethodChange(method);
-	// logger.error("Average change : method : " + method.getName() + " - " + averageMethodChange);
-	// }
-	// }
-	// }
+	@AfterClass
+	public static void afterClass() {
+		ATest.afterClass();
+		dataBase.close();
+	}
 
 	@Test
 	@SuppressWarnings("unchecked")
@@ -55,19 +48,6 @@ public class ProfilerTest extends ATest implements IConstants {
 				logger.error("Average net method time : method : " + method.getName() + " - " + averageMethodNetTime);
 			}
 		}
-	}
-
-	// @Test
-	// @SuppressWarnings("unchecked")
-	public void averageMethodNetChange() {
-		// List<Class> classes = dataBase.find(Class.class);
-		// for (Class klass : classes) {
-		// List<Method<?, ?>> methods = klass.getChildren();
-		// for (Method<?, ?> method : methods) {
-		// long averageMethodNetTimeChange = Profiler.averageMethodNetChange(method);
-		// logger.error("Average method net time change : method : " + method.getName() + " - " + averageMethodNetTimeChange);
-		// }
-		// }
 	}
 
 	@Test
