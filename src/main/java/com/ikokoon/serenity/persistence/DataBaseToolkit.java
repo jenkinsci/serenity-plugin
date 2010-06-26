@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.ikokoon.serenity.Collector;
-import com.ikokoon.serenity.LoggingConfigurator;
 import com.ikokoon.serenity.model.Afferent;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Composite;
@@ -15,6 +14,7 @@ import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.model.Project;
 import com.ikokoon.serenity.model.Snapshot;
+import com.ikokoon.toolkit.LoggingConfigurator;
 import com.ikokoon.toolkit.Toolkit;
 
 /**

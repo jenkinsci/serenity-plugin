@@ -23,6 +23,7 @@ import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.target.Target;
+import com.ikokoon.toolkit.LoggingConfigurator;
 import com.ikokoon.toolkit.Toolkit;
 
 /**

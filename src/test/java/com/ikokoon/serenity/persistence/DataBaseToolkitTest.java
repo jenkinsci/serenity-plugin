@@ -16,10 +16,10 @@ public class DataBaseToolkitTest extends ATest {
 
 	@Test
 	public void copy() {
-		File odbDataBaseFile = new File("./src/test/resources/serenity.odb");
-		File ramDataBaseFile = new File("./src/test/resources/serenity.ram");
-		File jarDataBaseFile = new File("./src/test/resources/jar.odb");
-		File tagDataBaseFile = new File("./src/test/resources/tag.odb");
+		File odbDataBaseFile = new File("./src/test/resources/isearch/merge/serenity.odb");
+		File ramDataBaseFile = new File("./src/test/resources/isearch/merge/serenity.ram");
+		File jarDataBaseFile = new File("./src/test/resources/isearch/merge/jar.odb");
+		File tagDataBaseFile = new File("./src/test/resources/isearch/merge/tag.odb");
 		Toolkit.deleteFile(odbDataBaseFile, 3);
 		Toolkit.deleteFile(ramDataBaseFile, 3);
 		IDataBase odbDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, odbDataBaseFile.getAbsolutePath(), null);
@@ -30,7 +30,7 @@ public class DataBaseToolkitTest extends ATest {
 		odbDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, odbDataBaseFile.getAbsolutePath(), null);
 		IDataBase ramDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, ramDataBaseFile.getAbsolutePath(), odbDataBase);
 
-		Class<?, ?> klass = ramDataBase.find(Class.class, Toolkit.hash("com.ikokoon.search.Search"));
+		Class<?, ?> klass = ramDataBase.find(Class.class, Toolkit.hash("com.ikokoon.search.action.Index"));
 		assertNull(klass);
 		klass = ramDataBase.find(Class.class, Toolkit.hash("com.ikokoon.search.tag.SpellingTag"));
 		assertNull(klass);
@@ -45,7 +45,7 @@ public class DataBaseToolkitTest extends ATest {
 		odbDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, odbDataBaseFile.getAbsolutePath(), null);
 		ramDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, ramDataBaseFile.getAbsolutePath(), odbDataBase);
 
-		klass = odbDataBase.find(Class.class, Toolkit.hash("com.ikokoon.search.Search"));
+		klass = odbDataBase.find(Class.class, Toolkit.hash("com.ikokoon.search.action.Index"));
 		assertNotNull(klass);
 		klass = odbDataBase.find(Class.class, Toolkit.hash("com.ikokoon.search.tag.SpellingTag"));
 		assertNull(klass);
@@ -58,7 +58,7 @@ public class DataBaseToolkitTest extends ATest {
 
 		odbDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, odbDataBaseFile.getAbsolutePath(), null);
 
-		klass = odbDataBase.find(Class.class, Toolkit.hash("com.ikokoon.search.Search"));
+		klass = odbDataBase.find(Class.class, Toolkit.hash("com.ikokoon.search.action.Index"));
 		assertNotNull(klass);
 		klass = odbDataBase.find(Class.class, Toolkit.hash("com.ikokoon.search.tag.SpellingTag"));
 		assertNotNull(klass);
@@ -69,7 +69,7 @@ public class DataBaseToolkitTest extends ATest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void clear() {
-		String dataBaseFile = "./src/main/resources/dummy.odb";
+		String dataBaseFile = "./src/test/resources/dummy.odb";
 		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, null);
 		Class<?, ?> klass = new Class<Package, Method>();
 		klass.setId(Long.MAX_VALUE);
@@ -86,6 +86,8 @@ public class DataBaseToolkitTest extends ATest {
 		assertNull(klass);
 
 		dataBase.close();
+
+		Toolkit.deleteFile(new File(dataBaseFile), 3);
 	}
 
 }

@@ -6,7 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
-import com.ikokoon.serenity.LoggingConfigurator;
+import com.ikokoon.toolkit.LoggingConfigurator;
 
 public class DataBaseManagerTest extends ATest {
 

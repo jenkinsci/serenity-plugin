@@ -7,7 +7,6 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
 import java.util.Date;
-import java.util.Enumeration;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassVisitor;
@@ -21,6 +20,9 @@ import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.serenity.process.Accumulator;
 import com.ikokoon.serenity.process.Aggregator;
 import com.ikokoon.serenity.process.Cleaner;
+import com.ikokoon.serenity.process.Listener;
+import com.ikokoon.serenity.process.Reporter;
+import com.ikokoon.toolkit.LoggingConfigurator;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
@@ -64,14 +66,10 @@ public class Transformer implements ClassFileTransformer, IConstants {
 	public static void premain(String args, Instrumentation instrumentation) {
 		if (!INITIALISED) {
 			INITIALISED = true;
-
-			// printSystemProperties();
-
 			LoggingConfigurator.configure();
 			CLASS_ADAPTER_CLASSES = Configuration.getConfiguration().classAdapters.toArray(new Class[Configuration.getConfiguration().classAdapters
 					.size()]);
 			LOGGER = Logger.getLogger(Transformer.class);
-
 			if (instrumentation != null) {
 				instrumentation.addTransformer(new Transformer());
 			}
@@ -93,13 +91,10 @@ public class Transformer implements ClassFileTransformer, IConstants {
 			// This is the ram database that will hold all the data in memory for better performance
 			IDataBase ramDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, odbDataBase);
 			DataBaseToolkit.clear(ramDataBase);
-
-			Listener.listen(ramDataBase);
-
-			addShutdownHook(ramDataBase);
-
-			// Initialise the collector and the snapshot taker for the profiler
 			Collector.initialize(ramDataBase);
+			Profiler.initialize(ramDataBase);
+			new Listener(null, ramDataBase).execute();
+			addShutdownHook(ramDataBase);
 		}
 	}
 
@@ -128,7 +123,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 				LOGGER.warn("Aggregator : " + (System.currentTimeMillis() - processStart));
 
 				processStart = System.currentTimeMillis();
-				Reporter.report(dataBase);
+				new Reporter(null, dataBase).execute();
 				LOGGER.warn("Reporter : " + (System.currentTimeMillis() - processStart));
 
 				processStart = System.currentTimeMillis();
@@ -150,37 +145,17 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		Runtime.getRuntime().removeShutdownHook(shutdownHook);
 	}
 
-	protected static void printSystemProperties() {
-		System.out.println("Working directory : " + new File(".").getAbsolutePath());
-		System.out.println("Java class path : " + System.getProperty("java.class.path"));
-		Enumeration<Object> keys = System.getProperties().keys();
-		while (keys.hasMoreElements()) {
-			Object key = keys.nextElement();
-			if (key == null) {
-				continue;
-			}
-			System.out.println("System property : " + key + "=" + System.getProperties().getProperty(key.toString()));
-		}
-	}
-
 	/**
 	 * This method transforms the classes that are specified.
 	 */
 	public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classBytes)
 			throws IllegalClassFormatException {
-		// Can we implement a classloader here? Would it make things simpler/more robust/faster?
-		// Thread.currentThread().setContextClassLoader(and the custom classloader);
-		// We don't need this anymore as we will be profiling servers and they have their own classloaders
-		// if (loader != ClassLoader.getSystemClassLoader()) {
-		// LOGGER.debug("No system classloader : " + className);
-		// return classBytes;
-		// }
 		if (Configuration.getConfiguration().excluded(className)) {
-			LOGGER.debug("Excluded class : " + className);
+			LOGGER.info("Excluded class : " + className);
 			return classBytes;
 		}
 		if (Configuration.getConfiguration().included(className)) {
-			LOGGER.debug("Enhancing class : " + className);
+			LOGGER.info("Enhancing class : " + className);
 			ByteArrayOutputStream source = new ByteArrayOutputStream(0);
 			ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(CLASS_ADAPTER_CLASSES, className, classBytes, source);
 			byte[] enhancedClassBytes = writer.toByteArray();
@@ -190,7 +165,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 			}
 			return enhancedClassBytes;
 		} else {
-			LOGGER.debug("Class not included : " + className);
+			LOGGER.info("Class not included : " + className);
 		}
 		return classBytes;
 	}
@@ -210,9 +185,8 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		File directory = new File(IConstants.SERENITY_DIRECTORY + File.separator + directoryPath);
 		if (!directory.exists()) {
 			directory.mkdirs();
+			LOGGER.debug(directory.getAbsolutePath());
 		}
-		LOGGER.debug(directory.getAbsolutePath());
-
 		File file = new File(directory, fileName);
 		Toolkit.setContents(file, classBytes);
 	}

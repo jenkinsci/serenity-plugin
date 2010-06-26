@@ -12,7 +12,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.ikokoon.serenity.IConstants;
-import com.ikokoon.serenity.LoggingConfigurator;
 import com.ikokoon.serenity.persistence.DataBaseOdb;
 import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.IDataBase;

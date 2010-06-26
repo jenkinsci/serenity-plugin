@@ -15,6 +15,7 @@ import com.ikokoon.serenity.instrumentation.coverage.CoverageClassAdapter;
 import com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapter;
 import com.ikokoon.serenity.instrumentation.profiling.ProfilingClassAdviceAdapter;
 import com.ikokoon.serenity.model.Project;
+import com.ikokoon.toolkit.LoggingConfigurator;
 import com.ikokoon.toolkit.Toolkit;
 
 /**

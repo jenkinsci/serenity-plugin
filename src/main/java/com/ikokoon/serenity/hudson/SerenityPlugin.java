@@ -6,8 +6,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.ikokoon.serenity.LoggingConfigurator;
 import com.ikokoon.serenity.persistence.IDataBase;
+import com.ikokoon.toolkit.LoggingConfigurator;
 
 /**
  * Entry point of a plugin.

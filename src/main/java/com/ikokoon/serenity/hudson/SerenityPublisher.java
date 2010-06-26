@@ -31,13 +31,13 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 import com.ikokoon.serenity.IConstants;
-import com.ikokoon.serenity.LoggingConfigurator;
 import com.ikokoon.serenity.persistence.DataBaseOdb;
 import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.DataBaseToolkit;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.serenity.process.Aggregator;
 import com.ikokoon.serenity.process.Pruner;
+import com.ikokoon.toolkit.LoggingConfigurator;
 
 /**
  * This class runs at the end of the build, called by Hudson. The purpose is to copy the database files from the output directories for each module in

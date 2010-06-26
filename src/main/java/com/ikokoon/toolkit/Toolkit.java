@@ -725,4 +725,9 @@ public class Toolkit {
 		return true;
 	}
 
+	public static void main(String[] args) {
+		File file = new File("D:/Servers/Tomcat/apache-tomcat-6.0.26/bin/serenity/charts");
+		Toolkit.deleteFile(file, 3);
+	}
+
 }

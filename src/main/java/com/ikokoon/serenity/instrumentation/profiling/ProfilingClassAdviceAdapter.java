@@ -18,11 +18,11 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class ProfilingClassAdviceAdapter extends ClassAdapter {
 
-	protected Logger logger = Logger.getLogger(this.getClass());
+	private Logger logger;
 	private String className;
 
 	/**
-	 * Constructor takes the class that will be profiled and the original visitor . *
+	 * Constructor takes the class that will be profiled and the original visitor.
 	 *
 	 * @param visitor
 	 *            the visitor from ASM
@@ -32,6 +32,7 @@ public class ProfilingClassAdviceAdapter extends ClassAdapter {
 	public ProfilingClassAdviceAdapter(ClassVisitor visitor, String className) {
 		super(visitor);
 		this.className = Toolkit.slashToDot(className);
+		this.logger = Logger.getLogger(this.getClass());
 	}
 
 	/**
@@ -48,11 +49,25 @@ public class ProfilingClassAdviceAdapter extends ClassAdapter {
 		// We test for interfaces and abstract classes, of course these methods do
 		// not have bodies so we can't add instructions to these methods or the Jvm
 		// will not like it, class format exceptions
-		if (access == Opcodes.ACC_ABSTRACT + Opcodes.ACC_PUBLIC) {
-			return methodVisitor;
-		} else if (access == Opcodes.ACC_ABSTRACT + Opcodes.ACC_PRIVATE) {
-			return methodVisitor;
-		} else if (access == Opcodes.ACC_ABSTRACT + Opcodes.ACC_PROTECTED) {
+
+		boolean isAbstract = false;
+		switch (access) {
+		case Opcodes.ACC_ABSTRACT:
+		case Opcodes.ACC_ABSTRACT + Opcodes.ACC_PUBLIC:
+		case Opcodes.ACC_ABSTRACT + Opcodes.ACC_PRIVATE:
+		case Opcodes.ACC_ABSTRACT + Opcodes.ACC_PROTECTED:
+		case Opcodes.ACC_INTERFACE:
+		case Opcodes.ACC_INTERFACE + Opcodes.ACC_PUBLIC:
+		case Opcodes.ACC_INTERFACE + Opcodes.ACC_PRIVATE:
+		case Opcodes.ACC_INTERFACE + Opcodes.ACC_PROTECTED:
+			isAbstract = true;
+			break;
+		default:
+			break;
+		}
+
+		if (isAbstract) {
+			logger.info("Abstract method : " + access + " : " + methodName);
 			return methodVisitor;
 		}
 

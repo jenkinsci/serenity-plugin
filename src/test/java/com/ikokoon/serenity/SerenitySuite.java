@@ -33,6 +33,8 @@ import com.ikokoon.serenity.persistence.DataBaseRamTest;
 import com.ikokoon.serenity.persistence.DataBaseToolkitTest;
 import com.ikokoon.serenity.process.AccumulatorTest;
 import com.ikokoon.serenity.process.AggregatorTest;
+import com.ikokoon.serenity.process.ListenerTest;
+import com.ikokoon.serenity.process.ReporterTest;
 import com.ikokoon.toolkit.MatrixTest;
 import com.ikokoon.toolkit.ObjectFactoryTest;
 import com.ikokoon.toolkit.PermutationsTest;

@@ -26,10 +26,10 @@ import com.ikokoon.toolkit.Toolkit;
 public class DataBaseOdbTest extends ATest {
 
 	private IDataBase dataBase;
+	private File dataBaseFile = new File("./src/test/resources/DataBaseOdbTest.odb");
 
 	@Before
 	public void clear() {
-		File dataBaseFile = new File("./src/test/resources/DataBaseOdbTest.odb");
 		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile.getAbsolutePath(), mockInternalDataBase);
 		DataBaseToolkit.clear(dataBase);
 	}
@@ -37,6 +37,7 @@ public class DataBaseOdbTest extends ATest {
 	@After
 	public void close() {
 		dataBase.close();
+		Toolkit.deleteFile(dataBaseFile, 3);
 	}
 
 	@Test

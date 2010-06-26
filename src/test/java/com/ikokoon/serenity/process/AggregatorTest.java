@@ -190,65 +190,63 @@ public class AggregatorTest extends ATest implements IConstants {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void aggregateProject() throws Exception {
-		// new Accumulator(null).execute();
-		// visitClass(DependencyClassAdapter.class, IDiscovery.class.getName());
-		// visitClass(DependencyClassAdapter.class, Discovery.class.getName());
-
 		File odbDataBaseFile = new File("./src/test/resources/isearch/serenity.odb");
 		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, odbDataBaseFile.getAbsolutePath(), null);
 
-		Project<?, ?> project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
-		project.setAbstractness(0);
-		project.setClasses(0);
-		project.setComplexity(0);
-		project.setCoverage(0);
-		project.setDistance(0);
-		project.setLines(0);
-		project.setMethods(0);
-		project.setPackages(0);
-		project.setStability(0);
+		try {
+			Project<?, ?> project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
+			project.setAbstractness(0);
+			project.setClasses(0);
+			project.setComplexity(0);
+			project.setCoverage(0);
+			project.setDistance(0);
+			project.setLines(0);
+			project.setMethods(0);
+			project.setPackages(0);
+			project.setStability(0);
 
-		dataBase.persist(project);
+			dataBase.persist(project);
 
-		DataBaseToolkit.execute(dataBase, new Package(), new DataBaseToolkit.Executer() {
-			public void execute(Object object) {
-				Package pakkage = (Package) object;
-				pakkage.setAbstractness(0);
-				pakkage.setAfference(0);
-				pakkage.setComplexity(0);
-				pakkage.setCoverage(0);
-				pakkage.setDistance(0);
-				pakkage.setEfference(0);
-				pakkage.setExecuted(0);
-				pakkage.setImplementations(0);
-				pakkage.setInterfaces(0);
-				pakkage.setLines(0);
-				pakkage.setStability(0);
-			}
-		});
-		DataBaseToolkit.execute(dataBase, new Class(), new DataBaseToolkit.Executer() {
-			public void execute(Object object) {
-				Class klass = (Class) object;
-				klass.setAfference(0);
-				klass.setComplexity(0);
-				klass.setCoverage(0);
-				klass.setEfference(0);
-				klass.setStability(0);
-			}
-		});
-		new Aggregator(null, dataBase).execute();
-		project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
-		assertTrue(project.getAbstractness() != 0);
-		assertTrue(project.getClasses() != 0);
-		assertTrue(project.getComplexity() != 0);
-		// assertTrue(project.getCoverage() != 0);
-		assertTrue(project.getDistance() != 0);
-		assertTrue(project.getLines() != 0);
-		assertTrue(project.getMethods() != 0);
-		assertTrue(project.getPackages() != 0);
-		assertTrue(project.getStability() != 0);
-
-		dataBase.close();
+			DataBaseToolkit.execute(dataBase, new Package(), new DataBaseToolkit.Executer() {
+				public void execute(Object object) {
+					Package pakkage = (Package) object;
+					pakkage.setAbstractness(0);
+					pakkage.setAfference(0);
+					pakkage.setComplexity(0);
+					pakkage.setCoverage(0);
+					pakkage.setDistance(0);
+					pakkage.setEfference(0);
+					pakkage.setExecuted(0);
+					pakkage.setImplementations(0);
+					pakkage.setInterfaces(0);
+					pakkage.setLines(0);
+					pakkage.setStability(0);
+				}
+			});
+			DataBaseToolkit.execute(dataBase, new Class(), new DataBaseToolkit.Executer() {
+				public void execute(Object object) {
+					Class klass = (Class) object;
+					klass.setAfference(0);
+					klass.setComplexity(0);
+					klass.setCoverage(0);
+					klass.setEfference(0);
+					klass.setStability(0);
+				}
+			});
+			new Aggregator(null, dataBase).execute();
+			project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
+			assertTrue(project.getAbstractness() != 0);
+			assertTrue(project.getClasses() != 0);
+			assertTrue(project.getComplexity() != 0);
+			// assertTrue(project.getCoverage() != 0);
+			assertTrue(project.getDistance() != 0);
+			assertTrue(project.getLines() != 0);
+			assertTrue(project.getMethods() != 0);
+			assertTrue(project.getPackages() != 0);
+			assertTrue(project.getStability() != 0);
+		} finally {
+			dataBase.close();
+		}
 	}
 
 	@SuppressWarnings( { "unused", "unchecked" })
