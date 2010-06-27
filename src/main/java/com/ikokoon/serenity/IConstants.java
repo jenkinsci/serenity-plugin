@@ -56,6 +56,8 @@ public interface IConstants {
 	public String CLEAN_CLASSES = "clean.classes";
 	/** The interval between snapshots for the profiler. */
 	public String SNAPSHOT_INTERVAL = "snapshotInterval";
+	/** The interval between report dumps for the profiler. */
+	public String REPORT_INTERVAL = "reportInterval";
 
 	public String COVERAGE = "coverage";
 	public String COMPLEXITY = "complexity";

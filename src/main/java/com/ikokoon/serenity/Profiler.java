@@ -8,10 +8,11 @@ import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 
-import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.model.Snapshot;
 import com.ikokoon.serenity.persistence.IDataBase;
+import com.ikokoon.serenity.process.Reporter;
+import com.ikokoon.serenity.process.Snapshooter;
 
 /**
  * This class generates the reports for the profiled classes.
@@ -95,7 +96,24 @@ public class Profiler {
 				public void run() {
 					try {
 						LOGGER.warn("Taking snapshot at : " + new Date());
-						takeSnapshot(dataBase);
+						new Snapshooter(null, dataBase).execute();
+					} catch (Exception e) {
+						LOGGER.error("Exception taking the snapshot : ", e);
+					}
+				}
+			};
+			timer.schedule(timerTask, snapshptInterval, snapshptInterval);
+		}
+		long reportInterval = Configuration.getConfiguration().getReportInterval();
+		LOGGER.info("Profiler initialize : " + dataBase + ", " + reportInterval);
+		if (reportInterval > 0) {
+			Timer timer = new Timer();
+			TimerTask timerTask = new TimerTask() {
+				@Override
+				public void run() {
+					try {
+						LOGGER.warn("Writing report at : " + new Date());
+						new Reporter(null, dataBase).execute();
 					} catch (Exception e) {
 						LOGGER.error("Exception taking the snapshot : ", e);
 					}
@@ -259,62 +277,6 @@ public class Profiler {
 			previousTime = time;
 		}
 		return totalChange;
-	}
-
-	@SuppressWarnings("unchecked")
-	private static void takeSnapshot(IDataBase dataBase) {
-		long time = System.currentTimeMillis();
-		List<Class> classes = dataBase.find(Class.class);
-		for (Class klass : classes) {
-			takeSnapshot(time, klass);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private static Class takeSnapshot(long time, Class klass) {
-		List<Method> methods = klass.getChildren();
-		long netClassTime = 0;
-		long totalClassTime = 0;
-		long totalWaitTime = 0;
-		for (Method method : methods) {
-			takeSnapshot(time, method);
-			netClassTime += method.getNetTime();
-			totalClassTime += method.getTotalTime();
-			totalWaitTime += method.getTotalTime();
-		}
-		List<Snapshot> snapshots = klass.getSnapshots();
-		int size = snapshots.size();
-		if (size > 0) {
-			// Finalise the last snapshot
-			Snapshot snapshot = snapshots.get(size - 1);
-			snapshot.setEnd(new Date(time));
-			snapshot.setNet(netClassTime);
-			snapshot.setTotal(totalClassTime);
-			snapshot.setWait(totalWaitTime);
-		}
-		Snapshot snapshot = new Snapshot();
-		snapshot.setStart(new Date(time));
-		snapshots.add(snapshot);
-		return klass;
-	}
-
-	@SuppressWarnings("unchecked")
-	private static Method takeSnapshot(long time, Method method) {
-		List<Snapshot> snapshots = method.getSnapshots();
-		int size = snapshots.size();
-		if (size > 0) {
-			// Finalise the last snapshot
-			Snapshot snapshot = snapshots.get(size - 1);
-			snapshot.setEnd(new Date(time));
-			snapshot.setNet(method.getNetTime());
-			snapshot.setTotal(method.getTotalTime());
-			// Reset the method data
-			method.reset();
-		}
-		Snapshot snapshot = new Snapshot();
-		snapshot.setStart(new Date(time));
-		snapshots.add(snapshot);
-		return method;
 	}
 
 }

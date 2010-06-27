@@ -150,6 +150,14 @@ public class Configuration {
 		return -1;
 	}
 
+	public long getReportInterval() {
+		String reportInterval = System.getProperty(IConstants.REPORT_INTERVAL);
+		if (reportInterval != null && Toolkit.isDigits(reportInterval)) {
+			return Long.parseLong(reportInterval);
+		}
+		return -1;
+	}
+
 	private void addIncludedPackages() {
 		String packageNames = System.getProperty(IConstants.INCLUDED_PACKAGES_PROPERTY);
 		logger.debug("Package names : " + packageNames);

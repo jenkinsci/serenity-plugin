@@ -52,31 +52,34 @@ public class Reporter extends AProcess {
 	}
 
 	public void execute() {
-		// Only execute the reports for the profiler if the snapshot interval is set
-		long snapshptInterval = Configuration.getConfiguration().getSnapshotInterval();
-		if (snapshptInterval < 0) {
-			return;
-		}
 		try {
-			// Write the style sheet first
-			File file = new File("./" + IConstants.STYLE_SHEET_FILE);
-			if (!file.exists()) {
-				InputStream inputStream = Reporter.class.getResourceAsStream(IConstants.REPORT_STYLE_SHEET);
-				Toolkit.setContents(file, Toolkit.getContents(inputStream).toByteArray());
+			// Only execute the reports for the profiler if the snapshot interval is set
+			long snapshptInterval = Configuration.getConfiguration().getSnapshotInterval();
+			if (snapshptInterval < 0) {
+				return;
 			}
+			try {
+				// Write the style sheet first
+				File file = new File("./" + IConstants.STYLE_SHEET_FILE);
+				if (!file.exists()) {
+					InputStream inputStream = Reporter.class.getResourceAsStream(IConstants.REPORT_STYLE_SHEET);
+					Toolkit.setContents(file, Toolkit.getContents(inputStream).toByteArray());
+				}
+			} catch (Exception e) {
+				logger.error("Exception writing the style sheet : ", e);
+			}
+
+			String html = methodSeries(dataBase);
+			writeReport(IConstants.METHOD_SERIES_FILE, html);
+			html = methodNetSeries(dataBase);
+			writeReport(IConstants.METHOD_NET_SERIES_FILE, html);
+			html = methodChangeSeries(dataBase);
+			writeReport(IConstants.METHOD_CHANGE_SERIES_FILE, html);
+			html = methodNetChangeSeries(dataBase);
+			writeReport(IConstants.METHOD_NET_CHANGE_SERIES_FILE, html);
 		} catch (Exception e) {
-			logger.error("Exception writing the style sheet : ", e);
+			logger.error("Exception writing the reports", e);
 		}
-
-		String html = methodSeries(dataBase);
-		writeReport(IConstants.METHOD_SERIES_FILE, html);
-		html = methodNetSeries(dataBase);
-		writeReport(IConstants.METHOD_NET_SERIES_FILE, html);
-		html = methodChangeSeries(dataBase);
-		writeReport(IConstants.METHOD_CHANGE_SERIES_FILE, html);
-		html = methodNetChangeSeries(dataBase);
-		writeReport(IConstants.METHOD_NET_CHANGE_SERIES_FILE, html);
-
 		super.execute();
 	}
 
