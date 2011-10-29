@@ -22,15 +22,15 @@ import com.ikokoon.toolkit.Toolkit;
 
 /**
  * TODO - make this class non static? Is this a better option? More OO? Better performance? Will it be easier to understand? In the case of
- * distributing the collector class by putting it in the constant pool of the classes and then calling the instance variable from inside the classes,
- * will this be more difficult to understand?
- *
- * In this static class all the real collection logic is in one place and is called statically. The generation of the instructions to call this class
- * is simple and seemingly not much less performant than an instance variable.
- *
- * This class collects the data from the processing. It adds the metrics to the packages, classes, methods and lines and persists the data in the
- * database. This is the central collection class for the coverage and dependency functionality.
- *
+ * distributing the collector class by putting it in the constant pool of the classes and then calling the instance variable from inside the
+ * classes, will this be more difficult to understand?
+ * 
+ * In this static class all the real collection logic is in one place and is called statically. The generation of the instructions to call
+ * this class is simple and seemingly not much less performant than an instance variable.
+ * 
+ * This class collects the data from the processing. It adds the metrics to the packages, classes, methods and lines and persists the data
+ * in the database. This is the central collection class for the coverage and dependency functionality.
+ * 
  * @author Michael Couck
  * @since 12.07.09
  * @version 01.00
@@ -40,23 +40,24 @@ public class Collector implements IConstants {
 	/** The logger. */
 	private static final Logger LOGGER = Logger.getLogger(Collector.class);
 	/** The database/persistence object. */
-	private static IDataBase dataBase;
+	private static IDataBase DATABASE;
 
 	/** These are the profiler methods. */
 
 	/**
 	 * Initialises the profiler snapshot taker.
-	 *
+	 * 
 	 * @param dataBase
 	 *            the database to use for taking snapshots.
 	 */
 	public static void initialize(final IDataBase dataBase) {
-		Collector.dataBase = dataBase;
+		Collector.DATABASE = dataBase;
 	}
 
 	/**
-	 * This class is called by the byte code injection to increment the allocations of classes on the heap, i.e. when their constructors are called.
-	 *
+	 * This class is called by the byte code injection to increment the allocations of classes on the heap, i.e. when their constructors are
+	 * called.
+	 * 
 	 * @param className
 	 *            the name of the class being instantiated
 	 * @param methodName
@@ -73,7 +74,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * This method is called by the byte code injection at the start of a method, i.e. when a thread enters a method.
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class where the thread is entering the method
 	 * @param methodName
@@ -88,9 +89,9 @@ public class Collector implements IConstants {
 	}
 
 	/**
-	 * This method is called by the byte code injection at the end of a method, i.e. when a thread returns from a method. This can happen in a return,
-	 * or when an exception is thrown.
-	 *
+	 * This method is called by the byte code injection at the end of a method, i.e. when a thread returns from a method. This can happen in
+	 * a return, or when an exception is thrown.
+	 * 
 	 * @param className
 	 *            the name of the class where the thread is entering the method
 	 * @param methodName
@@ -108,7 +109,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * This method is called by the byte code injection when there is wait, join, sleep or yield called in a method.
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class where the thread is entering the method
 	 * @param methodName
@@ -123,7 +124,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * This method is called by the byte code injection when there is wait, join, sleep or yield that exits in a method.
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class where the thread is entering the method
 	 * @param methodName
@@ -140,7 +141,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * This method accumulates the number of times a thread goes through each line in a method.
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class that is calling this method
 	 * @param methodName
@@ -157,7 +158,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * This method just collect the line specified in the parameter list.
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class that is calling this method
 	 * @param lineNumber
@@ -173,7 +174,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * This method collects the Java source for the class.
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class
 	 * @param source
@@ -198,9 +199,9 @@ public class Collector implements IConstants {
 	}
 
 	/**
-	 * This method is called after each jumps in the method graph. Every time there is a jump the complexity goes up one point. Jumps include if else
-	 * statements, or just if, throws statements, switch and so on.
-	 *
+	 * This method is called after each jumps in the method graph. Every time there is a jump the complexity goes up one point. Jumps
+	 * include if else statements, or just if, throws statements, switch and so on.
+	 * 
 	 * @param className
 	 *            the name of the class the method is in
 	 * @param methodName
@@ -217,7 +218,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * Collects the packages that the class references and adds them to the document.
-	 *
+	 * 
 	 * @param className
 	 *            the name of the classes
 	 * @param targetClassNames
@@ -256,7 +257,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * Adds the access attribute to the method object.
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class
 	 * @param methodName
@@ -273,7 +274,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * Adds the access attribute to the class object.
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class
 	 * @param access
@@ -289,7 +290,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * Collects the inner class for a class.
-	 *
+	 * 
 	 * @param innerName
 	 *            the name of the inner class
 	 * @param outerName
@@ -308,7 +309,7 @@ public class Collector implements IConstants {
 
 	/**
 	 * Collects the outer class of an inner class.
-	 *
+	 * 
 	 * @param innerName
 	 *            the name of the inner class
 	 * @param outerName
@@ -340,7 +341,7 @@ public class Collector implements IConstants {
 		String packageName = Toolkit.classNameToPackageName(className);
 
 		long id = Toolkit.hash(packageName);
-		Package<Project<?, ?>, Class<?, ?>> pakkage = (Package<Project<?, ?>, Class<?, ?>>) dataBase.find(Package.class, id);
+		Package<Project<?, ?>, Class<?, ?>> pakkage = (Package<Project<?, ?>, Class<?, ?>>) DATABASE.find(Package.class, id);
 
 		if (pakkage == null) {
 			pakkage = new Package<Project<?, ?>, Class<?, ?>>();
@@ -352,7 +353,7 @@ public class Collector implements IConstants {
 			pakkage.setDistance(0d);
 			pakkage.setInterfaces(0d);
 			pakkage.setImplementations(0d);
-			pakkage = (Package<Project<?, ?>, Class<?, ?>>) dataBase.persist(pakkage);
+			pakkage = (Package<Project<?, ?>, Class<?, ?>>) DATABASE.persist(pakkage);
 
 			LOGGER.debug("Added package : " + pakkage);
 		}
@@ -362,7 +363,7 @@ public class Collector implements IConstants {
 	@SuppressWarnings("unchecked")
 	private static final Class<Package<?, ?>, Method<?, ?>> getClass(String className) {
 		long id = Toolkit.hash(className);
-		Class klass = (Class) dataBase.find(Class.class, id);
+		Class klass = (Class) DATABASE.find(Class.class, id);
 
 		if (klass == null) {
 			klass = new Class();
@@ -379,7 +380,7 @@ public class Collector implements IConstants {
 			pakkage.getChildren().add(klass);
 			klass.setParent(pakkage);
 
-			klass = (Class<?, ?>) dataBase.persist(klass);
+			klass = (Class<?, ?>) DATABASE.persist(klass);
 			LOGGER.debug("Added class  : " + klass);
 		}
 		return klass;
@@ -390,7 +391,7 @@ public class Collector implements IConstants {
 		methodName = methodName.replace('<', ' ').replace('>', ' ').trim();
 
 		long id = Toolkit.hash(className, methodName, methodDescription);
-		Method method = (Method) dataBase.find(Method.class, id);
+		Method method = (Method) DATABASE.find(Method.class, id);
 
 		if (method == null) {
 			method = new Method();
@@ -409,7 +410,7 @@ public class Collector implements IConstants {
 			}
 			klass.getChildren().add(method);
 
-			dataBase.persist(method);
+			DATABASE.persist(method);
 		}
 		return method;
 	}
@@ -417,7 +418,7 @@ public class Collector implements IConstants {
 	@SuppressWarnings("unchecked")
 	protected static final Line<?, ?> getLine(String className, String methodName, String methodDescription, double lineNumber) {
 		long id = Toolkit.hash(className, methodName, lineNumber);
-		Line line = (Line) dataBase.find(Line.class, id);
+		Line line = (Line) DATABASE.find(Line.class, id);
 
 		if (line == null) {
 			line = new Line();
@@ -432,7 +433,7 @@ public class Collector implements IConstants {
 			line.setParent(method);
 			lines.add(line);
 
-			dataBase.persist(line);
+			DATABASE.persist(line);
 		}
 		return line;
 	}
@@ -444,14 +445,14 @@ public class Collector implements IConstants {
 		String name = builder.toString();
 
 		long id = Toolkit.hash(name);
-		Efferent efferent = (Efferent) dataBase.find(Efferent.class, id);
+		Efferent efferent = (Efferent) DATABASE.find(Efferent.class, id);
 		if (efferent == null) {
 			efferent = new Efferent();
 			efferent.setName(name);
 
 			klass.getEfferent().add(efferent);
 
-			dataBase.persist(efferent);
+			DATABASE.persist(efferent);
 		}
 		return efferent;
 	}
@@ -463,14 +464,14 @@ public class Collector implements IConstants {
 		String name = builder.toString();
 
 		long id = Toolkit.hash(name);
-		Afferent afferent = (Afferent) dataBase.find(Afferent.class, id);
+		Afferent afferent = (Afferent) DATABASE.find(Afferent.class, id);
 		if (afferent == null) {
 			afferent = new Afferent();
 			afferent.setName(name);
 
 			klass.getAfferent().add(afferent);
 
-			dataBase.persist(afferent);
+			DATABASE.persist(afferent);
 		}
 		return afferent;
 	}
