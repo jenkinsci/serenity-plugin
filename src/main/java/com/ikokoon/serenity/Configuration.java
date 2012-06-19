@@ -30,6 +30,8 @@ public class Configuration {
 
 	/** The instance of the configuration. */
 	private static Configuration configuration = new Configuration();
+	/** The separator for the package names. */
+	private static final String SEPARATOR = ";: ";
 
 	/** The logger for the class. */
 	public Logger logger;
@@ -132,7 +134,7 @@ public class Configuration {
 		String includedJars = System.getProperty(IConstants.INCLUDED_JARS_PROPERTY);
 		logger.debug("Included jars : " + includedJars);
 		if (includedJars != null) {
-			StringTokenizer tokenizer = new StringTokenizer(includedJars, ";:", false);
+			StringTokenizer tokenizer = new StringTokenizer(includedJars, SEPARATOR, false);
 			while (tokenizer.hasMoreTokens()) {
 				String jarFile = tokenizer.nextToken();
 				builder.append(File.pathSeparator);
@@ -162,7 +164,7 @@ public class Configuration {
 		String packageNames = System.getProperty(IConstants.INCLUDED_PACKAGES_PROPERTY);
 		logger.debug("Package names : " + packageNames);
 		if (packageNames != null) {
-			StringTokenizer tokenizer = new StringTokenizer(packageNames, ";: ", false);
+			StringTokenizer tokenizer = new StringTokenizer(packageNames, SEPARATOR, false);
 			while (tokenizer.hasMoreTokens()) {
 				String packageName = tokenizer.nextToken();
 				packageName = Toolkit.stripWhitespace(packageName);
@@ -175,7 +177,7 @@ public class Configuration {
 	private void addExcludedPackages() {
 		String excludedPatterns = System.getProperty(IConstants.EXCLUDED_PACKAGES_PROPERTY);
 		if (excludedPatterns != null) {
-			StringTokenizer tokenizer = new StringTokenizer(excludedPatterns, ";: ", false);
+			StringTokenizer tokenizer = new StringTokenizer(excludedPatterns, SEPARATOR, false);
 			while (tokenizer.hasMoreTokens()) {
 				String excludedPattern = tokenizer.nextToken();
 				excludedPackages.add(excludedPattern);
@@ -187,7 +189,7 @@ public class Configuration {
 	private void addIncludedClassAdapters() {
 		String adapterNames = System.getProperty(IConstants.INCLUDED_ADAPTERS_PROPERTY);
 		if (adapterNames != null) {
-			StringTokenizer tokenizer = new StringTokenizer(adapterNames, ";: ", false);
+			StringTokenizer tokenizer = new StringTokenizer(adapterNames, SEPARATOR, false);
 			while (tokenizer.hasMoreTokens()) {
 				String adapterName = tokenizer.nextToken();
 				adapterName = Toolkit.stripWhitespace(adapterName);

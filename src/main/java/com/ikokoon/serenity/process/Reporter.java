@@ -55,6 +55,7 @@ public class Reporter extends AProcess {
 		try {
 			// Only execute the reports for the profiler if the snapshot interval is set
 			long snapshptInterval = Configuration.getConfiguration().getSnapshotInterval();
+			logger.error("Reporter : ");
 			if (snapshptInterval < 0) {
 				return;
 			}
@@ -100,9 +101,7 @@ public class Reporter extends AProcess {
 			if (!file.exists()) {
 				file.createNewFile();
 			}
-			if (logger.isInfoEnabled()) {
-				logger.info("Writing report : " + file.getAbsolutePath());
-			}
+			logger.error("Writing report : " + file.getAbsolutePath());
 			Toolkit.setContents(file, html.getBytes());
 		} catch (Exception e) {
 			logger.error("Exception writing report : " + name, e);
@@ -288,10 +287,12 @@ public class Reporter extends AProcess {
 			builder.append(" to ");
 			builder.append(end);
 
-			long intervals = firstSnapshot.getEnd().getTime() - firstSnapshot.getStart().getTime();
-			builder.append(", at intervals of : ");
-			builder.append(intervals);
-			builder.append(" ms.");
+			if (firstSnapshot != null && firstSnapshot.getEnd() != null && firstSnapshot.getStart() != null) {
+				long intervals = firstSnapshot.getEnd().getTime() - firstSnapshot.getStart().getTime();
+				builder.append(", at intervals of : ");
+				builder.append(intervals);
+				builder.append(" ms.");
+			}
 
 			periods = builder.toString();
 		}

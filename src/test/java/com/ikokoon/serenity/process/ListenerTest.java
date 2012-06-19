@@ -45,7 +45,7 @@ public class ListenerTest extends ATest {
 		File file = new File(IConstants.SERENITY_DIRECTORY);
 		logger.warn("Searching directory : " + file.getAbsolutePath());
 		List<File> files = new ArrayList<File>();
-		Toolkit.findFiles(file, new Toolkit.IFileFilter() {
+		Toolkit.findFiles(new File("."), new Toolkit.IFileFilter() {
 			public boolean matches(File file) {
 				return file.getName().equals(IConstants.METHOD_SERIES);
 			}

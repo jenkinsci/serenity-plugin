@@ -70,6 +70,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 			CLASS_ADAPTER_CLASSES = Configuration.getConfiguration().classAdapters.toArray(new Class[Configuration.getConfiguration().classAdapters
 					.size()]);
 			LOGGER = Logger.getLogger(Transformer.class);
+			LOGGER.error("Starting Serenity : ");
 			if (instrumentation != null) {
 				instrumentation.addTransformer(new Transformer());
 			}
@@ -95,6 +96,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 			Profiler.initialize(ramDataBase);
 			new Listener(null, ramDataBase).execute();
 			addShutdownHook(ramDataBase);
+			LOGGER.error("Finished initializing Serenity : ");
 		}
 	}
 

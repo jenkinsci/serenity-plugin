@@ -88,14 +88,14 @@ public class Profiler {
 
 	public static void initialize(final IDataBase dataBase) {
 		long snapshptInterval = Configuration.getConfiguration().getSnapshotInterval();
-		LOGGER.info("Profiler initialize : " + dataBase + ", " + snapshptInterval);
+		LOGGER.error("Profiler initialize : " + dataBase + ", " + snapshptInterval);
 		if (snapshptInterval > 0) {
 			Timer timer = new Timer();
 			TimerTask timerTask = new TimerTask() {
 				@Override
 				public void run() {
 					try {
-						LOGGER.warn("Taking snapshot at : " + new Date());
+						LOGGER.error("Taking snapshot at : " + new Date());
 						new Snapshooter(null, dataBase).execute();
 					} catch (Exception e) {
 						LOGGER.error("Exception taking the snapshot : ", e);
@@ -105,14 +105,14 @@ public class Profiler {
 			timer.schedule(timerTask, snapshptInterval, snapshptInterval);
 		}
 		long reportInterval = Configuration.getConfiguration().getReportInterval();
-		LOGGER.info("Profiler initialize : " + dataBase + ", " + reportInterval);
+		LOGGER.error("Profiler initialize : " + dataBase + ", " + reportInterval);
 		if (reportInterval > 0) {
 			Timer timer = new Timer();
 			TimerTask timerTask = new TimerTask() {
 				@Override
 				public void run() {
 					try {
-						LOGGER.warn("Writing report at : " + new Date());
+						LOGGER.error("Writing report at : " + new Date());
 						new Reporter(null, dataBase).execute();
 					} catch (Exception e) {
 						LOGGER.error("Exception taking the snapshot : ", e);
