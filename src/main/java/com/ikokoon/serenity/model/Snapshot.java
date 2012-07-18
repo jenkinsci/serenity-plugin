@@ -5,25 +5,25 @@ import java.util.Date;
 
 public class Snapshot<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implements Comparable<Class<?, ?>>, Serializable {
 
-	private long net;
-	private long total;
-	private long wait;
+	private double net;
+	private double total;
+	private double wait;
 	private Date start;
 	private Date end;
 
-	public long getNet() {
+	public double getNet() {
 		return net;
 	}
 
-	public void setNet(long net) {
+	public void setNet(double net) {
 		this.net = net;
 	}
 
-	public long getTotal() {
+	public double getTotal() {
 		return total;
 	}
 
-	public void setTotal(long total) {
+	public void setTotal(double total) {
 		this.total = total;
 	}
 
@@ -43,11 +43,11 @@ public class Snapshot<E, F> extends Composite<Package<?, ?>, Method<?, ?>> imple
 		this.end = end;
 	}
 
-	public long getWait() {
+	public double getWait() {
 		return wait;
 	}
 
-	public void setWait(long wait) {
+	public void setWait(double wait) {
 		this.wait = wait;
 	}
 

@@ -42,29 +42,12 @@ public class ReporterTest extends ATest {
 
 	@Test
 	public void methodSeries() throws Exception {
+		System.setProperty(IConstants.TIME_UNIT, "1000");
+		String dataBaseFile = "./src/test/resources/profiler/serenity.odb";
+		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, mockInternalDataBase);
+		Profiler.initialize(dataBase);
 		String html = new Reporter(null, dataBase).methodSeries(dataBase);
 		File file = new File(IConstants.METHOD_SERIES_FILE);
-		Toolkit.setContents(file, html.getBytes());
-	}
-
-	@Test
-	public void methodNetSeries() throws Exception {
-		String html = new Reporter(null, dataBase).methodNetSeries(dataBase);
-		File file = new File(IConstants.METHOD_NET_SERIES_FILE);
-		Toolkit.setContents(file, html.getBytes());
-	}
-
-	@Test
-	public void methodChangeSeries() throws Exception {
-		String html = new Reporter(null, dataBase).methodChangeSeries(dataBase);
-		File file = new File(IConstants.METHOD_CHANGE_SERIES_FILE);
-		Toolkit.setContents(file, html.getBytes());
-	}
-
-	@Test
-	public void methodNetChangeSeries() throws Exception {
-		String html = new Reporter(null, dataBase).methodNetChangeSeries(dataBase);
-		File file = new File(IConstants.METHOD_NET_CHANGE_SERIES_FILE);
 		Toolkit.setContents(file, html.getBytes());
 	}
 
@@ -79,7 +62,7 @@ public class ReporterTest extends ATest {
 		Class klass = dataBase.find(Class.class, id);
 		List<Method> methods = klass.getChildren();
 		for (Method method : methods) {
-			List<Long> methodSeries = Profiler.methodSeries(method);
+			List<Double> methodSeries = Profiler.methodSeries(method);
 			logger.warn("Method series : " + methodSeries);
 			String graph = new Reporter(null, dataBase).buildGraph(IConstants.METHOD_SERIES, method, methodSeries);
 			logger.info("Built graph : " + graph);

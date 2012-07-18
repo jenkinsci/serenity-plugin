@@ -44,7 +44,7 @@ public class ProfilerTest extends ATest implements IConstants {
 		for (Class klass : classes) {
 			List<Method<?, ?>> methods = klass.getChildren();
 			for (Method<?, ?> method : methods) {
-				long averageMethodNetTime = Profiler.averageMethodNetTime(method);
+				double averageMethodNetTime = Profiler.averageMethodNetTime(method);
 				logger.debug("Average net method time : method : " + method.getName() + " - " + averageMethodNetTime);
 			}
 		}
@@ -57,7 +57,7 @@ public class ProfilerTest extends ATest implements IConstants {
 		for (Class klass : classes) {
 			List<Method<?, ?>> methods = klass.getChildren();
 			for (Method<?, ?> method : methods) {
-				long averageMethodTime = Profiler.averageMethodTime(method);
+				double averageMethodTime = Profiler.averageMethodTime(method);
 				logger.debug("Average method : method : " + method.getName() + " - " + averageMethodTime);
 			}
 		}
@@ -70,7 +70,7 @@ public class ProfilerTest extends ATest implements IConstants {
 		for (Class klass : classes) {
 			List<Method<?, ?>> methods = klass.getChildren();
 			for (Method<?, ?> method : methods) {
-				long methodChange = Profiler.methodChange(method);
+				double methodChange = Profiler.methodChange(method);
 				logger.debug("Method change : method : " + method.getName() + " - " + methodChange);
 			}
 		}
@@ -83,7 +83,7 @@ public class ProfilerTest extends ATest implements IConstants {
 		for (Class klass : classes) {
 			List<Method<?, ?>> methods = klass.getChildren();
 			for (Method<?, ?> method : methods) {
-				List<Long> series = Profiler.methodChangeSeries(method);
+				List<Double> series = Profiler.methodChangeSeries(method);
 				logger.debug("Method change series : " + method.getName() + " - " + series);
 			}
 		}
@@ -96,7 +96,7 @@ public class ProfilerTest extends ATest implements IConstants {
 		for (Class klass : classes) {
 			List<Method<?, ?>> methods = klass.getChildren();
 			for (Method<?, ?> method : methods) {
-				long methodNetChange = Profiler.methodNetChange(method);
+				double methodNetChange = Profiler.methodNetChange(method);
 				logger.debug("Method net change : method : " + method.getName() + " - " + methodNetChange);
 			}
 		}
@@ -109,7 +109,7 @@ public class ProfilerTest extends ATest implements IConstants {
 		for (Class klass : classes) {
 			List<Method<?, ?>> methods = klass.getChildren();
 			for (Method<?, ?> method : methods) {
-				List<Long> methodNetChangeSeries = Profiler.methodNetChangeSeries(method);
+				List<Double> methodNetChangeSeries = Profiler.methodNetChangeSeries(method);
 				logger.debug("Method net change series : method : " + method.getName() + " - " + methodNetChangeSeries);
 			}
 		}
@@ -122,7 +122,7 @@ public class ProfilerTest extends ATest implements IConstants {
 		for (Class klass : classes) {
 			List<Method<?, ?>> methods = klass.getChildren();
 			for (Method<?, ?> method : methods) {
-				List<Long> methodNetSeries = Profiler.methodNetSeries(method);
+				List<Double> methodNetSeries = Profiler.methodNetSeries(method);
 				logger.debug("Method net series : method : " + method.getName() + " - " + methodNetSeries);
 			}
 		}
@@ -135,7 +135,7 @@ public class ProfilerTest extends ATest implements IConstants {
 		for (Class klass : classes) {
 			List<Method<?, ?>> methods = klass.getChildren();
 			for (Method<?, ?> method : methods) {
-				List<Long> series = Profiler.methodSeries(method);
+				List<Double> series = Profiler.methodSeries(method);
 				logger.debug("Method series : " + method.getName() + " - " + series);
 			}
 		}
@@ -148,7 +148,7 @@ public class ProfilerTest extends ATest implements IConstants {
 		for (Class klass : classes) {
 			List<Method<?, ?>> methods = klass.getChildren();
 			for (Method<?, ?> method : methods) {
-				long totalMethodTime = Profiler.totalMethodTime(method);
+				double totalMethodTime = Profiler.totalMethodTime(method);
 				logger.debug("Total method time : method : " + method.getName() + " - " + totalMethodTime);
 			}
 		}
@@ -161,7 +161,7 @@ public class ProfilerTest extends ATest implements IConstants {
 		for (Class klass : classes) {
 			List<Method<?, ?>> methods = klass.getChildren();
 			for (Method<?, ?> method : methods) {
-				long totalNetMethodTime = Profiler.totalNetMethodTime(method);
+				double totalNetMethodTime = Profiler.totalNetMethodTime(method);
 				logger.debug("Total net method time : method : " + method.getName() + " - " + totalNetMethodTime);
 			}
 		}

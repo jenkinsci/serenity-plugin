@@ -58,6 +58,8 @@ public interface IConstants {
 	public String SNAPSHOT_INTERVAL = "snapshotInterval";
 	/** The interval between report dumps for the profiler. */
 	public String REPORT_INTERVAL = "reportInterval";
+	/** The time unit to use, default is nano seconds. */
+	public String TIME_UNIT = "timeUnit";
 
 	public String COVERAGE = "coverage";
 	public String COMPLEXITY = "complexity";
@@ -111,17 +113,14 @@ public interface IConstants {
 	public int PORT = 50005;
 
 	public String STYLE_SHEET = "profiler-report-style.css";
-	public String METHOD_SERIES = "methodSeries.html";
-	public String METHOD_NET_SERIES = "methodNetSeries.html";
+	public String METHOD_SERIES = "greatestAverageTimePerMethod.html";
+	public String METHOD_NET_SERIES = "netGreatestAverageTimePerMethod.html";
 	public String METHOD_CHANGE_SERIES = "methodChangeSeries.html";
 	public String METHOD_NET_CHANGE_SERIES = "methodNetChangeSeries.html";
 
 	public String STYLE_SHEET_FILE = SERENITY_DIRECTORY + File.separatorChar + STYLE_SHEET;
 	public String METHOD_SERIES_FILE = SERENITY_DIRECTORY + File.separatorChar + METHOD_SERIES;
-	public String METHOD_NET_SERIES_FILE = SERENITY_DIRECTORY + File.separatorChar + METHOD_NET_SERIES;
-	public String METHOD_CHANGE_SERIES_FILE = SERENITY_DIRECTORY + File.separatorChar + METHOD_CHANGE_SERIES;
-	public String METHOD_NET_CHANGE_SERIES_FILE = SERENITY_DIRECTORY + File.separatorChar + METHOD_NET_CHANGE_SERIES;
-
+	
 	public String CHARTS = "charts";
 	public File chartDirectory = new File(SERENITY_DIRECTORY + File.separatorChar + CHARTS);
 

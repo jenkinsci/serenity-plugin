@@ -159,6 +159,14 @@ public class Configuration {
 		}
 		return -1;
 	}
+	
+	public double getTimeUnitDenominator() {
+		String timeUnit = System.getProperty(IConstants.TIME_UNIT);
+		if (timeUnit != null && Toolkit.isDigits(timeUnit)) {
+			return Long.parseLong(timeUnit);
+		}
+		return 1000;
+	}
 
 	private void addIncludedPackages() {
 		String packageNames = System.getProperty(IConstants.INCLUDED_PACKAGES_PROPERTY);
