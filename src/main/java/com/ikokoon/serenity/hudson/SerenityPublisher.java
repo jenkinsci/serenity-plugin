@@ -277,6 +277,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 				}
 				printStream.println("Copying source from... " + sourceDirectory.toURI().toString() + " to... "
 						+ buildSourceDirectory.toURI().getRawPath());
+				buildSourceDirectory.deleteContents();
 				sourceDirectory.copyRecursiveTo(buildSourceDirectory);
 			}
 		} catch (IOException e) {
