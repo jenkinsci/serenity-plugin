@@ -82,8 +82,8 @@ public class ToolkitTest extends ATest {
 		assertEquals(stringHash, arrayHash);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
+	@SuppressWarnings("unchecked")
 	public void serializeAndDeserializeToAndFrom64() {
 		Target<Object, Object> target = new Target<Object, Object>(Target.class);
 		String string = Toolkit.serializeToBase64(target);
@@ -114,7 +114,7 @@ public class ToolkitTest extends ATest {
 	@Test
 	public void copyFiles() throws Exception {
 		File source = createFolderAndOneFile("target/folder", "serenity.odb");
-		File destination = new File("D:\\Eclipse\\workspace\\serenity\\work\\jobs\\Discovery\\builds\\2010-02-26_16-12-15\\serenity");
+		File destination = new File("/tmp/Eclipse/workspace/serenity/work/jobs/Discovery/builds/2010-02-26_16-12-15/serenity");
 		if (destination.exists()) {
 			Toolkit.deleteFile(destination, 3);
 		}

@@ -54,7 +54,7 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	 * @param source
 	 *            the Java source
 	 */
-	public DependencyClassAdapter(ClassVisitor classVisitor, String className, ByteArrayOutputStream source) {
+	public DependencyClassAdapter(final ClassVisitor classVisitor, final String className, final  ByteArrayOutputStream source) {
 		super(classVisitor);
 		this.className = Toolkit.slashToDot(className);
 		this.source = source;
@@ -64,7 +64,7 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void visit(int version, int access, String className, String signature, String superName, String[] interfaces) {
+	public void visit(final int version, final int access, final String className, final String signature, final String superName, final String[] interfaces) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visit : " + version + ", " + access + ", " + className + ", " + signature + ", " + superName);
 			if (interfaces != null) {
@@ -85,7 +85,7 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	/**
 	 * {@inheritDoc}
 	 */
-	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+	public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitAnnotation : " + desc + ", " + visible);
 		}
@@ -97,7 +97,7 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void visitAttribute(Attribute attr) {
+	public void visitAttribute(final Attribute attr) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitAttribute : " + attr);
 		}
@@ -108,7 +108,7 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	/**
 	 * {@inheritDoc}
 	 */
-	public FieldVisitor visitField(int access, String fieldName, String desc, String signature, Object value) {
+	public FieldVisitor visitField(final int access, final String fieldName, final String desc, final String signature, final Object value) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitField : " + access + ", " + fieldName + ", " + desc + ", " + signature + ", " + value);
 		}
@@ -120,7 +120,7 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void visitInnerClass(String innerName, String outerName, String innerSimpleName, int access) {
+	public void visitInnerClass(final String innerName, final String outerName, final String innerSimpleName, final int access) {
 		if (logger.isDebugEnabled()) {
 			logger.info("visitInnerClass : inner name : " + innerName + ", outer name : " + outerName + ", inner simple name : " + innerSimpleName);
 		}
@@ -136,7 +136,7 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void visitOuterClass(String outerName, String outerMethodName, String outerMethodDescription) {
+	public void visitOuterClass(final String outerName, final String outerMethodName, final String outerMethodDescription) {
 		if (logger.isDebugEnabled()) {
 			logger.info("visitOuterClass : class name : " + className + ", owner : " + outerName + ", method name : " + outerMethodName
 					+ ", description : " + outerMethodDescription);
@@ -148,7 +148,7 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	/**
 	 * {@inheritDoc}
 	 */
-	public MethodVisitor visitMethod(int access, String methodName, String methodDescription, String signature, String[] exceptions) {
+	public MethodVisitor visitMethod(final int access, final String methodName, final String methodDescription, final String signature, final String[] exceptions) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitMethod : " + access + ", " + methodName + ", " + methodDescription + ", " + signature);
 			if (exceptions != null) {
@@ -170,7 +170,7 @@ public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void visitSource(String source, String debug) {
+	public void visitSource(final String source, final String debug) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("visitSource : " + source + ", " + debug);
 		}

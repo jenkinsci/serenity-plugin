@@ -24,26 +24,25 @@ import org.apache.log4j.Logger;
 import com.ikokoon.serenity.model.Unique;
 
 /**
- * This class contains methods for changing a string to the byte code representation and visa versa. Also some other nifty functions like stripping a
- * string of white space etc.
- *
+ * This class contains methods for changing a string to the byte code representation and visa versa. Also some other nifty functions like
+ * stripping a string of white space etc.
+ * 
  * @author Michael Couck
  * @since 12.07.09
  * @version 01.00
  */
-public class Toolkit {
+public final class Toolkit {
 
 	/** The logger. */
 	private static Logger logger = Logger.getLogger(Toolkit.class);
 
 	/**
 	 * Simple, fast hash function to generate quite unique hashes from strings(i.e. toCharArray()).
-	 *
-	 * @param string
-	 *            the string to generate the hash from
+	 * 
+	 * @param string the string to generate the hash from
 	 * @return the integer representation of the hash of the string characters, typically quite unique for strings less than 10 characters
 	 */
-	public static final Long hash(String string) {
+	public static final Long hash(final String string) {
 		// Must be prime of course
 		long seed = 131; // 31 131 1313 13131 131313 etc..
 		long hash = 0;
@@ -56,12 +55,11 @@ public class Toolkit {
 
 	/**
 	 * Builds a hash from an array of objects.
-	 *
-	 * @param objects
-	 *            the objects to build the hash from
+	 * 
+	 * @param objects the objects to build the hash from
 	 * @return the hash of the objects
 	 */
-	public static final Long hash(Object... objects) {
+	public static final Long hash(final Object... objects) {
 		StringBuilder builder = new StringBuilder();
 		for (Object object : objects) {
 			builder.append(object);
@@ -72,48 +70,41 @@ public class Toolkit {
 
 	/**
 	 * This method replaces the / in the byte code name with . which is XML friendly.
-	 *
-	 * @param name
-	 *            the byte code name of a class
+	 * 
+	 * @param name the byte code name of a class
 	 * @return the Java name of the class
 	 */
-	public static String slashToDot(String name) {
+	public static String slashToDot(final String name) {
 		if (name == null) {
 			return name;
 		}
-		name = name.replace('/', '.');
-		name = name.replace('\\', '.');
-		return name;
+		return name.replace('/', '.').replace('\\', '.');
 	}
 
 	/**
 	 * This method replaces the . in the byte code name with / which is what we expect from byte code.
-	 *
-	 * @param name
-	 *            the name of the class or package
+	 * 
+	 * @param name the name of the class or package
 	 * @return the byte code name of the class or package
 	 */
-	public static String dotToSlash(String name) {
+	public static String dotToSlash(final String name) {
 		if (name == null) {
 			return name;
 		}
-		name = name.replace('.', '/');
-		return name;
+		return name.replace('.', '/');
 	}
 
 	/**
 	 * Takes the name of a class and returns the package name for the class.
-	 *
-	 * @param className
-	 *            the name of the class fully qualified
+	 * 
+	 * @param className the name of the class fully qualified
 	 * @return the package name of the class
 	 */
-	public static String classNameToPackageName(String className) {
-		// Type type = Type.getType(className);
-		className = Toolkit.slashToDot(className); // type.getClassName();
-		int index = className.lastIndexOf('.');
+	public static String classNameToPackageName(final String className) {
+		String strippedClassName = Toolkit.slashToDot(className);
+		int index = strippedClassName.lastIndexOf('.');
 		if (index > -1) {
-			return className.substring(0, index);
+			return strippedClassName.substring(0, index);
 		}
 		// Default and exception package
 		return "";
@@ -121,12 +112,11 @@ public class Toolkit {
 
 	/**
 	 * Removes any whitespace from the string.
-	 *
-	 * @param string
-	 *            the string to remove whitespace from
+	 * 
+	 * @param string the string to remove whitespace from
 	 * @return the string without any whitespace that includes carriage returns etc.
 	 */
-	public static String stripWhitespace(String string) {
+	public static String stripWhitespace(final String string) {
 		if (string == null) {
 			return string;
 		}
@@ -151,43 +141,38 @@ public class Toolkit {
 
 	/**
 	 * Gets a field in the class or in the heirachy of the class.
-	 *
-	 * @param klass
-	 *            the original class
-	 * @param name
-	 *            the name of the field
+	 * 
+	 * @param klass the original class
+	 * @param name the name of the field
 	 * @return the field in the object or super classes of the object
 	 */
-	public static Field getField(Class<?> klass, String name) {
-		if (klass == null || name == null) {
-			return null;
-		}
-		Field field = null;
-		try {
-			field = klass.getDeclaredField(name);
-		} catch (Throwable t) {
-			t.getCause();
-		}
-		if (field == null) {
-			Class<?> superClass = klass.getSuperclass();
-			if (superClass != null) {
-				field = getField(superClass, name);
+	public static Field getField(final Class<?> klass, final String name) {
+		Class<?> targetClass = klass;
+		do {
+			try {
+				Field field = targetClass.getDeclaredField(name);
+				if (field != null) {
+					return field;
+				}
+			} catch (NoSuchFieldException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				throw new RuntimeException(e);
 			}
-		}
-		return field;
+			targetClass = targetClass.getSuperclass();
+		} while (targetClass != null);
+		return null;
 	}
 
 	/**
 	 * Returns the value of the field specified from the object specified.
-	 *
-	 * @param object
-	 *            the object to get the field value from
-	 * @param name
-	 *            the name of the field in the object
+	 * 
+	 * @param object the object to get the field value from
+	 * @param name the name of the field in the object
 	 * @return the value of the field if there is such a field or null if there isn't ir if anything goes wrong
 	 */
 	@SuppressWarnings("unchecked")
-	public static <E> E getValue(Class<E> klass, Object object, String name) {
+	public static <E> E getValue(final Class<E> klass, final Object object, final String name) {
 		if (object == null) {
 			return null;
 		}
@@ -204,7 +189,7 @@ public class Toolkit {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <E> E executeMethod(Object object, String methodName, Object[] parameters) {
+	public static <E> E executeMethod(final Object object, final String methodName, final Object[] parameters) {
 		Class<?>[] parameterTypes = new Class[parameters.length];
 		int index = 0;
 		for (Object parameter : parameters) {
@@ -230,17 +215,15 @@ public class Toolkit {
 
 	/**
 	 * Deletes all the files recursively and then the directories recursively.
-	 *
-	 * @param file
-	 *            the directory or file to delete
-	 * @param the
-	 *            number of times to retry to delete the file
+	 * 
+	 * @param file the directory or file to delete
+	 * @param the number of times to retry to delete the file
 	 */
-	public static void deleteFile(File file, int maxRetryCount) {
+	public static final void deleteFile(final File file, final int maxRetryCount) {
 		deleteFile(file, maxRetryCount, 0);
 	}
 
-	private static void deleteFile(File file, int maxRetryCount, int retryCount) {
+	private static final void deleteFile(final File file, final int maxRetryCount, final int retryCount) {
 		if (file == null || !file.exists()) {
 			return;
 		}
@@ -261,28 +244,26 @@ public class Toolkit {
 				}
 			} else {
 				logger.info("Retrying count : " + retryCount + ", file : " + file);
-				deleteFile(file, maxRetryCount, ++retryCount);
+				deleteFile(file, maxRetryCount, retryCount + 1);
 			}
 		}
 	}
 
 	/**
 	 * Deletes all the files in a directory with one of the specified extensions.
-	 *
-	 * @param file
-	 *            the file to delete or the directory to delete files in
-	 * @param extensions
-	 *            the extensions of files to delete
+	 * 
+	 * @param file the file to delete or the directory to delete files in
+	 * @param extensions the extensions of files to delete
 	 */
-	public static void deleteFiles(File file, String... extensions) {
+	public static final void deleteFiles(final File file, final String... extensions) {
 		if (file == null || !file.exists() || !file.canWrite()) {
 			return;
 		}
 		if (file.isDirectory()) {
 			File files[] = file.listFiles();
 			for (int j = 0; j < files.length; j++) {
-				file = files[j];
-				deleteFiles(file, extensions);
+				File newFile = files[j];
+				deleteFiles(newFile, extensions);
 			}
 		}
 		if (file.isFile()) {
@@ -301,26 +282,24 @@ public class Toolkit {
 
 	/**
 	 * This is the interface to select files with below.
-	 *
+	 * 
 	 * @author Michael Couck
 	 * @since 10.01.10
 	 * @version 01.00
 	 */
 	public interface IFileFilter {
-		public boolean matches(File file);
+		public boolean matches(final File file);
 	}
 
 	/**
-	 * Finds files on the file system below the directory specified recursively using the selection criteria supplied in the IFileFilter parameter.
-	 *
-	 * @param file
-	 *            the file to start looking from
-	 * @param filter
-	 *            the filter to select files with
-	 * @param list
-	 *            the list of files to add the selected files to
+	 * Finds files on the file system below the directory specified recursively using the selection criteria supplied in the IFileFilter
+	 * parameter.
+	 * 
+	 * @param file the file to start looking from
+	 * @param filter the filter to select files with
+	 * @param list the list of files to add the selected files to
 	 */
-	public static void findFiles(File file, IFileFilter filter, List<File> list) {
+	public static final void findFiles(final File file, final IFileFilter filter, final List<File> list) {
 		if (file == null || !file.exists()) {
 			return;
 		}
@@ -337,13 +316,12 @@ public class Toolkit {
 
 	/**
 	 * Reads the contents of the file and returns the contents in a byte array form.
-	 *
-	 * @param file
-	 *            the file to read the contents from
+	 * 
+	 * @param file the file to read the contents from
 	 * @return the file contents in a byte array output stream
 	 * @throws Exception
 	 */
-	public static ByteArrayOutputStream getContents(File file) {
+	public static final ByteArrayOutputStream getContents(final File file) {
 		InputStream inputStream = null;
 		try {
 			inputStream = new FileInputStream(file);
@@ -357,13 +335,12 @@ public class Toolkit {
 
 	/**
 	 * Reads the contents of the file and returns the contents in a byte array form.
-	 *
-	 * @param inputStream
-	 *            the file to read the contents from
+	 * 
+	 * @param inputStream the file to read the contents from
 	 * @return the file contents in a byte array output stream
 	 * @throws Exception
 	 */
-	public static ByteArrayOutputStream getContents(InputStream inputStream) {
+	public static final ByteArrayOutputStream getContents(final InputStream inputStream) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		if (inputStream == null) {
 			return bos;
@@ -389,13 +366,11 @@ public class Toolkit {
 
 	/**
 	 * Writes the contents of a byte array to a file.
-	 *
-	 * @param file
-	 *            the file to write to
-	 * @param bytes
-	 *            the byte data to write
+	 * 
+	 * @param file the file to write to
+	 * @param bytes the byte data to write
 	 */
-	public static void setContents(File file, byte[] bytes) {
+	public static final void setContents(final File file, final byte[] bytes) {
 		FileOutputStream fileOutputStream = null;
 		try {
 			if (!file.getParentFile().exists()) {
@@ -425,18 +400,16 @@ public class Toolkit {
 
 	/**
 	 * Formats a double to the required precision.
-	 *
-	 * @param d
-	 *            the double to format
-	 * @param precision
-	 *            the precision for the result
+	 * 
+	 * @param d the double to format
+	 * @param precision the precision for the result
 	 * @return the double formatted to the required precision
 	 */
-	public static double format(double d, int precision) {
+	public static final double format(final double d, final int precision) {
 		String doubleString = Double.toString(d);
 		doubleString = format(doubleString, precision);
 		try {
-			d = Double.parseDouble(doubleString);
+			return Double.parseDouble(doubleString);
 		} catch (Exception e) {
 			logger.error("Exception formatting : " + d + ", " + precision, e);
 		}
@@ -445,14 +418,12 @@ public class Toolkit {
 
 	/**
 	 * Formats a string to the desired precision.
-	 *
-	 * @param string
-	 *            the string to format to a precision
-	 * @param precision
-	 *            the precision of the result
+	 * 
+	 * @param string the string to format to a precision
+	 * @param precision the precision of the result
 	 * @return the string formatted to the required precision
 	 */
-	public static String format(String string, int precision) {
+	public static final String format(final String string, final int precision) {
 		if (string == null) {
 			return string;
 		}
@@ -483,12 +454,11 @@ public class Toolkit {
 
 	/**
 	 * Serializes an object to a byte array then to a base 64 string of the byte array.
-	 *
-	 * @param object
-	 *            the object to serialise to base 64
+	 * 
+	 * @param object the object to serialise to base 64
 	 * @return the string representation of the object in serialised base 64
 	 */
-	public static String serializeToBase64(Object object) {
+	public static final String serializeToBase64(final Object object) {
 		String base64 = null;
 		try {
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -507,12 +477,11 @@ public class Toolkit {
 
 	/**
 	 * De-serializes an object from a base 64 string to an object.
-	 *
-	 * @param base64
-	 *            the base 64 string representation of the object
+	 * 
+	 * @param base64 the base 64 string representation of the object
 	 * @return the object de-serialised from the string or null if an exception is thrown
 	 */
-	public static Object deserializeFromBase64(String base64) {
+	public static final Object deserializeFromBase64(final String base64) {
 		byte[] bytes = Base64.decode(base64);
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
 		try {
@@ -525,16 +494,15 @@ public class Toolkit {
 	}
 
 	/**
-	 * Returns an array of values that are defined as being a unique combination for the entity by using the Unique annotation for the class.
-	 *
-	 * @param <T>
-	 *            the type of object to be inspected for unique fields
-	 * @param t
-	 *            the object t inspect for unique field combinations
+	 * Returns an array of values that are defined as being a unique combination for the entity by using the Unique annotation for the
+	 * class.
+	 * 
+	 * @param <T> the type of object to be inspected for unique fields
+	 * @param t the object t inspect for unique field combinations
 	 * @return the array of unique field values for the entity
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T[] getUniqueValues(T t) {
+	public static final <T> T[] getUniqueValues(final T t) {
 		Unique unique = t.getClass().getAnnotation(Unique.class);
 		if (unique == null) {
 			return (T[]) new Object[] { t };
@@ -551,7 +519,7 @@ public class Toolkit {
 		return (T[]) values.toArray(new Object[values.size()]);
 	}
 
-	public static void copyFile(File in, File out) {
+	public static final void copyFile(final File in, final File out) {
 		if (!out.getParentFile().exists()) {
 			if (!out.getParentFile().mkdirs()) {
 				logger.info("Didn't create parent directories : " + out.getParentFile().getAbsolutePath());
@@ -591,16 +559,14 @@ public class Toolkit {
 	}
 
 	/**
-	 * This function will copy files or directories from one location to another. note that the source and the destination must be mutually exclusive.
-	 * This function can not be used to copy a directory to a sub directory of itself. The function will also have problems if the destination files
-	 * already exist.
-	 *
-	 * @param src
-	 *            A File object that represents the source for the copy
-	 * @param dest
-	 *            A File object that represents the destination for the copy.
+	 * This function will copy files or directories from one location to another. note that the source and the destination must be mutually
+	 * exclusive. This function can not be used to copy a directory to a sub directory of itself. The function will also have problems if
+	 * the destination files already exist.
+	 * 
+	 * @param src A File object that represents the source for the copy
+	 * @param dest A File object that represents the destination for the copy.
 	 */
-	public static void copyFiles(File src, File dest) {
+	public static final void copyFiles(final File src, final File dest) {
 		// Check to ensure that the source is valid...
 		if (!src.exists()) {
 			logger.warn("Source file/directory does not exist : " + src);
@@ -633,15 +599,12 @@ public class Toolkit {
 
 	/**
 	 * If Java 1.4 is unavailable, the following technique may be used.
-	 *
-	 * @param aInput
-	 *            is the original String which may contain substring aOldPattern
-	 * @param aOldPattern
-	 *            is the non-empty substring which is to be replaced
-	 * @param aNewPattern
-	 *            is the replacement for aOldPattern
+	 * 
+	 * @param aInput is the original String which may contain substring aOldPattern
+	 * @param aOldPattern is the non-empty substring which is to be replaced
+	 * @param aNewPattern is the replacement for aOldPattern
 	 */
-	public static String replaceAll(final String aInput, final String aOldPattern, final String aNewPattern) {
+	public static final String replaceAll(final String aInput, final String aOldPattern, final String aNewPattern) {
 		if (aOldPattern.equals("")) {
 			throw new IllegalArgumentException("Old pattern must have content.");
 		}
@@ -664,7 +627,7 @@ public class Toolkit {
 		return result.toString();
 	}
 
-	public static boolean createFile(File file) {
+	public static final boolean createFile(final File file) {
 		boolean allCreated = file == null;
 		if (file != null && file.getParentFile() != null && !file.getParentFile().exists()) {
 			if (!file.getParentFile().mkdirs()) {
@@ -688,7 +651,7 @@ public class Toolkit {
 		return allCreated;
 	}
 
-	public static String serialize(Object object) {
+	public static final String serialize(final Object object) {
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		XMLEncoder xmlEncoder = new XMLEncoder(byteArrayOutputStream);
 		xmlEncoder.writeObject(object);
@@ -707,12 +670,11 @@ public class Toolkit {
 
 	/**
 	 * Verifies that all the characters in a string are digits, ie. the string is a number.
-	 *
-	 * @param string
-	 *            the string to verify for digit data
+	 * 
+	 * @param string the string to verify for digit data
 	 * @return whether every character in a string is a digit
 	 */
-	public static boolean isDigits(String string) {
+	public static final boolean isDigits(final String string) {
 		if (string == null || string.trim().equals("")) {
 			return false;
 		}

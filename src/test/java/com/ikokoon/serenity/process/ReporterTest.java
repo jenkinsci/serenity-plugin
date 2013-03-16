@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
@@ -23,6 +24,7 @@ import com.ikokoon.toolkit.Toolkit;
  * @since 19.06.10
  * @version 01.00
  */
+@Ignore
 public class ReporterTest extends ATest {
 
 	private static IDataBase dataBase;

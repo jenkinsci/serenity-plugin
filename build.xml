@@ -7,11 +7,8 @@
 
 	<target name="deploy">
 		<copy todir="serenity" file="${serenity.jar}" overwrite="true" failonerror="true" />
-		<echo message="Copying the serrenity jar to the test project (Discovery, Findbugs, Search)" />
-		<copy todir="../Discovery/serenity/" file="${serenity.jar}" overwrite="true" failonerror="true" />
-		<copy todir="../Findbugs/serenity/" file="${serenity.jar}" overwrite="true" failonerror="true" />
-		<copy todir="../search/serenity" file="${serenity.jar}" overwrite="true" failonerror="true" />
-		<copy todir="D:/Servers/Tomcat/apache-tomcat-6.0.26/bin/serenity" file="${serenity.jar}" overwrite="true" failonerror="true" />
+		<echo message="Copying the serrenity jar to the test project (iKube)" />
+		<copy todir="../ikube/serenity/" file="${serenity.jar}" overwrite="true" failonerror="true" />
 		<copy todir="serenity" file="${serenity.jar}" overwrite="true" failonerror="true" />
 	</target>
 

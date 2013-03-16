@@ -35,7 +35,7 @@ import com.ikokoon.toolkit.Toolkit;
  * @since 12.07.09
  * @version 01.00
  */
-public class Collector implements IConstants {
+public final class Collector implements IConstants {
 
 	/** The logger. */
 	private static final Logger LOGGER = Logger.getLogger(Collector.class);
@@ -65,7 +65,7 @@ public class Collector implements IConstants {
 	 * @param methodDescription
 	 *            the byte code description of the method
 	 */
-	public static final void collectAllocation(String className, String methodName, String methodDescription) {
+	public static final void collectAllocation(final String className, final String methodName, final String methodDescription) {
 		Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
 		double allocations = klass.getAllocations();
 		allocations++;
@@ -82,7 +82,7 @@ public class Collector implements IConstants {
 	 * @param methodDescription
 	 *            the byte code description of the method
 	 */
-	public static final void collectStart(String className, String methodName, String methodDescription) {
+	public static final void collectStart(final String className, final String methodName, final String methodDescription) {
 		Method<?, ?> method = getMethod(className, methodName, methodDescription);
 		method.setInvocations(method.getInvocations() + 1);
 		method.setStartTime(System.nanoTime());
@@ -99,7 +99,7 @@ public class Collector implements IConstants {
 	 * @param methodDescription
 	 *            the byte code description of the method
 	 */
-	public static final void collectEnd(String className, String methodName, String methodDescription) {
+	public static final void collectEnd(final String className, final String methodName, final String methodDescription) {
 		Method<?, ?> method = getMethod(className, methodName, methodDescription);
 		method.setEndTime(System.nanoTime());
 		long executionTime = method.getEndTime() - method.getStartTime();
@@ -117,7 +117,7 @@ public class Collector implements IConstants {
 	 * @param methodDescription
 	 *            the byte code description of the method
 	 */
-	public static final void collectStartWait(String className, String methodName, String methodDescription) {
+	public static final void collectStartWait(final String className, final String methodName, final String methodDescription) {
 		Method<?, ?> method = getMethod(className, methodName, methodDescription);
 		method.setStartWait(System.nanoTime());
 	}
@@ -132,7 +132,7 @@ public class Collector implements IConstants {
 	 * @param methodDescription
 	 *            the byte code description of the method
 	 */
-	public static final void collectEndWait(String className, String methodName, String methodDescription) {
+	public static final void collectEndWait(final String className, final String methodName, final String methodDescription) {
 		Method<?, ?> method = getMethod(className, methodName, methodDescription);
 		method.setEndWait(System.nanoTime());
 		long waitTime = (method.getEndWait() - method.getStartWait()) + method.getWaitTime();
@@ -151,7 +151,7 @@ public class Collector implements IConstants {
 	 * @param lineNumber
 	 *            the line number of the line that is calling this method
 	 */
-	public static final void collectCoverage(String className, String methodName, String methodDescription, int lineNumber) {
+	public static final void collectCoverage(final String className, final String methodName, final String methodDescription, final int lineNumber) {
 		Line<?, ?> line = getLine(className, methodName, methodDescription, lineNumber);
 		line.increment();
 	}
@@ -168,7 +168,7 @@ public class Collector implements IConstants {
 	 * @param methodDescription
 	 *            the description of the method
 	 */
-	public static final void collectLine(String className, String methodName, String methodDescription, Integer lineNumber) {
+	public static final void collectLine(final String className, final String methodName, final String methodDescription, final Integer lineNumber) {
 		getLine(className, methodName, methodDescription, lineNumber);
 	}
 
@@ -180,11 +180,16 @@ public class Collector implements IConstants {
 	 * @param source
 	 *            the source for the class
 	 */
-	public static final void collectSource(String className, String source) {
+	public static final void collectSource(final String className, final String source) {
 		Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
 		File file = new File(IConstants.SERENITY_SOURCE, className + ".html");
 		if (!file.getParentFile().exists()) {
 			file.getParentFile().mkdirs();
+		}
+		// We try to delete the old file first
+		boolean deleted = file.delete();
+		if (!deleted) {
+			LOGGER.warn("Didn't delete source coverage file : " + file);
 		}
 		if (!file.exists()) {
 			if (!Toolkit.createFile(file)) {
@@ -211,7 +216,7 @@ public class Collector implements IConstants {
 	 * @param complexity
 	 *            the complexity of the method
 	 */
-	public static final void collectComplexity(String className, String methodName, String methodDescription, double complexity) {
+	public static final void collectComplexity(final String className, final String methodName, final String methodDescription, final double complexity) {
 		Method<?, ?> method = getMethod(className, methodName, methodDescription);
 		method.setComplexity(complexity);
 	}
@@ -224,7 +229,7 @@ public class Collector implements IConstants {
 	 * @param targetClassNames
 	 *            the referenced class names
 	 */
-	public static final void collectEfferentAndAfferent(String className, String... targetClassNames) {
+	public static final void collectEfferentAndAfferent(final String className, final String... targetClassNames) {
 		String packageName = Toolkit.classNameToPackageName(className);
 		for (String targetClassName : targetClassNames) {
 			// Is the target name outside the package for this class
@@ -267,7 +272,7 @@ public class Collector implements IConstants {
 	 * @param access
 	 *            the access opcode associated with the method
 	 */
-	public static final void collectAccess(String className, String methodName, String methodDescription, Integer access) {
+	public static final void collectAccess(final String className, final String methodName, final String methodDescription, final Integer access) {
 		Method<?, ?> method = getMethod(className, methodName, methodDescription);
 		method.setAccess(access);
 	}
@@ -280,7 +285,7 @@ public class Collector implements IConstants {
 	 * @param access
 	 *            the access opcode associated with the class
 	 */
-	public static final void collectAccess(String className, Integer access) {
+	public static final void collectAccess(final String className, final Integer access) {
 		Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
 		if (access.intValue() == 1537) {
 			klass.setInterfaze(true);
@@ -296,7 +301,7 @@ public class Collector implements IConstants {
 	 * @param outerName
 	 *            the name of the outer class
 	 */
-	public static final void collectInnerClass(String innerName, String outerName) {
+	public static final void collectInnerClass(final String innerName, final String outerName) {
 		Class<?, ?> innerClass = getClass(innerName);
 		Class<?, ?> outerClass = getClass(outerName);
 		if (innerClass.getOuterClass() == null) {
@@ -319,7 +324,7 @@ public class Collector implements IConstants {
 	 * @param outerMethodDescription
 	 *            the description of the method for anonymous and inline inner classes
 	 */
-	public static final void collectOuterClass(String innerName, String outerName, String outerMethodName, String outerMethodDescription) {
+	public static final void collectOuterClass(final String innerName, final String outerName, final String outerMethodName, final String outerMethodDescription) {
 		Class<?, ?> innerClass = getClass(innerName);
 		Class<?, ?> outerClass = getClass(outerName);
 		if (innerClass.getOuterClass() == null) {
@@ -337,7 +342,7 @@ public class Collector implements IConstants {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static final Package<Project<?, ?>, Class<?, ?>> getPackage(String className) {
+	private static final Package<Project<?, ?>, Class<?, ?>> getPackage(final String className) {
 		String packageName = Toolkit.classNameToPackageName(className);
 
 		long id = Toolkit.hash(packageName);
@@ -360,8 +365,8 @@ public class Collector implements IConstants {
 		return pakkage;
 	}
 
-	@SuppressWarnings("unchecked")
-	private static final Class<Package<?, ?>, Method<?, ?>> getClass(String className) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static final Class<Package<?, ?>, Method<?, ?>> getClass(final String className) {
 		long id = Toolkit.hash(className);
 		Class klass = (Class) DATABASE.find(Class.class, id);
 
@@ -386,17 +391,17 @@ public class Collector implements IConstants {
 		return klass;
 	}
 
-	@SuppressWarnings("unchecked")
-	private static final Method<?, ?> getMethod(String className, String methodName, String methodDescription) {
-		methodName = methodName.replace('<', ' ').replace('>', ' ').trim();
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static final Method<?, ?> getMethod(final String className, final String methodName, final String methodDescription) {
+		String cleanMethodName = methodName.replace('<', ' ').replace('>', ' ').trim();
 
-		long id = Toolkit.hash(className, methodName, methodDescription);
+		long id = Toolkit.hash(className, cleanMethodName, methodDescription);
 		Method method = (Method) DATABASE.find(Method.class, id);
 
 		if (method == null) {
 			method = new Method();
 
-			method.setName(methodName);
+			method.setName(cleanMethodName);
 			method.setClassName(className);
 			method.setDescription(methodDescription);
 			method.setComplexity(0d);
@@ -415,8 +420,8 @@ public class Collector implements IConstants {
 		return method;
 	}
 
-	@SuppressWarnings("unchecked")
-	protected static final Line<?, ?> getLine(String className, String methodName, String methodDescription, double lineNumber) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected static final Line<?, ?> getLine(final String className, final String methodName, final String methodDescription, final double lineNumber) {
 		long id = Toolkit.hash(className, methodName, lineNumber);
 		Line line = (Line) DATABASE.find(Line.class, id);
 
@@ -438,7 +443,7 @@ public class Collector implements IConstants {
 		return line;
 	}
 
-	private static final Efferent getEfferent(Class<?, ?> klass, String packageName) {
+	private static final Efferent getEfferent(final Class<?, ?> klass, final String packageName) {
 		StringBuilder builder = new StringBuilder("<e:");
 		builder.append(packageName);
 		builder.append(">");
@@ -457,7 +462,7 @@ public class Collector implements IConstants {
 		return efferent;
 	}
 
-	private static final Afferent getAfferent(Class<?, ?> klass, String packageName) {
+	private static final Afferent getAfferent(final Class<?, ?> klass, final String packageName) {
 		StringBuilder builder = new StringBuilder("<a:");
 		builder.append(packageName);
 		builder.append(">");
@@ -475,5 +480,8 @@ public class Collector implements IConstants {
 		}
 		return afferent;
 	}
+	
+	/** There can be only one! */
+	private Collector() {}
 
 }
