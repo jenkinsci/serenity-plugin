@@ -21,9 +21,9 @@ import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
- * This class looks through the classpath and collects metrics on the classes that were not instantiated by the classloader during the unit tests and
- * creates a visitor chain for the class that will collect the complexity and dependency metrics for the class.
- *
+ * This class looks through the classpath and collects metrics on the classes that were not instantiated by the classloader during the unit tests and creates a
+ * visitor chain for the class that will collect the complexity and dependency metrics for the class.
+ * 
  * @author Michael Couck
  * @since 24.07.09
  * @version 01.00
@@ -41,10 +41,10 @@ public class Accumulator extends AProcess {
 	 * Constructor takes the parent process.
 	 */
 	@SuppressWarnings("unchecked")
-	public Accumulator(IProcess parent) {
+	public Accumulator(final IProcess parent) {
 		super(parent);
-		CLASS_ADAPTER_CLASSES = Configuration.getConfiguration().classAdapters
-				.toArray(new java.lang.Class[Configuration.getConfiguration().classAdapters.size()]);
+		CLASS_ADAPTER_CLASSES = Configuration.getConfiguration().classAdapters.toArray(new java.lang.Class[Configuration.getConfiguration().classAdapters
+				.size()]);
 	}
 
 	/**
@@ -53,19 +53,18 @@ public class Accumulator extends AProcess {
 	public void execute() {
 		super.execute();
 		String classpath = Configuration.getConfiguration().getClassPath();
-		logger.debug("Class path : " + File.pathSeparator + ", " + classpath);
+		logger.error("Class path : " + File.pathSeparator + ", " + classpath);
 		StringTokenizer stringTokenizer = new StringTokenizer(classpath, File.pathSeparator, false);
 		while (stringTokenizer.hasMoreTokens()) {
 			String token = stringTokenizer.nextToken();
 			File file = new File(token);
-			logger.debug("Processing jar : " + token + ", file : " + file.getAbsolutePath());
 			if (!file.exists() || !file.canRead()) {
 				logger.warn("Can't read file : " + file.getAbsolutePath());
 				continue;
 			}
 			if (file.isFile()) {
 				if (token.endsWith(".jar") || token.endsWith(".zip") || token.endsWith(".war") || token.endsWith(".ear")) {
-					logger.debug("Processing jar : " + file.getAbsolutePath());
+					logger.error("Processing jar : " + file.getAbsolutePath());
 					processJar(file);
 				}
 			} else if (file.isDirectory()) {
@@ -75,29 +74,26 @@ public class Accumulator extends AProcess {
 		// Look for all jars below this directory to find some source
 		List<File> list = new ArrayList<File>();
 		File baseDirectory = new File(".");
-		logger.info("Looking for source in base directory : " + baseDirectory.getAbsolutePath());
 		Toolkit.findFiles(baseDirectory, new Toolkit.IFileFilter() {
-			public boolean matches(File file) {
+			public boolean matches(final File file) {
 				if (file.getName().endsWith(".jar") || file.getName().endsWith(".zip")) {
 					return true;
 				}
 				return false;
 			}
 		}, list);
-		for (File file : list) {
-			logger.debug("Processing jar : " + file.getAbsolutePath());
+		for (final File file : list) {
+			logger.error("Processing jar : " + file.getAbsolutePath());
 			processJar(file);
 		}
 	}
 
 	/**
-	 * Processes a directory on a file system, looks for class files and feeds the byte code into the adapter chain for collecting the metrics for the
-	 * class.
-	 *
-	 * @param file
-	 *            the directory or file to look in for the class data
+	 * Processes a directory on a file system, looks for class files and feeds the byte code into the adapter chain for collecting the metrics for the class.
+	 * 
+	 * @param file the directory or file to look in for the class data
 	 */
-	void processDir(File file) {
+	void processDir(final File file) {
 		// Iteratively go through the directories
 		if (file == null || !file.exists() || !file.canWrite()) {
 			return;
@@ -105,8 +101,8 @@ public class Accumulator extends AProcess {
 		if (file.isDirectory()) {
 			File files[] = file.listFiles();
 			for (int j = 0; j < files.length; j++) {
-				file = files[j];
-				processDir(file);
+				File child = files[j];
+				processDir(child);
 			}
 		} else if (file.isFile() && file.canRead()) {
 			String filePath = file.getAbsolutePath();
@@ -142,13 +138,12 @@ public class Accumulator extends AProcess {
 	}
 
 	/**
-	 * Processes a jar or zip file or something like it, looks for class and feeds the byte code into the adapter chain for collecting the metrics for
-	 * the class.
-	 *
-	 * @param file
-	 *            the file to look in for the class data
+	 * Processes a jar or zip file or something like it, looks for class and feeds the byte code into the adapter chain for collecting the metrics for the
+	 * class.
+	 * 
+	 * @param file the file to look in for the class data
 	 */
-	private void processJar(File file) {
+	private void processJar(final File file) {
 		// Don't process the jars more than once
 		if (!jarsProcessed.add(file.getName())) {
 			return;
@@ -169,7 +164,7 @@ public class Accumulator extends AProcess {
 			if (excluded(className)) {
 				continue;
 			}
-			logger.info("Processsing entry : " + className);
+			logger.error("Processsing entry : " + className);
 			try {
 				InputStream inputStream = jarFile.getInputStream(jarEntry);
 				byte[] classFileBytes = Toolkit.getContents(inputStream).toByteArray();
@@ -186,52 +181,71 @@ public class Accumulator extends AProcess {
 		}
 	}
 
-	private ByteArrayOutputStream getSource(JarFile jarFile, String entryName) throws IOException {
+	protected ByteArrayOutputStream getSource(final JarFile jarFile, final String entryName) throws IOException {
 		// Look for the source
-		String javaEntryName = entryName.substring(0, entryName.lastIndexOf('.')) + ".java";
-		// LOGGER.warn("Looking for source : " + javaEntryName + ", " + entryName);
+		final String javaEntryName = entryName.substring(0, entryName.lastIndexOf('.')) + ".java";
+		logger.error("Looking for source : " + javaEntryName + ", " + entryName + ", " + jarFile.getName());
 		ZipEntry javaEntry = jarFile.getEntry(javaEntryName);
 		if (javaEntry != null) {
-			// LOGGER.warn("Got source : " + javaEntry);
+			logger.warn("Got source : " + javaEntry);
 			InputStream inputStream = jarFile.getInputStream(javaEntry);
 			return Toolkit.getContents(inputStream);
+		} else {
+			List<File> files = new ArrayList<File>();
+			// Look on the file system below the dot directory for the Java file
+			Toolkit.findFiles(new File("."), new Toolkit.IFileFilter() {
+				public boolean matches(final File file) {
+					String filePath = file.getAbsolutePath();
+					// Could be on windows
+					filePath = Toolkit.replaceAll(filePath, "\\", "/");
+					boolean isSourceFile = filePath.contains(javaEntryName);
+					if (isSourceFile) {
+						logger.error("Is source file : " + isSourceFile + ", " + filePath);
+					}
+					return isSourceFile;
+				}
+			}, files);
+			if (!files.isEmpty()) {
+				return Toolkit.getContents(files.get(0));
+			}
 		}
 		return new ByteArrayOutputStream();
 	}
 
-	private void processClass(String name, byte[] classBytes, ByteArrayOutputStream source) {
-		if (name != null && name.endsWith(".class")) {
-			name = name.substring(0, name.lastIndexOf('.'));
+	private void processClass(final String name, final byte[] classBytes, final ByteArrayOutputStream source) {
+		String strippedName = name;
+		if (strippedName != null && strippedName.endsWith(".class")) {
+			strippedName = strippedName.substring(0, strippedName.lastIndexOf('.'));
 		}
 		try {
-			logger.warn("Adding class : " + name);
-			VisitorFactory.getClassVisitor(CLASS_ADAPTER_CLASSES, name, classBytes, source);
+			logger.error("Adding class : " + strippedName);
+			VisitorFactory.getClassVisitor(CLASS_ADAPTER_CLASSES, strippedName, classBytes, source);
 		} catch (Exception e) {
 			int sourceLength = source != null ? source.size() : 0;
-			logger.warn("Class name : " + name + ", length : " + classBytes.length + ", source : " + sourceLength);
-			logger.error("Exception accululating data on class " + name, e);
+			logger.warn("Class name : " + strippedName + ", length : " + classBytes.length + ", source : " + sourceLength);
+			logger.error("Exception accululating data on class " + strippedName, e);
 		}
 	}
 
-	private boolean excluded(String name) {
+	private boolean excluded(final String name) {
 		// Don't process anything that is not a class file or a Java file
 		if (!name.endsWith(".class")) {
-			logger.info("Not processing file : " + name);
+			logger.debug("Not processing file : " + name);
 			return true;
 		}
 		// Check that the class is included in the included packages
 		if (!Configuration.getConfiguration().included(name)) {
-			logger.info("File not included : " + name);
+			logger.debug("File not included : " + name);
 			return true;
 		}
 		// Check that the class is not excluded in the excluded packages
 		if (Configuration.getConfiguration().excluded(name)) {
-			logger.info("Excluded file : " + name);
+			logger.debug("Excluded file : " + name);
 			return true;
 		}
 		// Don't process the same class twice
 		if (!filesProcessed.add(name)) {
-			logger.info("Already done file : " + name);
+			logger.debug("Already done file : " + name);
 			return true;
 		}
 		return false;

@@ -4,7 +4,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.File;
-import java.util.StringTokenizer;
+import java.util.jar.JarFile;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,10 +33,6 @@ public class AccumulatorTest extends ATest implements IConstants {
 		classPath = Toolkit.replaceAll(classPath, "\\.\\", "\\");
 		classPath = Toolkit.replaceAll(classPath, "/./", "/");
 		System.setProperty("java.class.path", classPath);
-		StringTokenizer stringTokenizer = new StringTokenizer(classPath, ";");
-		while (stringTokenizer.hasMoreTokens()) {
-			LOGGER.warn(stringTokenizer.nextToken());
-		}
 	}
 
 	@Test
@@ -49,6 +45,15 @@ public class AccumulatorTest extends ATest implements IConstants {
 		assertNotNull(targetClass);
 		Class<?, ?> targetConsumerClass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(Class.class.getName()));
 		assertNull(targetConsumerClass);
+	}
+
+	@Test
+	public void getSource() throws Exception {
+		Accumulator accumulator = new Accumulator(null);
+		JarFile jarFile = new JarFile(new File("src/test/resources/serenity.jar"));
+		String source = accumulator.getSource(jarFile, Toolkit.dotToSlash(Accumulator.class.getName()) + ".java").toString();
+		LOGGER.info("Source : " + source);
+		assertNotNull(source);
 	}
 
 }

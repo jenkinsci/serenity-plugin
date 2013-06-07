@@ -65,6 +65,7 @@ public interface IConstants {
 	public String COMPLEXITY = "complexity";
 	public String DEPENDENCY = "dependency";
 	public String PROFILING = "profiling";
+	public String DUMP = "dump";
 
 	/** The type of parameters that the {@link Collector} takes in the profiling collection method. */
 	public Type STRING_TYPE = Type.getType(String.class);
