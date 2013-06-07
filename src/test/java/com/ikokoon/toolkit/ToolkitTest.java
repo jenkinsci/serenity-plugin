@@ -42,12 +42,12 @@ public class ToolkitTest extends ATest {
 	public void classNameToPackageName() {
 		Type[] types = Type.getArgumentTypes("(Ljava/lang/Integer;Ljava/math/BigDecimal;)Ljava/lang/String;");
 		for (Type argumentType : types) {
-			logger.debug("Type : " + argumentType.getClassName() + ", " + argumentType.getDescriptor() + ", " + argumentType.getInternalName() + ", "
+			LOGGER.debug("Type : " + argumentType.getClassName() + ", " + argumentType.getDescriptor() + ", " + argumentType.getInternalName() + ", "
 					+ argumentType.getSize() + ", " + argumentType.getSort());
 		}
 
 		Type returnType = Type.getReturnType("(Ljava/lang/Integer;Ljava/math/BigDecimal;)Ljava/lang/String;");
-		logger.debug("Type : " + returnType.getClassName() + ", " + returnType.getDescriptor() + ", " + returnType.getInternalName() + ", "
+		LOGGER.debug("Type : " + returnType.getClassName() + ", " + returnType.getDescriptor() + ", " + returnType.getInternalName() + ", "
 				+ returnType.getSize() + ", " + returnType.getSort());
 
 		String name = Toolkit.classNameToPackageName(Toolkit.dotToSlash(Target.class.getName()));
@@ -96,7 +96,7 @@ public class ToolkitTest extends ATest {
 	public void deleteFile() throws Exception {
 		File folder = createFolderAndOneFile("target/folder", "file.txt");
 		Toolkit.deleteFile(folder, 3);
-		logger.debug("Deleted folder and file : " + folder.exists());
+		LOGGER.debug("Deleted folder and file : " + folder.exists());
 	}
 
 	private File createFolderAndOneFile(String folderName, String fileName) throws Exception {
@@ -118,9 +118,9 @@ public class ToolkitTest extends ATest {
 		if (destination.exists()) {
 			Toolkit.deleteFile(destination, 3);
 		}
-		logger.debug("Deleted destination : " + destination.exists());
+		LOGGER.debug("Deleted destination : " + destination.exists());
 		Toolkit.copyFiles(source, destination);
-		logger.debug("Copied file exists : " + new File(destination, "file.txt").exists());
+		LOGGER.debug("Copied file exists : " + new File(destination, "file.txt").exists());
 	}
 
 }

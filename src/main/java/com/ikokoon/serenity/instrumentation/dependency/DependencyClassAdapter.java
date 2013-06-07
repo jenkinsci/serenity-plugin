@@ -36,7 +36,7 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class DependencyClassAdapter extends ClassAdapter implements Opcodes {
 
-	/** The logger for the class. */
+	/** The LOGGER for the class. */
 	private Logger logger = Logger.getLogger(DependencyClassAdapter.class);
 	/** The name of the class to collect dependency metrics on. */
 	private String className;

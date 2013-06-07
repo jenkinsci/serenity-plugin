@@ -37,7 +37,7 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public final class Collector implements IConstants {
 
-	/** The logger. */
+	/** The LOGGER. */
 	private static final Logger LOGGER = Logger.getLogger(Collector.class);
 	/** The database/persistence object. */
 	private static IDataBase DATABASE;

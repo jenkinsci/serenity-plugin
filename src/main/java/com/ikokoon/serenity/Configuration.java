@@ -33,7 +33,7 @@ public class Configuration {
 	/** The separator for the package names. */
 	private static final String SEPARATOR = ";: ";
 
-	/** The logger for the class. */
+	/** The LOGGER for the class. */
 	public Logger logger;
 	/** Packages that are included in the enhancement. */
 	public Set<String> includedPackages = new TreeSet<String>();
@@ -76,7 +76,7 @@ public class Configuration {
 		}
 		string = Toolkit.slashToDot(string);
 		for (String pattern : includedPackages) {
-			// logger.info("String : " + string + ", pattern : " + pattern + ", index of : " + (string.indexOf(pattern) > -1));
+			// LOGGER.info("String : " + string + ", pattern : " + pattern + ", index of : " + (string.indexOf(pattern) > -1));
 			if (string.indexOf(pattern) > -1) {
 				return true;
 			}

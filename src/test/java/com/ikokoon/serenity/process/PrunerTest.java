@@ -60,7 +60,7 @@ public class PrunerTest extends ATest implements IConstants {
 				new Pruner(null, odbDataBase).execute();
 			}
 		}, "PrunerTest : ", 1);
-		logger.warn("Prune duration : " + pruneDuration);
+		LOGGER.warn("Prune duration : " + pruneDuration);
 		// Assert that there are no more afferent and lines in the database
 		lines = odbDataBase.find(Line.class);
 		assertEquals(0, lines.size());

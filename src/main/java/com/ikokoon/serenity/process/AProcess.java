@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class AProcess implements IProcess {
 
-	/** The logger for the class. */
+	/** The LOGGER for the class. */
 	protected Logger logger = Logger.getLogger(this.getClass());
 	/** The child process in the chain if there is one. */
 	private IProcess child;

@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
@@ -18,6 +19,7 @@ import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.serenity.process.Listener;
 import com.ikokoon.toolkit.Toolkit;
 
+@Ignore
 public class ListenerTest extends ATest {
 
 	private static IDataBase dataBase;
@@ -43,14 +45,14 @@ public class ListenerTest extends ATest {
 		Thread.sleep(10000);
 		// Verify that the reports are written
 		File file = new File(IConstants.SERENITY_DIRECTORY);
-		logger.warn("Searching directory : " + file.getAbsolutePath());
+		LOGGER.warn("Searching directory : " + file.getAbsolutePath());
 		List<File> files = new ArrayList<File>();
 		Toolkit.findFiles(new File("."), new Toolkit.IFileFilter() {
 			public boolean matches(File file) {
 				return file.getName().equals(IConstants.METHOD_SERIES);
 			}
 		}, files);
-		logger.warn("Report files : " + files);
+		LOGGER.warn("Report files : " + files);
 		assertTrue(files.size() > 0);
 	}
 

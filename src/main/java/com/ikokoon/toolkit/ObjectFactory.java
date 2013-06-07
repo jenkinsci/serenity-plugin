@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class ObjectFactory {
 
-	/** The logger for the class. */
+	/** The LOGGER for the class. */
 	private static Logger LOGGER = Logger.getLogger(ObjectFactory.class);
 
 	/**

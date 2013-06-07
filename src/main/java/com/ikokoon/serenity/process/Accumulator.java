@@ -189,10 +189,10 @@ public class Accumulator extends AProcess {
 	private ByteArrayOutputStream getSource(JarFile jarFile, String entryName) throws IOException {
 		// Look for the source
 		String javaEntryName = entryName.substring(0, entryName.lastIndexOf('.')) + ".java";
-		// logger.warn("Looking for source : " + javaEntryName + ", " + entryName);
+		// LOGGER.warn("Looking for source : " + javaEntryName + ", " + entryName);
 		ZipEntry javaEntry = jarFile.getEntry(javaEntryName);
 		if (javaEntry != null) {
-			// logger.warn("Got source : " + javaEntry);
+			// LOGGER.warn("Got source : " + javaEntry);
 			InputStream inputStream = jarFile.getInputStream(javaEntry);
 			return Toolkit.getContents(inputStream);
 		}
@@ -204,6 +204,7 @@ public class Accumulator extends AProcess {
 			name = name.substring(0, name.lastIndexOf('.'));
 		}
 		try {
+			logger.warn("Adding class : " + name);
 			VisitorFactory.getClassVisitor(CLASS_ADAPTER_CLASSES, name, classBytes, source);
 		} catch (Exception e) {
 			int sourceLength = source != null ? source.size() : 0;

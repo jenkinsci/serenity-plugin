@@ -19,7 +19,7 @@ import com.ikokoon.target.consumer.TargetConsumer;
 @Annotation(fields = { Target.NAME })
 public class Target<E, F> implements ITarget<E, F>, Serializable {
 
-	/** The logger for the class. */
+	/** The LOGGER for the class. */
 	private transient volatile Logger logger = Logger.getLogger(Target.class);
 	protected static final String NAME = "name";
 	protected TargetConsumer consumer; // = new TargetConsumer();

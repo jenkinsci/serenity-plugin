@@ -136,7 +136,7 @@ public class SerenityResult implements ISerenityResult {
 				closeDataBase(dataBase);
 			}
 		}
-		// logger.debug("Project : " + ToStringBuilder.reflectionToString(project));
+		// LOGGER.debug("Project : " + ToStringBuilder.reflectionToString(project));
 		return project;
 	}
 

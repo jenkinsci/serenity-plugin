@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -36,9 +35,9 @@ import com.ikokoon.toolkit.Executer;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
- * This is the test for the aggregator. The aggregator takes the collected data on the methods, classes and packages and calculates the metrics like
- * the abstractness the stability and so on.
- *
+ * This is the test for the aggregator. The aggregator takes the collected data on the methods, classes and packages and calculates the metrics like the
+ * abstractness the stability and so on.
+ * 
  * @author Michael Couck
  * @since 02.08.09
  * @version 01.00
@@ -68,25 +67,25 @@ public class AggregatorTest extends ATest implements IConstants {
 
 				Project<?, ?> project = (Project<?, ?>) ramDataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
 				if (project != null) {
-					logger.warn(ToStringBuilder.reflectionToString(project));
+					LOGGER.warn(ToStringBuilder.reflectionToString(project));
 				} else {
-					logger.warn("Project : " + project);
+					LOGGER.warn("Project : " + project);
 				}
 
 				ramDataBase.close();
 
 				odbDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, odbDataBaseFile.getAbsolutePath(), mockInternalDataBase);
 				project = (Project<?, ?>) odbDataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
-				logger.warn(ToStringBuilder.reflectionToString(project));
+				LOGGER.warn(ToStringBuilder.reflectionToString(project));
 
 				odbDataBase.close();
 			}
 		}, "AggregatorTest : ", 1);
-		logger.warn("Aggregation took : " + aggregationDuration);
+		LOGGER.warn("Aggregation took : " + aggregationDuration);
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void innerClasses() {
 		visitClass(DependencyClassAdapter.class, IDiscovery.class.getName());
 		visitClass(DependencyClassAdapter.class, Discovery.class.getName());
@@ -105,38 +104,38 @@ public class AggregatorTest extends ATest implements IConstants {
 		Aggregator aggregator = new Aggregator(null, dataBase);
 		aggregator.execute();
 
-		assertEquals(0d, method.getCoverage());
+		assertEquals(0d, method.getCoverage(), 0);
 		assertEquals(3, method.getChildren().size());
 
 		// Check the class
 		assertEquals(4, klass.getChildren().size()); // 10 + 15
 		// Sigma n=1, n, (method lines / class lines) * method complexity
 		// ((10 / 15) * 10) + ((5 / 15) * 20) = 6.666r + 6.6666r = 13.3333r
-		assertEquals(1d, klass.getComplexity());
+		assertEquals(1d, klass.getComplexity(), 0);
 		// ((10 / 15) * 20) + ((5 / 15) * 40) = 13.33r + 13.333r =
-		assertEquals(0d, klass.getCoverage());
+		assertEquals(0d, klass.getCoverage(), 0);
 		// e / e + a = 2 / 2 + 1 = 0.666r
-		assertEquals(1d, klass.getStability());
-		assertEquals(0d, klass.getEfference());
-		assertEquals(0d, klass.getAfference());
+		assertEquals(1d, klass.getStability(), 0);
+		assertEquals(0d, klass.getEfference(), 0);
+		assertEquals(0d, klass.getAfference(), 0);
 		assertEquals(false, klass.getInterfaze());
 
 		// assertEquals(22d, pakkage.getLines());
 		// Sigma : (class lines / package lines) * class complexity
 		// ((15 / 65) * 13.333333333333332) + ((50 / 65) * 25) = 3.07692 + 19.2307 = 22.30692307692308
-		assertEquals(1d, pakkage.getComplexity());
+		assertEquals(1d, pakkage.getComplexity(), 0);
 		// ((15 / 65) * 26.666666666666664) + ((50 / 65) * 7.996) = 6.1538 + 6.5107 = 12.298461538461538
-		assertEquals(0d, pakkage.getCoverage());
+		assertEquals(0d, pakkage.getCoverage(), 0);
 		// i / (i + im) = 1 / 2 = 0.5
-		assertEquals(0d, pakkage.getAbstractness());
+		assertEquals(0.16d, pakkage.getAbstractness(), 0);
 		// e / (e + a) = 3 / 5 = 0.6666666666666666
-		assertEquals(1d, pakkage.getStability());
+		assertEquals(1d, pakkage.getStability(), 0);
 		// d=|-stability + -abstractness + 1|/sqrt(-1²+-1²) = |-0.6666666666666666 + -0.5 + 1|sqrt(-1sq + -1sq) =
-		assertEquals(0.0d, pakkage.getDistance());
-		assertEquals(1d, pakkage.getInterfaces());
-		assertEquals(5d, pakkage.getImplementations());
-		assertEquals(0d, pakkage.getEfference());
-		assertEquals(0d, pakkage.getAfference());
+		assertEquals(0.11d, pakkage.getDistance(), 0);
+		assertEquals(1d, pakkage.getInterfaces(), 0);
+		assertEquals(5d, pakkage.getImplementations(), 0);
+		assertEquals(0d, pakkage.getEfference(), 0);
+		assertEquals(0d, pakkage.getAfference(), 0);
 		assertEquals(6, pakkage.getChildren().size());
 	}
 
@@ -166,9 +165,9 @@ public class AggregatorTest extends ATest implements IConstants {
 		visitClass(DependencyClassAdapter.class, Discovery.class.getName());
 
 		Class<?, ?> klass = dataBase.find(Class.class, Toolkit.hash(Discovery.class.getName()));
-		assertEquals(getComplexity(klass), klass.getComplexity());
-		assertEquals(getCoverage(klass), klass.getCoverage());
-		assertEquals(getStability(klass), klass.getStability());
+		assertEquals(getComplexity(klass), klass.getComplexity(), 0);
+		assertEquals(getCoverage(klass), klass.getCoverage(), 0);
+		assertEquals(getStability(klass), klass.getStability(), 0);
 	}
 
 	@Test
@@ -180,15 +179,15 @@ public class AggregatorTest extends ATest implements IConstants {
 
 		new PackageAggregator(dataBase, pakkage).aggregate();
 
-		assertEquals(getAbstractness(pakkage), pakkage.getAbstractness());
-		assertEquals(getComplexity(pakkage), pakkage.getComplexity());
-		assertEquals(getCoverage(pakkage), pakkage.getCoverage());
-		assertEquals(getDistance(pakkage), pakkage.getDistance());
-		assertEquals(getStability(pakkage), pakkage.getStability());
+		assertEquals(getAbstractness(pakkage), pakkage.getAbstractness(), 0.01);
+		assertEquals(getComplexity(pakkage), pakkage.getComplexity(), 0);
+		assertEquals(getCoverage(pakkage), pakkage.getCoverage(), 0);
+		assertEquals(getDistance(pakkage), pakkage.getDistance(), 0.01);
+		assertEquals(getStability(pakkage), pakkage.getStability(), 0);
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void aggregateProject() throws Exception {
 		File odbDataBaseFile = new File("./src/test/resources/isearch/serenity.odb");
 		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, odbDataBaseFile.getAbsolutePath(), null);
@@ -249,22 +248,6 @@ public class AggregatorTest extends ATest implements IConstants {
 		}
 	}
 
-	@SuppressWarnings( { "unused", "unchecked" })
-	private double getComplexity(List<Package> pakkages) {
-		return 0d;
-	}
-
-	@SuppressWarnings( { "unchecked", "unused" })
-	private double getAbstractness(List<Package> pakkages) {
-		double interfaces = 0d;
-		double implementations = 0d;
-		for (Package<?, ?> pakkage : pakkages) {
-			interfaces += pakkage.getInterfaces();
-			implementations += pakkage.getImplementations();
-		}
-		return interfaces / implementations > 0 ? implementations : 0;
-	}
-
 	protected double getStability(Package<?, ?> pakkage) {
 		double efferent = 0d;
 		double afferent = 0d;
@@ -301,7 +284,7 @@ public class AggregatorTest extends ATest implements IConstants {
 	}
 
 	protected double getAbstractness(Package<?, ?> pakkage) {
-		return pakkage.getInterfaces() / pakkage.getImplementations();
+		return pakkage.getInterfaces() / (pakkage.getImplementations() + pakkage.getInterfaces());
 	}
 
 	protected double getStability(Class<?, ?> klass) {

@@ -22,7 +22,7 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class ComplexityMethodAdapter extends MethodAdapter {
 
-	/** The logger for the class. */
+	/** The LOGGER for the class. */
 	private Logger logger = Logger.getLogger(CoverageMethodAdapter.class);
 
 	/** The name of the class that this method adapter is enhancing the methods for. */

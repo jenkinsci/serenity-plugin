@@ -33,7 +33,7 @@ import com.ikokoon.serenity.model.Unique;
  */
 public final class Toolkit {
 
-	/** The logger. */
+	/** The LOGGER. */
 	private static Logger logger = Logger.getLogger(Toolkit.class);
 
 	/**

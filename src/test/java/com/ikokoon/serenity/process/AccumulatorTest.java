@@ -1,6 +1,7 @@
 package com.ikokoon.serenity.process;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.util.StringTokenizer;
@@ -16,19 +17,17 @@ import com.ikokoon.target.Target;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
- * This is the test for the accumulator the looks through all the classes on the classpath that were not loaded at runtime and does the dependency,
- * coverage and so on for them.
- *
+ * This is the test for the accumulator the looks through all the classes on the classpath that were not loaded at runtime and does the dependency, coverage and
+ * so on for them.
+ * 
  * @author Michael Couck
  * @since 24.07.09
  * @version 01.00
  */
 public class AccumulatorTest extends ATest implements IConstants {
 
-	// private IDataBase dataBase;
-
 	@Before
-	public void initilize() {
+	public void before() {
 		String classPath = System.getProperty("java.class.path");
 		classPath += ";" + new File(".", "/target/serenity.jar").getAbsolutePath() + ";";
 		classPath = Toolkit.replaceAll(classPath, "\\.\\", "\\");
@@ -36,27 +35,20 @@ public class AccumulatorTest extends ATest implements IConstants {
 		System.setProperty("java.class.path", classPath);
 		StringTokenizer stringTokenizer = new StringTokenizer(classPath, ";");
 		while (stringTokenizer.hasMoreTokens()) {
-			logger.debug(stringTokenizer.nextToken());
+			LOGGER.warn(stringTokenizer.nextToken());
 		}
-
-		// dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, mockInternalDataBase);
-		// DataBaseToolkit.clear(dataBase);
-		// Collector.initialize(dataBase);
 	}
-
-	// @After
-	// public void close() {
-	// // dataBase.close();
-	// }
 
 	@Test
 	public void accumulate() {
-		logger.debug("Included : " + Configuration.getConfiguration().includedPackages);
-		logger.debug("Excluded : " + Configuration.getConfiguration().excludedPackages);
+		LOGGER.warn("Included : " + Configuration.getConfiguration().includedPackages);
+		LOGGER.warn("Excluded : " + Configuration.getConfiguration().excludedPackages);
 		Accumulator accumulator = new Accumulator(null);
 		accumulator.execute();
-		Class<?, ?> klass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(Target.class.getName()));
-		assertNotNull(klass);
+		Class<?, ?> targetClass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(Target.class.getName()));
+		assertNotNull(targetClass);
+		Class<?, ?> targetConsumerClass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(Class.class.getName()));
+		assertNull(targetConsumerClass);
 	}
 
 }

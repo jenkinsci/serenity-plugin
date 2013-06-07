@@ -37,15 +37,15 @@ public class TypeTest extends ATest {
 			printType(argumentType);
 		}
 		String internalName = Type.getInternalName(Collector.class);
-		logger.debug("Internal name : " + internalName);
+		LOGGER.debug("Internal name : " + internalName);
 		String methodDescriptor = Type.getMethodDescriptor(Type.getType(String.class), new Type[] { Type.getType(Project.class),
 				Type.getType(IDataBase.class) });
-		logger.debug("Method descriptor : " + methodDescriptor);
+		LOGGER.debug("Method descriptor : " + methodDescriptor);
 	}
 
 	private void printType(Type type) {
 		if (type != null) {
-			logger.debug("Type : class name : " + type.getClassName() + ", descriptor : " + type.getDescriptor() + ", internal name : "
+			LOGGER.debug("Type : class name : " + type.getClassName() + ", descriptor : " + type.getDescriptor() + ", internal name : "
 					+ type.getInternalName() + ", op code : " + type.getOpcode(Opcodes.ISTORE));
 		}
 	}

@@ -74,7 +74,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 	/** The pattern to exclude from the file filter. */
 	private static final String SERENITY_ODB_REGEX = ".*serenity.odb";
 	private static final String SERENITY_SOURCE_REGEX = ".*serenity.*.source.*";
-	/** The logger. */
+	/** The LOGGER. */
 	protected static Logger logger = Logger.getLogger(SerenityPublisher.class);
 	/** The description for Hudson. */
 	@Extension
@@ -191,7 +191,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 	 * @param fileFilter
 	 *            the file filter that will return all files in the path
 	 * @param printStream
-	 *            the logger to the front end
+	 *            the LOGGER to the front end
 	 * @throws Exception
 	 */
 	private void findFilesAndDirectories(FilePath filePath, List<FilePath> filePaths, FileFilter fileFilter, Pattern pattern, PrintStream printStream)
@@ -215,7 +215,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 	 * @param build
 	 *            the build for the project
 	 * @param buildListener
-	 *            the build listener that has the logger in it
+	 *            the build listener that has the LOGGER in it
 	 * @param targetDataBase
 	 *            the target database to aggregate
 	 */
@@ -230,7 +230,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 	 * @param build
 	 *            the build for the project
 	 * @param buildListener
-	 *            the build listener that has the logger in it
+	 *            the build listener that has the LOGGER in it
 	 * @param targetDataBase
 	 *            the target database to aggregate
 	 */

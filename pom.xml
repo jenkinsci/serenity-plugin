@@ -6,10 +6,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.jvnet.hudson.plugins</groupId>
+		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>1.505</version>
+		<version>1.479</version>
 	</parent>
 
 	<artifactId>serenity</artifactId>
@@ -73,7 +73,6 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.0</version>
 				<configuration>
 					<xmlOutput>true</xmlOutput>
 					<findbugsXmlOutput>true</findbugsXmlOutput>
@@ -99,6 +98,9 @@
 										<versionRange>[1.48,)</versionRange>
 										<goals>
 											<goal>insert-test</goal>
+											<goal>apt-compile</goal>
+											<goal>resolve-test-dependencies</goal>
+											<goal>test-hpl</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
@@ -112,6 +114,33 @@
 										<versionRange>[1.0-rc-5,)</versionRange>
 										<goals>
 											<goal>testCompile</goal>
+											<goal>generateTestStubs</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-enforcer-plugin</artifactId>
+										<versionRange>[1.0-beta-1,)</versionRange>
+										<goals>
+											<goal>display-info</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.jvnet.localizer</groupId>
+										<artifactId>maven-localizer-plugin</artifactId>
+										<versionRange>[1.8,)</versionRange>
+										<goals>
+											<goal>generate</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
@@ -162,12 +191,29 @@
 			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>asm</groupId>
+			<artifactId>asm-all</artifactId>
+			<version>2.2</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>
 		<repository>
 			<id>repo.jenkins-ci.org</id>
 			<url>http://repo.jenkins-ci.org/public/</url>
+		</repository>
+		<repository>
+			<id>repo.jenkins-ci.org-war</id>
+			<url>http://repo.jenkins-ci.org/repo/org/jenkins-ci/main/jenkins-war/</url>
+		</repository>
+		<repository>
+			<id>repo.jenkins-ci.org-plugins</id>
+			<url>http://repo.jenkins-ci.org/repo/org/jenkins-ci/plugins/</url>
+		</repository>
+		<repository>
+			<id>repo.jenkins-ci.org-mirror</id>
+			<url>http://mirrors.jenkins-ci.org/war/</url>
 		</repository>
 		<repository>
 			<id>repo1.maven.org</id>

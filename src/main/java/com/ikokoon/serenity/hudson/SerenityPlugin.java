@@ -22,7 +22,7 @@ import com.ikokoon.toolkit.LoggingConfigurator;
  */
 public class SerenityPlugin extends Plugin {
 
-	/** The logger for the plugin class. */
+	/** The LOGGER for the plugin class. */
 	private Logger logger;
 
 	/**

@@ -36,7 +36,7 @@ public class InstrumentationTest extends ATest {
 		ClassReader reader = new ClassReader(classBytes);
 		ClassWriter writer = new ClassWriter(reader, true);
 		ClassVisitor visitor = new InstrumentationClassAdapterChecker(writer, IConstants.COLLECT_START, IConstants.PROFILING_METHOD_DESCRIPTION);
-		logger.debug("Adding class visitor : " + visitor);
+		LOGGER.debug("Adding class visitor : " + visitor);
 		reader.accept(visitor, false);
 	}
 
@@ -63,7 +63,7 @@ public class InstrumentationTest extends ATest {
 		}
 		file.createNewFile();
 		Toolkit.setContents(file, classBytes);
-		logger.warn("Wrote class to : " + file.getAbsolutePath());
+		LOGGER.warn("Wrote class to : " + file.getAbsolutePath());
 
 		// Verify that the profiling instructions are in the byte code
 		reader = new ClassReader(classBytes);
@@ -96,20 +96,20 @@ public class InstrumentationTest extends ATest {
 		DataBaseToolkit.dump(dataBase, null, "Dump after profiling");
 
 		Method<Class<?, ?>, Line<?, ?>> method = dataBase.find(Method.class, Arrays.asList(className, joinMethodName, joinMethodDescription));
-		logger.warn("Method : " + method);
+		LOGGER.warn("Method : " + method);
 		assertNotNull(method);
 
-		logger.warn("Invocations : " + method.getInvocations());
+		LOGGER.warn("Invocations : " + method.getInvocations());
 
-		logger.warn("Start time : " + method.getStartTime());
-		logger.warn("End time   : " + method.getEndTime());
+		LOGGER.warn("Start time : " + method.getStartTime());
+		LOGGER.warn("End time   : " + method.getEndTime());
 
-		logger.warn("Start wait : " + method.getStartWait());
-		logger.warn("End wait   : " + method.getEndWait());
-		logger.warn("Wait time  : " + method.getWaitTime());
+		LOGGER.warn("Start wait : " + method.getStartWait());
+		LOGGER.warn("End wait   : " + method.getEndWait());
+		LOGGER.warn("Wait time  : " + method.getWaitTime());
 
-		logger.warn("Net time : " + method.getNetTime());
-		logger.warn("Total time : " + method.getTotalTime());
+		LOGGER.warn("Net time : " + method.getNetTime());
+		LOGGER.warn("Total time : " + method.getTotalTime());
 
 		assertTrue(method.getInvocations() > 0);
 		assertTrue(method.getStartTime() > 0);
@@ -148,7 +148,7 @@ public class InstrumentationTest extends ATest {
 		}
 		file.createNewFile();
 		Toolkit.setContents(file, classBytes);
-		logger.warn("Wrote class to : " + file.getAbsolutePath());
+		LOGGER.warn("Wrote class to : " + file.getAbsolutePath());
 
 		// Verify that the profiling instructions are not in the byte code
 		reader = new ClassReader(classBytes);
@@ -187,7 +187,7 @@ public class InstrumentationTest extends ATest {
 		}
 		file.createNewFile();
 		Toolkit.setContents(file, classBytes);
-		logger.warn("Wrote class to : " + file.getAbsolutePath());
+		LOGGER.warn("Wrote class to : " + file.getAbsolutePath());
 
 		// Verify that the profiling instructions are not in the byte code
 		reader = new ClassReader(classBytes);
@@ -214,7 +214,7 @@ public class InstrumentationTest extends ATest {
 		DataBaseToolkit.dump(dataBase, null, "Dump after profiling");
 
 		Method<Class<?, ?>, Line<?, ?>> method = dataBase.find(Method.class, Arrays.asList(className, methodName, methodDescription));
-		logger.warn("Method : " + method);
+		LOGGER.warn("Method : " + method);
 	}
 
 }

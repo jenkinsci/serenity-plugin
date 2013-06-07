@@ -65,9 +65,9 @@ public class ReporterTest extends ATest {
 		List<Method> methods = klass.getChildren();
 		for (Method method : methods) {
 			List<Double> methodSeries = Profiler.methodSeries(method);
-			logger.warn("Method series : " + methodSeries);
+			LOGGER.warn("Method series : " + methodSeries);
 			String graph = new Reporter(null, dataBase).buildGraph(IConstants.METHOD_SERIES, method, methodSeries);
-			logger.info("Built graph : " + graph);
+			LOGGER.info("Built graph : " + graph);
 		}
 	}
 

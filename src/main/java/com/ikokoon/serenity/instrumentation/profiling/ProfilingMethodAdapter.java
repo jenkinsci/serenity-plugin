@@ -20,7 +20,7 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class ProfilingMethodAdapter extends MethodAdapter implements Opcodes {
 
-	/** The logger for the class. */
+	/** The LOGGER for the class. */
 	private Logger logger = Logger.getLogger(ProfilingMethodAdapter.class);
 	/** The name of the class that this method adapter is enhancing the methods for. */
 	private String className;

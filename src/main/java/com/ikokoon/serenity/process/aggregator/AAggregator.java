@@ -37,11 +37,11 @@ public abstract class AAggregator implements IAggregator {
 
 	/**
 	 * Returns a list of lines in the packages, i.e. all the lines in the packages.
-	 *
+	 * 
 	 * @param pakkages
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected List<Line<?, ?>> getLines(List<Package> pakkages) {
 		List<Line<?, ?>> projectLines = new ArrayList<Line<?, ?>>();
 		for (Package<?, ?> pakkage : pakkages) {
@@ -56,7 +56,7 @@ public abstract class AAggregator implements IAggregator {
 
 	/**
 	 * Returns a list of lines in the package.
-	 *
+	 * 
 	 * @param pakkage
 	 * @return
 	 */
@@ -75,7 +75,7 @@ public abstract class AAggregator implements IAggregator {
 
 	/**
 	 * Returns a list of lines in the class.
-	 *
+	 * 
 	 * @param klass
 	 * @param lines
 	 * @return
@@ -102,7 +102,7 @@ public abstract class AAggregator implements IAggregator {
 
 	/**
 	 * Returns true if the specified set contains the line.
-	 *
+	 * 
 	 * @param lines
 	 * @param line
 	 * @return
@@ -118,11 +118,11 @@ public abstract class AAggregator implements IAggregator {
 
 	/**
 	 * Returns a list of methods that are in the packages, i.e. all the methods in the package.
-	 *
+	 * 
 	 * @param pakkages
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected List<Method<?, ?>> getMethods(Collection<Package> pakkages) {
 		List<Method<?, ?>> projectMethods = new ArrayList<Method<?, ?>>();
 		for (Package<?, ?> pakkage : pakkages) {
@@ -176,56 +176,52 @@ public abstract class AAggregator implements IAggregator {
 	}
 
 	/**
-	 * Distance from the Main Sequence (D): The perpendicular distance of a package from the idealised line A + I = 1. This metric is an indicator of
-	 * the package's balance between abstractness and stability. A package squarely on the main sequence is optimally balanced with respect to its
-	 * abstractness and stability. Ideal packages are either completely abstract and stable (x=0, y=1) or completely concrete and unstable (x=1, y=0).
-	 * The range for this metric is 0 to 1, with D=0 indicating a package that is coincident with the main sequence and D=1 indicating a package that
-	 * is as far from the main sequence as possible.
-	 *
+	 * Distance from the Main Sequence (D): The perpendicular distance of a package from the idealised line A + I = 1. This metric is an indicator of the
+	 * package's balance between abstractness and stability. A package squarely on the main sequence is optimally balanced with respect to its abstractness and
+	 * stability. Ideal packages are either completely abstract and stable (x=0, y=1) or completely concrete and unstable (x=1, y=0). The range for this metric
+	 * is 0 to 1, with D=0 indicating a package that is coincident with the main sequence and D=1 indicating a package that is as far from the main sequence as
+	 * possible.
+	 * 
 	 * 1) u = (x3 - x1)(x2 - x1) + (y3 - y1)(y2 - y1) / ||p2 - p1||² <br>
 	 * 2) y = mx + c, 0 = ax + by + c, d = |am + bn + c| / sqrt(a² + b²) : d= |-stability + -abstractness + 1| / sqrt(-1² + -1²)
-	 *
+	 * 
 	 * @param stability
 	 * @param abstractness
 	 * @return
 	 */
 	protected double getDistance(double stability, double abstractness) {
 		double a = -1, b = -1;
-		double distance = Math.abs(-stability + -abstractness + 1) / Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
-		return distance;
+		return Math.abs(-stability + -abstractness + 1) / Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
 	}
 
 	/**
-	 * Abstractness (A): The ratio of the number of abstract classes (and interfaces) in the analyzed package to the total number of classes in the
-	 * analyzed package. The range for this metric is 0 to 1, with A=0 indicating a completely concrete package and A=1 indicating a completely
-	 * abstract package.
-	 *
+	 * Abstractness (A): The ratio of the number of abstract classes (and interfaces) in the analyzed package to the total number of classes in the analyzed
+	 * package. The range for this metric is 0 to 1, with A=0 indicating a completely concrete package and A=1 indicating a completely abstract package.
+	 * 
 	 * @param interfaces
 	 * @param implementations
 	 * @return
 	 */
 	protected double getAbstractness(double interfaces, double implementations) {
-		double abstractness = (interfaces + implementations) > 0 ? interfaces / (interfaces + implementations) : 1d;
-		return abstractness;
+		return (interfaces + implementations) > 0 ? interfaces / (interfaces + implementations) : 1d;
 	}
 
 	/**
-	 * Instability (I): The ratio of efferent coupling (Ce) to total coupling (Ce + Ca) such that I = Ce / (Ce + Ca). This metric is an indicator of
-	 * the package's resilience to change. The range for this metric is 0 to 1, with I=0 indicating a completely stable package and I=1 indicating a
-	 * completely instable package.
-	 *
+	 * Instability (I): The ratio of efferent coupling (Ce) to total coupling (Ce + Ca) such that I = Ce / (Ce + Ca). This metric is an indicator of the
+	 * package's resilience to change. The range for this metric is 0 to 1, with I=0 indicating a completely stable package and I=1 indicating a completely
+	 * instable package.
+	 * 
 	 * @param efferent
 	 * @param afferent
 	 * @return
 	 */
 	protected double getStability(double efferent, double afferent) {
-		double stability = (efferent + afferent) > 0 ? efferent / (efferent + afferent) : 1d;
-		return stability;
+		return (efferent + afferent) > 0 ? efferent / (efferent + afferent) : 1d;
 	}
 
 	/**
 	 * Calculates the complexity for a class.
-	 *
+	 * 
 	 * @param methods
 	 * @param totalComplexity
 	 * @return
@@ -237,13 +233,12 @@ public abstract class AAggregator implements IAggregator {
 
 	/**
 	 * Calculates the coverage for a method, class or package.
-	 *
+	 * 
 	 * @param lines
 	 * @param executed
 	 * @return
 	 */
 	protected double getCoverage(double lines, double executed) {
-		double coverage = lines > 0 ? (executed / lines) * 100d : 0;
-		return coverage;
+		return lines > 0 ? (executed / lines) * 100d : 0;
 	}
 }

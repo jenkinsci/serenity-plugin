@@ -30,7 +30,7 @@ public class CoverageSourceCodeTest extends ATest {
 		setCovered(klass);
 		final CoverageSourceCode coverageSourceCode = new CoverageSourceCode(klass, source);
 		String html = coverageSourceCode.getSource();
-		logger.info(html);
+		LOGGER.info(html);
 
 		double executionsPerSecond = Executer.execute(new Executer.IPerform() {
 			public void execute() {

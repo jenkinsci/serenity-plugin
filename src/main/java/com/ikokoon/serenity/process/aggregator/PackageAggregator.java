@@ -26,7 +26,7 @@ public class PackageAggregator extends AAggregator {
 		this.pakkage = pakkage;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void aggregate() {
 		// First do the classes
 		List<Class<?, ?>> classes = pakkage.getChildren();
@@ -38,7 +38,7 @@ public class PackageAggregator extends AAggregator {
 		dataBase.persist(pakkage);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void aggregate(Package pakkage) {
 		logger.debug("Processing package : " + pakkage);
 

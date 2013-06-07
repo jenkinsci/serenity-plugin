@@ -45,7 +45,7 @@ public class ProfilingClassAdviceAdapter extends ClassAdapter {
 	}
 
 	private MethodVisitor getMethodAdapter(MethodVisitor methodVisitor, int access, final String methodName, final String methodDescription) {
-		// logger.warn("Access : " + access + ", " + Opcodes.ACC_ABSTRACT + ", " + Opcodes.ACC_INTERFACE);
+		// LOGGER.warn("Access : " + access + ", " + Opcodes.ACC_ABSTRACT + ", " + Opcodes.ACC_INTERFACE);
 		// We test for interfaces and abstract classes, of course these methods do
 		// not have bodies so we can't add instructions to these methods or the Jvm
 		// will not like it, class format exceptions

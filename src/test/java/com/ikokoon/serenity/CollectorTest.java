@@ -52,7 +52,7 @@ public class CollectorTest extends ATest implements IConstants {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	public void collectCoverageLineExecutor() {
 		// After this we expect a package, a class, a method and a line element
 		// dataBase.close();
@@ -66,7 +66,7 @@ public class CollectorTest extends ATest implements IConstants {
 
 		// We must test that the package is correct
 		Long packageId = Toolkit.hash(packageName);
-		logger.warn("Looking for package with id : " + packageId + ", " + packageName);
+		LOGGER.warn("Looking for package with id : " + packageId + ", " + packageName);
 		Package pakkage = (Package) dataBase.find(Package.class, packageId);
 		assertNotNull(pakkage);
 
@@ -83,15 +83,15 @@ public class CollectorTest extends ATest implements IConstants {
 		Line line = (Line) dataBase.find(Line.class, lineId);
 		assertNotNull(line);
 
-		assertEquals(1.0, line.getCounter());
+		assertEquals(1.0, line.getCounter(), 0);
 
 		Collector.collectCoverage(className, methodName, methodDescription, (int) lineNumber);
 
-		assertEquals(2.0, line.getCounter());
+		assertEquals(2.0, line.getCounter(), 0);
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void collectMetricsInterface() {
 		Collector.collectAccess(className, access);
 		Class klass = (Class) dataBase.find(Class.class, Toolkit.hash(className));
@@ -100,7 +100,7 @@ public class CollectorTest extends ATest implements IConstants {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void collectComplexity() {
 		Collector.collectComplexity(className, methodName, methodDescription, complexity/* , 1000 */);
 		Collector.collectComplexity(className, methodName, methodDescription, complexity/* , 1000 */);
@@ -113,7 +113,7 @@ public class CollectorTest extends ATest implements IConstants {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void collectMetricsAfferentEfferent() {
 		Collector.collectCoverage(className, methodName, methodDescription, (int) lineNumber);
 

@@ -35,7 +35,7 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class Transformer implements ClassFileTransformer, IConstants {
 
-	/** The logger. */
+	/** The LOGGER. */
 	private static Logger LOGGER;
 	/** During tests there can be more than one shutdown hook added. */
 	private static boolean INITIALISED = false;

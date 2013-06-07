@@ -37,11 +37,11 @@ public class DependencyTest extends ATest {
 
 	@Test
 	public void visitInner() throws Exception {
-		// logger.info("***************************************************");
+		// LOGGER.info("***************************************************");
 		// visitClass(DependencyClassAdapter.class, Discovery.class.getName());
-		// logger.info("***************************************************");
+		// LOGGER.info("***************************************************");
 		// visitClass(DependencyClassAdapter.class, Discovery.InnerClass.class.getName());
-		// logger.info("***************************************************");
+		// LOGGER.info("***************************************************");
 		// visitClass(DependencyClassAdapter.class, Discovery.InnerClass.InnerInnerClass.class.getName());
 	}
 
@@ -84,12 +84,12 @@ public class DependencyTest extends ATest {
 
 		List<Class<?, ?>> innerClasses = klass.getInnerClasses();
 		for (Class<?, ?> innerClass : innerClasses) {
-			logger.warn("Inner class : " + innerClass.getName() + ", " + innerClass.getAccess());
+			LOGGER.warn("Inner class : " + innerClass.getName() + ", " + innerClass.getAccess());
 		}
 
 		List<Method<?, ?>> methods = klass.getChildren();
 		for (Method<?, ?> method : methods) {
-			logger.warn("Method : " + method.getName() + ", " + method.getAccess());
+			LOGGER.warn("Method : " + method.getName() + ", " + method.getAccess());
 		}
 
 		// printOpCodes();
@@ -108,7 +108,7 @@ public class DependencyTest extends ATest {
 				field.setAccessible(true);
 				builder.append(field.get(opcodes));
 			} catch (Exception e) {
-				logger.error("", e);
+				LOGGER.error("", e);
 			}
 			builder.append("\" />");
 
@@ -118,7 +118,7 @@ public class DependencyTest extends ATest {
 
 	private boolean containsAfferentPackage(List<Afferent> afferent, String name) {
 		for (Afferent aff : afferent) {
-			logger.debug("Afferent : " + aff);
+			LOGGER.debug("Afferent : " + aff);
 			if (aff.getName().indexOf(name) > -1) {
 				return true;
 			}

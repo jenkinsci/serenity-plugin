@@ -35,7 +35,6 @@ import com.ikokoon.serenity.process.AccumulatorTest;
 import com.ikokoon.serenity.process.AggregatorTest;
 import com.ikokoon.serenity.process.ListenerTest;
 import com.ikokoon.serenity.process.ReporterTest;
-import com.ikokoon.toolkit.MatrixTest;
 import com.ikokoon.toolkit.ObjectFactoryTest;
 import com.ikokoon.toolkit.PermutationsTest;
 import com.ikokoon.toolkit.ToolkitTest;
@@ -68,7 +67,7 @@ import com.ikokoon.toolkit.TypeTest;
 		VisitorFactoryTest.class, // Instantiates the visitors
 
 		// Toolkit and assorted common functionality tests
-		TypeTest.class, ToolkitTest.class, ModellerTest.class, PermutationsTest.class, MatrixTest.class, CoverageSourceCodeTest.class,
+		TypeTest.class, ToolkitTest.class, ModellerTest.class, PermutationsTest.class, CoverageSourceCodeTest.class,
 		InstrumentationTest.class,
 
 		// Some of the many database/persistence tests

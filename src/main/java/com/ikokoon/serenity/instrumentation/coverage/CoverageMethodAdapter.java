@@ -19,7 +19,7 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class CoverageMethodAdapter extends MethodAdapter {
 
-	/** The logger for the class. */
+	/** The LOGGER for the class. */
 	private Logger logger = Logger.getLogger(CoverageMethodAdapter.class);
 
 	/** The type of parameters that the {@link Collector} takes in the coverage collection method. */

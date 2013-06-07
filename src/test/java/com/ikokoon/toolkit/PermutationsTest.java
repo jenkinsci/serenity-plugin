@@ -19,7 +19,7 @@ public class PermutationsTest extends ATest {
 		permutations.getPermutations(strings, permutationsList, strings.length);
 		for (Object[] stringArray : permutationsList) {
 			for (Object string : stringArray) {
-				logger.debug(string + ":");
+				LOGGER.debug(string + ":");
 			}
 		}
 	}

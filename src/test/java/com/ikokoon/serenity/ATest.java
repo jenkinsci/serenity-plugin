@@ -35,7 +35,7 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public abstract class ATest implements IConstants {
 
-	protected static Logger logger;
+	protected static Logger LOGGER;
 
 	protected static IDataBase mockInternalDataBase = mock(IDataBase.class);
 	protected static IDataBase dataBase;
@@ -58,7 +58,7 @@ public abstract class ATest implements IConstants {
 	@BeforeClass
 	public static void beforeClass() {
 		LoggingConfigurator.configure();
-		logger = Logger.getLogger(ATest.class);
+		LOGGER = Logger.getLogger(ATest.class);
 		System.setProperty(IConstants.INCLUDED_ADAPTERS_PROPERTY, "profiling;coverage;complexity;dependency");
 		Configuration.getConfiguration().includedPackages.add(IConstants.class.getPackage().getName());
 		Configuration.getConfiguration().includedPackages.add(Target.class.getPackage().getName());
@@ -85,7 +85,7 @@ public abstract class ATest implements IConstants {
 		try {
 			source.write(sourceBytes);
 		} catch (IOException e) {
-			logger.error("", e);
+			LOGGER.error("", e);
 		}
 		ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(new java.lang.Class[] { visitorClass }, className, classBytes, source);
 		return writer;
@@ -105,7 +105,7 @@ public abstract class ATest implements IConstants {
 		return sourceBytes;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected Package<?, ?> getPackage() {
 		Package pakkage = new Package();
 		pakkage.setAbstractness(1d);
@@ -123,7 +123,7 @@ public abstract class ATest implements IConstants {
 		return pakkage;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected Class<?, ?> getClass(Package<?, ?> pakkage) {
 		Class klass = new Class();
 		klass.setParent(pakkage);
@@ -149,7 +149,7 @@ public abstract class ATest implements IConstants {
 		return klass;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected Method<?, ?> getMethod(Class<?, ?> klass) {
 		Method method = new Method();
 		method.setParent(klass);
@@ -163,7 +163,7 @@ public abstract class ATest implements IConstants {
 		return method;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected Line<?, ?> getLine(Method<?, ?> method) {
 		Line line = new Line();
 		line.setCounter(1d);

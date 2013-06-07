@@ -24,7 +24,7 @@ import com.ikokoon.target.Target;
  */
 public class TransformerTest extends ATest {
 
-	/** The logger for the class. */
+	/** The LOGGER for the class. */
 	private Instrumentation instrumentation = null; // createMock(Instrumentation.class);
 	private ProtectionDomain protectionDomain; // = createMock(ProtectionDomain.class);
 
