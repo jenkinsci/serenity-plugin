@@ -154,7 +154,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 	public byte[] transform(final ClassLoader loader, final String className, final Class<?> classBeingRedefined, final ProtectionDomain protectionDomain,
 			final byte[] classBytes) throws IllegalClassFormatException {
 		if (Configuration.getConfiguration().included(className) && !Configuration.getConfiguration().excluded(className)) {
-			LOGGER.error("Enhancing class : " + className);
+			LOGGER.debug("Enhancing class : " + className);
 			ByteArrayOutputStream source = new ByteArrayOutputStream(0);
 			ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(CLASS_ADAPTER_CLASSES, className, classBytes, source);
 			byte[] enhancedClassBytes = writer.toByteArray();

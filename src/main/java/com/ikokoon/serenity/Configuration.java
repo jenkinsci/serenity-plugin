@@ -19,9 +19,9 @@ import com.ikokoon.toolkit.LoggingConfigurator;
 import com.ikokoon.toolkit.Toolkit;
 
 /**
- * The configuration object holds the parameters for the processing, some from the system parameters that can be set by the user and some internal
- * like packages to be excluded always for example java.lang.
- *
+ * The configuration object holds the parameters for the processing, some from the system parameters that can be set by the user and some internal like packages
+ * to be excluded always for example java.lang.
+ * 
  * @author Michael Couck
  * @since 05.10.09
  * @version 01.00
@@ -44,7 +44,7 @@ public class Configuration {
 
 	/**
 	 * System wide access to the configuration.
-	 *
+	 * 
 	 * @return the configuration for the system
 	 */
 	public static synchronized Configuration getConfiguration() {
@@ -65,19 +65,17 @@ public class Configuration {
 
 	/**
 	 * Checks to see that the class name is included in the packages that are to be included.
-	 *
-	 * @param string
-	 *            the string to check for pattern inclusion
+	 * 
+	 * @param string the string to check for pattern inclusion
 	 * @return whether the string is included in the pattern list
 	 */
-	public boolean included(String string) {
+	public boolean included(final String string) {
 		if (string == null) {
 			return false;
 		}
-		string = Toolkit.slashToDot(string);
-		for (String pattern : includedPackages) {
-			// LOGGER.info("String : " + string + ", pattern : " + pattern + ", index of : " + (string.indexOf(pattern) > -1));
-			if (string.indexOf(pattern) > -1) {
+		String strippedString = Toolkit.slashToDot(string);
+		for (final String pattern : includedPackages) {
+			if (strippedString.contains(pattern)) {
 				return true;
 			}
 		}
@@ -86,18 +84,17 @@ public class Configuration {
 
 	/**
 	 * Checks to see if the class is included in the classes that can be enhanced, so for example java.lang is excluded.
-	 *
-	 * @param string
-	 *            the string that is to be checked for exclusion
+	 * 
+	 * @param string the string that is to be checked for exclusion
 	 * @return whether the class is excluded and should not be used
 	 */
-	public boolean excluded(String string) {
+	public boolean excluded(final String string) {
 		if (string == null) {
 			return true;
 		}
-		string = Toolkit.slashToDot(string);
-		for (String pattern : excludedPackages) {
-			if (string.indexOf(pattern) > -1) {
+		String strippedString = Toolkit.slashToDot(string);
+		for (final String pattern : excludedPackages) {
+			if (strippedString.contains(pattern)) {
 				return true;
 			}
 		}
@@ -106,18 +103,17 @@ public class Configuration {
 
 	/**
 	 * Access to the system properties. This method can be extended to include other properties like in files etc.
-	 *
-	 * @param name
-	 *            the name of the property
+	 * 
+	 * @param name the name of the property
 	 * @return the system property with the specified name
 	 */
-	public String getProperty(String name) {
+	public String getProperty(final String name) {
 		return System.getProperty(name);
 	}
 
 	/**
 	 * Access to the classpath of the system. Included in the classpath are the jars that were manually added by the user.
-	 *
+	 * 
 	 * @return the classpath of the system including the Surefire classpath
 	 */
 	public String getClassPath() {
@@ -159,7 +155,7 @@ public class Configuration {
 		}
 		return -1;
 	}
-	
+
 	public double getTimeUnitDenominator() {
 		String timeUnit = System.getProperty(IConstants.TIME_UNIT);
 		if (timeUnit != null && Toolkit.isDigits(timeUnit)) {

@@ -25,7 +25,7 @@ public class ProjectAggregator extends AAggregator {
 		super(dataBase);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void aggregate() {
 		// First do the packages
 		List<Package> packages = dataBase.find(Package.class);
@@ -42,7 +42,7 @@ public class ProjectAggregator extends AAggregator {
 		dataBase.persist(project);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	protected void aggregate(Project<?, ?> project) {
 		logger.debug("Processing project : " + project);
 

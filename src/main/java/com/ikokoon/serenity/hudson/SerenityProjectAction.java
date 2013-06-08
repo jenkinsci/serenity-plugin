@@ -18,7 +18,7 @@ import org.kohsuke.stapler.StaplerResponse;
  * @since 09.12.09
  * @version 01.00
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings("rawtypes")
 public class SerenityProjectAction extends Actionable implements ProminentProjectAction {
 
 	private Logger logger = Logger.getLogger(SerenityProjectAction.class);

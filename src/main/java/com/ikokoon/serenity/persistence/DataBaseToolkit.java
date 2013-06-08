@@ -37,7 +37,7 @@ public class DataBaseToolkit {
 	 * @param dataBase
 	 *            the database to truncate
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public static synchronized void clear(IDataBase dataBase) {
 		Project<?, ?> project = (Project<?, ?>) dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
 		if (project != null) {
@@ -65,7 +65,7 @@ public class DataBaseToolkit {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static synchronized void copyDataBase(IDataBase sourceDataBase, IDataBase targetDataBase) {
 		Collector.initialize(targetDataBase);
 		List<Package> sourcePackages = sourceDataBase.find(Package.class);
@@ -103,7 +103,7 @@ public class DataBaseToolkit {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	public static synchronized void execute(IDataBase dataBase, Composite composite, Executer executer) {
 		List list = dataBase.find(composite.getClass());
 		for (Object object : list) {
@@ -115,7 +115,7 @@ public class DataBaseToolkit {
 		public void execute(Object object);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static synchronized void collectEfferentAndAfferent(Class klass, List<Package> packages) {
 		List<Efferent> efferents = klass.getEfferent();
 		for (Efferent efferent : efferents) {
@@ -145,7 +145,7 @@ public class DataBaseToolkit {
 	 * @param criteria
 	 *            the criteria to match if the data for the composite must be written to the output
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public static synchronized void dump(IDataBase dataBase, ICriteria criteria, String message) {
 		if (message != null) {
 			logger.warn(message);

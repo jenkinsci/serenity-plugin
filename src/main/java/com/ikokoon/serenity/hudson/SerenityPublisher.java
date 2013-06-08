@@ -289,6 +289,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 	}
 
 	@Override
+	@SuppressWarnings("rawtypes")
 	public Action getProjectAction(AbstractProject abstractProject) {
 		logger.debug("getProjectAction(AbstractProject)");
 		return new SerenityProjectAction(abstractProject);
@@ -319,6 +320,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 		}
 
 		@Override
+		@SuppressWarnings("rawtypes")
 		public boolean isApplicable(java.lang.Class<? extends AbstractProject> jobType) {
 			logger.debug("isApplicable");
 			return true;

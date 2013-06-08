@@ -85,7 +85,7 @@ public final class DataBaseRam extends DataBase {
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, int start, int end) {
 		List<E> list = new ArrayList<E>();
 		int counter = 0;
@@ -102,7 +102,7 @@ public final class DataBaseRam extends DataBase {
 			if (this.dataBase != null) {
 				list = this.dataBase.find(klass, start, end);
 				if (list != null && list.size() > 0) {
-					for (Composite composite : list) {
+					for (final Composite composite : list) {
 						insert(index, composite);
 					}
 				}
@@ -191,7 +191,7 @@ public final class DataBaseRam extends DataBase {
 	 * @param composite
 	 *            the object to set the id for
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	synchronized final <T> void setIds(Composite<?, ?> composite) {
 		if (composite == null) {
 			return;
@@ -226,7 +226,7 @@ public final class DataBaseRam extends DataBase {
 	 *            the id of the composite to get
 	 * @return the composite from the index, or the underlying database, or null if no such composites exists
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	final <E extends Composite<?, ?>> E search(Class klass, List<Composite<?, ?>> index, long id) {
 		int low = 0;
 		int high = index.size() - 1;

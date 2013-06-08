@@ -35,7 +35,7 @@ public class Pruner extends AProcess implements IConstants {
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void execute() {
 		super.execute();
 		List<Line> lines = dataBase.find(Line.class);

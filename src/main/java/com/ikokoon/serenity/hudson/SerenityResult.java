@@ -70,7 +70,7 @@ public class SerenityResult implements ISerenityResult {
 	 * @return the result which is this class
 	 * @throws IOException
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) throws Exception {
 		logger.debug("getDynamic:" + token);
 
@@ -140,7 +140,7 @@ public class SerenityResult implements ISerenityResult {
 		return project;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public List<Package> getPackages() {
 		logger.debug("getPackages");
 		IDataBase dataBase = null;

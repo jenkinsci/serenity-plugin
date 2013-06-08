@@ -22,11 +22,11 @@ public class ClassAggregator extends AAggregator {
 		this.klass = klass;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void aggregate() {
 		// First do the methods
 		List<Method<?, ?>> methods = klass.getChildren();
-		for (Method method : methods) {
+		for (final Method method : methods) {
 			new MethodAggregator(dataBase, method).aggregate();
 		}
 		aggregate(klass);
@@ -34,7 +34,7 @@ public class ClassAggregator extends AAggregator {
 		dataBase.persist(klass);
 	}
 
-	protected void aggregate(Class<?, ?> klass) {
+	protected void aggregate(final Class<?, ?> klass) {
 		logger.debug("Processing class : " + klass);
 
 		List<Line<?, ?>> lines = getLines(klass, new ArrayList<Line<?, ?>>());

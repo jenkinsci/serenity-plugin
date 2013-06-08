@@ -1,7 +1,7 @@
 package com.ikokoon.serenity.hudson;
 
-import hudson.model.AbstractBuild;
 import hudson.model.Action;
+import hudson.model.AbstractBuild;
 
 import java.lang.ref.WeakReference;
 
@@ -9,12 +9,12 @@ import org.kohsuke.stapler.StaplerProxy;
 
 /**
  * This is the Stapler 'proxy'. It serves the chain of results objects to the front end.
- *
+ * 
  * @author Michael Couck
  * @since 12.08.09
  * @version 01.00
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class SerenityBuildAction implements StaplerProxy, Action {
 
 	/** The Hudson build owner, i.e. the action that really did the build. */
@@ -23,13 +23,10 @@ public class SerenityBuildAction implements StaplerProxy, Action {
 	private transient WeakReference<ISerenityResult> result;
 
 	/**
-	 * Constructor takes the Hudson build owner and the result that will be presented to the front end for displaying the data from teh build and
-	 * metrics.
-	 *
-	 * @param owner
-	 *            the build owner that generated the build
-	 * @param result
-	 *            the result from Serenity that will be presented to the front end
+	 * Constructor takes the Hudson build owner and the result that will be presented to the front end for displaying the data from teh build and metrics.
+	 * 
+	 * @param owner the build owner that generated the build
+	 * @param result the result from Serenity that will be presented to the front end
 	 */
 	public SerenityBuildAction(AbstractBuild owner, ISerenityResult result) {
 		if (owner == null) {

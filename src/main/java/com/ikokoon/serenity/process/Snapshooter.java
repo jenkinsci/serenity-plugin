@@ -27,7 +27,7 @@ public class Snapshooter extends AProcess {
 		super.execute();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private static void takeSnapshot(IDataBase dataBase) {
 		long time = System.currentTimeMillis();
 		List<Class> classes = dataBase.find(Class.class);
@@ -36,7 +36,7 @@ public class Snapshooter extends AProcess {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Class takeSnapshot(long time, Class klass) {
 		List<Method> methods = klass.getChildren();
 		long netClassTime = 0;
@@ -64,7 +64,7 @@ public class Snapshooter extends AProcess {
 		return klass;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static Method takeSnapshot(long time, Method method) {
 		List<Snapshot> snapshots = method.getSnapshots();
 		int size = snapshots.size();
