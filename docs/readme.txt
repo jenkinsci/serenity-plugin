@@ -1,7 +1,13 @@
-Hi,
+This is the Serenity code coverage packaged files. It includes the Serenity jar and 
+required libraries. Please refer to the wiki for either Jenkins or Hudson to configure 
+Serenity to generate coverage and code metrics for your Ant or Maven project.
 
-Thank you for downloading and using Serenity. For information on how to configure
-Serenity please refer to the Wiki at http://wiki.hudson-ci.org/display/HUDSON/Serenity+Plugin.
+Jenkins: https://wiki.jenkins-ci.org/display/JENKINS/Serenity+Plugin
+Hudson: http://wiki.hudson-ci.org/display/HUDSON/Serenity+Plugin
 
-Have a nice day,
-Michael Couck
+Other software form same programmer: 
+* http://ikube.be/site
+* http://ikube.be:8080/ikube
+
+Have a fantastic day!
+Michael

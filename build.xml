@@ -3,6 +3,7 @@
 	<property name="src" value="src/main/java" />
 	<property name="temp" value="target/temp" />
 	<property name="serenity.jar" value="target/serenity.jar" />
+	<property name="readme.txt" value="docs/readme.txt" />
 	<property name="serenity.hpi" value="target/serenity.hpi" />
 
 	<target name="deploy">
@@ -10,6 +11,15 @@
 		<echo message="Copying the serrenity jar to the test project (iKube)" />
 		<copy todir="../ikube/serenity/" file="${serenity.jar}" overwrite="true" failonerror="true" />
 		<copy todir="serenity" file="${serenity.jar}" overwrite="true" failonerror="true" />
+	</target>
+	
+	<target name="package">
+		<delete dir="serenity" />
+		<mkdir dir="serenity"/>
+		<copy todir="serenity" file="${serenity.jar}" overwrite="true" failonerror="true" />
+		<copy todir="serenity" file="${readme.txt}" overwrite="true" failonerror="true" />
+		<copydir dest="serenity/lib" src="lib" />
+		<zip destfile="serenity.zip" basedir="serenity" />
 	</target>
 
 </project>
