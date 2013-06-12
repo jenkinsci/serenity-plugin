@@ -1,10 +1,7 @@
 package com.ikokoon.toolkit;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import org.apache.log4j.Logger;
 
 /**
  * This class generates the permutations for parameters.
@@ -14,8 +11,6 @@ import org.apache.log4j.Logger;
  * @version 01.00
  */
 public class Permutations {
-
-	private Logger logger = Logger.getLogger(Permutations.class);
 
 	public void getPermutations(Object[] objects) {
 		int N = objects.length;
@@ -29,10 +24,10 @@ public class Permutations {
 
 	public void getPermutations(Object[] objects, List<Object[]> permutations, int n) {
 		if (n == 1) {
-			for (Object object : objects) {
-				logger.debug(object + ":");
-			}
-			permutations.add(Arrays.copyOf(objects, objects.length));
+			Object[] objectsCopy = new Object[objects.length];
+			System.arraycopy(objects, 0, objectsCopy, 0, objectsCopy.length);
+			permutations.add(objectsCopy);
+			// permutations.add(Arrays.copyOf(objects, objects.length));
 			return;
 		}
 		for (int i = 0; i < n; i++) {

@@ -196,6 +196,11 @@
 			<artifactId>asm-all</artifactId>
 			<version>2.2</version>
 		</dependency>
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-aop-jdk50-client</artifactId>
+			<version>4.2.2.GA</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>
@@ -243,6 +248,22 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		
+		<repository>
+			<id>jboss-public-repository-group</id>
+			<name>JBoss Public Maven Repository Group</name>
+			<url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+		
 	</repositories>
 
 	<pluginRepositories>
