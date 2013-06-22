@@ -2,17 +2,17 @@ Manifest-Version: 1.0
 Archiver-Version: Plexus Archiver
 Created-By: Apache Maven
 Built-By: Michael Couck
-Build-Jdk: 1.6.0_14
+Build-Jdk: 1.7.0_11
 Extension-Name: serenity
 Implementation-Title: serenity
-Implementation-Version: 0.4
+Implementation-Version: 0.5
 Short-Name: serenity
 Long-Name: Serenity code coverage
 Url: http://wiki.hudson-ci.org/display/HUDSON/Serenity+Plugin
 Plugin-Version: 1.0
 Plugin-Class: com.ikokoon.serenity.hudson.SerenityPlugin
-Hudson-Version: 1.350
-Class-Path: serenity.jar lib/log4j-1.2.15.jar lib/asm-all-2.2.jar lib/neodatis-odb-1.9-beta-1.jar lib/java2html.jar lib/dom4j-1.6.1.jar lib/jfreechart-1.0.9.jar lib/jcommon-1.0.9.jar
-Boot-Class-Path: serenity.jar lib/log4j-1.2.15.jar lib/asm-all-2.2.jar lib/neodatis-odb-1.9-beta-1.jar lib/java2html.jar lib/dom4j-1.6.1.jar lib/jfreechart-1.0.9.jar lib/jcommon-1.0.9.jar
+Hudson-Version: 1.490
+Class-Path: serenity.jar lib/log4j-1.2.15.jar lib/asm-3.3.1.jar lib/asm-commmons-3.3.1.jar lib/neodatis-odb-1.9-beta-1.jar lib/java2html.jar lib/dom4j-1.6.1.jar lib/jfreechart-1.0.9.jar lib/jcommon-1.0.9.jar
+Boot-Class-Path: serenity.jar lib/log4j-1.2.15.jar lib/asm-3.3.1.jar lib/asm-commmons-3.3.1.jar lib/neodatis-odb-1.9-beta-1.jar lib/java2html.jar lib/dom4j-1.6.1.jar lib/jfreechart-1.0.9.jar lib/jcommon-1.0.9.jar
 Premain-Class: com.ikokoon.serenity.Transformer
 Main-Class: com.ikokoon.serenity.Messenger

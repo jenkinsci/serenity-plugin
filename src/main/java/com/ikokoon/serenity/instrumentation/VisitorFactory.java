@@ -45,7 +45,8 @@ public class VisitorFactory {
 			ByteArrayOutputStream source) {
 		ClassReader reader = new ClassReader(classBytes);
 		// 'true' for ASM 2.2, 'ClassWriter.COMPUTE_MAXS' for ASM 3++
-		ClassWriter writer = new ClassWriter(reader, true);
+		// ClassWriter writer = new ClassWriter(reader, true);
+		ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
 		ClassVisitor visitor = writer;
 		for (Class<ClassVisitor> klass : classAdapterClasses) {
 			Object[] parameters = new Object[] { visitor, className, classBytes, source };
@@ -53,7 +54,7 @@ public class VisitorFactory {
 			LOGGER.debug("Adding class visitor : " + visitor);
 		}
 		// 'false' for ASM 2.2, '0' for ASM 3++
-		reader.accept(visitor, false);
+		reader.accept(visitor, 0);
 		return writer;
 	}
 

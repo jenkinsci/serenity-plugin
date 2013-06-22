@@ -4,17 +4,12 @@ import java.io.Serializable;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
-
 /**
  * @author Michael Couck
  * @since 12.08.09
  * @version 01.00
  */
-@Entity
+// @Entity
 @Unique(fields = { Composite.NAME })
 public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> implements Comparable<Package<?, ?>>, Serializable {
 
@@ -34,7 +29,9 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 	private double efference;
 	private double afference;
 
+	// @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	private Set<Efferent> efferent = new TreeSet<Efferent>();
+	// @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	private Set<Afferent> afferent = new TreeSet<Afferent>();
 
 	public String getName() {
@@ -133,7 +130,6 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 		this.afference = afferent;
 	}
 
-	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public Set<Efferent> getEfferent() {
 		return efferent;
 	}
@@ -142,7 +138,6 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 		this.efferent = efference;
 	}
 
-	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public Set<Afferent> getAfferent() {
 		return afferent;
 	}

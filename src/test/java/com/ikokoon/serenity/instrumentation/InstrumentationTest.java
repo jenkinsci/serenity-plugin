@@ -34,10 +34,10 @@ public class InstrumentationTest extends ATest {
 		ByteArrayOutputStream source = new ByteArrayOutputStream();
 		source.write(sourceBytes);
 		ClassReader reader = new ClassReader(classBytes);
-		ClassWriter writer = new ClassWriter(reader, true);
+		ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
 		ClassVisitor visitor = new InstrumentationClassAdapterChecker(writer, IConstants.COLLECT_START, IConstants.PROFILING_METHOD_DESCRIPTION);
 		LOGGER.debug("Adding class visitor : " + visitor);
-		reader.accept(visitor, false);
+		reader.accept(visitor, 0);
 	}
 
 	@Test
@@ -50,10 +50,10 @@ public class InstrumentationTest extends ATest {
 		ByteArrayOutputStream source = new ByteArrayOutputStream();
 		source.write(sourceBytes);
 		ClassReader reader = new ClassReader(classBytes);
-		ClassWriter writer = new ClassWriter(reader, true);
+		ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
 		ProfilingClassAdviceAdapter profilingClassAdviceAdapter = new ProfilingClassAdviceAdapter(writer, className);
 
-		reader.accept(profilingClassAdviceAdapter, false);
+		reader.accept(profilingClassAdviceAdapter, 0);
 		classBytes = writer.toByteArray();
 
 		String classPath = Toolkit.dotToSlash(this.className);
@@ -67,10 +67,10 @@ public class InstrumentationTest extends ATest {
 
 		// Verify that the profiling instructions are in the byte code
 		reader = new ClassReader(classBytes);
-		writer = new ClassWriter(reader, true);
+		writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
 		InstrumentationClassAdapterChecker instrumentationClassAdapterChecker = new InstrumentationClassAdapterChecker(writer,
 				IConstants.COLLECT_START, IConstants.PROFILING_METHOD_DESCRIPTION);
-		reader.accept(instrumentationClassAdapterChecker, false);
+		reader.accept(instrumentationClassAdapterChecker, 0);
 
 		final byte[] finalClassBytes = classBytes;
 		final String finalClassName = this.className;
@@ -135,10 +135,10 @@ public class InstrumentationTest extends ATest {
 		ByteArrayOutputStream source = new ByteArrayOutputStream();
 		source.write(sourceBytes);
 		ClassReader reader = new ClassReader(classBytes);
-		ClassWriter writer = new ClassWriter(reader, true);
+		ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
 		ProfilingClassAdviceAdapter profilingClassAdviceAdapter = new ProfilingClassAdviceAdapter(writer, className);
 
-		reader.accept(profilingClassAdviceAdapter, false);
+		reader.accept(profilingClassAdviceAdapter, 0);
 		classBytes = writer.toByteArray();
 
 		String classPath = Toolkit.dotToSlash(className);
@@ -152,10 +152,10 @@ public class InstrumentationTest extends ATest {
 
 		// Verify that the profiling instructions are not in the byte code
 		reader = new ClassReader(classBytes);
-		writer = new ClassWriter(reader, true);
+		writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
 		InstrumentationClassAdapterChecker instrumentationClassAdapterChecker = new InstrumentationClassAdapterChecker(writer,
 				IConstants.COLLECT_START, IConstants.PROFILING_METHOD_DESCRIPTION);
-		reader.accept(instrumentationClassAdapterChecker, false);
+		reader.accept(instrumentationClassAdapterChecker, 0);
 	}
 
 	// @Test
@@ -168,10 +168,10 @@ public class InstrumentationTest extends ATest {
 		ByteArrayOutputStream source = new ByteArrayOutputStream();
 		source.write(sourceBytes);
 		ClassReader reader = new ClassReader(classBytes);
-		ClassWriter writer = new ClassWriter(reader, true);
+		ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
 		ProfilingClassAdapter profilingClassAdapter = new ProfilingClassAdapter(writer, className);
 
-		reader.accept(profilingClassAdapter, false);
+		reader.accept(profilingClassAdapter, 0);
 		classBytes = writer.toByteArray();
 
 		// OutputStream outputStream = new ByteArrayOutputStream();
@@ -191,11 +191,11 @@ public class InstrumentationTest extends ATest {
 
 		// Verify that the profiling instructions are not in the byte code
 		reader = new ClassReader(classBytes);
-		writer = new ClassWriter(reader, true);
+		writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
 		// ClassVisitor classVisitor, Class<?> methodVisitorClass, String collectorMethodName, String collectorMethodDescription
 		InstrumentationClassAdapterChecker instrumentationClassAdapterChecker = new InstrumentationClassAdapterChecker(writer,
 				IConstants.COLLECT_START, IConstants.PROFILING_METHOD_DESCRIPTION);
-		reader.accept(instrumentationClassAdapterChecker, false);
+		reader.accept(instrumentationClassAdapterChecker, 0);
 
 		final byte[] finalClassBytes = classBytes;
 		final String finalClassName = this.className;

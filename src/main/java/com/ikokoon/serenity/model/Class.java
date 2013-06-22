@@ -4,17 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
-
 /**
  * @author Michael Couck
  * @since 12.08.09
  * @version 01.00
  */
-@Entity
+// @Entity
 @Unique(fields = { Composite.NAME })
 public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implements Comparable<Class<?, ?>>, Serializable {
 
@@ -35,7 +30,9 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 
 	private double allocations;
 
+	// @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	private List<Efferent> efferent = new ArrayList<Efferent>();
+	// @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	private List<Afferent> afferent = new ArrayList<Afferent>();
 
 	private List<Snapshot<?, ?>> snapshots = new ArrayList<Snapshot<?, ?>>();
@@ -136,7 +133,6 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 		this.allocations = allocations;
 	}
 
-	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public List<Efferent> getEfferent() {
 		return efferent;
 	}
@@ -145,7 +141,6 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 		this.efferent = efferent;
 	}
 
-	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public List<Afferent> getAfferent() {
 		return afferent;
 	}

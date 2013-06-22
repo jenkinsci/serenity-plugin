@@ -3,14 +3,12 @@ package com.ikokoon.serenity.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Entity;
-
 /**
  * @author Michael Couck
  * @since 12.08.09
  * @version 01.00
  */
-@Entity
+// @Entity
 @Unique(fields = { Composite.NAME })
 public class Project<E, F> extends Composite<Object, Package<?, ?>> implements Serializable {
 

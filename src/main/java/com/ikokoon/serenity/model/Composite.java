@@ -3,21 +3,12 @@ package com.ikokoon.serenity.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-
 /**
  * @author Michael Couck
  * @since 09.12.09
  * @version 01.00
  */
-@Entity
+// @Entity
 public abstract class Composite<E, F> {
 
 	public static final String NAME = "name";
@@ -27,11 +18,13 @@ public abstract class Composite<E, F> {
 	public static final String DESCRIPTION = "description";
 
 	private Long id;
+	// @ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	private Composite<E, F> parent;
+	// @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	private List<F> children = new ArrayList<F>();
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	// @Id
+	// @GeneratedValue(strategy = GenerationType.AUTO)
 	public Long getId() {
 		return id;
 	}
@@ -40,7 +33,6 @@ public abstract class Composite<E, F> {
 		this.id = id;
 	}
 
-	@ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	public Composite<E, F> getParent() {
 		return parent;
 	}
@@ -49,7 +41,6 @@ public abstract class Composite<E, F> {
 		this.parent = parent;
 	}
 
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	public List<F> getChildren() {
 		return children;
 	}

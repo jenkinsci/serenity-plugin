@@ -2,14 +2,12 @@ package com.ikokoon.serenity.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-
 /**
  * @author Michael Couck
  * @since 12.08.09
  * @version 01.00
  */
-@Entity
+// @Entity
 @Unique(fields = { Composite.CLASS_NAME, Composite.METHOD_NAME, Composite.NUMBER })
 public class Line<E, F> extends Composite<Class<?, ?>, Object> implements Comparable<Line<?, ?>>, Serializable {
 

@@ -2,8 +2,6 @@ package com.ikokoon.serenity.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-
 /**
  * This class represents a package that the owner effects.
  * 
@@ -11,7 +9,7 @@ import javax.persistence.Entity;
  * @since 17.07.09
  * @version 01.00
  */
-@Entity
+// @Entity
 @Unique(fields = { Composite.NAME })
 public class Efferent extends Composite<Object, Object> implements Comparable<Efferent>, Serializable {
 
