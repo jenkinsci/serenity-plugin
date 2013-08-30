@@ -35,12 +35,12 @@ public class Listener extends AProcess {
 	 */
 	public void execute() {
 		try {
-			logger.warn("Starting socket listener on port : " + IConstants.PORT);
+			logger.info("Starting socket listener on port : " + IConstants.PORT);
 			Timer timer = new Timer();
 			TimerTask timerTask = new TimerTask() {
 				@Override
 				public void run() {
-					logger.warn("Running : " + this);
+					logger.info("Running : " + this);
 					ServerSocket serverSocket = null;
 					try {
 						serverSocket = new ServerSocket(IConstants.PORT);
@@ -49,7 +49,7 @@ public class Listener extends AProcess {
 								Socket socket = serverSocket.accept();
 								ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 								Object object = ois.readObject();
-								logger.warn("Client message : " + object);
+								logger.info("Client message : " + object);
 								if (String.class.isAssignableFrom(object.getClass())) {
 									if (object.equals(IConstants.REPORT)) {
 										new Reporter(null, dataBase).execute();
@@ -63,8 +63,7 @@ public class Listener extends AProcess {
 							}
 						}
 					} catch (Exception e) {
-						logger.error("Exception opening a socket, could be the firewall : ");
-						logger.error("The listener will not be listening : ", e);
+						logger.error("Exception opening a socket, could be the firewall, the listener will not be listening : ", e);
 					} finally {
 						try {
 							serverSocket.close();

@@ -90,7 +90,6 @@ public class Profiler {
 
 	public static void initialize(final IDataBase dataBase) {
 		long snapshptInterval = Configuration.getConfiguration().getSnapshotInterval();
-		LOGGER.error("Profiler initialize : " + dataBase + ", " + snapshptInterval);
 		if (snapshptInterval > 0) {
 			Timer timer = new Timer();
 			TimerTask timerTask = new TimerTask() {
@@ -107,7 +106,6 @@ public class Profiler {
 			timer.schedule(timerTask, snapshptInterval, snapshptInterval);
 		}
 		long reportInterval = Configuration.getConfiguration().getReportInterval();
-		LOGGER.error("Profiler initialize : " + dataBase + ", " + reportInterval);
 		if (reportInterval > 0) {
 			Timer timer = new Timer();
 			TimerTask timerTask = new TimerTask() {
@@ -123,6 +121,7 @@ public class Profiler {
 			};
 			timer.schedule(timerTask, snapshptInterval, snapshptInterval);
 		}
+		LOGGER.info("Profiler initialize : " + dataBase + ", " + snapshptInterval + ", " + reportInterval);
 		TIME_UNIT_DENOMINATOR = Configuration.getConfiguration().getTimeUnitDenominator();
 	}
 

@@ -65,9 +65,9 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		if (!INITIALISED) {
 			INITIALISED = true;
 			LoggingConfigurator.configure();
-			CLASS_ADAPTER_CLASSES = Configuration.getConfiguration().classAdapters.toArray(new Class[Configuration.getConfiguration().classAdapters.size()]);
 			LOGGER = Logger.getLogger(Transformer.class);
-			LOGGER.error("Starting Serenity : ");
+			CLASS_ADAPTER_CLASSES = Configuration.getConfiguration().classAdapters.toArray(new Class[Configuration.getConfiguration().classAdapters.size()]);
+			LOGGER.info("Starting Serenity : ");
 			if (instrumentation != null) {
 				instrumentation.addTransformer(new Transformer());
 			}
@@ -93,7 +93,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 			Profiler.initialize(ramDataBase);
 			new Listener(null, ramDataBase).execute();
 			addShutdownHook(ramDataBase);
-			LOGGER.error("Finished initializing Serenity : ");
+			LOGGER.info("Finished initializing Serenity : ");
 		}
 	}
 
@@ -106,27 +106,27 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		shutdownHook = new Thread() {
 			public void run() {
 				Date start = new Date();
-				LOGGER.warn("Starting accumulation : " + start);
+				LOGGER.info("Starting accumulation : " + start);
 
 				long processStart = System.currentTimeMillis();
 				new Accumulator(null).execute();
-				LOGGER.warn("Accumlulator : " + (System.currentTimeMillis() - processStart));
+				LOGGER.info("Accumlulator : " + (System.currentTimeMillis() - processStart));
 
 				processStart = System.currentTimeMillis();
 				new Cleaner(null, dataBase).execute();
-				LOGGER.warn("Cleaner : " + (System.currentTimeMillis() - processStart));
+				LOGGER.info("Cleaner : " + (System.currentTimeMillis() - processStart));
 
 				processStart = System.currentTimeMillis();
 				new Aggregator(null, dataBase).execute();
-				LOGGER.warn("Aggregator : " + (System.currentTimeMillis() - processStart));
+				LOGGER.info("Aggregator : " + (System.currentTimeMillis() - processStart));
 
 				processStart = System.currentTimeMillis();
 				new Reporter(null, dataBase).execute();
-				LOGGER.warn("Reporter : " + (System.currentTimeMillis() - processStart));
+				LOGGER.info("Reporter : " + (System.currentTimeMillis() - processStart));
 
 				processStart = System.currentTimeMillis();
 				dataBase.close();
-				LOGGER.warn("Close database : " + (System.currentTimeMillis() - processStart));
+				LOGGER.info("Close database : " + (System.currentTimeMillis() - processStart));
 
 				String dumpData = Configuration.getConfiguration().getProperty(IConstants.DUMP);
 				if (dumpData != null && "true".equals(dumpData.trim())) {
@@ -136,8 +136,8 @@ public class Transformer implements ClassFileTransformer, IConstants {
 				Date end = new Date();
 				long million = 1000 * 1000;
 				long duration = end.getTime() - start.getTime();
-				LOGGER.warn("Finished accumulation : " + end + ", duration : " + duration + " millis");
-				LOGGER.warn("Total memory : " + (Runtime.getRuntime().totalMemory() / million) + ", max memory : "
+				LOGGER.info("Finished accumulation : " + end + ", duration : " + duration + " millis");
+				LOGGER.info("Total memory : " + (Runtime.getRuntime().totalMemory() / million) + ", max memory : "
 						+ (Runtime.getRuntime().maxMemory() / million) + ", free memory : " + (Runtime.getRuntime().freeMemory() / million));
 			}
 		};

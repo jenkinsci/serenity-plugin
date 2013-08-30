@@ -27,7 +27,7 @@ package com.ikokoon.serenity.persistence;
 // */
 //public class DataBaseJpa extends DataBase {
 //
-//	private Logger logger = Logger.getLogger(this.getClass());
+//	private Logger LOGGER = Logger.getLogger(this.getClass());
 //	@PersistenceContext(type = PersistenceContextType.TRANSACTION, unitName = IConstants.SERENITY_PERSISTENCE_UNIT)
 //	private EntityManager entityManager;
 //	private boolean closed = true;
@@ -47,10 +47,10 @@ package com.ikokoon.serenity.persistence;
 //		boolean commit = begin();
 //		try {
 //			E e = entityManager.find(klass, id);
-//			logger.info("find(klass, id) : " + e);
+//			LOGGER.info("find(klass, id) : " + e);
 //			return e;
 //		} catch (Exception e) {
-//			logger.error("Exception finding : " + klass + ", " + id, e);
+//			LOGGER.error("Exception finding : " + klass + ", " + id, e);
 //		} finally {
 //			commit(commit);
 //		}
@@ -113,7 +113,7 @@ package com.ikokoon.serenity.persistence;
 //	 * {@inheritDoc}
 //	 */
 //	public synchronized void close() {
-//		logger.info("Closing the JPA database : " + entityManager.isOpen());
+//		LOGGER.info("Closing the JPA database : " + entityManager.isOpen());
 //		if (entityManager.isOpen()) {
 //			boolean commit = begin();
 //			try {
@@ -163,7 +163,7 @@ package com.ikokoon.serenity.persistence;
 //				EntityManagerFactory factory = Persistence.createEntityManagerFactory(IConstants.SERENITY_PERSISTENCE_UNIT);
 //				entityManager = factory.createEntityManager();
 //			} catch (Exception e) {
-//				logger.error("Error setting up the entity manager in stand alone.", e);
+//				LOGGER.error("Error setting up the entity manager in stand alone.", e);
 //			}
 //		}
 //		return entityManager;
