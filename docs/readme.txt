@@ -5,9 +5,5 @@ Serenity to generate coverage and code metrics for your Ant or Maven project.
 Jenkins: https://wiki.jenkins-ci.org/display/JENKINS/Serenity+Plugin
 Hudson: http://wiki.hudson-ci.org/display/HUDSON/Serenity+Plugin
 
-Other software form same programmer: 
-* http://ikube.be/site
-* http://ikube.be:8080/ikube
-
 Have a fantastic day!
 Michael

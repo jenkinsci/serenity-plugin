@@ -9,14 +9,14 @@
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>1.479</version>
+		<version>1.529</version>
 	</parent>
 
 	<artifactId>serenity</artifactId>
 	<version>0.5-SNAPSHOT</version>
 	<packaging>hpi</packaging>
-	<name>Hudson Serenity plugin</name>
-	<url>http://wiki.hudson-ci.org/display/HUDSON/Serenity+Plugin</url>
+	<name>Jenkins Serenity plugin</name>
+	<url>https://wiki.jenkins-ci.org/pages/viewpage.action?pageId=42468892</url>
 	<properties>
 		<project.build.sourceEncoding>UTF8</project.build.sourceEncoding>
 	</properties>
@@ -26,8 +26,8 @@
 			<id>michael.couck</id>
 			<name>Michael Couck</name>
 			<email>michael.couck@gmail.com</email>
-			<url>http://www.ikokoon.com/ikokoon</url>
-			<timezone>Brussels</timezone>
+			<url>http://www.ikube.be/site</url>
+			<timezone>Gent</timezone>
 		</developer>
 	</developers>
 

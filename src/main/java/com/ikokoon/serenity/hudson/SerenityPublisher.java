@@ -4,11 +4,11 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
@@ -111,9 +111,8 @@ public class SerenityPublisher extends Recorder implements Serializable {
 			SerenityBuildAction buildAction = new SerenityBuildAction(build, result);
 			build.getActions().add(buildAction);
 		} catch (Exception e) {
-			LOGGER.error(null, e);
-			// buildListener.error(e.getMessage());
 			printStream.println(e.getMessage());
+			LOGGER.error(null, e);
 		}
 
 		return true;
@@ -156,8 +155,6 @@ public class SerenityPublisher extends Recorder implements Serializable {
 					findFilesAndDirectories(moduleRoot, serenityOdbs, fileFilter, pattern, printStream);
 				} catch (Exception e) {
 					printStream.println("Exception searching for database files : " + moduleRoot);
-					// buildListener.error("Exception searching for database files : " + moduleRoot);
-					// e.printStackTrace(buildListener.fatalError("Exception searching for Serenity database files : " + moduleRoot));
 					LOGGER.error(null, e);
 				}
 			}
@@ -179,9 +176,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 						sourceFile.deleteOnExit();
 					}
 				} catch (Exception e) {
-					// e.printStackTrace(buildListener.fatalError("Unable to copy Serenity database file from : " + sourcePath + ", to : " + targetPath));
-					// build.setResult(Result.UNSTABLE);
-					// buildListener.error("Unable to copy Serenity database file from : " + sourcePath + ", to : " + targetPath);
+					printStream.println("Unable to copy Serenity database file from : " + sourcePath + ", to : " + targetPath);
 					LOGGER.error(null, e);
 				} finally {
 					sourceDataBase.close();
@@ -189,7 +184,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 			}
 		} catch (Exception e) {
 			printStream.println(e.getMessage());
-			// buildListener.error(e.getMessage());
+			LOGGER.error(null, e);
 		}
 		return targetDataBase;
 	}
@@ -234,7 +229,6 @@ public class SerenityPublisher extends Recorder implements Serializable {
 			new Aggregator(null, targetDataBase).execute();
 		} catch (Exception e) {
 			buildListener.getLogger().println(e.getMessage());
-			// buildListener.error(e.getMessage());
 			LOGGER.error(null, e);
 		}
 	}
@@ -252,7 +246,6 @@ public class SerenityPublisher extends Recorder implements Serializable {
 			new Pruner(null, targetDataBase).execute();
 		} catch (Exception e) {
 			buildListener.getLogger().println(e.getMessage());
-			// buildListener.error(e.getMessage());
 			LOGGER.error(null, e);
 		}
 	}
@@ -274,8 +267,6 @@ public class SerenityPublisher extends Recorder implements Serializable {
 					findFilesAndDirectories(moduleRoot, sourceDirectories, fileFilter, pattern, printStream);
 				} catch (Exception e) {
 					printStream.println("Exception searching for source directories : " + moduleRoot);
-					// buildListener.error("Exception searching for source directories : " + moduleRoot);
-					// e.printStackTrace(buildListener.fatalError("Exception searching for Serenity source files : " + moduleRoot));
 					LOGGER.error(null, e);
 				}
 			}
@@ -302,14 +293,11 @@ public class SerenityPublisher extends Recorder implements Serializable {
 				}
 			} catch (IOException e) {
 				Util.displayIOException(e, buildListener);
-				// e.printStackTrace(buildListener.fatalError("Unable to copy Serenity source directories from : " + sourceDirectories + ", to : " + buildDirectory));
-				// buildListener.error("Unable to copy Serenity source directories from : " + sourceDirectories + ", to : " + buildDirectory);
 				LOGGER.error(null, e);
 			}
 		} catch (Exception e) {
-			LOGGER.error(null, e);
-			// buildListener.error(e.getMessage());
 			buildListener.getLogger().println(e.getMessage());
+			LOGGER.error(null, e);
 		}
 		return true;
 	}
@@ -317,7 +305,6 @@ public class SerenityPublisher extends Recorder implements Serializable {
 	@Override
 	@SuppressWarnings("rawtypes")
 	public Action getProjectAction(AbstractProject abstractProject) {
-		LOGGER.info("getProjectAction(AbstractProject)");
 		return new SerenityProjectAction(abstractProject);
 	}
 
@@ -334,21 +321,18 @@ public class SerenityPublisher extends Recorder implements Serializable {
 		 */
 		DescriptorImpl() {
 			super(SerenityPublisher.class);
-			LOGGER.info("DescriptorImpl");
 		}
 
 		/**
 		 * This human readable name is used in the configuration screen.
 		 */
 		public String getDisplayName() {
-			LOGGER.info("getDisplayName");
 			return "Publish Serenity Report";
 		}
 
 		@Override
 		@SuppressWarnings("rawtypes")
 		public boolean isApplicable(java.lang.Class<? extends AbstractProject> jobType) {
-			LOGGER.info("isApplicable");
 			return true;
 		}
 
@@ -357,7 +341,6 @@ public class SerenityPublisher extends Recorder implements Serializable {
 		 */
 		@Override
 		public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
-			LOGGER.info("configure");
 			req.bindParameters(this, "serenity.");
 			save();
 			return super.configure(req, json);
@@ -368,14 +351,12 @@ public class SerenityPublisher extends Recorder implements Serializable {
 		 */
 		@Override
 		public SerenityPublisher newInstance(StaplerRequest req, JSONObject json) throws FormException {
-			LOGGER.info("newInstance");
 			SerenityPublisher instance = req.bindParameters(SerenityPublisher.class, "serenity.");
 			return instance;
 		}
 	}
 
 	public BuildStepMonitor getRequiredMonitorService() {
-		LOGGER.info("getRequiredMonitorService");
 		return BuildStepMonitor.STEP;
 	}
 }
