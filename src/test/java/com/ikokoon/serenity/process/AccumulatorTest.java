@@ -30,6 +30,8 @@ public class AccumulatorTest extends ATest implements IConstants {
 	public void before() {
 		String classPath = System.getProperty("java.class.path");
 		classPath += ";" + new File(".", "/target/serenity.jar").getAbsolutePath() + ";";
+		// classPath += "/usr/share/eclipse/workspace/ikube;";
+
 		classPath = Toolkit.replaceAll(classPath, "\\.\\", "\\");
 		classPath = Toolkit.replaceAll(classPath, "/./", "/");
 		System.setProperty("java.class.path", classPath);
@@ -37,6 +39,7 @@ public class AccumulatorTest extends ATest implements IConstants {
 
 	@Test
 	public void accumulate() {
+		// Configuration.getConfiguration().includedPackages.add("ikube");
 		LOGGER.warn("Included : " + Configuration.getConfiguration().includedPackages);
 		LOGGER.warn("Excluded : " + Configuration.getConfiguration().excludedPackages);
 		Accumulator accumulator = new Accumulator(null);
@@ -45,9 +48,14 @@ public class AccumulatorTest extends ATest implements IConstants {
 		assertNotNull(targetClass);
 		Class<?, ?> targetConsumerClass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(Class.class.getName()));
 		assertNull(targetConsumerClass);
+
+		// Class<?, ?> targetIkubeClass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash("ikube.model.Indexable"));
+		// LOGGER.error("Ikube class : " + targetIkubeClass);
+		// assertNotNull(targetIkubeClass);
 	}
 
 	@Test
+	// @Ignore
 	public void getSource() throws Exception {
 		Accumulator accumulator = new Accumulator(null);
 		JarFile jarFile = new JarFile(new File("src/test/resources/serenity.jar"));

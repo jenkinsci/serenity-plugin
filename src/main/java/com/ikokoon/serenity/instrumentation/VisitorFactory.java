@@ -54,7 +54,7 @@ public class VisitorFactory {
 			LOGGER.debug("Adding class visitor : " + visitor);
 		}
 		// 'false' for ASM 2.2, '0' for ASM 3++
-		reader.accept(visitor, 0);
+		reader.accept(visitor, ClassReader.SKIP_FRAMES);
 		return writer;
 	}
 

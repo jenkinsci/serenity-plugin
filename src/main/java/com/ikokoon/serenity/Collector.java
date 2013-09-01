@@ -189,7 +189,7 @@ public final class Collector implements IConstants {
 		// We try to delete the old file first
 		boolean deleted = file.delete();
 		if (!deleted) {
-			LOGGER.warn("Didn't delete source coverage file : " + file);
+			LOGGER.debug("Didn't delete source coverage file : " + file);
 		}
 		if (!file.exists()) {
 			if (!Toolkit.createFile(file)) {
