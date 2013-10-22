@@ -38,7 +38,7 @@ public class ProfilerTest extends ATest implements IConstants {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void averageMethodNetTime() {
 		List<Class> classes = dataBase.find(Class.class);
 		for (Class klass : classes) {
@@ -51,7 +51,7 @@ public class ProfilerTest extends ATest implements IConstants {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void averageMethodTime() {
 		List<Class> classes = dataBase.find(Class.class);
 		for (Class klass : classes) {
@@ -64,7 +64,7 @@ public class ProfilerTest extends ATest implements IConstants {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void methodChange() {
 		List<Class> classes = dataBase.find(Class.class);
 		for (Class klass : classes) {
@@ -77,7 +77,7 @@ public class ProfilerTest extends ATest implements IConstants {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void methodChangeSeries() {
 		List<Class> classes = dataBase.find(Class.class);
 		for (Class klass : classes) {
@@ -90,7 +90,7 @@ public class ProfilerTest extends ATest implements IConstants {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void methodNetChange() {
 		List<Class> classes = dataBase.find(Class.class);
 		for (Class klass : classes) {
@@ -103,7 +103,7 @@ public class ProfilerTest extends ATest implements IConstants {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void methodNetChangeSeries() {
 		List<Class> classes = dataBase.find(Class.class);
 		for (Class klass : classes) {
@@ -116,7 +116,7 @@ public class ProfilerTest extends ATest implements IConstants {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void methodNetSeries() {
 		List<Class> classes = dataBase.find(Class.class);
 		for (Class klass : classes) {
@@ -129,7 +129,7 @@ public class ProfilerTest extends ATest implements IConstants {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void methodSeries() {
 		List<Class> classes = dataBase.find(Class.class);
 		for (Class klass : classes) {
@@ -142,7 +142,7 @@ public class ProfilerTest extends ATest implements IConstants {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void totalMethodTime() {
 		List<Class> classes = dataBase.find(Class.class);
 		for (Class klass : classes) {
@@ -155,7 +155,7 @@ public class ProfilerTest extends ATest implements IConstants {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void totalNetMethodTime() {
 		List<Class> classes = dataBase.find(Class.class);
 		for (Class klass : classes) {

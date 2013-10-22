@@ -25,12 +25,10 @@ public interface IConstants {
 
 	public String SERENITY_ODB = "serenity.odb";
 	public String SERENITY_RAM = "serenity.ram";
-	public String SERENITY_JPA = "serenity.jpa";
 
 	/** The database file, 'serenity.ram', 'serenity.odb', 'serenity.jpa'. */
 	public String DATABASE_FILE_RAM = SERENITY_DIRECTORY + File.separatorChar + SERENITY_RAM;
 	public String DATABASE_FILE_ODB = SERENITY_DIRECTORY + File.separatorChar + SERENITY_ODB;
-	public String DATABASE_FILE_JPA = SERENITY_DIRECTORY + File.separatorChar + SERENITY_JPA;
 	/** The JPA persistence unit name, 'SerenityPersistenceUnit'. */
 	public String SERENITY_PERSISTENCE_UNIT = "SerenityPersistenceUnit";
 	/** The logging configuration file, '/META-INF/log4j.properties'. */

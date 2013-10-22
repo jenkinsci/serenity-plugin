@@ -9,7 +9,6 @@ import java.util.List;
  * @since 12.08.09
  * @version 01.00
  */
-// @Entity
 @Unique(fields = { Composite.CLASS_NAME, Composite.NAME, Composite.DESCRIPTION })
 public class Method<E, F> extends Composite<Class<?, ?>, Line<?, ?>> implements Comparable<Method<?, ?>>, Serializable {
 

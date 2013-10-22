@@ -54,7 +54,7 @@ public class ReporterTest extends ATest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void buildGraph() {
 		File chartDirectory = new File(IConstants.SERENITY_DIRECTORY + File.separatorChar + IConstants.CHARTS);
 		Toolkit.deleteFile(chartDirectory, 3);

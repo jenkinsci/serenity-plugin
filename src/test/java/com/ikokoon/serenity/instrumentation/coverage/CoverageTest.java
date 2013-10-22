@@ -28,7 +28,7 @@ public class CoverageTest extends ATest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void visit() throws Exception {
 		byte[] classBytes = getClassBytes(className);
 		byte[] sourceBytes = getSourceBytes(className);

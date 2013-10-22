@@ -30,7 +30,7 @@ public class VisitorFactoryTest extends ATest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void getClassVisitor() throws Exception {
 		byte[] classBytes = getClassBytes(className);
 		byte[] sourceBytes = getSourceBytes(className);

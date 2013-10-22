@@ -8,7 +8,6 @@ import java.util.Date;
  * @since 12.08.09
  * @version 01.00
  */
-// @Entity
 @Unique(fields = { Composite.NAME })
 public class Project<E, F> extends Composite<Object, Package<?, ?>> implements Serializable {
 

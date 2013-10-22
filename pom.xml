@@ -162,20 +162,6 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-		<!-- <dependency>
-			<groupId>org.apache.openjpa</groupId>
-			<artifactId>openjpa</artifactId>
-			<version>1.2.0</version>
-			<type>jar</type>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<version>1.8.0.1</version>
-			<type>jar</type>
-			<scope>test</scope>
-		</dependency> -->
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
@@ -188,11 +174,6 @@
 			<artifactId>asm-all</artifactId>
 			<version>2.2</version>
 		</dependency> -->
-		<!-- <dependency>
-			<groupId>jboss</groupId>
-			<artifactId>jboss-aop-jdk50-client</artifactId>
-			<version>4.2.2.GA</version>
-		</dependency> -->
 		<dependency>
 			<groupId>asm</groupId>
 			<artifactId>asm</artifactId>
@@ -203,6 +184,13 @@
 			<artifactId>asm-commons</artifactId>
 			<version>3.3.1</version>
 		</dependency>
+		<!-- <dependency>
+			<groupId>mockit</groupId>
+			<artifactId>jmockit</artifactId>
+			<version>0.999</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency> -->
 	</dependencies>
 
 	<repositories>
@@ -237,7 +225,7 @@
 			<name>ibiblio Mirror of http://repo1.maven.org/maven2/</name>
 			<url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
 		</repository>
-		<repository>
+		<!-- <repository>
 			<id>hudson-libs</id>
 			<url>https://hudson.dev.java.net/source/browse/*checkout*/hudson/hudson/main/lib
 			</url>
@@ -249,9 +237,9 @@
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
-		</repository>
+		</repository> -->
 		
-		<repository>
+		<!-- <repository>
 			<id>jboss-public-repository-group</id>
 			<name>JBoss Public Maven Repository Group</name>
 			<url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
@@ -264,7 +252,7 @@
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
 			</snapshots>
-		</repository>
+		</repository> -->
 		
 	</repositories>
 

@@ -42,7 +42,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 	/** The chain of adapters for analysing the classes. */
 	private static Class<ClassVisitor>[] CLASS_ADAPTER_CLASSES;
 	/** The shutdown hook will clean, accumulate and aggregate the data. */
-	private static Thread shutdownHook;
+	private static Thread SHUTDOWN_HOOK;
 
 	/**
 	 * This method is called by the JVM at startup. This method will only be called if the command line for starting the JVM has the following on it:
@@ -103,7 +103,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 	 * @param dataBase the database to get the data from
 	 */
 	private static void addShutdownHook(final IDataBase dataBase) {
-		shutdownHook = new Thread() {
+		SHUTDOWN_HOOK = new Thread() {
 			public void run() {
 				Date start = new Date();
 				LOGGER.info("Starting accumulation : " + start);
@@ -141,11 +141,11 @@ public class Transformer implements ClassFileTransformer, IConstants {
 						+ (Runtime.getRuntime().maxMemory() / million) + ", free memory : " + (Runtime.getRuntime().freeMemory() / million));
 			}
 		};
-		Runtime.getRuntime().addShutdownHook(shutdownHook);
+		Runtime.getRuntime().addShutdownHook(SHUTDOWN_HOOK);
 	}
 
 	protected static void removeShutdownHook() {
-		Runtime.getRuntime().removeShutdownHook(shutdownHook);
+		Runtime.getRuntime().removeShutdownHook(SHUTDOWN_HOOK);
 	}
 
 	/**

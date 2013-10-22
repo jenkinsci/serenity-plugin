@@ -687,9 +687,15 @@ public final class Toolkit {
 		return true;
 	}
 
-	public static void main(String[] args) {
-		File file = new File("D:/Servers/Tomcat/apache-tomcat-6.0.26/bin/serenity/charts");
-		Toolkit.deleteFile(file, 3);
+	public static String cleanFilePath(final String path) {
+		String filePath = replaceAll(path, "/./", "/");
+		filePath = replaceAll(filePath, "\\.\\", "/");
+		filePath = replaceAll(filePath, "\\", "/");
+		// filePath = filePath.removeEnd(filePath, ".");
+		if (filePath.endsWith(".")) {
+			filePath = filePath.substring(0, filePath.length() - 1);
+		}
+		return filePath;
 	}
 
 }

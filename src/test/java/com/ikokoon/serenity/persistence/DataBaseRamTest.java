@@ -1,8 +1,8 @@
 package com.ikokoon.serenity.persistence;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -37,7 +37,7 @@ public class DataBaseRamTest extends ATest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void insert() {
 		final DataBaseRam dataBase = (DataBaseRam) this.dataBase;
 		final List<Composite<?, ?>> list = getList();
@@ -56,7 +56,7 @@ public class DataBaseRamTest extends ATest {
 		assertTrue(insertsPerSecond > 1000);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private LinkedList<Composite<?, ?>> getList() {
 		DataBaseRam dataBase = (DataBaseRam) this.dataBase;
 
@@ -92,7 +92,7 @@ public class DataBaseRamTest extends ATest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void persist() {
 		// T object
 		Package pakkage = getPackage();
@@ -106,7 +106,7 @@ public class DataBaseRamTest extends ATest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void findId() {
 		DataBaseToolkit.clear(dataBase);
 		Package pakkage = getPackage();
@@ -117,7 +117,7 @@ public class DataBaseRamTest extends ATest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void findParameters() {
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
@@ -148,7 +148,7 @@ public class DataBaseRamTest extends ATest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void removeId() throws Exception {
 		// java.lang.Class<T> klass, Long id
 		Package pakkage = getPackage();
@@ -162,7 +162,7 @@ public class DataBaseRamTest extends ATest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void persistPerformance() throws Exception {
 		// Test the insert performance
 		double inserts = 10000;
@@ -180,7 +180,7 @@ public class DataBaseRamTest extends ATest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void findPerformance() throws Exception {
 		long size = 10000;
 		for (int i = 0; i < size; i++) {

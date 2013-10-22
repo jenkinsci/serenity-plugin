@@ -1,7 +1,7 @@
 package com.ikokoon.serenity.persistence;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
 
@@ -67,7 +67,7 @@ public class DataBaseToolkitTest extends ATest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void clear() {
 		String dataBaseFile = "./src/test/resources/dummy.odb";
 		IDataBase dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, null);

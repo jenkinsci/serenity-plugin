@@ -1,7 +1,7 @@
 package com.ikokoon.serenity.process;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.List;
@@ -57,7 +57,7 @@ public class CleanerTest extends ATest implements IConstants {
 	@Test
 	public void execute() {
 		DataBaseToolkit.dump(dataBase, null, null);
-		assertTrue(containsPattern(dataBase, className));
+		assertTrue("", containsPattern(dataBase, className));
 		assertTrue(containsPattern(dataBase, packageName));
 		Executer.execute(new Executer.IPerform() {
 			public void execute() {

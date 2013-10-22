@@ -35,7 +35,7 @@ public class PrunerTest extends ATest implements IConstants {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void execute() {
 		File sourceOdbDataBaseFile = new File("./src/test/resources/isearch/merge/tag.odb");
 		File targetOdbDataBaseFile = new File("./src/test/resources/isearch/prune/tag.odb");

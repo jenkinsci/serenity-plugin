@@ -1,9 +1,9 @@
 package com.ikokoon.serenity.persistence;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class DataBaseOdbTest extends ATest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void persist() {
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
@@ -54,7 +54,7 @@ public class DataBaseOdbTest extends ATest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void findId() {
 		DataBaseToolkit.dump(dataBase, new DataBaseToolkit.ICriteria() {
 			public boolean satisfied(Composite<?, ?> composite) {
@@ -69,7 +69,7 @@ public class DataBaseOdbTest extends ATest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void findParameters() {
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
@@ -100,7 +100,7 @@ public class DataBaseOdbTest extends ATest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void removeId() throws Exception {
 		// java.lang.Class<T> klass, Long id
 		Package pakkage = getPackage();
@@ -114,7 +114,7 @@ public class DataBaseOdbTest extends ATest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void find() {
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
@@ -125,7 +125,7 @@ public class DataBaseOdbTest extends ATest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void findStartEnd() {
 		Package pakkage = getPackage();
 		dataBase.persist(pakkage);
@@ -140,7 +140,7 @@ public class DataBaseOdbTest extends ATest {
 	}
 
 	// @Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void memoryUsage() {
 		long million = 1000000;
 		long freeMemoryStart = Runtime.getRuntime().freeMemory() / million;

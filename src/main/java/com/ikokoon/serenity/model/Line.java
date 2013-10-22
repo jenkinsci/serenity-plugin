@@ -7,7 +7,6 @@ import java.io.Serializable;
  * @since 12.08.09
  * @version 01.00
  */
-// @Entity
 @Unique(fields = { Composite.CLASS_NAME, Composite.METHOD_NAME, Composite.NUMBER })
 public class Line<E, F> extends Composite<Class<?, ?>, Object> implements Comparable<Line<?, ?>>, Serializable {
 
@@ -45,8 +44,6 @@ public class Line<E, F> extends Composite<Class<?, ?>, Object> implements Compar
 	}
 
 	public void setCounter(double counter) {
-		// System.out.println("Set counter : " + counter + ", " + number);
-		// Thread.dumpStack();
 		this.counter = counter;
 	}
 

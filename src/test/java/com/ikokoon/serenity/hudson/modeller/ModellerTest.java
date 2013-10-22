@@ -17,8 +17,8 @@ import com.ikokoon.target.Target;
  */
 public class ModellerTest extends ATest {
 
+	@SuppressWarnings("rawtypes")
 	@Test
-	@SuppressWarnings("unchecked")
 	public void visitProject() {
 		Project projectOne = new Project();
 		projectOne.setAbstractness(0.25);

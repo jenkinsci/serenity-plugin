@@ -9,7 +9,6 @@ import java.io.Serializable;
  * @since 17.07.09
  * @version 01.00
  */
-// @Entity
 @Unique(fields = { Composite.NAME })
 public class Efferent extends Composite<Object, Object> implements Comparable<Efferent>, Serializable {
 

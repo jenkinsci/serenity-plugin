@@ -1,11 +1,16 @@
 package com.ikokoon.serenity.process;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.jar.JarFile;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,42 +31,86 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class AccumulatorTest extends ATest implements IConstants {
 
+//	@MockClass(realClass = Configuration.class)
+//	public static class ConfigurationMock {
+//		@Mock
+//		public String getClassPath() {
+//			return "/usr/share/eclipse/workspace/ikube";
+//		}
+//	}
+	
+	private Accumulator accumulator;
+
 	@Before
 	public void before() {
 		String classPath = System.getProperty("java.class.path");
 		classPath += ";" + new File(".", "/target/serenity.jar").getAbsolutePath() + ";";
-		// classPath += "/usr/share/eclipse/workspace/ikube;";
 
 		classPath = Toolkit.replaceAll(classPath, "\\.\\", "\\");
 		classPath = Toolkit.replaceAll(classPath, "/./", "/");
 		System.setProperty("java.class.path", classPath);
+		
+		accumulator = new Accumulator(null);
+	}
+	
+	@After
+	public void after() {
+		Toolkit.deleteFile(new File("./serenity"), 3);
 	}
 
 	@Test
 	public void accumulate() {
-		// Configuration.getConfiguration().includedPackages.add("ikube");
-		LOGGER.warn("Included : " + Configuration.getConfiguration().includedPackages);
-		LOGGER.warn("Excluded : " + Configuration.getConfiguration().excludedPackages);
-		Accumulator accumulator = new Accumulator(null);
 		accumulator.execute();
 		Class<?, ?> targetClass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(Target.class.getName()));
 		assertNotNull(targetClass);
 		Class<?, ?> targetConsumerClass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash(Class.class.getName()));
 		assertNull(targetConsumerClass);
 
-		// Class<?, ?> targetIkubeClass = (Class<?, ?>) dataBase.find(Class.class, Toolkit.hash("ikube.model.Indexable"));
-		// LOGGER.error("Ikube class : " + targetIkubeClass);
-		// assertNotNull(targetIkubeClass);
+		// Verify that the Java.java has been accumulated
+		Class<?, ?> javaClass = dataBase.find(Class.class, Toolkit.hash("com.ikokoon.Java"));
+		assertNotNull(javaClass);
+		List<File> files = new ArrayList<File>();
+		Toolkit.findFiles(new File("."), new Toolkit.IFileFilter() {
+			public boolean matches(final File file) {
+				return file.getName().endsWith("Java.html");
+			}
+		}, files);
+		assertEquals("The source for the Java.java class should have been persisted : ", 1, files.size());
 	}
 
 	@Test
-	// @Ignore
 	public void getSource() throws Exception {
-		Accumulator accumulator = new Accumulator(null);
 		JarFile jarFile = new JarFile(new File("src/test/resources/serenity.jar"));
 		String source = accumulator.getSource(jarFile, Toolkit.dotToSlash(Accumulator.class.getName()) + ".java").toString();
-		LOGGER.info("Source : " + source);
 		assertNotNull(source);
 	}
+	
+	@Test
+	public void excluded() {
+		Configuration.getConfiguration().excludedPackages.clear();
+		Configuration.getConfiguration().includedPackages.clear();
+		
+		Configuration.getConfiguration().excludedPackages.add("model");
+		Configuration.getConfiguration().excludedPackages.add("Mock");
+		Configuration.getConfiguration().excludedPackages.add("Test");
+		Configuration.getConfiguration().excludedPackages.add("Integration");
+		
+		Configuration.getConfiguration().includedPackages.add("ikube");
+		
+		boolean excluded = accumulator.isExcluded(".root..jenkins.jobs.ikube.workspace.code.com.src.main.java.ikube.toolkit.ObjectToolkit.java");
+		assertFalse(excluded);
+	}
+
+//	@Test
+//	public void getIkubeSource() {
+//		try {
+//			Configuration.getConfiguration().includedPackages.add("ikube");
+//			Mockit.setUpMocks(ConfigurationMock.class);
+//			Accumulator accumulator = new Accumulator(null);
+//			accumulator.execute();
+//		} finally {
+//			Mockit.tearDownMocks();
+//		}
+//	}
 
 }

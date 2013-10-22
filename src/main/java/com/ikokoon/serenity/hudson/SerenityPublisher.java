@@ -21,7 +21,6 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
@@ -38,6 +37,7 @@ import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.serenity.process.Aggregator;
 import com.ikokoon.serenity.process.Pruner;
 import com.ikokoon.toolkit.LoggingConfigurator;
+import com.ikokoon.toolkit.Toolkit;
 
 /**
  * This class runs at the end of the build, called by Hudson. The purpose is to copy the database files from the output directories for each module in the case
@@ -53,27 +53,14 @@ import com.ikokoon.toolkit.LoggingConfigurator;
 @SuppressWarnings("unchecked")
 public class SerenityPublisher extends Recorder implements Serializable {
 
-	/**
-	 * The file filter that matches all the files available. We'll filter then later.
-	 * 
-	 * @author Michael Couck
-	 * @since 12.05.10
-	 * @version 01.00
-	 */
-	class FileFilterImpl implements FileFilter, Serializable {
-		public boolean accept(File pathname) {
-			return true;
-		}
-	}
-
 	/** Initialise the logging. */
 	static {
 		LoggingConfigurator.configure();
 	}
 
 	/** The pattern to exclude from the file filter. */
-	private static final String SERENITY_ODB_REGEX = ".*serenity.odb";
-	private static final String SERENITY_SOURCE_REGEX = ".*serenity.*.source.*";
+	static final String SERENITY_ODB_REGEX = ".*(serenity.odb)";
+	static final String SERENITY_SOURCE_REGEX = ".*(serenity/source).*";
 	/** The LOGGER. */
 	protected static Logger LOGGER = Logger.getLogger(SerenityPublisher.class);
 	/** The description for Hudson. */
@@ -145,14 +132,13 @@ public class SerenityPublisher extends Recorder implements Serializable {
 
 			// Scan the build output roots for database files to merge
 			FilePath[] moduleRoots = build.getModuleRoots();
-			FileFilter fileFilter = new FileFilterImpl();
 			// The list of Serenity database files found in the module roots
 			List<FilePath> serenityOdbs = new ArrayList<FilePath>();
 			Pattern pattern = Pattern.compile(SERENITY_ODB_REGEX);
 			for (FilePath moduleRoot : moduleRoots) {
 				// printStream.println("Module root : " + moduleRoot.toURI());
 				try {
-					findFilesAndDirectories(moduleRoot, serenityOdbs, fileFilter, pattern, printStream);
+					findFilesAndDirectories(moduleRoot, serenityOdbs, pattern, printStream);
 				} catch (Exception e) {
 					printStream.println("Exception searching for database files : " + moduleRoot);
 					LOGGER.error(null, e);
@@ -198,18 +184,23 @@ public class SerenityPublisher extends Recorder implements Serializable {
 	 * @param printStream the LOGGER to the front end
 	 * @throws Exception
 	 */
-	private void findFilesAndDirectories(FilePath filePath, List<FilePath> filePaths, FileFilter fileFilter, Pattern pattern, PrintStream printStream)
+	void findFilesAndDirectories(final FilePath filePath, final List<FilePath> filePaths, final Pattern pattern, final PrintStream printStream)
 			throws Exception {
 		try {
-			List<FilePath> list = filePath.list(fileFilter);
-			if (list != null) {
-				for (FilePath childFilePath : list) {
-					findFilesAndDirectories(childFilePath, filePaths, fileFilter, pattern, printStream);
+			// printStream.println("File path : " + filePath.toURI().toString());
+			class FileFilterImpl implements FileFilter, Serializable {
+				public boolean accept(final File pathname) {
+					String stringFilePath = Toolkit.cleanFilePath(pathname.getAbsolutePath());
+					boolean match = pattern.matcher(stringFilePath).matches();
+					return match || stringFilePath.contains("serenity/source");
 				}
 			}
-			Matcher matcher = pattern.matcher(filePath.toURI().toString());
-			if (matcher.find()) {
-				filePaths.add(filePath);
+			List<FilePath> list = filePath.list(new FileFilterImpl());
+			if (list != null) {
+				filePaths.addAll(list);
+				for (FilePath childFilePath : filePath.list()) {
+					findFilesAndDirectories(childFilePath, filePaths, pattern, printStream);
+				}
 			}
 		} catch (Exception e) {
 			LOGGER.error(null, e);
@@ -257,14 +248,13 @@ public class SerenityPublisher extends Recorder implements Serializable {
 			printStream.println("Workspace root... " + workSpace.toURI().getRawPath());
 
 			FilePath[] moduleRoots = build.getModuleRoots();
-			FileFilter fileFilter = new FileFilterImpl();
 			// The list of Serenity source directories found in the module roots
 			List<FilePath> sourceDirectories = new ArrayList<FilePath>();
 			Pattern pattern = Pattern.compile(SERENITY_SOURCE_REGEX);
 			for (FilePath moduleRoot : moduleRoots) {
-				// printStream.println("Module root : " + moduleRoot.toURI());
 				try {
-					findFilesAndDirectories(moduleRoot, sourceDirectories, fileFilter, pattern, printStream);
+					printStream.println("Module root : " + moduleRoot.toURI());
+					findFilesAndDirectories(moduleRoot, sourceDirectories, pattern, printStream);
 				} catch (Exception e) {
 					printStream.println("Exception searching for source directories : " + moduleRoot);
 					LOGGER.error(null, e);
@@ -275,21 +265,26 @@ public class SerenityPublisher extends Recorder implements Serializable {
 			FilePath buildSourceDirectory = new FilePath(buildDirectory, IConstants.SERENITY_SOURCE);
 
 			try {
-				buildSourceDirectory.deleteContents();
+				// We'll delete everything to start with
+				// buildSourceDirectory.deleteContents();
+				// printStream.println("Source directories : " + sourceDirectories);
 				for (FilePath sourceDirectory : sourceDirectories) {
-					String sourcePath = sourceDirectory.toURI().toString();
+					// String sourcePath = sourceDirectory.toURI().toString();
 					// This is a hack. The pattern for the source directories (.*serenity.*.source) doesn't work in a slave for some reason. So we
 					// have to use .*serenity.*.source.*, which returns all the directories and files with the pattern in it, and after that we have to
 					// check that this is not a sub directory of the source folder and that it is not a file either. Pity that, try to get the bloody
 					// pattern working in the future
-					boolean isDirectoryAndSerenitySource = !sourceDirectory.isDirectory() && !sourcePath.endsWith("serenity/source/")
-							&& !sourcePath.endsWith("serenity\\source\\");
-					if (isDirectoryAndSerenitySource) {
-						continue;
+					// boolean isDirectoryAndSerenitySource = !sourceDirectory.isDirectory() && !sourcePath.endsWith("serenity/source/")
+					// && !sourcePath.endsWith("serenity\\source\\");
+					// if (isDirectoryAndSerenitySource) {
+					// continue;
+					// }
+					if (sourceDirectory.isDirectory()) {
+						printStream.println("Copying source from... " + sourceDirectory.toURI().toString() + " to... "
+								+ buildSourceDirectory.toURI().getRawPath());
+						// buildSourceDirectory.deleteContents();
+						sourceDirectory.copyRecursiveTo(buildSourceDirectory);
 					}
-					printStream.println("Copying source from... " + sourceDirectory.toURI().toString() + " to... " + buildSourceDirectory.toURI().getRawPath());
-					buildSourceDirectory.deleteContents();
-					sourceDirectory.copyRecursiveTo(buildSourceDirectory);
 				}
 			} catch (IOException e) {
 				Util.displayIOException(e, buildListener);

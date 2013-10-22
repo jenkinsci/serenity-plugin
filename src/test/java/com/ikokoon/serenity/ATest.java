@@ -63,6 +63,7 @@ public abstract class ATest implements IConstants {
 		Configuration.getConfiguration().includedPackages.add(IConstants.class.getPackage().getName());
 		Configuration.getConfiguration().includedPackages.add(Target.class.getPackage().getName());
 		Configuration.getConfiguration().includedPackages.add(Configuration.class.getPackage().getName());
+		Configuration.getConfiguration().includedPackages.add("com.ikokoon");
 
 		dataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, mockInternalDataBase);
 		Collector.initialize(dataBase);

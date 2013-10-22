@@ -54,6 +54,9 @@ public final class DataBaseRam extends DataBase {
 	 * {@inheritDoc}
 	 */
 	public synchronized final <E extends Composite<?, ?>> E persist(E composite) {
+//		if (com.ikokoon.serenity.model.Class.class.isAssignableFrom(composite.getClass())) {
+//			logger.error("Persisting : " + composite);
+//		}
 		setIds(composite);
 		return composite;
 	}

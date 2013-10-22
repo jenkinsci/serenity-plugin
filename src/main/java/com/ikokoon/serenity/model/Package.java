@@ -9,7 +9,6 @@ import java.util.TreeSet;
  * @since 12.08.09
  * @version 01.00
  */
-// @Entity
 @Unique(fields = { Composite.NAME })
 public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> implements Comparable<Package<?, ?>>, Serializable {
 
@@ -29,9 +28,7 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
 	private double efference;
 	private double afference;
 
-	// @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	private Set<Efferent> efferent = new TreeSet<Efferent>();
-	// @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	private Set<Afferent> afferent = new TreeSet<Afferent>();
 
 	public String getName() {

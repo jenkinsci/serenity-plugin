@@ -8,7 +8,6 @@ import java.util.List;
  * @since 09.12.09
  * @version 01.00
  */
-// @Entity
 public abstract class Composite<E, F> {
 
 	public static final String NAME = "name";
@@ -18,13 +17,9 @@ public abstract class Composite<E, F> {
 	public static final String DESCRIPTION = "description";
 
 	private Long id;
-	// @ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	private Composite<E, F> parent;
-	// @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	private List<F> children = new ArrayList<F>();
 
-	// @Id
-	// @GeneratedValue(strategy = GenerationType.AUTO)
 	public Long getId() {
 		return id;
 	}
