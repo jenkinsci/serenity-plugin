@@ -35,8 +35,6 @@ public class ClassAggregator extends AAggregator {
 	}
 
 	protected void aggregate(final Class<?, ?> klass) {
-		logger.debug("Processing class : " + klass);
-
 		List<Line<?, ?>> lines = getLines(klass, new ArrayList<Line<?, ?>>());
 		List<Method<?, ?>> methods = getMethods(klass, new ArrayList<Method<?, ?>>());
 

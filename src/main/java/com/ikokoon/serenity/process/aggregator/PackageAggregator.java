@@ -40,8 +40,6 @@ public class PackageAggregator extends AAggregator {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void aggregate(Package pakkage) {
-		logger.debug("Processing package : " + pakkage);
-
 		List<Line<?, ?>> lines = getLines(pakkage);
 		List<Method<?, ?>> methods = getMethods(pakkage);
 
@@ -82,10 +80,7 @@ public class PackageAggregator extends AAggregator {
 			for (Afferent afferent : afferents) {
 				afference.add(afferent);
 			}
-			logger.info("Class : " + klass.getName());
 		}
-
-		logger.info("Package : " + pakkage.getName() + ", interfaces : " + interfaces + ", implementations : " + implementations);
 
 		pakkage.setEfferent(efference);
 		pakkage.setAfferent(afference);

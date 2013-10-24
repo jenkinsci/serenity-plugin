@@ -53,11 +53,11 @@ public class Accumulator extends AProcess {
 		// Look for all jars below this directory to find some source
 		File dotDirectory = new File(".");
 		walkFileSystem(dotDirectory, files);
-		// logger.error("Files : " + files);
+		logger.debug("Files : " + files);
 
 		// Walk the class path looking for files that are included
 		String classpath = Configuration.getConfiguration().getClassPath();
-		// logger.error("Class path : " + File.pathSeparator + ", " + classpath);
+		logger.debug("Class path : " + File.pathSeparator + ", " + classpath);
 		StringTokenizer stringTokenizer = new StringTokenizer(classpath, ";:", false);
 		while (stringTokenizer.hasMoreTokens()) {
 			String token = stringTokenizer.nextToken();
@@ -69,7 +69,7 @@ public class Accumulator extends AProcess {
 
 	private void walkFileSystem(final File file, final Set<File> files) {
 		try {
-			// logger.error("Walking file : " + file);
+			logger.debug("Walking file : " + file);
 			if (file.isDirectory()) {
 				File[] childFiles = file.listFiles();
 				if (childFiles != null && childFiles.length > 0) {
@@ -159,7 +159,7 @@ public class Accumulator extends AProcess {
 			}
 			String sourceFilePath = Toolkit.slashToDot(Toolkit.cleanFilePath(file.getAbsolutePath()));
 			if (sourceFilePath.contains(className)) {
-				// logger.error("Got source file : " + sourceFilePath);
+				logger.debug("Got source file : " + sourceFilePath);
 				return file;
 			}
 		}
@@ -177,7 +177,7 @@ public class Accumulator extends AProcess {
 		try {
 			jarFile = new JarFile(file);
 		} catch (Exception e) {
-			// logger.error("Exeption accessing the jar : " + file, e);
+			logger.error("Exeption accessing the jar : " + file, e);
 			return;
 		}
 		Enumeration<JarEntry> jarEntries = jarFile.entries();
@@ -189,7 +189,7 @@ public class Accumulator extends AProcess {
 				continue;
 			}
 			try {
-				// logger.error("Processsing entry : " + className);
+				logger.debug("Processsing entry : " + className);
 				InputStream inputStream = jarFile.getInputStream(jarEntry);
 				byte[] classFileBytes = Toolkit.getContents(inputStream).toByteArray();
 				ByteArrayOutputStream source = null;
@@ -208,10 +208,10 @@ public class Accumulator extends AProcess {
 	protected ByteArrayOutputStream getSource(final JarFile jarFile, final String entryName) throws IOException {
 		// Look for the source
 		final String javaEntryName = entryName.substring(0, entryName.lastIndexOf('.')) + ".java";
-		// logger.error("Looking for source : " + javaEntryName + ", " + entryName + ", " + jarFile.getName());
+		logger.debug("Looking for source : " + javaEntryName + ", " + entryName + ", " + jarFile.getName());
 		ZipEntry javaEntry = jarFile.getEntry(javaEntryName);
 		if (javaEntry != null) {
-			// logger.error("Got source : " + javaEntry);
+			logger.debug("Got source : " + javaEntry);
 			InputStream inputStream = jarFile.getInputStream(javaEntry);
 			return Toolkit.getContents(inputStream);
 		}
@@ -223,7 +223,7 @@ public class Accumulator extends AProcess {
 		if (strippedName != null && strippedName.endsWith("class")) {
 			strippedName = strippedName.substring(0, strippedName.lastIndexOf('.'));
 		}
-		// logger.error("Adding class : " + strippedName);
+		logger.debug("Adding class : " + strippedName);
 		VisitorFactory.getClassVisitor(CLASS_ADAPTER_CLASSES, strippedName, classBytes, source);
 	}
 
@@ -233,17 +233,17 @@ public class Accumulator extends AProcess {
 			return true;
 		}
 		if (!name.endsWith("class") && !name.endsWith("java") && !name.endsWith("jar") && !name.endsWith("zip")) {
-			// logger.error("Not processing file : " + name);
+			logger.debug("Not processing file : " + name);
 			return true;
 		}
 		// Check that the class is included in the included packages
 		if (!Configuration.getConfiguration().included(name)) {
-			// logger.error("File not included : " + name);
+			logger.debug("File not included : " + name);
 			return true;
 		} else {
 			// Check that the class is not excluded in the excluded packages
 			if (Configuration.getConfiguration().excluded(name)) {
-				// logger.error("Excluded file : " + name);
+				logger.debug("Excluded file : " + name);
 				return true;
 			}
 		}

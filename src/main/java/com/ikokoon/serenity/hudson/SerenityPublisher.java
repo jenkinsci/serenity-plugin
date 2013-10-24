@@ -149,12 +149,17 @@ public class SerenityPublisher extends Recorder implements Serializable {
 
 			// Iterate over the database files that were found and merge them to the final database
 			for (final FilePath serenityOdb : serenityOdbs) {
-				File sourceFile = File.createTempFile("serenity", ".odb");
-				FilePath sourceFilePath = new FilePath(sourceFile);
-				serenityOdb.copyTo(sourceFilePath);
-				String sourcePath = sourceFile.getAbsolutePath();
-				IDataBase sourceDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, sourcePath, null);
+				if (serenityOdb.isDirectory()) {
+					continue;
+				}
+				String sourcePath = null;
+				IDataBase sourceDataBase = null;
 				try {
+					File sourceFile = File.createTempFile("serenity", ".odb");
+					FilePath sourceFilePath = new FilePath(sourceFile);
+					serenityOdb.copyTo(sourceFilePath);
+					sourcePath = sourceFile.getAbsolutePath();
+					sourceDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, sourcePath, null);
 					// Copy the data from the source into the target, then close the source
 					printStream.println("Copying database from... " + sourcePath + " to... " + targetPath);
 					DataBaseToolkit.copyDataBase(sourceDataBase, targetDataBase);
@@ -167,7 +172,13 @@ public class SerenityPublisher extends Recorder implements Serializable {
 					printStream.println("Unable to copy Serenity database file from : " + sourcePath + ", to : " + targetPath);
 					LOGGER.error(null, e);
 				} finally {
-					sourceDataBase.close();
+					if (sourceDataBase != null) {
+						try {
+							sourceDataBase.close();
+						} catch (Exception e) {
+							printStream.println("Exception closing the source database : " + sourcePath + ", target : " + targetPath);
+						}
+					}
 				}
 			}
 		} catch (Exception e) {

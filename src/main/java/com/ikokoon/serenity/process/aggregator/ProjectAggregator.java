@@ -44,10 +44,7 @@ public class ProjectAggregator extends AAggregator {
 
 	@SuppressWarnings("rawtypes")
 	protected void aggregate(Project<?, ?> project) {
-		logger.debug("Processing project : " + project);
-
 		List<Package> packages = dataBase.find(Package.class);
-		logger.debug("Packages : " + packages);
 
 		project.setTimestamp(new Date());
 
@@ -71,10 +68,6 @@ public class ProjectAggregator extends AAggregator {
 			if (line.getCounter() > 0) {
 				executed++;
 			}
-		}
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Lines : " + lines.size() + ", executed : " + executed);
 		}
 
 		if (lines.size() > 0) {

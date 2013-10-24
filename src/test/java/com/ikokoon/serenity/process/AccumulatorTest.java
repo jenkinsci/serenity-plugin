@@ -42,13 +42,13 @@ public class AccumulatorTest extends ATest implements IConstants {
 		classPath = Toolkit.replaceAll(classPath, "\\.\\", "\\");
 		classPath = Toolkit.replaceAll(classPath, "/./", "/");
 		System.setProperty("java.class.path", classPath);
-		
+
 		accumulator = new Accumulator(null);
 	}
-	
+
 	@After
 	public void after() {
-		Toolkit.deleteFile(new File("./serenity"), 3);
+		// Toolkit.deleteFile(new File("./serenity"), 3);
 	}
 
 	@Test
@@ -77,32 +77,33 @@ public class AccumulatorTest extends ATest implements IConstants {
 		String source = accumulator.getSource(jarFile, Toolkit.dotToSlash(Accumulator.class.getName()) + ".java").toString();
 		assertNotNull(source);
 	}
-	
+
 	@Test
 	public void excluded() {
 		Configuration.getConfiguration().excludedPackages.clear();
 		Configuration.getConfiguration().includedPackages.clear();
-		
+
 		Configuration.getConfiguration().excludedPackages.add("model");
 		Configuration.getConfiguration().excludedPackages.add("Mock");
 		Configuration.getConfiguration().excludedPackages.add("Test");
 		Configuration.getConfiguration().excludedPackages.add("Integration");
-		
+
 		Configuration.getConfiguration().includedPackages.add("ikube");
-		
+
 		boolean excluded = accumulator.isExcluded(".root..jenkins.jobs.ikube.workspace.code.com.src.main.java.ikube.toolkit.ObjectToolkit.java");
 		assertFalse(excluded);
-		excluded = accumulator.isExcluded(".usr.share.eclipse.workspace.serenity.work.workspace.ikube.code.core.serenity.ikube.action.index.handler.IIndexableHandler.class");
+		excluded = accumulator
+				.isExcluded(".usr.share.eclipse.workspace.serenity.work.workspace.ikube.code.core.serenity.ikube.action.index.handler.IIndexableHandler.class");
 		assertFalse(excluded);
 	}
 
 	@Test
 	@Ignore
 	public void getIkubeSource() {
-		System.setProperty("java.class.path", "/usr/share/eclipse/workspace/serenity/work/workspace/ikube");
+		System.setProperty("java.class.path", "/usr/share/eclipse/workspace/ikube");
 		Configuration.getConfiguration().includedPackages.add("ikube");
 		accumulator.execute();
-		
+
 		Class<?, ?> javaClass = dataBase.find(Class.class, Toolkit.hash("ikube.action.Action"));
 		assertNotNull(javaClass);
 	}

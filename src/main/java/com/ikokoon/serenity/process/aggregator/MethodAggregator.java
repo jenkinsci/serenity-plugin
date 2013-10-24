@@ -25,14 +25,10 @@ public class MethodAggregator extends AAggregator {
 	}
 
 	protected void aggregate(Method<?, ?> method) {
-		logger.debug("Processing method : " + method);
 		try {
 			double executed = 0d;
 			// Collect all the lines that were executed
 			for (Line<?, ?> line : method.getChildren()) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Line covered : " + line + ", " + line.getCounter());
-				}
 				if (line.getCounter() > 0) {
 					executed++;
 				}
