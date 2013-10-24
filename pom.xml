@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>serenity</artifactId>
-	<version>0.8-SNAPSHOT</version>
+	<version>0.8</version>
 	<packaging>hpi</packaging>
 	<name>Jenkins Serenity plugin</name>
 	<url>https://wiki.jenkins-ci.org/pages/viewpage.action?pageId=42468892</url>
@@ -262,4 +262,10 @@
 			<url>http://repo.jenkins-ci.org/public/</url>
 		</pluginRepository>
 	</pluginRepositories>
+
+  <scm>
+    <connection>scm:svn:https://svn.jenkins-ci.org/tags/serenity-0.8</connection>
+    <developerConnection>scm:svn:https://svn.jenkins-ci.org/tags/serenity-0.8</developerConnection>
+    <url>https://svn.jenkins-ci.org/tags/serenity-0.8</url>
+  </scm>
 </project>
