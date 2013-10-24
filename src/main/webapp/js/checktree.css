@@ -1,0 +1,33 @@
+/* Some formatting for the menu UL tags themselves; remove margins */
+ul.checktree,ul.checktree ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+	font: 10px sans-serif;
+}
+
+/*
+LI tags have a different background depending if they're the last node, and padding
+The script will automatically assign these CSS classes to LI tags depending on their
+expanded state, so we style them appropriately here.
+*/
+ul.checktree li {
+	margin: 0;
+	padding: 0 0 0 16px;
+	font-family: Arial, Sanserif, New Roman Times;
+	font-size: 12px;
+	color: #303030;
+}
+
+a:link {
+	color: #303030;
+} /* unvisited link */
+a:visited {
+	color: #303030;
+} /* visited link */
+a:hover {
+	color: #808080;
+} /* mouse over link */
+a:active {
+	color: #505050;
+} /* selected link */

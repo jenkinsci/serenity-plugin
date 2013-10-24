@@ -128,7 +128,6 @@ public class Configuration {
 		}
 
 		String includedJars = System.getProperty(IConstants.INCLUDED_JARS_PROPERTY);
-		logger.debug("Included jars : " + includedJars);
 		if (includedJars != null) {
 			StringTokenizer tokenizer = new StringTokenizer(includedJars, SEPARATOR, false);
 			while (tokenizer.hasMoreTokens()) {
@@ -166,14 +165,13 @@ public class Configuration {
 
 	private void addIncludedPackages() {
 		String packageNames = System.getProperty(IConstants.INCLUDED_PACKAGES_PROPERTY);
-		logger.debug("Package names : " + packageNames);
 		if (packageNames != null) {
 			StringTokenizer tokenizer = new StringTokenizer(packageNames, SEPARATOR, false);
 			while (tokenizer.hasMoreTokens()) {
 				String packageName = tokenizer.nextToken();
 				packageName = Toolkit.stripWhitespace(packageName);
 				includedPackages.add(packageName);
-				logger.debug("Added package to enhance : " + packageName);
+				logger.info("Added package to enhance : " + packageName);
 			}
 		}
 	}
@@ -185,6 +183,7 @@ public class Configuration {
 			while (tokenizer.hasMoreTokens()) {
 				String excludedPattern = tokenizer.nextToken();
 				excludedPackages.add(excludedPattern);
+				logger.info("Excluded pattern : " + excludedPattern);
 			}
 		}
 	}

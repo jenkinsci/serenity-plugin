@@ -166,7 +166,7 @@ public final class Collector implements IConstants {
 		// We try to delete the old file first
 		boolean deleted = file.delete();
 		if (!deleted) {
-			LOGGER.info("Didn't delete source coverage file : " + file);
+			LOGGER.debug("Didn't delete source coverage file : " + file);
 		}
 		if (!file.exists()) {
 			if (!Toolkit.createFile(file)) {
@@ -177,6 +177,8 @@ public final class Collector implements IConstants {
 			ISourceCode sourceCode = new CoverageSourceCode(klass, source);
 			String htmlSource = sourceCode.getSource();
 			Toolkit.setContents(file, htmlSource.getBytes());
+		} else {
+			LOGGER.warn("Source file does not exist : " + file);
 		}
 	}
 
@@ -318,8 +320,6 @@ public final class Collector implements IConstants {
 			pakkage.setInterfaces(0d);
 			pakkage.setImplementations(0d);
 			pakkage = (Package<Project<?, ?>, Class<?, ?>>) DATABASE.persist(pakkage);
-
-			LOGGER.debug("Added package : " + pakkage);
 		}
 		return pakkage;
 	}
@@ -345,7 +345,6 @@ public final class Collector implements IConstants {
 			klass.setParent(pakkage);
 
 			klass = (Class<?, ?>) DATABASE.persist(klass);
-			LOGGER.debug("Added class  : " + klass);
 		}
 		return klass;
 	}

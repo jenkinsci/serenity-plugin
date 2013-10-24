@@ -7,7 +7,7 @@
 			title: {
 				text: 'compositeName',
 				style: {
-					margin: '3px 0 0 0' // center it
+					margin: '3px 0px 0px 0px' // center it
 				}
 			},
 			xAxis: [{

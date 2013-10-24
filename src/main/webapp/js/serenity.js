@@ -8,45 +8,67 @@
  *            the class of the composite, i.e. Project, Package or Class
  * @param id
  *            the id of the composite
+ * @param the event so we can stop the checktree function opening the class method           
  * @return nothing
  */
-function loadFrames(klass, id) {
-	// alert('Load frames : ' + class + ', ' + id);
+function loadFrames(klass, id, evt) {
 	var xmlhttp = null;
-	// Object of the current windows
 	if (window.XMLHttpRequest) {
 		// Firefox, Safari, ...
 		xmlhttp = new XMLHttpRequest();
 	} else if (window.ActiveXObject) {
-		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); // Internet Explorer
+		// Internet Explorer
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
 	}
 	xmlhttp.onreadystatechange = function() {
-		// instructions to process the response
 		if (xmlhttp.readyState == 4) {
-			// Received, OK
 			if (xmlhttp.status == 200) {
 				var d = window.document;
-				// var d = window.parent.document;
 				var f = d.frames ? d.frames['chart'] : d.getElementById('chart');
 				var p = f.document || f.contentWindow.document;
-				// alert('P : 0 : ' + p);
 				p.location.reload(true);
-				// window.parent.document.getElementById('chart').contentWindow.location
-				// .reload(true);
-				// alert('Model : ' + xmlhttp.responseText);
 				if (klass == 'com.ikokoon.serenity.model.Class') {
-					f = d.frames ? d.frames['source'] : d.getElementById('source');
-					p = f.document || f.contentWindow.document;
-					p.location.reload(true);
-					// alert('P : 1 : ' + p);
-					// window.parent.document.getElementById('source').contentWindow.location
-					// .reload(true);
+					loadSource();
 				}
 			}
 		}
 	}
 	var url = 'SerenityResult/target?class=' + klass + '&id=' + id;
 	xmlhttp.open('POST', url); // , true
+	xmlhttp.send(); // null
+	
+	evt = evt || window.event;
+    if (typeof evt.stopPropagation != "undefined") {
+        evt.stopPropagation();
+    } else {
+        evt.cancelBubble = true;
+    }
+}
+
+function loadSource() {
+	var xmlhttp = null;
+	// Object of the current windows
+	if (window.XMLHttpRequest) {
+		// Firefox, Safari, ...
+		xmlhttp = new XMLHttpRequest();
+	} else if (window.ActiveXObject) {
+		 // Internet Explorer
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4) {
+			if (xmlhttp.status == 200) {
+				var d = window.document;
+				var s = d.getElementById('source');
+				s = (s.contentWindow) ? s.contentWindow : (s.contentDocument.document) ? s.contentDocument.document : s.contentDocument;
+				s.document.open();
+				s.document.write(xmlhttp.responseText);
+				s.document.close();
+			}
+		}
+	}
+	var url = 'SerenityResult/source';
+	xmlhttp.open('GET', url); // , true
 	xmlhttp.send(); // null
 }
 
@@ -61,38 +83,8 @@ function resizeFrames() {
 	var chart = document.frames ? document.frames['chart'] : document.getElementById('chart');
 	chart.height = 180;
 	var source = document.frames ? document.frames['source'] : document.getElementById('source');
-	source.height = usableHeight - chart.height;
-	var treeDiv = document.getElementById('treeDiv');
-	treeDiv.style.width = 330;
-	treeDiv.style.height = usableHeight;
-	// alert('Width : ' + pageWidth() + ', height : ' + pageHeight() + ', chart : ' + chart.height + ', source : ' + source.height + ', tree div : ' + treeDiv.style.height);
-}
-
-var tree;
-/**
- * This function takes the 'xmp' tags and loads the JavaScript navigation tree.
- * @return nothing
- */
-function loadTree() {
-	tree = dhtmlXTreeFromHTML('treeDiv');
-	// alert('Load tree : ' + tree);
-	tree.setOnClickHandler(onClick);
-	// alert('Load tree : 0 : ' + tree);
-}
-
-/**
- * This function is the event handler for the tree.
- *
- * @param id the id of the tree item
- * @return nothing
- */
-function onClick(id) {
-	// alert('On click : ' + id + ', ' + tree);
-	var klassName = tree.getUserData(id, 'klass');
-	if (!id || !klassName) {
-		return;
-	}
-	loadFrames(klassName, id);
+	source.height = usableHeight - chart.height - 65;
+	// alert('Width : ' + pageWidth() + ', height : ' + pageHeight() + ', chart : ' + chart.height + ', source : ' + source.height);
 }
 
 // Browser Window Size and Position

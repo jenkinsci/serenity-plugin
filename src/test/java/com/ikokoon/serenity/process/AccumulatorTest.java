@@ -12,6 +12,7 @@ import java.util.jar.JarFile;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ikokoon.serenity.ATest;
@@ -31,14 +32,6 @@ import com.ikokoon.toolkit.Toolkit;
  */
 public class AccumulatorTest extends ATest implements IConstants {
 
-//	@MockClass(realClass = Configuration.class)
-//	public static class ConfigurationMock {
-//		@Mock
-//		public String getClassPath() {
-//			return "/usr/share/eclipse/workspace/ikube";
-//		}
-//	}
-	
 	private Accumulator accumulator;
 
 	@Before
@@ -99,18 +92,19 @@ public class AccumulatorTest extends ATest implements IConstants {
 		
 		boolean excluded = accumulator.isExcluded(".root..jenkins.jobs.ikube.workspace.code.com.src.main.java.ikube.toolkit.ObjectToolkit.java");
 		assertFalse(excluded);
+		excluded = accumulator.isExcluded(".usr.share.eclipse.workspace.serenity.work.workspace.ikube.code.core.serenity.ikube.action.index.handler.IIndexableHandler.class");
+		assertFalse(excluded);
 	}
 
-//	@Test
-//	public void getIkubeSource() {
-//		try {
-//			Configuration.getConfiguration().includedPackages.add("ikube");
-//			Mockit.setUpMocks(ConfigurationMock.class);
-//			Accumulator accumulator = new Accumulator(null);
-//			accumulator.execute();
-//		} finally {
-//			Mockit.tearDownMocks();
-//		}
-//	}
+	@Test
+	@Ignore
+	public void getIkubeSource() {
+		System.setProperty("java.class.path", "/usr/share/eclipse/workspace/serenity/work/workspace/ikube");
+		Configuration.getConfiguration().includedPackages.add("ikube");
+		accumulator.execute();
+		
+		Class<?, ?> javaClass = dataBase.find(Class.class, Toolkit.hash("ikube.action.Action"));
+		assertNotNull(javaClass);
+	}
 
 }

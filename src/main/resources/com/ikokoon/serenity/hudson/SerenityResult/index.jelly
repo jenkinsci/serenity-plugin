@@ -3,24 +3,28 @@
 	<l:layout>
 		<st:include it="${it.owner}" page="sidepanel.jelly" />
 		<l:main-panel>
-			<link rel="stylesheet" type="text/css" href="${rootURL}/plugin/serenity/js/dhtmlxtree.css" />
-
+			<link rel="stylesheet" type="text/css" href="${rootURL}/plugin/serenity/js/checktree.css" />
+			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/checktree.js" />
 			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/serenity.js" />
-			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/dhtmlxcommon.js" />
-			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/ext/dhtmlxtree_start.js" />
-			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/dhtmlxtree.js" />
+			
 			<script type="text/javascript">
-				dhtmlx.skin = "dhx_skyblue";
-				window.onresize = function () {
+				var chtOldOL = window.onload;
+ 				window.onresize = function () {
 					resizeFrames();
-					// loadTree();
-				}
+				};
 				window.onload = function() {
 					resizeFrames();
-					loadTree();
-				}
-			</script>
-
+					if (chtOldOL) {
+						chtOldOL();
+					}
+					for ( var i in CheckTree.list) {
+						CheckTree.list[i].init()
+					}
+				};
+				
+ 				var packages = new CheckTree('packages');
+ 			</script>
+ 			
 			<table border="0" width="100%">
 				<tr>
 					<td colspan="2">
@@ -37,81 +41,109 @@
 					</td>
 				</tr>
 				<tr>
-					<td width="30%" valign="top">
-						<j:set var="ACC_DEFAULT" value="0" />
-						<j:set var="ACC_PUBLIC" value="1" />
-						<j:set var="ACC_PRIVATE" value="2" />
-						<j:set var="ACC_PROTECTED" value="4" />
-						<div id="treeDiv" setImagePath="${rootURL}/plugin/serenity/js/imgs/" class="dhtmlxTree">
-							<xmp container="true">
-								<j:forEach var="package" items="${it.packages}">
-									<item text="${package.name} (${package.coverage},${package.complexity},${package.stability})" id="${package.id}" call="true">
-										<userdata name="klass">${package.class.name}</userdata>
-										<j:forEach var="klass" items="${package.children}">
-											<item text="${klass.name} (${klass.coverage},${klass.complexity},${klass.stability})" id="${klass.id}" call="true" im0="leaf.gif" im1="leaf.gif"
-												im2="leaf.gif">
-												<userdata name="klass">${klass.class.name}</userdata>
-												<j:forEach var="innerKlass" items="${klass.innerClasses}">
-													<j:set var="classIcon" value="innerclass_default_obj.gif" />
-                                                    <j:if test="${(innerKlass.access &amp; ACC_PUBLIC) == ACC_PUBLIC}">
-														<j:set var="classIcon" value="innerclass_public_obj.gif" />
+					<td valign="top" nowrap="nowrap">
+						<div style="width : 300px; height: 550px; overflow : scroll;">
+							<j:set var="ACC_DEFAULT" value="0" />
+							<j:set var="ACC_PUBLIC" value="1" />
+							<j:set var="ACC_PRIVATE" value="2" />
+							<j:set var="ACC_PROTECTED" value="4" />			
+									
+							<ul id="tree-packages" class="checktree">
+							<j:forEach var="package" items="${it.packages}">
+								<li id="show-classes-${package.name}">
+									<img src="${rootURL}/plugin/serenity/js/imgs/package.gif" />
+									<a 
+										href="#" 
+										onClick="loadFrames('com.ikokoon.serenity.model.Package', '${package.id}', event)"
+										style="text-decoration : none;">&#160;
+										${package.name} (${package.coverage},${package.complexity},${package.stability})
+									</a>
+									
+									<ul id="tree-classes-${package.name}">
+									<j:forEach var="klass" items="${package.children}">
+										<li id="show-inner-and-methods-${klass.name}">
+											<j:set var="classIcon" value="class.gif" />
+											<j:if test="${(klass.access &amp; ACC_PUBLIC) != ACC_PUBLIC}">
+   		 									<j:set var="classIcon" value="class_default.gif" />
+											</j:if>
+											<img src="${rootURL}/plugin/serenity/js/imgs/${classIcon}" />
+											<a 
+												href="#" 
+												onClick="loadFrames('com.ikokoon.serenity.model.Class', '${klass.id}', event)"
+												style="text-decoration : none;">&#160;
+													${klass.name} (${klass.coverage},${klass.complexity},${klass.stability},${klass.access})
+											</a>
+											
+											<ul id="tree-inner-and-methods-${klass.name}">
+											<j:forEach var="innerKlass" items="${klass.innerClasses}">
+												<li>
+													<j:set var="innerClassIcon" value="innerclass_public_obj.gif" />
+													<j:if test="${(innerKlass.access &amp; ACC_PRIVATE) == ACC_PRIVATE}">
+   			 											<j:set var="innerClassIcon" value="innerclass_private_obj.gif" />
 													</j:if>
 													<j:if test="${(innerKlass.access &amp; ACC_DEFAULT) == ACC_DEFAULT}">
-														<j:set var="classIcon" value="innerclass_default_obj.gif" />
+   			 											<j:set var="innerClassIcon" value="innerclass_default_obj.gif" />
 													</j:if>
 													<j:if test="${(innerKlass.access &amp; ACC_PROTECTED) == ACC_PROTECTED}">
-														<j:set var="classIcon" value="innerclass_protected_obj.gif" />
+   		 												<j:set var="innerClassIcon" value="innerclass_protected_obj.gif" />
 													</j:if>
-													<j:if test="${(innerKlass.access &amp; ACC_PRIVATE) == ACC_PRIVATE}">
-														<j:set var="classIcon" value="innerclass_private_obj.gif" />
+													<j:if test="${(innerKlass.access &amp; ACC_PUBLIC) == ACC_PUBLIC}">
+   		 												<j:set var="innerClassIcon" value="innerclass_public_obj.gif" />
 													</j:if>
-                                                    <item text="${innerKlass.name} (${innerKlass.coverage},${innerKlass.complexity},${innerKlass.stability})" call="false"
-														im0="${classIcon}" im1="${classIcon}" im2="${classIcon}">
-													</item>
-												</j:forEach>
-												<j:forEach var="method" items="${klass.children}">
-	                                                <j:set var="methodIcon" value="methdef_obj.gif" />
-													<j:if test="${(method.access &amp; ACC_PUBLIC) == ACC_PUBLIC}">
-														<j:set var="methodIcon" value="methpub_obj.gif" />
+													
+													<img src="${rootURL}/plugin/serenity/js/imgs/${innerClassIcon}" />
+													${innerKlass.name} (${innerKlass.coverage},${innerKlass.complexity},${innerKlass.stability})
+												</li>
+											</j:forEach>
+												
+											<j:forEach var="method" items="${klass.children}">
+												<li>
+													<j:set var="methodIcon" value="methpub_obj.gif" />
+													<j:if test="${(method.access &amp; ACC_PRIVATE) == ACC_PRIVATE}">
+   	 													<j:set var="methodIcon" value="methpri_obj.gif" />
 													</j:if>
 													<j:if test="${(method.access &amp; ACC_DEFAULT) == ACC_DEFAULT}">
-														<j:set var="classIcon" value="methdef_obj.gif" />
+   	 													<j:set var="methodIcon" value="methdef_obj.gif" />
 													</j:if>
 													<j:if test="${(method.access &amp; ACC_PROTECTED) == ACC_PROTECTED}">
-														<j:set var="methodIcon" value="methpro_obj.gif" />
+   	 													<j:set var="methodIcon" value="methpro_obj.gif" />
 													</j:if>
-													<j:if test="${(method.access &amp; ACC_PRIVATE) == ACC_PRIVATE}">
-														<j:set var="methodIcon" value="methpri_obj.gif" />
+													<j:if test="${(method.access &amp; ACC_PUBLIC) == ACC_PUBLIC}">
+   	 													<j:set var="methodIcon" value="methpub_obj.gif" />
 													</j:if>
-													<item text="${method.name} (${method.coverage},${method.complexity})" call="false"
-                                                        im0="${methodIcon}" im1="${methodIcon}" im2="${methodIcon}">
-													</item>
-												</j:forEach>
-											</item>
-										</j:forEach>
-									</item>
-								</j:forEach>
-							</xmp>
+													<img src="${rootURL}/plugin/serenity/js/imgs/${methodIcon}" />
+													${method.name} (${method.coverage},${method.complexity})
+												</li>
+											</j:forEach>
+											</ul>
+										</li>
+									</j:forEach>
+									</ul>
+								</li>
+							</j:forEach>
+							</ul>
 						</div>
 					</td>
+
 					<td width="70%" height="100%" valign="top">
-						<table width="100%" height="100%" border="0">
+						<table width="100%" height="100%">
 							<tr>
-								<td width="100%" height="30%" valign="top">
-									<iframe src="chart" width="100%" height="100%" id="chart" name="chart" frameborder="0">
+								<td border="3">
+									<iframe id="chart" name="chart" src="chart" width="100%" height="100%" scrolling="no" style="border : 0px solid white;">
 										<p>Your browser does not support internal frames.</p>
 									</iframe>
 								</td>
 							</tr>
 							<tr>
 								<td width="100%" height="70%" valign="top">
-									<iframe src="source" width="100%" height="100%" id="source" name="source" frameborder="0">
+									<iframe id="source" name="source" src="source" width="100%" height="100%" scrolling="auto" style="border : 0px solid white;">
 										<p>Your browser does not support internal frames.</p>
 									</iframe>
 								</td>
 							</tr>
 						</table>
 					</td>
+
 				</tr>
 			</table>
 		</l:main-panel>

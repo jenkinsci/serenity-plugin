@@ -69,6 +69,7 @@ public class Accumulator extends AProcess {
 
 	private void walkFileSystem(final File file, final Set<File> files) {
 		try {
+			// logger.error("Walking file : " + file);
 			if (file.isDirectory()) {
 				File[] childFiles = file.listFiles();
 				if (childFiles != null && childFiles.length > 0) {
@@ -118,7 +119,7 @@ public class Accumulator extends AProcess {
 				int classIndex = filePath.lastIndexOf(".class");
 				if (classIndex > -1) {
 					final String className = filePath.substring(indexOfPackageName, classIndex);
-					if (isExcluded(filePath)) {
+					if (isExcluded(className + ".class")) {
 						continue;
 					}
 					ByteArrayOutputStream source = new ByteArrayOutputStream();
@@ -239,11 +240,12 @@ public class Accumulator extends AProcess {
 		if (!Configuration.getConfiguration().included(name)) {
 			// logger.error("File not included : " + name);
 			return true;
-		}
-		// Check that the class is not excluded in the excluded packages
-		if (Configuration.getConfiguration().excluded(name)) {
-			// logger.error("Excluded file : " + name);
-			return true;
+		} else {
+			// Check that the class is not excluded in the excluded packages
+			if (Configuration.getConfiguration().excluded(name)) {
+				// logger.error("Excluded file : " + name);
+				return true;
+			}
 		}
 		return false;
 	}

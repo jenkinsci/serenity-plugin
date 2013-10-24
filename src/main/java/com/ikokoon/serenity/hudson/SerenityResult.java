@@ -30,7 +30,7 @@ import com.ikokoon.toolkit.Toolkit;
 
 /**
  * This is the result that will be used to render the results on the front end.
- *
+ * 
  * @author Michael Couck
  * @since 12.08.09
  * @version 01.00
@@ -47,32 +47,25 @@ public class SerenityResult implements ISerenityResult {
 
 	/**
 	 * Constructor takes the real action that generated the build for the project.
-	 *
-	 * @param abstractBuild
-	 *            the build action that generated the build for the project
+	 * 
+	 * @param abstractBuild the build action that generated the build for the project
 	 */
 	public SerenityResult(AbstractBuild<?, ?> abstractBuild) {
-		logger.debug("SerenityResult");
 		this.abstractBuild = abstractBuild;
 	}
 
 	/**
-	 * This method is called from the front end. The result from the call will result in some piece of data being extracted from the database. For
-	 * example if the user clicks on a package the name of the package will be used to get that package from the database and will be made available
-	 * to the UI.
-	 *
-	 * @param token
-	 *            the token from the front end
-	 * @param req
-	 *            the Stapler request from the ui
-	 * @param rsp
-	 *            the Stapler response for the ui
+	 * This method is called from the front end. The result from the call will result in some piece of data being extracted from the database. For example if
+	 * the user clicks on a package the name of the package will be used to get that package from the database and will be made available to the UI.
+	 * 
+	 * @param token the token from the front end
+	 * @param req the Stapler request from the ui
+	 * @param rsp the Stapler response for the ui
 	 * @return the result which is this class
 	 * @throws IOException
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) throws Exception {
-		logger.debug("getDynamic:" + token);
+	public Object getDynamic(final String token, final StaplerRequest req, final StaplerResponse rsp) throws Exception {
 
 		String klass = req.getParameter("class");
 		String id = req.getParameter("id");
@@ -86,8 +79,7 @@ public class SerenityResult implements ISerenityResult {
 				}
 				java.lang.Class _klass = java.lang.Class.forName(klass);
 				dataBase = getDataBase(abstractBuild);
-				composite = dataBase.find((java.lang.Class<Composite<?, ?>>) _klass, _id);
-				logger.debug("Class : " + klass + ", id : " + id + ", " + composite);
+				composite = dataBase.find(_klass, _id);
 			}
 		} catch (Exception e) {
 			logger.error("Exception initialising the model and the source for : " + klass + ", " + id, e);
@@ -99,12 +91,10 @@ public class SerenityResult implements ISerenityResult {
 	}
 
 	public Object getOwner() {
-		logger.debug("getOwner");
 		return this.abstractBuild;
 	}
 
 	public String getName() {
-		logger.debug("getName");
 		if (abstractBuild != null) {
 			AbstractProject<?, ?> abstractProject = abstractBuild.getProject();
 			if (abstractProject != null) {
@@ -115,7 +105,6 @@ public class SerenityResult implements ISerenityResult {
 	}
 
 	public boolean hasReport() {
-		logger.debug("hasReport");
 		IDataBase dataBase = null;
 		try {
 			dataBase = getDataBase(abstractBuild);
@@ -126,7 +115,6 @@ public class SerenityResult implements ISerenityResult {
 	}
 
 	public Project<?, ?> getProject() {
-		logger.debug("getProject");
 		if (project == null) {
 			IDataBase dataBase = null;
 			try {
@@ -136,13 +124,11 @@ public class SerenityResult implements ISerenityResult {
 				closeDataBase(dataBase);
 			}
 		}
-		// LOGGER.debug("Project : " + ToStringBuilder.reflectionToString(project));
 		return project;
 	}
 
 	@SuppressWarnings("rawtypes")
 	public List<Package> getPackages() {
-		logger.debug("getPackages");
 		IDataBase dataBase = null;
 		try {
 			dataBase = getDataBase(abstractBuild);
@@ -187,7 +173,6 @@ public class SerenityResult implements ISerenityResult {
 	}
 
 	public String getModel() {
-		logger.debug("getModel");
 		if (composite == null) {
 			return "";
 		}
@@ -195,7 +180,6 @@ public class SerenityResult implements ISerenityResult {
 	}
 
 	public String getProjectModel() {
-		logger.debug("getProjectModel");
 		// Move the build forward to the last build because Hudson will go to the last stable build
 		// which we don't want, we want the last build
 		AbstractBuild<?, ?> abstractBuild = getLastBuild(this.abstractBuild);
@@ -210,11 +194,10 @@ public class SerenityResult implements ISerenityResult {
 			project.setName(projectName);
 		}
 
-		String model = getModel("ProjectSmall", project);
-		return model;
+		return getModel("ProjectSmall", project);
 	}
 
-	private AbstractBuild<?, ?> getLastBuild(AbstractBuild<?, ?> abstractBuild) {
+	private AbstractBuild<?, ?> getLastBuild(final AbstractBuild<?, ?> abstractBuild) {
 		if (abstractBuild.getNextBuild() == null) {
 			return abstractBuild;
 		}
@@ -226,33 +209,34 @@ public class SerenityResult implements ISerenityResult {
 	}
 
 	public String getSource() {
-		logger.debug("getSource");
 		return getSource(composite);
 	}
 
-	public String getFile(String name) {
+	public String getFile(final String name) {
 		return Toolkit.getContents(this.getClass().getResourceAsStream(name)).toString();
 	}
 
-	private String getSource(Composite<?, ?> composite) {
-		logger.debug("getSource");
-		if (composite instanceof Class<?, ?>) {
+	private String getSource(final Composite<?, ?> composite) {
+		if (composite != null && Class.class.isAssignableFrom(composite.getClass())) {
 			String className = ((Class<?, ?>) composite).getName();
-			String sourceFilePath = abstractBuild.getRootDir().getAbsolutePath() + File.separator + IConstants.SERENITY_SOURCE + File.separator
-					+ className + ".html";
-			logger.debug("Looking for source : " + sourceFilePath);
-			File sourceFile = new File(sourceFilePath);
+			
+			StringBuilder sourceFilePath = new StringBuilder(abstractBuild.getRootDir().getAbsolutePath());
+			sourceFilePath.append(File.separator);
+			sourceFilePath.append(IConstants.SERENITY_SOURCE);
+			sourceFilePath.append(File.separator);
+			sourceFilePath.append(className);
+			sourceFilePath.append(".html");
+			
+			File sourceFile = new File(sourceFilePath.toString());
 			if (sourceFile.exists()) {
-				String source = Toolkit.getContents(sourceFile).toString();
-				return source;
+				return Toolkit.getContents(sourceFile).toString();
 			}
 		}
 		return "";
 	}
 
 	@SuppressWarnings("unchecked")
-	public String getModel(String modelName, Composite<?, ?> composite) {
-		logger.debug("getModel");
+	public String getModel(final String modelName, final Composite<?, ?> composite) {
 		if (composite == null) {
 			return "";
 		}
@@ -261,8 +245,8 @@ public class SerenityResult implements ISerenityResult {
 		LinkedList<Integer> buildNumbers = new LinkedList<Integer>();
 		buildNumbers.addFirst(abstractBuild.number);
 
-		composites = getPreviousComposites((java.lang.Class<Composite<?, ?>>) composite.getClass(), abstractBuild, composites, buildNumbers,
-				composite.getId(), 1);
+		composites = getPreviousComposites((java.lang.Class<Composite<?, ?>>) composite.getClass(), abstractBuild, composites, buildNumbers, composite.getId(),
+				1);
 
 		IModeller modeller = new HighchartsModeller(modelName, buildNumbers.toArray(new Integer[buildNumbers.size()]));
 		modeller.visit(composite.getClass(), composites.toArray(new Composite[composites.size()]));
@@ -271,12 +255,11 @@ public class SerenityResult implements ISerenityResult {
 	}
 
 	@SuppressWarnings("unchecked")
-	LinkedList<Composite<?, ?>> getPreviousComposites(java.lang.Class<Composite<?, ?>> klass, AbstractBuild<?, ?> abstractBuild,
-			LinkedList<Composite<?, ?>> composites, LinkedList<Integer> buildNumbers, Long id, int history) {
+	LinkedList<Composite<?, ?>> getPreviousComposites(final java.lang.Class<Composite<?, ?>> klass, final AbstractBuild<?, ?> abstractBuild,
+			final LinkedList<Composite<?, ?>> composites, final LinkedList<Integer> buildNumbers, final Long id, final int history) {
 		if (history >= HISTORY) {
 			return composites;
 		}
-		logger.debug("Abstract build : " + abstractBuild);
 		AbstractBuild<?, ?> previousBuild = abstractBuild.getPreviousBuild();
 		if (previousBuild == null) {
 			return composites;
@@ -286,18 +269,17 @@ public class SerenityResult implements ISerenityResult {
 			return composites;
 		}
 		Composite<?, ?> composite = dataBase.find(klass, id);
-		logger.debug("Looking for composite : " + id + ", " + composite);
 		closeDataBase(dataBase);
 		if (composite == null) {
 			return composites;
 		}
 		composites.addFirst(composite);
 		buildNumbers.addFirst(previousBuild.number);
-		return getPreviousComposites((java.lang.Class<Composite<?, ?>>) composite.getClass(), previousBuild, composites, buildNumbers, id, ++history);
+		return getPreviousComposites((java.lang.Class<Composite<?, ?>>) composite.getClass(), previousBuild, composites, buildNumbers, id, history + 1);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void printParameters(StaplerRequest req) {
+	protected void printParameters(final StaplerRequest req) {
 		Enumeration<String> parameterNames = req.getParameterNames();
 		while (parameterNames.hasMoreElements()) {
 			String parameterName = parameterNames.nextElement();
@@ -305,12 +287,12 @@ public class SerenityResult implements ISerenityResult {
 		}
 	}
 
-	private IDataBase getDataBase(AbstractBuild<?, ?> abstractBuild) {
+	private IDataBase getDataBase(final AbstractBuild<?, ?> abstractBuild) {
 		String dataBaseFile = abstractBuild.getRootDir().getAbsolutePath() + File.separator + IConstants.DATABASE_FILE_ODB;
 		return IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, dataBaseFile, null);
 	}
 
-	private void closeDataBase(IDataBase dataBase) {
+	private void closeDataBase(final IDataBase dataBase) {
 		try {
 			if (dataBase != null) {
 				dataBase.close();

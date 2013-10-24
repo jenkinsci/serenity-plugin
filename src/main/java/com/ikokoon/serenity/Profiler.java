@@ -121,7 +121,7 @@ public class Profiler {
 			};
 			timer.schedule(timerTask, snapshptInterval, snapshptInterval);
 		}
-		LOGGER.info("Profiler initialize : " + dataBase + ", " + snapshptInterval + ", " + reportInterval);
+		// LOGGER.info("Profiler initialize : " + dataBase + ", " + snapshptInterval + ", " + reportInterval);
 		TIME_UNIT_DENOMINATOR = Configuration.getConfiguration().getTimeUnitDenominator();
 	}
 

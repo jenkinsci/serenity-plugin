@@ -75,7 +75,8 @@ public class SerenityPublisher extends Recorder implements Serializable {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener buildListener) throws InterruptedException, IOException {
+	public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener buildListener) throws InterruptedException,
+			IOException {
 		PrintStream printStream = buildListener.getLogger();
 		try {
 			printStream.println("Publishing Serenity reports...");
@@ -115,7 +116,8 @@ public class SerenityPublisher extends Recorder implements Serializable {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	private IDataBase copyDataBasesToBuildDirectory(AbstractBuild<?, ?> build, BuildListener buildListener) throws InterruptedException, IOException {
+	private IDataBase copyDataBasesToBuildDirectory(final AbstractBuild<?, ?> build, final BuildListener buildListener) throws InterruptedException,
+			IOException {
 		final PrintStream printStream = buildListener.getLogger();
 		IDataBase targetDataBase = null;
 
@@ -135,7 +137,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 			// The list of Serenity database files found in the module roots
 			List<FilePath> serenityOdbs = new ArrayList<FilePath>();
 			Pattern pattern = Pattern.compile(SERENITY_ODB_REGEX);
-			for (FilePath moduleRoot : moduleRoots) {
+			for (final FilePath moduleRoot : moduleRoots) {
 				// printStream.println("Module root : " + moduleRoot.toURI());
 				try {
 					findFilesAndDirectories(moduleRoot, serenityOdbs, pattern, printStream);
@@ -146,7 +148,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 			}
 
 			// Iterate over the database files that were found and merge them to the final database
-			for (FilePath serenityOdb : serenityOdbs) {
+			for (final FilePath serenityOdb : serenityOdbs) {
 				File sourceFile = File.createTempFile("serenity", ".odb");
 				FilePath sourceFilePath = new FilePath(sourceFile);
 				serenityOdb.copyTo(sourceFilePath);
@@ -192,13 +194,14 @@ public class SerenityPublisher extends Recorder implements Serializable {
 				public boolean accept(final File pathname) {
 					String stringFilePath = Toolkit.cleanFilePath(pathname.getAbsolutePath());
 					boolean match = pattern.matcher(stringFilePath).matches();
+					// printStream.println("File path : " + stringFilePath + ", " + match + ", " + stringFilePath.contains("serenity/source"));
 					return match || stringFilePath.contains("serenity/source");
 				}
 			}
 			List<FilePath> list = filePath.list(new FileFilterImpl());
 			if (list != null) {
 				filePaths.addAll(list);
-				for (FilePath childFilePath : filePath.list()) {
+				for (final FilePath childFilePath : filePath.list()) {
 					findFilesAndDirectories(childFilePath, filePaths, pattern, printStream);
 				}
 			}
@@ -214,7 +217,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 	 * @param buildListener the build listener that has the LOGGER in it
 	 * @param targetDataBase the target database to aggregate
 	 */
-	private void aggregate(AbstractBuild<?, ?> build, BuildListener buildListener, IDataBase targetDataBase) {
+	private void aggregate(final AbstractBuild<?, ?> build, final BuildListener buildListener, final IDataBase targetDataBase) {
 		try {
 			buildListener.getLogger().println("Aggregating data... ");
 			new Aggregator(null, targetDataBase).execute();
@@ -231,7 +234,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 	 * @param buildListener the build listener that has the LOGGER in it
 	 * @param targetDataBase the target database to aggregate
 	 */
-	private void prune(AbstractBuild<?, ?> build, BuildListener buildListener, IDataBase targetDataBase) {
+	private void prune(final AbstractBuild<?, ?> build, final BuildListener buildListener, final IDataBase targetDataBase) {
 		try {
 			buildListener.getLogger().println("Pruning data...");
 			new Pruner(null, targetDataBase).execute();
@@ -241,7 +244,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 		}
 	}
 
-	private boolean copySourceToBuildDirectory(AbstractBuild<?, ?> build, final BuildListener buildListener) throws InterruptedException, IOException {
+	private boolean copySourceToBuildDirectory(final AbstractBuild<?, ?> build, final BuildListener buildListener) throws InterruptedException, IOException {
 		try {
 			FilePath workSpace = build.getWorkspace();
 			PrintStream printStream = buildListener.getLogger();
@@ -299,7 +302,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 
 	@Override
 	@SuppressWarnings("rawtypes")
-	public Action getProjectAction(AbstractProject abstractProject) {
+	public Action getProjectAction(final AbstractProject abstractProject) {
 		return new SerenityProjectAction(abstractProject);
 	}
 
@@ -327,7 +330,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 
 		@Override
 		@SuppressWarnings("rawtypes")
-		public boolean isApplicable(java.lang.Class<? extends AbstractProject> jobType) {
+		public boolean isApplicable(final java.lang.Class<? extends AbstractProject> jobType) {
 			return true;
 		}
 
@@ -335,7 +338,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
+		public boolean configure(final StaplerRequest req, final JSONObject json) throws FormException {
 			req.bindParameters(this, "serenity.");
 			save();
 			return super.configure(req, json);
@@ -345,7 +348,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 		 * Creates a new instance of {@link SerenityPublisher} from a submitted form.
 		 */
 		@Override
-		public SerenityPublisher newInstance(StaplerRequest req, JSONObject json) throws FormException {
+		public SerenityPublisher newInstance(final StaplerRequest req, final JSONObject json) throws FormException {
 			SerenityPublisher instance = req.bindParameters(SerenityPublisher.class, "serenity.");
 			return instance;
 		}
