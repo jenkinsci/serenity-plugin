@@ -650,6 +650,31 @@ public final class Toolkit {
 		}
 		return allCreated;
 	}
+	
+	public static final synchronized File getOrCreateDirectory(final String filePath) {
+		return (filePath == null) ? null : getOrCreateDirectory(new File(filePath));
+	}
+	
+	/**
+	 * Gets a single directory. First looking to find it, if it can not be found then it is created.
+	 * 
+	 * @param file the directory that is requested
+	 * @return the found or newly created {@link File} or <code>null</code> if something went wrong.
+	 */
+	public static final synchronized File getOrCreateDirectory(final File file) {
+		try {
+			if (file.exists() && file.isDirectory()) {
+				return file;
+			}
+			boolean created = file.mkdirs();
+			if (created && file.exists()) {
+				return file;
+			}
+			return null;
+		} finally {
+			Toolkit.class.notifyAll();
+		}
+	}
 
 	public static final String serialize(final Object object) {
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

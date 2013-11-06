@@ -19,18 +19,27 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import com.ikokoon.serenity.ATest;
+import com.ikokoon.serenity.IConstants;
 import com.ikokoon.toolkit.Toolkit;
 
 public class SerenityPublisherTest extends ATest {
 
 	private File sourceDirectory;
+	private PrintStream printStream;
 	private SerenityPublisher serenityPublisher;
 
 	@Before
 	public void before() {
-		sourceDirectory = new File("./serenity/source");
-		Toolkit.createFile(sourceDirectory);
+		printStream = Mockito.mock(PrintStream.class);
+		sourceDirectory = new File("./" + IConstants.SERENITY_SOURCE_DIRECTORY);
+		Toolkit.getOrCreateDirectory(sourceDirectory);
 		serenityPublisher = new SerenityPublisher();
+		Mockito.doAnswer(new Answer<Void>() {
+			public Void answer(final InvocationOnMock invocation) throws Throwable {
+				LOGGER.error(Arrays.deepToString(invocation.getArguments()));
+				return null;
+			}
+		}).when(printStream).println(Mockito.anyString());
 	}
 
 	@After
@@ -43,13 +52,6 @@ public class SerenityPublisherTest extends ATest {
 		FilePath filePath = new FilePath(new File("."));
 		List<FilePath> filePaths = new ArrayList<FilePath>();
 		Pattern pattern = Pattern.compile(SerenityPublisher.SERENITY_SOURCE_REGEX);
-		PrintStream printStream = Mockito.mock(PrintStream.class);
-		Mockito.doAnswer(new Answer<Void>() {
-			public Void answer(final InvocationOnMock invocation) throws Throwable {
-				LOGGER.error(Arrays.deepToString(invocation.getArguments()));
-				return null;
-			}
-		}).when(printStream).println(Mockito.anyString());
 		serenityPublisher.findFilesAndDirectories(filePath, filePaths, pattern, printStream);
 		assertTrue(filePaths.size() > 0);
 		for (final FilePath path : filePaths) {
@@ -58,6 +60,16 @@ public class SerenityPublisherTest extends ATest {
 			}
 		}
 		fail();
+	}
+
+	@Test
+	public void findDatabaseFiles() throws Exception {
+		Toolkit.createFile(new File("./" + IConstants.SERENITY_SOURCE_DIRECTORY, "serenity.odb"));
+		FilePath filePath = new FilePath(new File("."));
+		List<FilePath> filePaths = new ArrayList<FilePath>();
+		Pattern pattern = Pattern.compile(SerenityPublisher.SERENITY_ODB_REGEX);
+		serenityPublisher.findFilesAndDirectories(filePath, filePaths, pattern, printStream);
+		assertTrue(filePaths.size() > 0);
 	}
 
 }

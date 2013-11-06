@@ -15,12 +15,12 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
@@ -60,7 +60,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 
 	/** The pattern to exclude from the file filter. */
 	static final String SERENITY_ODB_REGEX = ".*(serenity.odb)";
-	static final String SERENITY_SOURCE_REGEX = ".*(serenity/source).*";
+	static final String SERENITY_SOURCE_REGEX = ".*serenity.*.source.*";
 	/** The LOGGER. */
 	protected static Logger LOGGER = Logger.getLogger(SerenityPublisher.class);
 	/** The description for Hudson. */
@@ -135,12 +135,12 @@ public class SerenityPublisher extends Recorder implements Serializable {
 			// Scan the build output roots for database files to merge
 			FilePath[] moduleRoots = build.getModuleRoots();
 			// The list of Serenity database files found in the module roots
-			List<FilePath> serenityOdbs = new ArrayList<FilePath>();
+			List<FilePath> databaseFiles = new ArrayList<FilePath>();
 			Pattern pattern = Pattern.compile(SERENITY_ODB_REGEX);
 			for (final FilePath moduleRoot : moduleRoots) {
 				// printStream.println("Module root : " + moduleRoot.toURI());
 				try {
-					findFilesAndDirectories(moduleRoot, serenityOdbs, pattern, printStream);
+					findFilesAndDirectories(moduleRoot, databaseFiles, pattern, printStream);
 				} catch (Exception e) {
 					printStream.println("Exception searching for database files : " + moduleRoot);
 					LOGGER.error(null, e);
@@ -148,16 +148,16 @@ public class SerenityPublisher extends Recorder implements Serializable {
 			}
 
 			// Iterate over the database files that were found and merge them to the final database
-			for (final FilePath serenityOdb : serenityOdbs) {
-				if (serenityOdb.isDirectory()) {
+			for (final FilePath databaseFile : databaseFiles) {
+				if (databaseFile.isDirectory()) {
 					continue;
 				}
 				String sourcePath = null;
 				IDataBase sourceDataBase = null;
 				try {
-					File sourceFile = File.createTempFile("serenity", ".odb");
+					File sourceFile = File.createTempFile("serenity", ".odb", new File(IConstants.SERENITY_DIRECTORY));
 					FilePath sourceFilePath = new FilePath(sourceFile);
-					serenityOdb.copyTo(sourceFilePath);
+					databaseFile.copyTo(sourceFilePath);
 					sourcePath = sourceFile.getAbsolutePath();
 					sourceDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, sourcePath, null);
 					// Copy the data from the source into the target, then close the source
@@ -186,39 +186,6 @@ public class SerenityPublisher extends Recorder implements Serializable {
 			LOGGER.error(null, e);
 		}
 		return targetDataBase;
-	}
-
-	/**
-	 * Scans recursively the {@link FilePath}(s) for the database files.
-	 * 
-	 * @param filePath the starting file path to start scanning from
-	 * @param filePaths the list of file paths that were found
-	 * @param fileFilter the file filter that will return all files in the path
-	 * @param printStream the LOGGER to the front end
-	 * @throws Exception
-	 */
-	void findFilesAndDirectories(final FilePath filePath, final List<FilePath> filePaths, final Pattern pattern, final PrintStream printStream)
-			throws Exception {
-		try {
-			// printStream.println("File path : " + filePath.toURI().toString());
-			class FileFilterImpl implements FileFilter, Serializable {
-				public boolean accept(final File pathname) {
-					String stringFilePath = Toolkit.cleanFilePath(pathname.getAbsolutePath());
-					boolean match = pattern.matcher(stringFilePath).matches();
-					// printStream.println("File path : " + stringFilePath + ", " + match + ", " + stringFilePath.contains("serenity/source"));
-					return match || stringFilePath.contains("serenity/source");
-				}
-			}
-			List<FilePath> list = filePath.list(new FileFilterImpl());
-			if (list != null) {
-				filePaths.addAll(list);
-				for (final FilePath childFilePath : filePath.list()) {
-					findFilesAndDirectories(childFilePath, filePaths, pattern, printStream);
-				}
-			}
-		} catch (Exception e) {
-			LOGGER.error(null, e);
-		}
 	}
 
 	/**
@@ -265,7 +232,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 			// The list of Serenity source directories found in the module roots
 			List<FilePath> sourceDirectories = new ArrayList<FilePath>();
 			Pattern pattern = Pattern.compile(SERENITY_SOURCE_REGEX);
-			for (FilePath moduleRoot : moduleRoots) {
+			for (final FilePath moduleRoot : moduleRoots) {
 				try {
 					printStream.println("Module root : " + moduleRoot.toURI());
 					findFilesAndDirectories(moduleRoot, sourceDirectories, pattern, printStream);
@@ -282,23 +249,43 @@ public class SerenityPublisher extends Recorder implements Serializable {
 				// We'll delete everything to start with
 				// buildSourceDirectory.deleteContents();
 				// printStream.println("Source directories : " + sourceDirectories);
-				for (FilePath sourceDirectory : sourceDirectories) {
-					// String sourcePath = sourceDirectory.toURI().toString();
+				for (final FilePath sourceDirectory : sourceDirectories) {
+					String sourcePath = sourceDirectory.toURI().toString();
 					// This is a hack. The pattern for the source directories (.*serenity.*.source) doesn't work in a slave for some reason. So we
-					// have to use .*serenity.*.source.*, which returns all the directories and files with the pattern in it, and after that we have to
+					// have to use .*(serenity).*.(source).*, which returns all the directories and files with the pattern in it, and after that we have to
 					// check that this is not a sub directory of the source folder and that it is not a file either. Pity that, try to get the bloody
 					// pattern working in the future
-					// boolean isDirectoryAndSerenitySource = !sourceDirectory.isDirectory() && !sourcePath.endsWith("serenity/source/")
-					// && !sourcePath.endsWith("serenity\\source\\");
-					// if (isDirectoryAndSerenitySource) {
-					// continue;
-					// }
-					if (sourceDirectory.isDirectory()) {
-						printStream.println("Copying source from... " + sourceDirectory.toURI().toString() + " to... "
-								+ buildSourceDirectory.toURI().getRawPath());
-						// buildSourceDirectory.deleteContents();
-						sourceDirectory.copyRecursiveTo(buildSourceDirectory);
+					if (!sourceDirectory.isDirectory()) {
+						continue;
 					}
+					if (!sourcePath.endsWith(IConstants.SERENITY_SOURCE_DIRECTORY) && !sourcePath.endsWith("serenity\\source\\")) {
+						continue;
+					}
+					// First delete the files in the source that are already int he target, as we expect the
+					// first module to be executed to be the 'top' level module in a multi-module project,
+					// so if follows that this file will be written first no? as there can not be a dependancy from the
+					// 'common' module to the 'dependent' module, or can there? ;)
+					List<FilePath> sourceFiles = sourceDirectory.list();
+					List<FilePath> buildSourceFiles = buildSourceDirectory.list();
+					if (buildSourceFiles != null && !buildSourceFiles.isEmpty()) {
+						if (sourceFiles != null && !sourceFiles.isEmpty()) {
+							for (final FilePath buildSourceFile : buildSourceFiles) {
+								for (final FilePath sourceFile : sourceFiles) {
+									if (sourceFile.isDirectory()) {
+										continue;
+									}
+									if (sourceFile.getName().equals(buildSourceFile.getName())) {
+										boolean deleted = sourceFile.delete();
+										if (!deleted) {
+											printStream.println("Couldn't delete... " + sourceFile);
+										}
+									}
+								}
+							}
+						}
+					}
+					printStream.println("Copying source from... " + sourceDirectory.toURI().toString() + " to... " + buildSourceDirectory.toURI().getRawPath());
+					sourceDirectory.copyRecursiveTo(buildSourceDirectory);
 				}
 			} catch (IOException e) {
 				Util.displayIOException(e, buildListener);
@@ -309,6 +296,34 @@ public class SerenityPublisher extends Recorder implements Serializable {
 			LOGGER.error(null, e);
 		}
 		return true;
+	}
+
+	/**
+	 * Scans recursively the {@link FilePath}(s) for the database files.
+	 * 
+	 * @param filePath the starting file path to start scanning from
+	 * @param filePaths the list of file paths that were found
+	 * @param fileFilter the file filter that will return all files in the path
+	 * @param printStream the LOGGER to the front end
+	 * @throws Exception
+	 */
+	void findFilesAndDirectories(final FilePath filePath, final List<FilePath> filePaths, final Pattern pattern, final PrintStream printStream)
+			throws Exception {
+		try {
+			List<FilePath> subFilePaths = filePath.list();
+			if (subFilePaths != null) {
+				for (final FilePath subFilePath : subFilePaths) {
+					findFilesAndDirectories(subFilePath, filePaths, pattern, printStream);
+				}
+			}
+			String stringFilePath = Toolkit.cleanFilePath(filePath.toURI().toString());
+			Matcher matcher = pattern.matcher(stringFilePath);
+			if (matcher.matches()) {
+				filePaths.add(filePath);
+			}
+		} catch (Exception e) {
+			LOGGER.error(null, e);
+		}
 	}
 
 	@Override

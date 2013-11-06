@@ -82,6 +82,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 				}
 			}
 			File file = new File(IConstants.DATABASE_FILE_ODB);
+			LOGGER.warn("Deleting database file : " + file.getAbsolutePath());
 			Toolkit.deleteFile(file, 3);
 			// This is the underlying database that will persist the data to the file system
 			IDataBase odbDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, null);
