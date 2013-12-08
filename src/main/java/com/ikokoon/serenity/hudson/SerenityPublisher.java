@@ -278,7 +278,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 						}
 					}
 					if (file.exists()) {
-						LOGGER.error("Writing source to : " + file);
+						LOGGER.debug("Writing source to : " + file);
 						ISourceCode sourceCode = new CoverageSourceCode(clazz, source);
 						String htmlSource = sourceCode.getSource();
 						Toolkit.setContents(file, htmlSource.getBytes());
