@@ -3,7 +3,6 @@ package com.ikokoon.serenity.hudson;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.Util;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
@@ -30,6 +29,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 import com.ikokoon.serenity.IConstants;
+import com.ikokoon.serenity.hudson.source.CoverageSourceCode;
+import com.ikokoon.serenity.hudson.source.ISourceCode;
+import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.persistence.DataBaseOdb;
 import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.DataBaseToolkit;
@@ -85,7 +87,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 			}
 
 			// Copy the source for the Java files to the build directory
-			copySourceToBuildDirectory(build, buildListener);
+			writeCoveredSourceForClasses(build, buildListener);
 
 			// Copy the database files from the output directories to the build directory. and
 			// merge them and then aggregate all the data, then prune the data
@@ -116,6 +118,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
+	@SuppressWarnings("rawtypes")
 	private IDataBase copyDataBasesToBuildDirectory(final AbstractBuild<?, ?> build, final BuildListener buildListener) throws InterruptedException,
 			IOException {
 		final PrintStream printStream = buildListener.getLogger();
@@ -154,8 +157,10 @@ public class SerenityPublisher extends Recorder implements Serializable {
 				}
 				String sourcePath = null;
 				IDataBase sourceDataBase = null;
+				File sourceFile = null;
 				try {
-					File sourceFile = File.createTempFile("serenity", ".odb", new File(IConstants.SERENITY_DIRECTORY));
+					// We copy the file to a 'local' file because the database could be on a remote machine
+					sourceFile = File.createTempFile("serenity", ".odb", new File(IConstants.SERENITY_DIRECTORY));
 					FilePath sourceFilePath = new FilePath(sourceFile);
 					databaseFile.copyTo(sourceFilePath);
 					sourcePath = sourceFile.getAbsolutePath();
@@ -163,10 +168,13 @@ public class SerenityPublisher extends Recorder implements Serializable {
 					// Copy the data from the source into the target, then close the source
 					printStream.println("Copying database from... " + sourcePath + " to... " + targetPath);
 					DataBaseToolkit.copyDataBase(sourceDataBase, targetDataBase);
-					boolean deleted = sourceFile.delete();
-					if (!deleted) {
-						printStream.println("Couldn't delete temp database file... " + sourcePath);
-						sourceFile.deleteOnExit();
+					List<Class> classes = targetDataBase.find(Class.class);
+					for (final Class clazz : classes) {
+						File coverageSourceCodeFile = new File(buildDirectory, IConstants.SERENITY_SOURCE + File.separatorChar + clazz.getName() + ".html");
+						ISourceCode sourceCode = new CoverageSourceCode(clazz, clazz.getSource());
+						String htmlSource = sourceCode.getSource();
+						// printStream.println("Creating coverage source : " + coverageSourceCodeFile.getAbsolutePath());
+						Toolkit.setContents(coverageSourceCodeFile, htmlSource.getBytes());
 					}
 				} catch (Exception e) {
 					printStream.println("Unable to copy Serenity database file from : " + sourcePath + ", to : " + targetPath);
@@ -175,6 +183,18 @@ public class SerenityPublisher extends Recorder implements Serializable {
 					if (sourceDataBase != null) {
 						try {
 							sourceDataBase.close();
+						} catch (Exception e) {
+							printStream.println("Exception closing the source database : " + sourcePath + ", target : " + targetPath);
+						}
+					}
+					if (sourceFile != null) {
+						try {
+							boolean deleted = sourceFile.delete();
+							if (!deleted) {
+								printStream.println("Couldn't delete temp database file... " + sourcePath);
+								Toolkit.deleteFile(sourceFile, 3);
+								sourceFile.deleteOnExit();
+							}
 						} catch (Exception e) {
 							printStream.println("Exception closing the source database : " + sourcePath + ", target : " + targetPath);
 						}
@@ -222,74 +242,52 @@ public class SerenityPublisher extends Recorder implements Serializable {
 		}
 	}
 
-	private boolean copySourceToBuildDirectory(final AbstractBuild<?, ?> build, final BuildListener buildListener) throws InterruptedException, IOException {
+	@SuppressWarnings("rawtypes")
+	boolean writeCoveredSourceForClasses(final AbstractBuild<?, ?> build, final BuildListener buildListener) throws InterruptedException, IOException {
 		try {
-			FilePath workSpace = build.getWorkspace();
 			PrintStream printStream = buildListener.getLogger();
-			printStream.println("Workspace root... " + workSpace.toURI().getRawPath());
+			File targetDataBaseFile = new File(build.getRootDir(), IConstants.DATABASE_FILE_ODB);
+			printStream.println("Target database... " + targetDataBaseFile);
 
-			FilePath[] moduleRoots = build.getModuleRoots();
-			// The list of Serenity source directories found in the module roots
-			List<FilePath> sourceDirectories = new ArrayList<FilePath>();
-			Pattern pattern = Pattern.compile(SERENITY_SOURCE_REGEX);
-			for (final FilePath moduleRoot : moduleRoots) {
-				try {
-					printStream.println("Module root : " + moduleRoot.toURI());
-					findFilesAndDirectories(moduleRoot, sourceDirectories, pattern, printStream);
-				} catch (Exception e) {
-					printStream.println("Exception searching for source directories : " + moduleRoot);
-					LOGGER.error(null, e);
+			// Create the final output database file for the build
+			String targetPath = targetDataBaseFile.getAbsolutePath();
+			IDataBase odbDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, targetPath, null);
+			List<Class> classes = odbDataBase.find(Class.class);
+			for (final Class clazz : classes) {
+				String source = clazz.getSource();
+				if (source == null) {
+					continue;
 				}
-			}
-
-			FilePath buildDirectory = new FilePath(build.getRootDir());
-			FilePath buildSourceDirectory = new FilePath(buildDirectory, IConstants.SERENITY_SOURCE);
-
-			try {
-				// We'll delete everything to start with
-				// buildSourceDirectory.deleteContents();
-				// printStream.println("Source directories : " + sourceDirectories);
-				for (final FilePath sourceDirectory : sourceDirectories) {
-					String sourcePath = sourceDirectory.toURI().toString();
-					// This is a hack. The pattern for the source directories (.*serenity.*.source) doesn't work in a slave for some reason. So we
-					// have to use .*(serenity).*.(source).*, which returns all the directories and files with the pattern in it, and after that we have to
-					// check that this is not a sub directory of the source folder and that it is not a file either. Pity that, try to get the bloody
-					// pattern working in the future
-					if (!sourceDirectory.isDirectory()) {
-						continue;
-					}
-					if (!sourcePath.endsWith(IConstants.SERENITY_SOURCE_DIRECTORY) && !sourcePath.endsWith("serenity\\source\\")) {
-						continue;
-					}
-					// First delete the files in the source that are already int he target, as we expect the
-					// first module to be executed to be the 'top' level module in a multi-module project,
-					// so if follows that this file will be written first no? as there can not be a dependancy from the
-					// 'common' module to the 'dependent' module, or can there? ;)
-					List<FilePath> sourceFiles = sourceDirectory.list();
-					List<FilePath> buildSourceFiles = buildSourceDirectory.list();
-					if (buildSourceFiles != null && !buildSourceFiles.isEmpty()) {
-						if (sourceFiles != null && !sourceFiles.isEmpty()) {
-							for (final FilePath buildSourceFile : buildSourceFiles) {
-								for (final FilePath sourceFile : sourceFiles) {
-									if (sourceFile.isDirectory()) {
-										continue;
-									}
-									if (sourceFile.getName().equals(buildSourceFile.getName())) {
-										boolean deleted = sourceFile.delete();
-										if (!deleted) {
-											printStream.println("Couldn't delete... " + sourceFile);
-										}
-									}
-								}
-							}
+				try {
+					File file = new File(IConstants.SERENITY_SOURCE, clazz.getName() + ".html");
+					if (!file.getParentFile().exists()) {
+						boolean madeDirectories = file.getParentFile().mkdirs();
+						if (!madeDirectories) {
+							LOGGER.warn("Couldn't make directories : " + file.getAbsolutePath());
 						}
 					}
-					printStream.println("Copying source from... " + sourceDirectory.toURI().toString() + " to... " + buildSourceDirectory.toURI().getRawPath());
-					sourceDirectory.copyRecursiveTo(buildSourceDirectory);
+					// LOGGER.error("Collecting source : " + className + ", " + file.getAbsolutePath());
+					// We try to delete the old file first
+					boolean deleted = file.delete();
+					if (!deleted) {
+						LOGGER.debug("Didn't delete source coverage file : " + file);
+					}
+					if (!file.exists()) {
+						if (!Toolkit.createFile(file)) {
+							LOGGER.warn("Couldn't create new source file : " + file);
+						}
+					}
+					if (file.exists()) {
+						LOGGER.error("Writing source to : " + file);
+						ISourceCode sourceCode = new CoverageSourceCode(clazz, source);
+						String htmlSource = sourceCode.getSource();
+						Toolkit.setContents(file, htmlSource.getBytes());
+					} else {
+						LOGGER.warn("Source file does not exist : " + file);
+					}
+				} catch (Exception e) {
+					LOGGER.error(null, e);
 				}
-			} catch (IOException e) {
-				Util.displayIOException(e, buildListener);
-				LOGGER.error(null, e);
 			}
 		} catch (Exception e) {
 			buildListener.getLogger().println(e.getMessage());

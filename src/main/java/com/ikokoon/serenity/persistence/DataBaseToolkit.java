@@ -26,12 +26,12 @@ import com.ikokoon.toolkit.Toolkit;
  * @since 09.12.09
  * @version 01.00
  */
-public class DataBaseToolkit {
+public final class DataBaseToolkit {
 
 	static {
 		LoggingConfigurator.configure();
 	}
-	private static Logger logger = Logger.getLogger(DataBaseToolkit.class);
+	private static final Logger logger = Logger.getLogger(DataBaseToolkit.class);
 
 	/**
 	 * Clears the data in the database.
@@ -39,7 +39,7 @@ public class DataBaseToolkit {
 	 * @param dataBase the database to truncate
 	 */
 	@SuppressWarnings("rawtypes")
-	public static synchronized void clear(final IDataBase dataBase) {
+	public static final synchronized void clear(final IDataBase dataBase) {
 		Project<?, ?> project = (Project<?, ?>) dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
 		if (project != null) {
 			dataBase.remove(Project.class, project.getId());
@@ -49,35 +49,37 @@ public class DataBaseToolkit {
 			dataBase.remove(composite.getClass(), composite.getId());
 		}
 		List<Class> classes = dataBase.find(Class.class);
-		for (Composite composite : classes) {
+		for (final Composite composite : classes) {
 			dataBase.remove(composite.getClass(), composite.getId());
 		}
 		List<Method> methods = dataBase.find(Method.class);
-		for (Composite composite : methods) {
+		for (final Composite composite : methods) {
 			dataBase.remove(composite.getClass(), composite.getId());
 		}
 		List<Line> lines = dataBase.find(Line.class);
-		for (Composite composite : lines) {
+		for (final Composite composite : lines) {
 			dataBase.remove(composite.getClass(), composite.getId());
 		}
 		List<Snapshot> snapshots = dataBase.find(Snapshot.class);
-		for (Snapshot snapshot : snapshots) {
+		for (final Snapshot snapshot : snapshots) {
 			dataBase.remove(Snapshot.class, snapshot.getId());
 		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static synchronized void copyDataBase(IDataBase sourceDataBase, IDataBase targetDataBase) {
+	public static synchronized void copyDataBase(final IDataBase sourceDataBase, final IDataBase targetDataBase) {
 		Collector.initialize(targetDataBase);
 		List<Package> sourcePackages = sourceDataBase.find(Package.class);
-		for (Package sourcePackage : sourcePackages) {
+		for (final Package sourcePackage : sourcePackages) {
 			List<Class> sourceClasses = sourcePackage.getChildren();
-			for (Class sourceClass : sourceClasses) {
+			for (final Class sourceClass : sourceClasses) {
 				Collector.collectAccess(sourceClass.getName(), sourceClass.getAccess());
+				Collector.collectSource(sourceClass.getName(), sourceClass.getSource());
 				collectEfferentAndAfferent(sourceClass, sourcePackages);
 				List<Class> sourceInnerClasses = sourceClass.getInnerClasses();
-				for (Class sourceInnerClass : sourceInnerClasses) {
+				for (final Class sourceInnerClass : sourceInnerClasses) {
 					Collector.collectInnerClass(sourceInnerClass.getName(), sourceClass.getName());
+					Collector.collectSource(sourceInnerClass.getName(), sourceInnerClass.getSource());
 					Method sourceOuterMethod = sourceClass.getOuterMethod();
 					if (sourceOuterMethod != null) {
 						Collector.collectOuterClass(sourceInnerClass.getName(), sourceClass.getName(), sourceOuterMethod.getName(),
@@ -86,11 +88,11 @@ public class DataBaseToolkit {
 				}
 				// Collector.collectSource(sourceClass.getName(), "source");
 				List<Method> sourceMethods = sourceClass.getChildren();
-				for (Method sourceMethod : sourceMethods) {
+				for (final Method sourceMethod : sourceMethods) {
 					Collector.collectComplexity(sourceClass.getName(), sourceMethod.getName(), sourceMethod.getDescription(), sourceMethod.getComplexity());
 					Collector.collectAccess(sourceClass.getName(), sourceMethod.getName(), sourceMethod.getDescription(), sourceMethod.getAccess());
 					List<Line> sourceLines = sourceMethod.getChildren();
-					for (Line sourceLine : sourceLines) {
+					for (final Line sourceLine : sourceLines) {
 						Collector.collectLine(sourceClass.getName(), sourceMethod.getName(), sourceMethod.getDescription(),
 								Integer.valueOf((int) sourceLine.getNumber()));
 						for (int i = 0; i < sourceLine.getCounter(); i++) {
@@ -104,28 +106,28 @@ public class DataBaseToolkit {
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	public static synchronized void execute(IDataBase dataBase, Composite composite, Executer executer) {
+	public static final synchronized void execute(final IDataBase dataBase, final Composite composite, final Executer executer) {
 		List list = dataBase.find(composite.getClass());
-		for (Object object : list) {
+		for (final Object object : list) {
 			executer.execute(object);
 		}
 	}
 
 	public interface Executer {
-		public void execute(Object object);
+		public void execute(final Object object);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static synchronized void collectEfferentAndAfferent(Class klass, List<Package> packages) {
+	private static final synchronized void collectEfferentAndAfferent(final Class klass, final List<Package> packages) {
 		List<Efferent> efferents = klass.getEfferent();
-		for (Efferent efferent : efferents) {
+		for (final Efferent efferent : efferents) {
 			String efferentPackage = Toolkit.replaceAll(efferent.getName(), "<e:", "");
 			efferentPackage = Toolkit.replaceAll(efferent.getName(), ">", "");
-			for (Package pakkage : packages) {
+			for (final Package pakkage : packages) {
 				List<Class> children = pakkage.getChildren();
-				for (Class child : children) {
+				for (final Class child : children) {
 					List<Afferent> afferents = child.getAfferent();
-					for (Afferent afferent : afferents) {
+					for (final Afferent afferent : afferents) {
 						String afferentPackage = Toolkit.replaceAll(afferent.getName(), "<a:", "");
 						afferentPackage = Toolkit.replaceAll(afferent.getName(), ">", "");
 						if (efferentPackage.equals(afferentPackage)) {
@@ -144,7 +146,7 @@ public class DataBaseToolkit {
 	 * @param criteria the criteria to match if the data for the composite must be written to the output
 	 */
 	@SuppressWarnings("rawtypes")
-	public static synchronized void dump(IDataBase dataBase, ICriteria criteria, String message) {
+	public static final synchronized void dump(IDataBase dataBase, ICriteria criteria, String message) {
 		if (message != null) {
 			logger.warn(message);
 		}
@@ -167,6 +169,9 @@ public class DataBaseToolkit {
 					log(criteria, klass, 2, " : id : ", klass.getId(), " : name : ", klass.getName(), " : coverage : ", klass.getCoverage(), ", complexity : ",
 							klass.getComplexity(), ", outer class : ", klass.getOuterClass(), ", outer method : ", klass.getOuterMethod(), ", lines : ", klass
 									.getChildren().size(), ", inner classes : ", klass.getInnerClasses());
+					if (klass.getSource() != null) {
+						log(criteria, klass, 5, klass.getSource());
+					}
 					List<Efferent> efferents = klass.getEfferent();
 					List<Afferent> afferents = klass.getAfferent();
 					for (final Efferent efferent : efferents) {
@@ -190,7 +195,7 @@ public class DataBaseToolkit {
 		}
 	}
 
-	private static synchronized void log(ICriteria criteria, Composite<?, ?> composite, int tabs, Object... data) {
+	private static final synchronized void log(final ICriteria criteria, final Composite<?, ?> composite, final int tabs, final Object... data) {
 		if (criteria == null || (criteria != null && criteria.satisfied(composite))) {
 			StringBuilder builder = new StringBuilder();
 			for (int i = 0; i < tabs; i++) {
@@ -207,7 +212,7 @@ public class DataBaseToolkit {
 
 	public interface ICriteria {
 
-		public boolean satisfied(Composite<?, ?> composite);
+		public boolean satisfied(final Composite<?, ?> composite);
 
 	}
 

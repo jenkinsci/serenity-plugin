@@ -12,10 +12,10 @@ import java.util.List;
 @Unique(fields = { Composite.NAME })
 public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implements Comparable<Class<?, ?>>, Serializable {
 
-	private String name;
 	private int access;
+	private String name;
 	private Class<?, ?> outerClass;
-	private Method<?, ?> outerMethod;
+	private Method<?, ?> outerMethod;	
 	private List<Class<?, ?>> innerClasses = new ArrayList<Class<?, ?>>();
 
 	private double coverage;
@@ -33,6 +33,8 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 	private List<Afferent> afferent = new ArrayList<Afferent>();
 
 	private List<Snapshot<?, ?>> snapshots = new ArrayList<Snapshot<?, ?>>();
+
+	private String source;
 
 	public String getName() {
 		return name;
@@ -152,6 +154,14 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 
 	public void setSnapshots(List<Snapshot<?, ?>> snapshots) {
 		this.snapshots = snapshots;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
 	}
 
 	public String toString() {

@@ -3,8 +3,11 @@ package com.ikokoon.serenity.hudson;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import hudson.FilePath;
+import hudson.model.BuildListener;
+import hudson.model.AbstractBuild;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,6 +73,19 @@ public class SerenityPublisherTest extends ATest {
 		Pattern pattern = Pattern.compile(SerenityPublisher.SERENITY_ODB_REGEX);
 		serenityPublisher.findFilesAndDirectories(filePath, filePaths, pattern, printStream);
 		assertTrue(filePaths.size() > 0);
+	}
+
+	@Test
+	public void writeCoveredSourceForClasses() throws InterruptedException, IOException {
+		File rootDirectory = new File("src/test/resources");
+
+		final AbstractBuild<?, ?> build = Mockito.mock(AbstractBuild.class);
+		final BuildListener buildListener = Mockito.mock(BuildListener.class);
+
+		Mockito.when(build.getRootDir()).thenReturn(rootDirectory);
+		Mockito.when(buildListener.getLogger()).thenReturn(printStream);
+
+		serenityPublisher.writeCoveredSourceForClasses(build, buildListener);
 	}
 
 }

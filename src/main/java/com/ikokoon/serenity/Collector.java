@@ -155,6 +155,12 @@ public final class Collector implements IConstants {
 	 */
 	public static final void collectSource(final String className, final String source) {
 		Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
+		// We only set the source if it is null
+		if (klass.getSource() == null && source != null && !"".equals(source.trim())) {
+			klass.setSource(source);
+			LOGGER.debug("Setting source : " + klass.getName());
+			LOGGER.debug("                       : " + klass.getSource());
+		}
 		File file = new File(IConstants.SERENITY_SOURCE, className + ".html");
 		if (!file.getParentFile().exists()) {
 			boolean madeDirectories = file.getParentFile().mkdirs();
