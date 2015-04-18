@@ -1,15 +1,7 @@
 package com.ikokoon.serenity.persistence;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
+import com.ikokoon.serenity.model.Composite;
+import com.ikokoon.toolkit.Toolkit;
 import org.apache.log4j.Logger;
 import org.neodatis.odb.ODB;
 import org.neodatis.odb.ODBFactory;
@@ -18,14 +10,17 @@ import org.neodatis.odb.core.query.IQuery;
 import org.neodatis.odb.core.query.criteria.Where;
 import org.neodatis.odb.impl.core.query.criteria.CriteriaQuery;
 
-import com.ikokoon.serenity.model.Composite;
-import com.ikokoon.toolkit.Toolkit;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.*;
 
 /**
  * This is the database class using Neodatis as the persistence tool.
  *
  * @author Michael Couck
- * @since 01.12.09
+ * @since 01-12-2009
  * @version 01.00
  */
 public class DataBaseOdb extends DataBase {
@@ -43,18 +38,15 @@ public class DataBaseOdb extends DataBase {
 	 *
 	 * @param dataBaseFile
 	 *            the file to open the database with
-	 * @param create
-	 *            whether to create a new database essentially deleting the database file and creating a new one or to use the data in the existing
-	 *            database file
 	 */
-	public DataBaseOdb(String dataBaseFile) {
+	public DataBaseOdb(final String dataBaseFile) {
 		synchronized (DataBaseOdb.class) {
 			this.dataBaseFile = dataBaseFile;
 			logger.info("Opening ODB database on file : " + new File(dataBaseFile).getAbsolutePath());
 			try {
 				odb = ODBFactory.open(this.dataBaseFile);
 				closed = false;
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				logger.error("Exception initialising the database : " + dataBaseFile + ", " + this, e);
 			}
 		}
@@ -64,7 +56,7 @@ public class DataBaseOdb extends DataBase {
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public synchronized <E extends Composite<?, ?>> E find(Class<E> klass, Long id) {
+	public synchronized <E extends Composite<?, ?>> E find(final Class<E> klass, final Long id) {
 		IQuery query = new CriteriaQuery(klass, Where.equal("id", id));
 		return (E) find(query);
 	}
@@ -72,7 +64,7 @@ public class DataBaseOdb extends DataBase {
 	/**
 	 * {@inheritDoc}
 	 */
-	public synchronized <E extends Composite<?, ?>> E find(Class<E> klass, List<?> parameters) {
+	public synchronized <E extends Composite<?, ?>> E find(final Class<E> klass, final List<?> parameters) {
 		Long id = Toolkit.hash(parameters.toArray());
 		return find(klass, id);
 	}
@@ -80,7 +72,7 @@ public class DataBaseOdb extends DataBase {
 	/**
 	 * {@inheritDoc}
 	 */
-	public synchronized <E extends Composite<?, ?>> List<E> find(Class<E> klass) {
+	public synchronized <E extends Composite<?, ?>> List<E> find(final Class<E> klass) {
 		return find(klass, 0, Integer.MAX_VALUE);
 	}
 
@@ -88,7 +80,10 @@ public class DataBaseOdb extends DataBase {
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public <E extends Composite<?, ?>> List<E> find(Class<E> klass, int start, int end) {
+	public <E extends Composite<?, ?>> List<E> find(final Class<E> klass, final int start, final int end) {
+        if (isClosed()) {
+            return Collections.EMPTY_LIST;
+        }
 		List<E> list = new ArrayList<E>();
 		try {
 			Objects objects = odb.getObjects(klass, false, start, end);
@@ -96,7 +91,7 @@ public class DataBaseOdb extends DataBase {
 				Object object = objects.next();
 				list.add((E) object);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error("Exception selecting objects with class : " + klass + ", " + this, e);
 		}
 		return list;
@@ -107,8 +102,11 @@ public class DataBaseOdb extends DataBase {
 	 */
 	@SuppressWarnings("unchecked")
 	public <E extends Composite<?, ?>> List<E> find(final Class<E> klass, final Map<String, ?> parameters) {
+        if (isClosed()) {
+            return Collections.EMPTY_LIST;
+        }
 		Set<E> set = new TreeSet<E>();
-		for (String field : parameters.keySet()) {
+		for (final String field : parameters.keySet()) {
 			Object value = parameters.get(field);
 			logger.debug("Field : " + field + ", " + value);
 			IQuery query = new CriteriaQuery(klass, Where.like(field, "%" + value.toString() + "%"));
@@ -135,9 +133,9 @@ public class DataBaseOdb extends DataBase {
 			if (!isClosed()) {
 				odb.commit();
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			logger.error("Exception comitting the ODB database : " + this, e);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error("Exception comitting the ODB database : " + this, e);
 		}
 	}
@@ -146,7 +144,10 @@ public class DataBaseOdb extends DataBase {
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public synchronized <E extends Composite<?, ?>> E persist(E composite) {
+	public synchronized <E extends Composite<?, ?>> E persist(final E composite) {
+        if (isClosed()) {
+            return null;
+        }
 		try {
 			setIds(composite);
 			E duplicate = (E) find(composite.getClass(), composite.getId());
@@ -158,7 +159,7 @@ public class DataBaseOdb extends DataBase {
 			}
 			logger.debug("Persisting composite : " + composite);
 			odb.store(composite);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error("Exception persisting object : " + composite + ", " + this, e);
 		}
 		commit();
@@ -168,13 +169,13 @@ public class DataBaseOdb extends DataBase {
 	/**
 	 * {@inheritDoc}
 	 */
-	public synchronized <E extends Composite<?, ?>> E remove(Class<E> klass, Long id) {
+	public synchronized <E extends Composite<?, ?>> E remove(final Class<E> klass, final Long id) {
 		E composite = find(klass, id);
 		try {
 			if (composite != null) {
 				odb.delete(composite);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error("Exception deleting object : " + id + ", " + this, e);
 		}
 		commit();
@@ -210,23 +211,26 @@ public class DataBaseOdb extends DataBase {
 
 			IDataBaseEvent dataBaseEvent = new DataBaseEvent(this, IDataBaseEvent.Type.DATABASE_CLOSE);
 			IDataBase.DataBaseManager.fireDataBaseEvent(dataBaseFile, dataBaseEvent);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error("Exception closing the ODB database : " + this, e);
 		}
 		closed = true;
 	}
 
 	@SuppressWarnings("unchecked")
-	private synchronized <E extends Composite<?, ?>> E find(IQuery query) {
-		E e = null;
-		try {
-			Objects objects = odb.getObjects(query);
+	private synchronized <E extends Composite<?, ?>> E find(final IQuery query) {
+        if (isClosed()) {
+            return null;
+        }
+        E e = null;
+        try {
+            Objects objects = odb.getObjects(query);
 			if (objects.size() == 1) {
 				e = (E) objects.getFirst();
 			} else if (objects.size() > 1) {
 				logger.warn("Id for object must be unique : " + query);
 			}
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			logger.error("Exception selecting object on ODB database : " + query + ", " + this.dataBaseFile + ", " + this, ex);
 		}
 		return e;
@@ -235,11 +239,14 @@ public class DataBaseOdb extends DataBase {
 	/**
 	 * This method sets the ids in a graph of objects.
 	 *
-	 * @param object
+	 * @param composite
 	 *            the object to set the ids for
 	 */
 	@SuppressWarnings("unchecked")
-	synchronized final void setIds(Composite<?, ?> composite) {
+	synchronized final void setIds(final Composite<?, ?> composite) {
+        if (isClosed()) {
+            return;
+        }
 		if (composite == null) {
 			return;
 		}
@@ -247,7 +254,7 @@ public class DataBaseOdb extends DataBase {
 		logger.debug("Persisted object : " + composite);
 		List<Composite<?, ?>> children = (List<Composite<?, ?>>) composite.getChildren();
 		if (children != null) {
-			for (Composite<?, ?> child : children) {
+			for (final Composite<?, ?> child : children) {
 				setIds(child);
 			}
 		}
