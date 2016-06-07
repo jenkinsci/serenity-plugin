@@ -1,19 +1,15 @@
 package com.ikokoon.toolkit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import com.ikokoon.serenity.ATest;
+import com.ikokoon.target.Target;
+import org.junit.Test;
+import org.objectweb.asm.Type;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-import org.objectweb.asm.Type;
-
-import com.ikokoon.serenity.ATest;
-import com.ikokoon.target.Target;
+import static org.junit.Assert.*;
 
 /**
  * This is the test for the utility class.
@@ -80,16 +76,6 @@ public class ToolkitTest extends ATest {
 		objects.add(string);
 		Long arrayHash = Toolkit.hash(objects.toArray());
 		assertEquals(stringHash, arrayHash);
-	}
-
-	@Test
-	@SuppressWarnings("unchecked")
-	public void serializeAndDeserializeToAndFrom64() {
-		Target<Object, Object> target = new Target<Object, Object>(Target.class);
-		String string = Toolkit.serializeToBase64(target);
-		assertNotNull(string);
-		target = (Target<Object, Object>) Toolkit.deserializeFromBase64(string);
-		assertNotNull(target);
 	}
 
 	@Test

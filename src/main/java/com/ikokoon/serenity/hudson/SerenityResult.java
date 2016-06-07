@@ -62,7 +62,7 @@ public class SerenityResult implements ISerenityResult {
 	 * @param req the Stapler request from the ui
 	 * @param rsp the Stapler response for the ui
 	 * @return the result which is this class
-	 * @throws IOException
+	 * @throws Exception anything untoward
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getDynamic(final String token, final StaplerRequest req, final StaplerResponse rsp) throws Exception {

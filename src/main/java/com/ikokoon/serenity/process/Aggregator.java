@@ -9,39 +9,41 @@ import com.ikokoon.serenity.process.aggregator.ProjectAggregator;
  * line that is executed there is a line element. So the percentage of lines that were executed is covered lines / total lines * 100. The complexity
  * total is added up for each method along with the coverage total for each method and divided by the total methods in the class to get the class
  * average for coverage and complexity.
- *
+ * <p>
  * Similarly for the package totals of complexity and coverage the class totals for the package are added up and divided by the number of classes in
  * the package.
- *
+ * <p>
  * Metrics are also gathered for the dependency, afferent and efferent and the abstractness and stability calculated from that.
  *
  * @author Michael Couck
- * @since 18.07.09
  * @version 01.00
+ * @since 18.07.09
  */
 public class Aggregator extends AProcess implements IConstants {
 
-	/** The database to aggregate the data for. */
-	private IDataBase dataBase;
+    /**
+     * The database to aggregate the data for.
+     */
+    private IDataBase dataBase;
 
-	/**
-	 * Constructor takes the parent process.
-	 *
-	 * @param parent
-	 *            the parent process that will call this child. The child process, i.e. this instance, will add it's self to the parent
-	 */
-	public Aggregator(IProcess parent, IDataBase dataBase) {
-		super(parent);
-		this.dataBase = dataBase;
-	}
+    /**
+     * Constructor takes the parent process.
+     *
+     * @param parent   the parent process that will call this child. The child process, i.e. this instance, will add it's self to the parent
+     * @param dataBase the database to aggregate the statistics for
+     */
+    public Aggregator(IProcess parent, IDataBase dataBase) {
+        super(parent);
+        this.dataBase = dataBase;
+    }
 
-	/**
-	 * Please refer to the class JavaDoc for more information.
-	 */
-	public void execute() {
-		super.execute();
-		logger.info("Running Aggregator : ");
-		new ProjectAggregator(dataBase).aggregate();
-	}
+    /**
+     * Please refer to the class JavaDoc for more information.
+     */
+    public void execute() {
+        super.execute();
+        logger.info("Running Aggregator : ");
+        new ProjectAggregator(dataBase).aggregate();
+    }
 
 }

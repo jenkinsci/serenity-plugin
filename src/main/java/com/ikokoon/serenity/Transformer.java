@@ -184,6 +184,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
 		String fileName = className.replaceFirst(Toolkit.classNameToPackageName(className), "") + ".class";
 		File directory = new File(IConstants.SERENITY_DIRECTORY + File.separator + directoryPath);
 		if (!directory.exists()) {
+			//noinspection ResultOfMethodCallIgnored
 			directory.mkdirs();
 			LOGGER.debug(directory.getAbsolutePath());
 		}

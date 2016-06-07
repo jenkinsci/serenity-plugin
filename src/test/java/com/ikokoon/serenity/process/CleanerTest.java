@@ -43,6 +43,7 @@ public class CleanerTest extends ATest implements IConstants {
 		File sourceOdbDataBaseFile = new File("./src/test/resources/isearch/merge/tag.odb");
 		File targetOdbDataBaseFile = new File(databaseFile);
 		if (!targetOdbDataBaseFile.getParentFile().exists()) {
+			//noinspection ResultOfMethodCallIgnored
 			targetOdbDataBaseFile.getParentFile().mkdirs();
 		}
 		Toolkit.copyFile(sourceOdbDataBaseFile, targetOdbDataBaseFile);

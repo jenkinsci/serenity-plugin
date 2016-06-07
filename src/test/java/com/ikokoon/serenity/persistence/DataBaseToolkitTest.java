@@ -96,12 +96,12 @@ public class DataBaseToolkitTest extends ATest {
 	@Test
 	public void dump() {
 		// String targetPath = "/usr/share/eclipse/workspace/serenity/work/jobs/ikube/builds/2013-12-08_12-50-04/serenity/serenity.odb";
-		String targetPath = "/usr/share/eclipse/workspace/serenity/work/jobs/ikube/builds/2013-12-08_13-32-43/serenity/serenity.odb";
+		String targetPath = "/tmp/serenity.odb";
 		IDataBase odbDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, targetPath, null);
 		DataBaseToolkit.dump(odbDataBase, null, null);
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({"rawtypes", "unused"})
 	void addSource(final File targetDataBaseFile) {
 		String targetPath = targetDataBaseFile.getAbsolutePath();
 		IDataBase odbDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, targetPath, null);

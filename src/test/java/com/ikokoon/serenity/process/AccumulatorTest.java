@@ -62,7 +62,7 @@ public class AccumulatorTest extends ATest implements IConstants {
 		// Verify that the Java.java has been accumulated
 		Class<?, ?> javaClass = dataBase.find(Class.class, Toolkit.hash("com.ikokoon.Java"));
 		assertNotNull(javaClass);
-		List<File> files = new ArrayList<File>();
+		List<File> files = new ArrayList<>();
 		Toolkit.findFiles(new File("."), new Toolkit.IFileFilter() {
 			public boolean matches(final File file) {
 				return file.getName().endsWith("Java.html");
@@ -95,17 +95,6 @@ public class AccumulatorTest extends ATest implements IConstants {
 		excluded = accumulator
 				.isExcluded(".usr.share.eclipse.workspace.serenity.work.workspace.ikube.code.core.serenity.ikube.action.index.handler.IIndexableHandler.class");
 		assertFalse(excluded);
-	}
-
-	@Test
-	@Ignore
-	public void getIkubeSource() {
-		System.setProperty("java.class.path", "/usr/share/eclipse/workspace/ikube");
-		Configuration.getConfiguration().includedPackages.add("ikube");
-		accumulator.execute();
-
-		Class<?, ?> javaClass = dataBase.find(Class.class, Toolkit.hash("ikube.action.Action"));
-		assertNotNull(javaClass);
 	}
 
 }

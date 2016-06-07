@@ -1,21 +1,19 @@
 package com.ikokoon.serenity.instrumentation.coverage;
 
-import org.objectweb.asm.ClassAdapter;
+import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
-import com.ikokoon.serenity.instrumentation.VisitorFactory;
+public class CoverageClassAdapterChecker extends ClassVisitor {
 
-public class CoverageClassAdapterChecker extends ClassAdapter {
+    public CoverageClassAdapterChecker(ClassVisitor visitor) {
+        super(Opcodes.ASM5, visitor);
+    }
 
-	public CoverageClassAdapterChecker(ClassVisitor visitor) {
-		super(visitor);
-	}
-
-	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-		MethodVisitor methodVisitor = super.visitMethod(access, name, desc, signature, exceptions);
-		MethodVisitor methodAdapter = VisitorFactory.getMethodVisitor(methodVisitor, CoverageMethodAdapterChecker.class, access, null, name, desc);
-		return methodAdapter;
-	}
+    public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+        MethodVisitor methodVisitor = super.visitMethod(access, name, desc, signature, exceptions);
+        return VisitorFactory.getMethodVisitor(methodVisitor, CoverageMethodAdapterChecker.class, access, null, name, desc);
+    }
 
 }

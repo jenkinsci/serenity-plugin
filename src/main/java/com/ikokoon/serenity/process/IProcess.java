@@ -1,22 +1,22 @@
 package com.ikokoon.serenity.process;
 
 /**
- * @see AProcess for more information on the end processing strategy.
- * 
  * @author Michael Couck
- * @since 23.08.09
  * @version 01.00
+ * @see AProcess for more information on the end processing strategy.
+ * @since 23.08.09
  */
 public interface IProcess {
 
-	/**
-	 * @see AProcess
-	 */
-	public void execute();
+    /**
+     * @see AProcess
+     */
+    void execute();
 
-	/**
-	 * @see AProcess
-	 */
-	public void setChild(IProcess child);
+    /**
+     * @param child the process to execute after the parent
+     * @see AProcess
+     */
+    void setChild(IProcess child);
 
 }

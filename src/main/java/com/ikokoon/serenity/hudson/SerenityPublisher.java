@@ -332,8 +332,6 @@ public class SerenityPublisher extends Recorder implements Serializable {
 
 	/**
 	 * Descriptor for {@link SerenityPublisher}. Used as a singleton. The class is marked as public so that it can be accessed from views.
-	 * <p/>
-	 * <p/>
 	 * See <tt>views/hudson/plugins/coverage/CoveragePublisher/*.jelly</tt> for the actual HTML fragment for the configuration screen.
 	 */
 	public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
@@ -373,8 +371,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
 		 */
 		@Override
 		public SerenityPublisher newInstance(final StaplerRequest req, final JSONObject json) throws FormException {
-			SerenityPublisher instance = req.bindParameters(SerenityPublisher.class, "serenity.");
-			return instance;
+			return req.bindParameters(SerenityPublisher.class, "serenity.");
 		}
 	}
 
