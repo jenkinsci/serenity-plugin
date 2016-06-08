@@ -27,17 +27,17 @@ public interface IDataBase {
      * @version 01.00
      * @since 12.08.09
      */
-    public static class DataBaseManager {
+    class DataBaseManager {
 
         private static Logger logger = Logger.getLogger(DataBaseManager.class);
         /**
          * The map of open databases keyed on the database file name.
          */
-        private static Map<String, IDataBase> dataBases = new HashMap<String, IDataBase>();
+        private static Map<String, IDataBase> dataBases = new HashMap<>();
         /**
          * The map of database listeners keyed on the database file name.
          */
-        private static Map<String, List<IDataBaseListener>> dataBaseListeners = new HashMap<String, List<IDataBaseListener>>();
+        private static Map<String, List<IDataBaseListener>> dataBaseListeners = new HashMap<>();
 
         /**
          * Access to all the databases in the current VM.
@@ -59,22 +59,22 @@ public interface IDataBase {
          * @param internalDataBase the underlying database
          * @return the database
          */
-        public static synchronized final <E extends IDataBase> IDataBase getDataBase(Class<E> klass, String dataBaseFile, IDataBase internalDataBase) {
+        public static synchronized <E extends IDataBase> IDataBase getDataBase(Class<E> klass, String dataBaseFile, IDataBase internalDataBase) {
             IDataBase dataBase = dataBases.get(dataBaseFile);
             if (dataBase == null || dataBase.isClosed()) {
                 getDataBaseListener(dataBaseFile);
                 dataBase = ObjectFactory.getObject(klass, dataBaseFile, internalDataBase);
-                logger.info("Adding database : " + dataBase);
+                logger.debug("Adding database : " + dataBase);
                 dataBases.put(dataBaseFile, dataBase);
             }
-            logger.info("Returned database : " + klass + ", data base : " + dataBase + ", file : " + dataBaseFile);
+            logger.debug("Returned database : " + klass + ", data base : " + dataBase + ", file : " + dataBaseFile);
             return dataBase;
         }
 
         public static synchronized void addDataBaseListener(String dataBaseFile, IDataBaseListener dataBaseListener) {
             List<IDataBaseListener> dataBaseListeners = DataBaseManager.dataBaseListeners.get(dataBaseFile);
             if (dataBaseListeners == null) {
-                dataBaseListeners = new ArrayList<IDataBaseListener>();
+                dataBaseListeners = new ArrayList<>();
                 DataBaseManager.dataBaseListeners.put(dataBaseFile, dataBaseListeners);
             }
             dataBaseListeners.add(dataBaseListener);
@@ -98,7 +98,7 @@ public interface IDataBase {
         }
 
         private synchronized static IDataBaseListener getDataBaseListener(final String dataBaseFile) {
-            IDataBaseListener dataBaseListener = new IDataBaseListener() {
+            return new IDataBaseListener() {
 
                 {
                     DataBaseManager.addDataBaseListener(dataBaseFile, this);
@@ -116,7 +116,6 @@ public interface IDataBase {
                     }
                 }
             };
-            return dataBaseListener;
         }
 
     }
@@ -138,7 +137,7 @@ public interface IDataBase {
      * @param id    the unique id of the class
      * @return the composite with the specified id
      */
-    public <E extends Composite<?, ?>> E find(Class<E> klass, Long id);
+    <E extends Composite<?, ?>> E find(Class<E> klass, Long id);
 
     /**
      * Selects a class based on the combination of field values in the parameter list.
@@ -148,7 +147,7 @@ public interface IDataBase {
      * @param parameters the unique combination of field values to select the class with
      * @return the composite with the specified unique field combination
      */
-    public <E extends Composite<?, ?>> E find(Class<E> klass, List<?> parameters);
+    <E extends Composite<?, ?>> E find(Class<E> klass, List<?> parameters);
 
     /**
      * Selects a list of objects based on the values in the objects and the class of the object. The implementations can implement multiple search
@@ -159,7 +158,7 @@ public interface IDataBase {
      * @param parameters the parameters to do the selection with. These are the fields in the objects and the values
      * @return the list of composites that match the selection criteria
      */
-    public <E extends Composite<?, ?>> List<E> find(Class<E> klass, Map<String, ?> parameters);
+    <E extends Composite<?, ?>> List<E> find(Class<E> klass, Map<String, ?> parameters);
 
     /**
      * Selects all the classes of a particular type. Note this could potentially return the whole database.
@@ -168,7 +167,7 @@ public interface IDataBase {
      * @param klass the type of class to select
      * @return a list of all the objects in the database that have the specified class type
      */
-    public <E extends Composite<?, ?>> List<E> find(Class<E> klass);
+    <E extends Composite<?, ?>> List<E> find(Class<E> klass);
 
     /**
      * Selects all the classes of a particular type starting from an index and going to an index.
@@ -179,7 +178,7 @@ public interface IDataBase {
      * @param end   the end index for the list of objects
      * @return a list of all the objects in the database that have the specified class type
      */
-    public <E extends Composite<?, ?>> List<E> find(Class<E> klass, int start, int end);
+    <E extends Composite<?, ?>> List<E> find(Class<E> klass, int start, int end);
 
     /**
      * Removes an object from the database and returns the removed object as a convenience.
@@ -189,18 +188,18 @@ public interface IDataBase {
      * @param id    the unique id of the class
      * @return the composite with the specified id
      */
-    public <E extends Composite<?, ?>> E remove(Class<E> klass, Long id);
+    <E extends Composite<?, ?>> E remove(Class<E> klass, Long id);
 
     /**
      * Checks the open status of the database.
      *
      * @return whether the database is open or closed
      */
-    public boolean isClosed();
+    boolean isClosed();
 
     /**
      * Closes the database.
      */
-    public void close();
+    void close();
 
 }

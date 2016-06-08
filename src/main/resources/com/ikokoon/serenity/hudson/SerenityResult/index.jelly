@@ -1,31 +1,75 @@
 <?jelly escape-by-default='true'?>
-<j:jelly trim="false" xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
-	xmlns:f="/lib/form">
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 	<l:layout>
 		<st:include it="${it.owner}" page="sidepanel.jelly" />
 		<l:main-panel>
+
 			<link rel="stylesheet" type="text/css" href="${rootURL}/plugin/serenity/js/checktree.css" />
 			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/checktree.js" />
 			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/serenity.js" />
-			
+			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/base64.js" />
+
+			<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
 			<script type="text/javascript">
-				var chtOldOL = window.onload;
- 				window.onresize = function () {
-					resizeFrames();
-				};
 				window.onload = function() {
-					resizeFrames();
-					if (chtOldOL) {
-						chtOldOL();
-					}
 					for ( var i in CheckTree.list) {
 						CheckTree.list[i].init()
 					}
 				};
 				
  				var packages = new CheckTree('packages');
+
+ 				// Load the Visualization API and the corechart package.
+                      google.charts.load('current', {'packages':['corechart']});
+
+                      // Set a callback to run when the Google Visualization API is loaded.
+                      google.charts.setOnLoadCallback(drawChart);
+
+                      // Callback that creates and populates a data table,
+                      // instantiates the pie chart, passes in the data and
+                      // draws it.
+                      function drawChart() {
+                        // Get the data from the server
+                        var projectData = loadChart('com.ikokoon.serenity.model.Project', '${it.project.id}');
+
+                        // Create the data table.
+                        var data = new google.visualization.DataTable();
+                        data.addColumn('string', 'Topping');
+                        data.addColumn('number', 'Slices');
+                        data.addRows([
+                          ['Mushrooms', 3],
+                          ['Onions', 1],
+                          ['Olives', 1],
+                          ['Zucchini', 1],
+                          ['Pepperoni', 2]
+                        ]);
+
+                        // Set chart options
+                        var options = {'title':'How Much Pizza I Ate Last Night',
+                                       'width':150,
+                                       'height':150};
+
+                        // Instantiate and draw our chart, passing in some options.
+                        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+                        chart.draw(data, options);
+
+                        document.getElementById('source').innerHTML = '${it.project.id}';
+                        // document.getElementById('source').innerHTML = '${it.source}';
+                      }
+
+                  var serenityResult = <st:bind value="${it}" />
+                  function getSource(identifier) {
+                  	serenityResult.getSource('com.ikokoon.serenity.model.Class', identifier, function(t) {
+                  		var source = t.responseObject();
+                  		source = base64Decode(source);
+                  		var sourceElement = document.getElementById('source');
+                  		// alert(sourceElement + ':' + sourceElement.innerHTML + ':' + source);
+                    	sourceElement.innerHTML = source;
+                  	});
+                  };
  			</script>
- 			
+
 			<table border="0" width="100%">
 				<tr>
 					<td colspan="2">
@@ -43,7 +87,7 @@
 				</tr>
 				<tr>
 					<td valign="top" nowrap="nowrap">
-						<div style="width : 300px; height: 550px; overflow : scroll;">
+						<div style="width : 400px; height: 650px; overflow : scroll;">
 							<j:set var="ACC_DEFAULT" value="0" />
 							<j:set var="ACC_PUBLIC" value="1" />
 							<j:set var="ACC_PRIVATE" value="2" />
@@ -70,7 +114,7 @@
 											<img src="${rootURL}/plugin/serenity/js/imgs/${classIcon}" />
 											<a 
 												href="#" 
-												onClick="loadFrames('com.ikokoon.serenity.model.Class', '${klass.id}', event)"
+												onClick="getSource('${klass.id}')"
 												style="text-decoration : none;">&#160;
 													${klass.name} (${klass.coverage},${klass.complexity},${klass.stability},${klass.access})
 											</a>
@@ -126,20 +170,18 @@
 						</div>
 					</td>
 
-					<td width="70%" height="100%" valign="top">
-						<table width="100%" height="100%">
+					<td valign="top" align="left" width="100%">
+						<table border="1" width="100%">
 							<tr>
-								<td border="3">
-									<iframe id="chart" name="chart" src="chart" width="100%" height="100%" scrolling="no" style="border : 0px solid white;">
-										<p>Your browser does not support internal frames.</p>
-									</iframe>
+								<td>
+									<div id="chart_div"></div>
 								</td>
 							</tr>
+						</table>
+						<table width="100%" height="750">
 							<tr>
-								<td width="100%" height="70%" valign="top">
-									<iframe id="source" name="source" src="source" width="100%" height="100%" scrolling="auto" style="border : 0px solid white;">
-										<p>Your browser does not support internal frames.</p>
-									</iframe>
+								<td valign="top">
+									<div id="source" />
 								</td>
 							</tr>
 						</table>

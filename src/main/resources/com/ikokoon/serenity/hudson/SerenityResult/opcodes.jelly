@@ -1,4 +1,3 @@
-<?jelly escape-by-default='true'?>
 <j:jelly trim="false" xmlns:d="jelly:define" xmlns:f="/lib/form" xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler" xmlns:t="/lib/hudson">
 <j:set var="V1_1" value="196653" />
 <j:set var="V1_2" value="46" />

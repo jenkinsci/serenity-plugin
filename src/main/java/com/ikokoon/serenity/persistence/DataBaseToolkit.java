@@ -21,6 +21,14 @@ import static com.ikokoon.serenity.persistence.IDataBase.DataBaseManager.getData
  */
 public final class DataBaseToolkit {
 
+    public interface Executer {
+        void execute(final Object object);
+    }
+
+    public interface ICriteria {
+        boolean satisfied(final Composite<?, ?> composite);
+    }
+
     static {
         LoggingConfigurator.configure();
     }
@@ -33,7 +41,7 @@ public final class DataBaseToolkit {
      * @param dataBase the database to truncate
      */
     @SuppressWarnings("rawtypes")
-    public static final synchronized void clear(final IDataBase dataBase) {
+    public static synchronized void clear(final IDataBase dataBase) {
         Project<?, ?> project = (Project<?, ?>) dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
         if (project != null) {
             dataBase.remove(Project.class, project.getId());
@@ -87,8 +95,7 @@ public final class DataBaseToolkit {
                     Collector.collectAccess(sourceClass.getName(), sourceMethod.getName(), sourceMethod.getDescription(), sourceMethod.getAccess());
                     List<Line> sourceLines = sourceMethod.getChildren();
                     for (final Line sourceLine : sourceLines) {
-                        Collector.collectLine(sourceClass.getName(), sourceMethod.getName(), sourceMethod.getDescription(),
-                                Integer.valueOf((int) sourceLine.getNumber()));
+                        Collector.collectLine(sourceClass.getName(), sourceMethod.getName(), sourceMethod.getDescription(), (int) sourceLine.getNumber());
                         for (int i = 0; i < sourceLine.getCounter(); i++) {
                             Collector.collectCoverage(sourceClass.getName(), sourceMethod.getName(), sourceMethod.getDescription(),
                                     (int) sourceLine.getNumber());
@@ -100,19 +107,15 @@ public final class DataBaseToolkit {
     }
 
     @SuppressWarnings({"rawtypes"})
-    public static final synchronized void execute(final IDataBase dataBase, final Composite composite, final Executer executer) {
+    public static synchronized void execute(final IDataBase dataBase, final Composite composite, final Executer executer) {
         List list = dataBase.find(composite.getClass());
         for (final Object object : list) {
             executer.execute(object);
         }
     }
 
-    public interface Executer {
-        public void execute(final Object object);
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private static final synchronized void collectEfferentAndAfferent(final Class klass, final List<Package> packages) {
+    @SuppressWarnings({"unchecked", "rawtypes", "UnusedAssignment"})
+    private static synchronized void collectEfferentAndAfferent(final Class klass, final List<Package> packages) {
         List<Efferent> efferents = klass.getEfferent();
         for (final Efferent efferent : efferents) {
             String efferentPackage = Toolkit.replaceAll(efferent.getName(), "<e:", "");
@@ -160,7 +163,7 @@ public final class DataBaseToolkit {
             for (final Package<?, ?> pakkage : packages) {
                 log(criteria, pakkage, 1, pakkage.getId(), " : ", pakkage.getName(), ", coverage : ", pakkage.getCoverage(), ", complexity : ",
                         pakkage.getComplexity(), ", stability : ", pakkage.getStability());
-                for (final Class<?, ?> klass : ((List<Class<?, ?>>) pakkage.getChildren())) {
+                for (final Class<?, ?> klass : (pakkage.getChildren())) {
                     log(criteria, klass, 2, " : id : ", klass.getId(), " : name : ", klass.getName(), " : coverage : ", klass.getCoverage(), ", complexity : ",
                             klass.getComplexity(), ", outer class : ", klass.getOuterClass(), ", outer method : ", klass.getOuterMethod(), ", lines : ", klass
                                     .getChildren().size(), ", inner classes : ", klass.getInnerClasses());
@@ -175,11 +178,11 @@ public final class DataBaseToolkit {
                     for (final Afferent afferent : afferents) {
                         log(criteria, afferent, 4, afferent.getName());
                     }
-                    for (final Method<?, ?> method : ((List<Method<?, ?>>) klass.getChildren())) {
+                    for (final Method<?, ?> method : klass.getChildren()) {
                         log(criteria, method, 3, method.getId().toString(), " : name : ", method.getName(), " : description : ", method.getDescription(),
                                 " : coverage : ", method.getCoverage(), ", complexity : ", method.getComplexity(), ", start time : ", method.getStartTime()
                                         + ", end time : ", method.getEndTime());
-                        for (final Line<?, ?> line : ((List<Line<?, ?>>) method.getChildren())) {
+                        for (final Line<?, ?> line : method.getChildren()) {
                             log(criteria, line, 4, line.getId(), " : number : ", line.getNumber(), ", counter : ", line.getCounter());
                         }
                     }
@@ -190,8 +193,8 @@ public final class DataBaseToolkit {
         }
     }
 
-    private static final synchronized void log(final ICriteria criteria, final Composite<?, ?> composite, final int tabs, final Object... data) {
-        if (criteria == null || (criteria != null && criteria.satisfied(composite))) {
+    private static synchronized void log(final ICriteria criteria, final Composite<?, ?> composite, final int tabs, final Object... data) {
+        if (criteria == null || (criteria.satisfied(composite))) {
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < tabs; i++) {
                 builder.append("    ");
@@ -205,21 +208,12 @@ public final class DataBaseToolkit {
         }
     }
 
-    public interface ICriteria {
-
-        public boolean satisfied(final Composite<?, ?> composite);
-
-    }
-
     public static void main(final String[] args) {
         IDataBase dataBase = getDataBase(DataBaseOdb.class, "/usr/share/eclipse/workspace/ikube/code/core/serenity/serenity.odb", null);
         DataBaseToolkit.dump(dataBase, new ICriteria() {
             @SuppressWarnings("rawtypes")
             public boolean satisfied(final Composite<?, ?> composite) {
-                if (Class.class.isAssignableFrom(composite.getClass())) {
-                    return ((Class) composite).getName().contains("Test");
-                }
-                return false;
+                return Class.class.isAssignableFrom(composite.getClass()) && ((Class) composite).getName().contains("Test");
             }
         }, "Database dump : ");
         dataBase.close();

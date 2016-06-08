@@ -78,7 +78,7 @@ import java.util.*;
  */
 public class Profiler {
 
-    protected static Logger LOGGER = Logger.getLogger(Profiler.class);
+    protected static final Logger LOGGER = Logger.getLogger(Profiler.class);
 
     private static double TIME_UNIT_DENOMINATOR = 1d;
 

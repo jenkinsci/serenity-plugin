@@ -4,11 +4,11 @@
  * generated. The frames are then forced to reload which will transfer the model
  * data to the chart and source pages.
  *
- * @param class
+ * @param klass
  *            the class of the composite, i.e. Project, Package or Class
  * @param id
  *            the id of the composite
- * @param the event so we can stop the checktree function opening the class method           
+ * @param evt the event so we can stop the checktree function opening the class method
  * @return nothing
  */
 function loadFrames(klass, id, evt) {
@@ -32,17 +32,48 @@ function loadFrames(klass, id, evt) {
 				}
 			}
 		}
-	}
+	};
 	var url = 'SerenityResult/target?class=' + klass + '&id=' + id;
 	xmlhttp.open('POST', url); // , true
 	xmlhttp.send(); // null
 	
 	evt = evt || window.event;
     if (typeof evt.stopPropagation != "undefined") {
-        evt.stopPropagation();
+        // evt.stopPropagation();
     } else {
         evt.cancelBubble = true;
     }
+}
+
+function loadChart(klass, id, evt) {
+	var xmlhttp = null;
+	if (window.XMLHttpRequest) {
+		// Firefox, Safari, ...
+		xmlhttp = new XMLHttpRequest();
+	} else if (window.ActiveXObject) {
+		// Internet Explorer
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4) {
+			if (xmlhttp.status == 200) {
+				// Nothing
+			} else {
+				alert('Status from call : ' + xmlhttp.status);
+			}
+		}
+	};
+	var url = 'SerenityResult/target?class=' + klass + '&id=' + id;
+	xmlhttp.open('POST', url); // , true
+	xmlhttp.send(); // null
+
+	evt = evt || window.event;
+    /*if (typeof evt.stopPropagation != "undefined") {
+        // evt.stopPropagation();
+    } else {
+        evt.cancelBubble = true;
+    }*/
+	return xmlhttp.responseText;
 }
 
 function loadSource() {
@@ -66,7 +97,7 @@ function loadSource() {
 				s.document.close();
 			}
 		}
-	}
+	};
 	var url = 'SerenityResult/source';
 	xmlhttp.open('GET', url); // , true
 	xmlhttp.send(); // null
@@ -80,10 +111,10 @@ function loadSource() {
  */
 function resizeFrames() {
 	var usableHeight = pageHeight() * 85 / 100;
-	var chart = document.frames ? document.frames['chart'] : document.getElementById('chart');
-	chart.height = 180;
-	var source = document.frames ? document.frames['source'] : document.getElementById('source');
-	source.height = usableHeight - chart.height - 65;
+	// var chart = document.frames ? document.frames['chart'] : document.getElementById('chart');
+	// chart.height = 180;
+	// var source = document.frames ? document.frames['source'] : document.getElementById('source');
+	// source.height = usableHeight - chart.height - 65;
 	// alert('Width : ' + pageWidth() + ', height : ' + pageHeight() + ', chart : ' + chart.height + ', source : ' + source.height);
 }
 

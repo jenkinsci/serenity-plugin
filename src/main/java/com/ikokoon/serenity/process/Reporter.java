@@ -93,7 +93,7 @@ public class Reporter extends AProcess {
                 file.createNewFile();
             }
             logger.error("Writing report : " + file.getAbsolutePath());
-            Toolkit.setContents(file, html.getBytes());
+            Toolkit.setContents(file, html.getBytes(IConstants.ENCODING));
         } catch (Exception e) {
             logger.error("Exception writing report : " + name, e);
         }
@@ -116,7 +116,7 @@ public class Reporter extends AProcess {
                 return o2Average.compareTo(o1Average);
             }
         };
-        Set<Method> sortedMethods = new TreeSet<Method>(comparator);
+        Set<Method> sortedMethods = new TreeSet<>(comparator);
         List<Method> methods = dataBase.find(Method.class);
         sortedMethods.addAll(methods);
 
@@ -228,7 +228,7 @@ public class Reporter extends AProcess {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             XMLWriter writer = new XMLWriter(byteArrayOutputStream, format);
             writer.write(document);
-            return byteArrayOutputStream.toString();
+            return byteArrayOutputStream.toString(IConstants.ENCODING);
         } catch (Exception e) {
             logger.error("Exception pretty printing the output", e);
         }

@@ -25,6 +25,10 @@ import static org.junit.Assert.assertTrue;
 
 public class InstrumentationTest extends ATest {
 
+    interface Interface {
+        void method();
+    }
+
     @Test(expected = RuntimeException.class)
     public void checkNoProfilingInstructions() throws IOException {
         byte[] classBytes = getClassBytes(this.className);
@@ -120,10 +124,6 @@ public class InstrumentationTest extends ATest {
         assertTrue(method.getWaitTime() > 0);
         // assertTrue(method.getNetTime() > 0);
         assertTrue(method.getTotalTime() > 0);
-    }
-
-    interface Interface {
-        void method();
     }
 
     @Test(expected = RuntimeException.class)

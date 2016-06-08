@@ -49,7 +49,7 @@ public class CoverageClassAdapterExt extends ClassVisitor implements Opcodes {
         logger.debug("visitMethod : " + access + ", " + methodName + ", " + methodDescription + ", " + methodSignature + ", " + Arrays.toString(exceptions));
         MethodVisitor methodVisitor = super.visitMethod(access, methodName, methodDescription, methodSignature, exceptions);
         CoverageMethodAdapterExt methodAdapter = new CoverageMethodAdapterExt(methodVisitor, className, linesArrayName, linesArrayDescription);
-        logger.debug("Lines : " + CoverageMethodAdapterExt.lines);
+        logger.debug("Lines : " + methodAdapter.getLines());
         return methodAdapter;
     }
 

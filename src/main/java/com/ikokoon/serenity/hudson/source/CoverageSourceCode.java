@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 
+import com.ikokoon.serenity.IConstants;
 import org.apache.log4j.Logger;
 
 import com.ikokoon.serenity.model.Class;
@@ -37,7 +38,7 @@ public class CoverageSourceCode implements ISourceCode {
 	 * @author Michael Couck
 	 *
 	 */
-	class JavaSourceParserExt extends JavaSourceParser {
+	static class JavaSourceParserExt extends JavaSourceParser {
 		public JavaSourceParserExt() {
 			super(JavaSourceConversionOptions.getRawDefault());
 		}
@@ -74,14 +75,13 @@ public class CoverageSourceCode implements ISourceCode {
 		if (this.klass != null && this.source != null) {
 			try {
 				// Convert the Java source to HTML
-				InputStream inputStream = new ByteArrayInputStream(source.getBytes());
+				InputStream inputStream = new ByteArrayInputStream(source.getBytes(IConstants.ENCODING));
 				JavaSource javaSource = javaSourceParser.parse(new InputStreamReader(inputStream));
 				JavaSource2HTMLConverter converter = new JavaSource2HTMLConverterExt(klass);
 				StringWriter writer = new StringWriter();
 				converter.convert(javaSource, options, writer);
-				String html = writer.toString();
-				return html;
-			} catch (Exception e) {
+				return writer.toString();
+			} catch (final Exception e) {
 				logger.error("Exception generating the HTML for the class source : " + klass, e);
 			}
 		}

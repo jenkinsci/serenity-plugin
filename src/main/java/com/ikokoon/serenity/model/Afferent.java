@@ -26,7 +26,7 @@ public class Afferent extends Composite<Object, Object> implements Comparable<Af
 		return getId() + ":" + name;
 	}
 
-	public int compareTo(Afferent o) {
+	public int compareTo(@SuppressWarnings("NullableProblems") final Afferent o) {
 		int comparison = 0;
 		if (this.getId() != null && o.getId() != null) {
 			comparison = this.getId().compareTo(o.getId());

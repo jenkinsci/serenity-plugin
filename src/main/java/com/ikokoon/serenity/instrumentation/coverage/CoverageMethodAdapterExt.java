@@ -17,7 +17,7 @@ public class CoverageMethodAdapterExt extends MethodVisitor {
     private String className;
     private String linesArrayName;
     private String linesArrayDescription;
-    public static int lines = 0;
+    private int lines = 0;
 
     public CoverageMethodAdapterExt(MethodVisitor methodVisitor, String className, String linesArrayName, String linesArrayDescription) {
         super(Opcodes.ASM5, methodVisitor);
@@ -39,6 +39,10 @@ public class CoverageMethodAdapterExt extends MethodVisitor {
         mv.visitInsn(Opcodes.IASTORE);
         mv.visitLineNumber(lineNumber, label);
         lines = Math.max(lines, lineNumber);
+    }
+
+    public int getLines() {
+        return lines;
     }
 
 }

@@ -1,12 +1,14 @@
 package com.ikokoon.serenity.instrumentation.dependency;
 
 import com.ikokoon.serenity.Collector;
+import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import com.ikokoon.toolkit.Toolkit;
 import org.apache.log4j.Logger;
 import org.objectweb.asm.*;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 /**
@@ -168,7 +170,11 @@ public class DependencyClassAdapter extends ClassVisitor implements Opcodes {
             logger.debug("visitSource : " + source + ", " + debug);
         }
         if (this.source != null && this.source.size() > 0) {
-            Collector.collectSource(className, this.source.toString());
+            try {
+                Collector.collectSource(className, this.source.toString(IConstants.ENCODING));
+            } catch (final UnsupportedEncodingException e) {
+                logger.error(null, e);
+            }
         }
         super.visitSource(source, debug);
     }

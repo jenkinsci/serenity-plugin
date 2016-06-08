@@ -16,6 +16,8 @@
     <url>https://wiki.jenkins-ci.org/display/JENKINS/Serenity+Plugin</url>
 
     <properties>
+        <main-class>com.ikokoon.serenity.Messenger</main-class>
+        <pre-main-class>com.ikokoon.serenity.Transformer</pre-main-class>
         <project.build.sourceEncoding>UTF8</project.build.sourceEncoding>
     </properties>
 
@@ -61,7 +63,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>once</forkMode>
-                    <argLine>-Xms512m -Xmx1024m -noverify -XX:-UseSplitVerifier</argLine>
+                    <argLine>-Xms512m -Xmx1024m -noverify</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -70,7 +72,6 @@
                 <configuration>
                     <xmlOutput>true</xmlOutput>
                     <findbugsXmlOutput>true</findbugsXmlOutput>
-                    <!--<findbugsXmlWithMessages>true</findbugsXmlWithMessages>-->
                     <xmlOutputDirectory>serenity</xmlOutputDirectory>
                     <failOnError>false</failOnError>
                 </configuration>
@@ -92,6 +93,25 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!--<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <verbose>true</verbose>
+                    <archive>
+                        <index>true</index>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>${main-class}</mainClass>
+                            <preMainClass>${pre-main-class}</preMainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>-->
+
         </plugins>
     </build>
 
@@ -152,6 +172,16 @@
             <url>http://mirrors.jenkins-ci.org/war/</url>
         </repository>
         <repository>
+            <id>ikube</id>
+            <url>http://ikube.be/artifactory/libs-release-local/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <!--<repository>
             <id>repo1.maven.org</id>
             <name>repo1 Mirror of http://repo1.maven.org/maven2</name>
             <url>http://repo1.maven.org/maven2</url>
@@ -165,7 +195,7 @@
             <id>ibiblio.org</id>
             <name>ibiblio Mirror of http://repo1.maven.org/maven2/</name>
             <url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
-        </repository>
+        </repository>-->
     </repositories>
 
     <pluginRepositories>

@@ -1,5 +1,6 @@
 package com.ikokoon.toolkit;
 
+import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.model.Unique;
 import org.apache.log4j.Logger;
 
@@ -341,7 +342,7 @@ public final class Toolkit {
             while ((read = inputStream.read(bytes)) > -1) {
                 bos.write(bytes, 0, read);
             }
-            logger.debug("Read bytes : " + bos.toString());
+            logger.debug("Read bytes : " + bos.toString(IConstants.ENCODING));
         } catch (Exception e) {
             logger.error("Exception accessing the file contents.", e);
         } finally {
@@ -354,6 +355,16 @@ public final class Toolkit {
         return bos;
     }
 
+    public static String getStringContents(final InputStream inputStream) {
+        try {
+            ByteArrayOutputStream byteArrayOutputStream = getContents(inputStream);
+            return byteArrayOutputStream.toString(IConstants.ENCODING);
+        } catch (final UnsupportedEncodingException e) {
+            logger.error(IConstants.ENCODING + " not supported on this platform : ", e);
+        }
+        return null;
+    }
+
     /**
      * Writes the contents of a byte array to a file.
      *
@@ -364,7 +375,6 @@ public final class Toolkit {
         FileOutputStream fileOutputStream = null;
         try {
             //noinspection ResultOfMethodCallIgnored
-            file.mkdirs();
             if (file.getParentFile() != null && !file.getParentFile().exists()) {
                 //noinspection ResultOfMethodCallIgnored
                 file.getParentFile().mkdirs();

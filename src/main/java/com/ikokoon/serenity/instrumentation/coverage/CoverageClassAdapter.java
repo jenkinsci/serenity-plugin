@@ -7,6 +7,8 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.util.Arrays;
+
 /**
  * This is the class visitor that visits the class structures and invokes the method visitor for the coverage functionality.
  *
@@ -40,7 +42,7 @@ public class CoverageClassAdapter extends ClassVisitor implements Opcodes {
      * the class at runtime producing a line coverage report for the class.
      */
     public MethodVisitor visitMethod(int access, String methodName, String methodDescription, String methodSignature, String[] exceptions) {
-        logger.debug("visitMethod : " + access + ", " + methodName + ", " + methodDescription + ", " + methodSignature + ", " + exceptions);
+        logger.debug("visitMethod : " + access + ", " + methodName + ", " + methodDescription + ", " + methodSignature + ", " + Arrays.toString(exceptions));
         MethodVisitor methodVisitor = super.visitMethod(access, methodName, methodDescription, methodSignature, exceptions);
         return VisitorFactory.getMethodVisitor(methodVisitor, CoverageMethodAdapter.class, access, className,
                 methodName, methodDescription);
