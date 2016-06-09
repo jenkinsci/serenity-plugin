@@ -3,14 +3,15 @@ package com.ikokoon.serenity.hudson;
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.hudson.modeller.HighchartsModeller;
 import com.ikokoon.serenity.hudson.modeller.IModeller;
-import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.*;
+import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.persistence.DataBaseOdb;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.toolkit.Toolkit;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.remoting.Base64;
 import org.apache.log4j.Logger;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -133,7 +134,7 @@ public class SerenityResult implements ISerenityResult {
         return project;
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "Convert2Lambda"})
     public List<Package> getPackages() {
         IDataBase dataBase = null;
         try {
@@ -159,18 +160,6 @@ public class SerenityResult implements ISerenityResult {
                                 return o1.getName().compareTo(o2.getName());
                             }
                         });
-                    }
-                }
-            }
-            // Remove the inner classes from the packages
-            if (packages != null) {
-                for (Package<?, ?> pakkage : packages) {
-                    Iterator<Class<?, ?>> iterator = pakkage.getChildren().iterator();
-                    while (iterator.hasNext()) {
-                        Class<?, ?> klass = iterator.next();
-                        if (klass.getName().contains("$")) {
-                            iterator.remove();
-                        }
                     }
                 }
             }
@@ -266,8 +255,7 @@ public class SerenityResult implements ISerenityResult {
                 try {
                     String source = Toolkit.getContents(sourceFile).toString(IConstants.ENCODING);
                     source = source.replace("\r", "").replace("\n", "").replace("\\", "");
-                    source = new String(Base64.getEncoder().encode(source.getBytes()));
-                    return source;
+                    return Base64.encode(source.getBytes(IConstants.ENCODING));
                 } catch (final UnsupportedEncodingException e) {
                     logger.error(IConstants.ENCODING + " not supported on this platform : ", e);
                 }
