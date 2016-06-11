@@ -3,8 +3,8 @@ package com.ikokoon.serenity.hudson;
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.hudson.modeller.HighchartsModeller;
 import com.ikokoon.serenity.hudson.modeller.IModeller;
-import com.ikokoon.serenity.model.*;
 import com.ikokoon.serenity.model.Class;
+import com.ikokoon.serenity.model.*;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.persistence.DataBaseOdb;
 import com.ikokoon.serenity.persistence.IDataBase;
@@ -31,8 +31,6 @@ import java.util.*;
  */
 public class SerenityResult implements ISerenityResult {
 
-    public static SerenityResult SERENITY_RESULT;
-
     private Logger logger = Logger.getLogger(SerenityResult.class);
     /**
      * Owner is necessary to render the sidepanel.jelly
@@ -54,7 +52,6 @@ public class SerenityResult implements ISerenityResult {
      */
     public SerenityResult(AbstractBuild<?, ?> abstractBuild) {
         this.abstractBuild = abstractBuild;
-        SERENITY_RESULT = this;
     }
 
     /**
@@ -70,10 +67,8 @@ public class SerenityResult implements ISerenityResult {
      */
     @SuppressWarnings({"unchecked", "rawtypes", "unused"})
     public Object getDynamic(final String token, final StaplerRequest req, final StaplerResponse rsp) throws Exception {
-
         String klass = req.getParameter("class");
         String id = req.getParameter("id");
-
         IDataBase dataBase = null;
         try {
             if (klass != null && id != null) {
@@ -85,13 +80,9 @@ public class SerenityResult implements ISerenityResult {
                 }
             }
         } catch (final Exception e) {
-            logger.error("Exception initialising the model and the source for : " + klass + ", " + id, e);
+            throw new RuntimeException("Exception initialising the model and the source for : " + klass + ", " + id, e);
         } finally {
             closeDataBase(dataBase);
-        }
-
-        if (composite != null) {
-            logger.warn("Composite : " + id + ", " + composite.getClass().getSimpleName());
         }
         return this;
     }
@@ -217,7 +208,6 @@ public class SerenityResult implements ISerenityResult {
     }
 
     @Exported
-    @JavaScriptMethod
     public String getSource() {
         return getSource(composite);
     }
@@ -231,10 +221,9 @@ public class SerenityResult implements ISerenityResult {
             java.lang.Class _klass = java.lang.Class.forName(klass);
             Composite<?, ?> composite = dataBase.find(_klass, _id);
             return getSource(composite);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (final ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
-        return getSource(composite);
     }
 
     @Exported
@@ -251,14 +240,12 @@ public class SerenityResult implements ISerenityResult {
             sourceFilePath.append(".html");
 
             File sourceFile = new File(sourceFilePath.toString());
-            if (sourceFile.exists()) {
-                try {
-                    String source = Toolkit.getContents(sourceFile).toString(IConstants.ENCODING);
-                    source = source.replace("\r", "").replace("\n", "").replace("\\", "");
-                    return Base64.encode(source.getBytes(IConstants.ENCODING));
-                } catch (final UnsupportedEncodingException e) {
-                    logger.error(IConstants.ENCODING + " not supported on this platform : ", e);
-                }
+            try {
+                String source = Toolkit.getContents(sourceFile).toString(IConstants.ENCODING);
+                source = source.replace("\r", "").replace("\n", "").replace("\\", "");
+                return Base64.encode(source.getBytes(IConstants.ENCODING));
+            } catch (final UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
             }
         }
         return "";
@@ -324,7 +311,7 @@ public class SerenityResult implements ISerenityResult {
             if (dataBase != null) {
                 dataBase.close();
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Exception closing database : " + dataBase, e);
         }
     }
