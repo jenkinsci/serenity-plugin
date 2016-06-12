@@ -111,10 +111,10 @@ function loadSource() {
  */
 function resizeFrames() {
 	var usableHeight = pageHeight() * 85 / 100;
-	// var chart = document.frames ? document.frames['chart'] : document.getElementById('chart');
-	// chart.height = 180;
-	// var source = document.frames ? document.frames['source'] : document.getElementById('source');
-	// source.height = usableHeight - chart.height - 65;
+	var chart = document.frames ? document.frames['chart'] : document.getElementById('chart');
+	chart.height = 180;
+	var source = document.frames ? document.frames['source'] : document.getElementById('source');
+	source.height = usableHeight - chart.height - 65;
 	// alert('Width : ' + pageWidth() + ', height : ' + pageHeight() + ', chart : ' + chart.height + ', source : ' + source.height);
 }
 

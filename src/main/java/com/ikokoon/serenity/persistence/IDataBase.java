@@ -108,9 +108,9 @@ public interface IDataBase {
                     if (dataBaseEvent.getEventType().equals(IDataBaseEvent.Type.DATABASE_CLOSE)) {
                         IDataBase dataBase = dataBaseEvent.getDataBase();
                         if (!dataBases.values().remove(dataBase)) {
-                            logger.info("Database not removed : " + dataBase);
+                            logger.debug("Database not removed : " + dataBase);
                         } else {
-                            logger.info("Removed database : " + dataBase);
+                            logger.debug("Removed database : " + dataBase);
                         }
                         DataBaseManager.removeDataBaseListener(dataBaseFile, this);
                     }

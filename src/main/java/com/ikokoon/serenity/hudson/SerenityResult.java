@@ -1,7 +1,7 @@
 package com.ikokoon.serenity.hudson;
 
 import com.ikokoon.serenity.IConstants;
-import com.ikokoon.serenity.hudson.modeller.HighchartsModeller;
+import com.ikokoon.serenity.hudson.modeller.GoogleChartModeller;
 import com.ikokoon.serenity.hudson.modeller.IModeller;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.*;
@@ -160,43 +160,6 @@ public class SerenityResult implements ISerenityResult {
         }
     }
 
-    public String getModel() {
-        if (composite == null) {
-            return "";
-        }
-        return getModel(null, composite);
-    }
-
-    @SuppressWarnings("unused")
-    public String getProjectModel() {
-        // Move the build forward to the last build because Hudson will go to the last stable build
-        // which we don't want, we want the last build
-        AbstractBuild<?, ?> abstractBuild = getLastBuild(this.abstractBuild);
-
-        IDataBase dataBase = getDataBase(abstractBuild);
-        Project<?, ?> project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
-
-        Object object = abstractBuild.getProject();
-        if (object instanceof hudson.model.Project<?, ?>) {
-            hudson.model.Project<?, ?> hudsonProject = (hudson.model.Project<?, ?>) object;
-            String projectName = hudsonProject.getName();
-            project.setName(projectName);
-        }
-
-        return getModel("ProjectSmall", project);
-    }
-
-    private AbstractBuild<?, ?> getLastBuild(final AbstractBuild<?, ?> abstractBuild) {
-        if (abstractBuild.getNextBuild() == null) {
-            return abstractBuild;
-        }
-        AbstractBuild<?, ?> nextAbstractBuild = getLastBuild(abstractBuild.getNextBuild());
-        if (nextAbstractBuild.isBuilding()) {
-            return abstractBuild;
-        }
-        return getLastBuild(abstractBuild.getNextBuild());
-    }
-
     @SuppressWarnings("unused")
     public String getFile(final String name) {
         try {
@@ -215,15 +178,7 @@ public class SerenityResult implements ISerenityResult {
     @Exported
     @JavaScriptMethod
     public String getSource(final String klass, final String identifier) {
-        IDataBase dataBase = getDataBase(abstractBuild);
-        try {
-            long _id = Long.parseLong(identifier);
-            java.lang.Class _klass = java.lang.Class.forName(klass);
-            Composite<?, ?> composite = dataBase.find(_klass, _id);
-            return getSource(composite);
-        } catch (final ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        return getSource(getComposite(klass, identifier));
     }
 
     @Exported
@@ -251,26 +206,44 @@ public class SerenityResult implements ISerenityResult {
         return "";
     }
 
+    @JavaScriptMethod
+    public String getModel(final String klass, final String identifier) {
+        return getModel(getComposite(klass, identifier));
+    }
+
     @SuppressWarnings("unchecked")
-    public String getModel(final String modelName, final Composite<?, ?> composite) {
+    public String getModel(final Composite<?, ?> composite) {
         if (composite == null) {
             return "";
         }
         LinkedList<Composite<?, ?>> composites = new LinkedList<>();
         composites.addFirst(composite);
-        LinkedList<Integer> buildNumbers = new LinkedList<>();
-        buildNumbers.addFirst(abstractBuild.number);
+        List<Integer> buildNumbers = new ArrayList<>();
+        buildNumbers.add(abstractBuild.number);
 
         composites = getPreviousComposites((java.lang.Class<Composite<?, ?>>) composite.getClass(), abstractBuild, composites, buildNumbers, composite.getId(), 1);
 
-        IModeller modeller = new HighchartsModeller(modelName, buildNumbers.toArray(new Integer[buildNumbers.size()]));
+        IModeller modeller = new GoogleChartModeller();
+        modeller.setBuildNumbers(buildNumbers.toArray(new Integer[buildNumbers.size()]));
         modeller.visit(composite.getClass(), composites.toArray(new Composite[composites.size()]));
         return modeller.getModel();
     }
 
+    private Composite<?, ?> getComposite(final String klass, final String identifier) {
+        IDataBase dataBase = getDataBase(abstractBuild);
+        long _id = Long.parseLong(identifier);
+        java.lang.Class _klass;
+        try {
+            _klass = java.lang.Class.forName(klass);
+            return dataBase.find(_klass, _id);
+        } catch (final ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     LinkedList<Composite<?, ?>> getPreviousComposites(final java.lang.Class<Composite<?, ?>> klass, final AbstractBuild<?, ?> abstractBuild,
-                                                      final LinkedList<Composite<?, ?>> composites, final LinkedList<Integer> buildNumbers, final Long id, final int history) {
+                                                      final LinkedList<Composite<?, ?>> composites, final List<Integer> buildNumbers, final Long id, final int history) {
         if (history >= HISTORY) {
             return composites;
         }
@@ -288,7 +261,7 @@ public class SerenityResult implements ISerenityResult {
             return composites;
         }
         composites.addFirst(composite);
-        buildNumbers.addFirst(previousBuild.number);
+        buildNumbers.add(previousBuild.number);
         return getPreviousComposites((java.lang.Class<Composite<?, ?>>) composite.getClass(), previousBuild, composites, buildNumbers, id, history + 1);
     }
 
@@ -315,5 +288,37 @@ public class SerenityResult implements ISerenityResult {
             logger.error("Exception closing database : " + dataBase, e);
         }
     }
+
+    /*@Deprecated
+    @JavaScriptMethod
+    @SuppressWarnings("unused")
+    public String getProjectModel() {
+        // Move the build forward to the last build because Hudson will go to the last stable build
+        // which we don't want, we want the last build
+        AbstractBuild<?, ?> abstractBuild = getLastBuild(this.abstractBuild);
+
+        IDataBase dataBase = getDataBase(abstractBuild);
+        Project<?, ?> project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
+
+        Object object = abstractBuild.getProject();
+        if (object instanceof hudson.model.Project<?, ?>) {
+            hudson.model.Project<?, ?> hudsonProject = (hudson.model.Project<?, ?>) object;
+            String projectName = hudsonProject.getName();
+            project.setName(projectName);
+        }
+
+        return getModel(project);
+    }*/
+
+    /*private AbstractBuild<?, ?> getLastBuild(final AbstractBuild<?, ?> abstractBuild) {
+        if (abstractBuild.getNextBuild() == null) {
+            return abstractBuild;
+        }
+        AbstractBuild<?, ?> nextAbstractBuild = getLastBuild(abstractBuild.getNextBuild());
+        if (nextAbstractBuild.isBuilding()) {
+            return abstractBuild;
+        }
+        return getLastBuild(abstractBuild.getNextBuild());
+    }*/
 
 }

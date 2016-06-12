@@ -12,13 +12,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class takes the composites and generates the data arrays for the Highcharts model, and makes a big string that can be inserted into the
- * Highcharts object on the front end.
+ * This class takes the composites and generates the data arrays for the Highcharts model, and makes
+ * a big string that can be inserted into the Highcharts object on the front end.
  *
  * @author Michael Couck
  * @version 01.00
  * @since 01.01.10
  */
+@Deprecated
 public class HighchartsModeller implements IModeller {
 
     public interface IConstructor {
@@ -37,7 +38,7 @@ public class HighchartsModeller implements IModeller {
      * @param modelName    the name of the model file
      * @param buildNumbers the numbers that should be on the x-axis
      */
-    public HighchartsModeller(String modelName, Integer... buildNumbers) {
+    public HighchartsModeller(final String modelName, final Integer... buildNumbers) {
         this.modelName = modelName;
         this.buildNumbers = buildNumbers;
         addConstructors();
@@ -74,6 +75,11 @@ public class HighchartsModeller implements IModeller {
             logger.debug("Data : " + data);
             model = Toolkit.replaceAll(model, mapEntry.getKey(), data);
         }
+    }
+
+    @Override
+    public void setBuildNumbers(final Integer... buildNumbers) {
+        this.buildNumbers = buildNumbers;
     }
 
     private String getName(Composite<?, ?>... composites) {

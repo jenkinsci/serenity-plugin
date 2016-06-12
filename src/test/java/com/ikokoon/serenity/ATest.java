@@ -12,6 +12,9 @@ import com.ikokoon.toolkit.Toolkit;
 import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
 
@@ -29,6 +32,8 @@ import static org.mockito.Mockito.mock;
  * @version 01.00
  * @since 30.07.09
  */
+@Ignore
+@RunWith(MockitoJUnitRunner.class)
 public abstract class ATest implements IConstants {
 
     protected static Logger LOGGER;

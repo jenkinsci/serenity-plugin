@@ -41,7 +41,7 @@ public class SerenityPlugin extends Plugin {
     public SerenityPlugin() {
         LoggingConfigurator.configure();
         Logger logger = Logger.getLogger(SerenityPlugin.class);
-        logger.info("Loaded plugin : " + this.getClass().getName());
+        logger.debug("Loaded plugin : " + this.getClass().getName());
     }
 
     /**

@@ -1,6 +1,5 @@
 package com.ikokoon.serenity.persistence;
 
-import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.model.Composite;
 import com.ikokoon.toolkit.Toolkit;
 import org.apache.log4j.Logger;
@@ -11,9 +10,7 @@ import org.neodatis.odb.core.query.IQuery;
 import org.neodatis.odb.core.query.criteria.Where;
 import org.neodatis.odb.impl.core.query.criteria.CriteriaQuery;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintStream;
 import java.util.*;
 
 /**
@@ -47,7 +44,7 @@ public class DataBaseOdb extends DataBase {
     public DataBaseOdb(final String dataBaseFile) {
         synchronized (DataBaseOdb.class) {
             this.dataBaseFile = dataBaseFile;
-            logger.info("Opening ODB database on file : " + new File(dataBaseFile).getAbsolutePath());
+            logger.debug("Opening ODB database on file : " + new File(dataBaseFile).getAbsolutePath());
             try {
                 odb = ODBFactory.open(this.dataBaseFile);
                 closed = false;
@@ -127,7 +124,7 @@ public class DataBaseOdb extends DataBase {
                 logger.error("Exception selecting objects with class : " + klass + ", parameters : " + parameters + ", " + this, e);
             }
         }
-        List<E> list = new ArrayList<E>();
+        List<E> list = new ArrayList<>();
         list.addAll(set);
         logger.debug("List : " + list);
         return list;
@@ -201,13 +198,6 @@ public class DataBaseOdb extends DataBase {
                 logger.warn("Attempted to close the database again : " + this);
                 return;
             }
-
-            /*if (logger.isInfoEnabled()) {
-                logger.info("Closing database : " + dataBaseFile + ", " + this);
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                new Exception().printStackTrace(new PrintStream(bos));
-                logger.info("Stack dump        : " + bos.toString(IConstants.ENCODING));
-            }*/
 
             commit();
             odb.close();

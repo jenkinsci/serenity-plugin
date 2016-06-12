@@ -26,4 +26,11 @@ public interface IModeller {
      */
     void visit(final Class<?> klass, final Composite<?, ?>... composites);
 
+    /**
+     * Sets the numbers of each build in Jenkins.
+     *
+     * @param buildNumbers the build numbers in Jenkins, i.e. 23, 26, 89 etc, do not have to be consecutive
+     */
+    void setBuildNumbers(final Integer... buildNumbers);
+
 }

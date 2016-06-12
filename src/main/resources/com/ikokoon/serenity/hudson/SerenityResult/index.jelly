@@ -12,10 +12,10 @@
 			<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 			<script type="text/javascript">
- 				// Load the Visualization API and the corechart package.
-                // Callback that creates and populates a data table,
-                // instantiates the chart, passes in the data and draws
-                // it.
+			    var serenityResult = <st:bind value="${it}" />
+
+ 				// Load the Visualization API and the corechart package. Callback that creates and populates
+ 				// a data table, instantiates the chart, passes in the data and draws it.
 			    google.charts.load('current', {'packages':['corechart']});
 			    google.charts.setOnLoadCallback(drawChart);
 
@@ -25,49 +25,60 @@
                   for (var i in CheckTree.list) {
                     CheckTree.list[i].init()
                   }
-
-                  // Get the data from the server
-                  // var projectData = loadChart('com.ikokoon.serenity.model.Project', '${it.project.id}');
-
-                  // Create the data table.
-                  var data = new google.visualization.DataTable();
-                  data.addColumn('number', 'Build');
-                  data.addColumn('number', 'Coverage');
-                  data.addColumn('number', 'Complexity');
-                  data.addColumn('number', 'Stability');
-                  data.addColumn('number', 'Abstractness');
-                  data.addColumn('number', 'Distance');
-                  data.addRows([
-                    [1, 0.78, 0.3125, 0.69, 0.24, 0.13],
-                    [2, 0.78, 0.3125, 0.69, 0.24, 0.13],
-                    [3, 0.78, 0.3125, 0.69, 0.24, 0.13],
-                    [4, 0.78, 0.3125, 0.69, 0.24, 0.13],
-                    [5, 0.78, 0.3125, 0.69, 0.24, 0.13],
-                    [6, 0.78, 0.3125, 0.69, 0.24, 0.13],
-                    [7, 0.78, 0.3125, 0.69, 0.24, 0.13],
-                    [8, 0.78, 0.3125, 0.69, 0.24, 0.13]
-                  ]);
-
-                  // Set chart options - 'width':650,
-                  var options = {'title':'Project metrics', 'height':150};
-
-                  // Instantiate and draw our chart, passing in some options.
-                  var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-                  chart.draw(data, options);
-
                   // alert('Width : ' + options.width);
                 }
 
+                window.onload = setTimeout(function() {
+                	getModel('com.ikokoon.serenity.model.Project', '${it.project.id}');
+                }, 1000);
                 window.onresize = drawChart;
 
-                var serenityResult = <st:bind value="${it}" />
+                function getModel(klass, identifier, e) {
+                	serenityResult.getModel(klass, identifier, function(t) {
+                		var model = t.responseObject();
+                		// alert('Model : ' + model);
+
+                		setTimeout(function() {
+                        	// Instantiate and draw our chart, passing in some options.
+                            var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+                            var data = new google.visualization.DataTable(model);
+                            // Set chart options - 'width':650,
+                            var options = {
+                            	title:'Project metrics',
+	                            vAxis: {title: 'Values'},
+   		                        hAxis: {title: 'Builds'},
+   	                         	seriesType: 'bars',
+   	                         	series: {0: {type: 'line'}},
+   	                         	legend: { position: 'bottom' },
+   	                         	curveType: 'function',
+   	                         	height:310
+                            };
+                            chart.draw(data, options);
+                        }, 100);
+                	});
+                	// Stops the tree from opening the node
+                    if (!e) {
+                    	var e = window.event;
+                    	if (e !== undefined) {
+                    		e.cancelBubble = true;
+                    		if (e.stopPropagation) {
+                    			e.stopPropagation();
+                    		}
+                    	}
+                    }
+                };
+
                 function getSource(identifier) {
+                  getModel('com.ikokoon.serenity.model.Class', identifier);
                   serenityResult.getSource('com.ikokoon.serenity.model.Class', identifier, function(t) {
                 	  var source = t.responseObject();
-                	  source = base64Decode(source);
-                	  var sourceElement = document.getElementById('source');
-                	  // alert(sourceElement + ':' + sourceElement.innerHTML + ':' + source);
-                  	sourceElement.innerHTML = source;
+                	  setTimeout(function() {
+                	  	var sourceDecoded = base64Decode(source);
+                	  	var sourceElement = document.getElementById('source');
+                	  	// alert(sourceElement + ':' + sourceElement.innerHTML + ':' + sourceDecoded);
+                  	  	// sourceElement.innerHTML = 'Some other fucking source!' + identifier;
+                  	  	sourceElement.innerHTML = sourceDecoded;
+                	  }, 100);
                   });
                 };
  			</script>
@@ -76,7 +87,7 @@
 				<tr>
 					<td colspan="2">
 						<h3>
-							<a href="#" onclick="JavaScript:loadFrames('com.ikokoon.serenity.model.Project', '${it.project.id}');">
+							<a href="#" onclick="JavaScript:getModel('com.ikokoon.serenity.model.Project', '${it.project.id}');">
 								<img src="${rootURL}/plugin/serenity/icons/project.gif" alt="The Serenity Report Icon" title="Serenity Graph" />
 								Project : ${it.name}
 							</a>
@@ -101,7 +112,7 @@
 									<img src="${rootURL}/plugin/serenity/js/imgs/package.gif" />
 									<a 
 										href="#" 
-										onClick="loadFrames('com.ikokoon.serenity.model.Package', '${package.id}', event)"
+										onClick="JavaScript:getModel('com.ikokoon.serenity.model.Package', '${package.id}')"
 										style="text-decoration : none;">&#160;
 										${package.name} (${package.coverage},${package.complexity},${package.stability})
 									</a>
@@ -116,7 +127,7 @@
 											<img src="${rootURL}/plugin/serenity/js/imgs/${classIcon}" />
 											<a 
 												href="#" 
-												onClick="getSource('${klass.id}')"
+												onClick="JavaScript:getSource('${klass.id}');"
 												style="text-decoration : none;">&#160;
 													${klass.name} (${klass.coverage},${klass.complexity},${klass.stability},${klass.access})
 											</a>
@@ -173,20 +184,11 @@
 					</td>
 
 					<td valign="top" align="left" width="100%">
-						<table width="100%">
-							<tr>
-								<td>
-									<div id="chart_div"></div>
-								</td>
-							</tr>
-						</table>
-						<table width="100%" height="750">
-							<tr>
-								<td valign="top">
-									<div id="source" />
-								</td>
-							</tr>
-						</table>
+						<div id="chart_div"></div>
+						<div id="page-break" style="width: 100%; height: 20px; overflow: auto" />
+						<div id="source" style="width: 100%; height: 500px; overflow: auto">
+						<!-- Source to be replaced in JavaScript -->
+						</div>
 					</td>
 
 				</tr>
