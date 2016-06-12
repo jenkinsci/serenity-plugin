@@ -1,14 +1,81 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
+
+    <!-- <b>It</b>: ${it}<br></br> -->
+    <!-- <b>From</b>: ${from}<br></br> -->
+
 	<j:choose>
 		<j:when test="${from.hasResult()}">
 			<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-			<div id="container" style="width: 500px; height: 140px"></div>
+
 			<script type="text/javascript">
-				// alert('Creating chart : ');
-				// var chart = new Highcharts.Chart(${from.lastResult.projectModel});
-				// alert('Chart : ' + chart);
+			    google.charts.load('current', {'packages':['corechart']});
+                google.charts.setOnLoadCallback(getModel);
+
+				var serenityResult = <st:bind value="${from.lastResult}" />
+				var projectId = ${from.getLastBuildProjectId()};
+				var projectName = ${from.getProjectName()};
+				// alert('Chart : ' + serenityResult);
+
+                function getModel() {
+                    serenityResult.getProjectModel(function(t) {
+                        var model = t.responseObject();
+                        // alert('Model : ' + model);
+                        setTimeout(function() {
+                            // Instantiate and draw our chart, passing in some options.
+                            var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+                            var data = new google.visualization.DataTable(model);
+                            var options = {
+                                title:'Project metrics - Powered by Serenity',
+                	            vAxis: {title: 'Values'},
+                   		        hAxis: {title: 'Builds'},
+                   	            seriesType: 'bars',
+                   	            series: {0: {type: 'line'}},
+                   	            legend: { position: 'bottom' },
+                   	            curveType: 'function',
+                   	            height:250
+                            };
+                            chart.draw(data, options);
+                        }, 100);
+                    });
+                };
+
+                function toggleElementVisibility(id) {
+                    var e = document.getElementById(id);
+                    if(e.style.display == 'block')
+                        e.style.display = 'none';
+                    else
+                        e.style.display = 'block';
+                }
 			</script>
+
+			<table id="chart_div_table" width="100%">
+    			<tr>
+    			    <td width="100%">
+            			<div id="chart_div">
+                             <!-- Source to be replaced in JavaScript -->
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="100%" align="right">
+                        <a href="#" onClick="JavaScript:toggleElementVisibility('metrics-legend');">
+                            Metrics legend
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="100%" align="left">
+                        <div id="metrics-legend" style="display: none; padding: 20px;">
+                            <b>Coverage:</b> More is better, target: 80% <br></br>
+                            <b>Complexity:</b> Less is better,  target: &lt; 10 <br></br>
+                            <b>(In)Stability:</b> Less is better, target: 10 <br></br>
+                            <b>Abstractness:</b> Every class must have an interface, target: ~30 <br></br>
+                            <b>Distance:</b> Less is better, target: 10 <br></br>
+                        </div>
+                    </td>
+                </tr>
+            </table>
 		</j:when>
 	</j:choose>
 </j:jelly>

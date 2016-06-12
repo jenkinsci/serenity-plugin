@@ -2,36 +2,30 @@
 <j:jelly trim="false" xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 	<l:layout>
 		<st:include it="${it.owner}" page="sidepanel.jelly" />
-		<l:main-panel>
-
+			<l:main-panel>
 			<link rel="stylesheet" type="text/css" href="${rootURL}/plugin/serenity/js/checktree.css" />
+			<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/checktree.js" />
-			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/serenity.js" />
 			<script type="text/javascript" src="${rootURL}/plugin/serenity/js/base64.js" />
 
-			<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
 			<script type="text/javascript">
+				google.charts.load('current', {'packages':['corechart']});
+                google.charts.setOnLoadCallback(initPage);
+
 			    var serenityResult = <st:bind value="${it}" />
 
- 				// Load the Visualization API and the corechart package. Callback that creates and populates
- 				// a data table, instantiates the chart, passes in the data and draws it.
-			    google.charts.load('current', {'packages':['corechart']});
-			    google.charts.setOnLoadCallback(drawChart);
-
- 				var packages = new CheckTree('packages');
-
-                function drawChart() {
-                  for (var i in CheckTree.list) {
-                    CheckTree.list[i].init()
-                  }
-                  // alert('Width : ' + options.width);
+                function initPage() {
+                	initTree();
+                	getModel('com.ikokoon.serenity.model.Project', '${it.project.id}');
                 }
 
-                window.onload = setTimeout(function() {
-                	getModel('com.ikokoon.serenity.model.Project', '${it.project.id}');
-                }, 1000);
-                window.onresize = drawChart;
+				var packages = new CheckTree('packages');
+
+				function initTree() {
+                    for (var i in CheckTree.list) {
+                        CheckTree.list[i].init()
+                    }
+                }
 
                 function getModel(klass, identifier, e) {
                 	serenityResult.getModel(klass, identifier, function(t) {
@@ -184,10 +178,12 @@
 					</td>
 
 					<td valign="top" align="left" width="100%">
-						<div id="chart_div"></div>
+						<div id="chart_div">
+							<!-- Source to be replaced in JavaScript -->
+						</div>
 						<div id="page-break" style="width: 100%; height: 20px; overflow: auto" />
 						<div id="source" style="width: 100%; height: 500px; overflow: auto">
-						<!-- Source to be replaced in JavaScript -->
+							<!-- Source to be replaced in JavaScript -->
 						</div>
 					</td>
 

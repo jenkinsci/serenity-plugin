@@ -11,4 +11,8 @@ public interface ISerenityResult {
 
     int HISTORY = 8;
 
+    String getLastBuildProjectId();
+
+    String getName();
+
 }

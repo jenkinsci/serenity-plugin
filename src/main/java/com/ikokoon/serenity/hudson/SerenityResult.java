@@ -31,7 +31,7 @@ import java.util.*;
  */
 public class SerenityResult implements ISerenityResult {
 
-    private Logger logger = Logger.getLogger(SerenityResult.class);
+    private Logger logger;
     /**
      * Owner is necessary to render the sidepanel.jelly
      */
@@ -50,14 +50,15 @@ public class SerenityResult implements ISerenityResult {
      *
      * @param abstractBuild the build action that generated the build for the project
      */
-    public SerenityResult(AbstractBuild<?, ?> abstractBuild) {
+    public SerenityResult(final AbstractBuild<?, ?> abstractBuild) {
         this.abstractBuild = abstractBuild;
+        logger = Logger.getLogger(SerenityResult.class);
     }
 
     /**
-     * This method is called from the front end. The result from the call will result in some piece of data being extracted
-     * from the database. For example if the user clicks on a package the name of the package will be used to get that package
-     * from the database and will be made available to the UI.
+     * This method is called from the front end. The result from the call will result in some piece of data being
+     * extracted from the database. For example if the user clicks on a package the name of the package will be used
+     * to get that package from the database and will be made available to the UI.
      *
      * @param token the token from the front end
      * @param req   the Stapler request from the ui
@@ -91,6 +92,7 @@ public class SerenityResult implements ISerenityResult {
         return this.abstractBuild;
     }
 
+    @JavaScriptMethod
     public String getName() {
         if (abstractBuild != null) {
             AbstractProject<?, ?> abstractProject = abstractBuild.getProject();
@@ -112,6 +114,7 @@ public class SerenityResult implements ISerenityResult {
         }
     }
 
+    @JavaScriptMethod
     public Project<?, ?> getProject() {
         if (project == null) {
             IDataBase dataBase = null;
@@ -123,6 +126,12 @@ public class SerenityResult implements ISerenityResult {
             }
         }
         return project;
+    }
+
+    @JavaScriptMethod
+    public String getLastBuildProjectId() {
+        Project<?, ?> project = getProject();
+        return String.valueOf(project.getId());
     }
 
     @SuppressWarnings({"rawtypes", "Convert2Lambda"})
@@ -207,8 +216,18 @@ public class SerenityResult implements ISerenityResult {
     }
 
     @JavaScriptMethod
+    public String getProjectModel() {
+        Project<?, ?> project = getProject();
+        return getModel(project);
+    }
+
+    @JavaScriptMethod
     public String getModel(final String klass, final String identifier) {
-        return getModel(getComposite(klass, identifier));
+        Composite<?, ?> composite = getComposite(klass, identifier);
+        logger.info("Composite : " + klass + ", " + identifier + ", " + composite);
+        String model = getModel(composite);
+        logger.info("Model : " + model);
+        return model;
     }
 
     @SuppressWarnings("unchecked")
@@ -242,8 +261,12 @@ public class SerenityResult implements ISerenityResult {
     }
 
     @SuppressWarnings("unchecked")
-    LinkedList<Composite<?, ?>> getPreviousComposites(final java.lang.Class<Composite<?, ?>> klass, final AbstractBuild<?, ?> abstractBuild,
-                                                      final LinkedList<Composite<?, ?>> composites, final List<Integer> buildNumbers, final Long id, final int history) {
+    LinkedList<Composite<?, ?>> getPreviousComposites(final java.lang.Class<Composite<?, ?>> klass,
+                                                      final AbstractBuild<?, ?> abstractBuild,
+                                                      final LinkedList<Composite<?, ?>> composites,
+                                                      final List<Integer> buildNumbers,
+                                                      final Long id,
+                                                      final int history) {
         if (history >= HISTORY) {
             return composites;
         }
@@ -288,37 +311,5 @@ public class SerenityResult implements ISerenityResult {
             logger.error("Exception closing database : " + dataBase, e);
         }
     }
-
-    /*@Deprecated
-    @JavaScriptMethod
-    @SuppressWarnings("unused")
-    public String getProjectModel() {
-        // Move the build forward to the last build because Hudson will go to the last stable build
-        // which we don't want, we want the last build
-        AbstractBuild<?, ?> abstractBuild = getLastBuild(this.abstractBuild);
-
-        IDataBase dataBase = getDataBase(abstractBuild);
-        Project<?, ?> project = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
-
-        Object object = abstractBuild.getProject();
-        if (object instanceof hudson.model.Project<?, ?>) {
-            hudson.model.Project<?, ?> hudsonProject = (hudson.model.Project<?, ?>) object;
-            String projectName = hudsonProject.getName();
-            project.setName(projectName);
-        }
-
-        return getModel(project);
-    }*/
-
-    /*private AbstractBuild<?, ?> getLastBuild(final AbstractBuild<?, ?> abstractBuild) {
-        if (abstractBuild.getNextBuild() == null) {
-            return abstractBuild;
-        }
-        AbstractBuild<?, ?> nextAbstractBuild = getLastBuild(abstractBuild.getNextBuild());
-        if (nextAbstractBuild.isBuilding()) {
-            return abstractBuild;
-        }
-        return getLastBuild(abstractBuild.getNextBuild());
-    }*/
 
 }
