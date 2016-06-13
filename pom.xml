@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -10,7 +9,7 @@
     </parent>
 
     <artifactId>serenity</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
     <packaging>hpi</packaging>
     <name>Jenkins Serenity plugin</name>
     <url>https://wiki.jenkins-ci.org/display/JENKINS/Serenity+Plugin</url>
@@ -43,13 +42,13 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks verbose="true">
-                                <property name="temp" value="target/temp"/>
-                                <property name="serenity.jar" value="target/serenity.jar"/>
-                                <property name="manifest" value="src/main/resources/META-INF/MANIFEST.MF"/>
+                                <property name="temp" value="target/temp" />
+                                <property name="serenity.jar" value="target/serenity.jar" />
+                                <property name="manifest" value="src/main/resources/META-INF/MANIFEST.MF" />
 
-                                <echo message="Unpacking and repacking serenity.jar with the agent manifest"/>
-                                <unjar src="${serenity.jar}" dest="${temp}" overwrite="true"/>
-                                <jar destfile="${serenity.jar}" basedir="${temp}" manifest="${manifest}"/>
+                                <echo message="Unpacking and repacking serenity.jar with the agent manifest" />
+                                <unjar src="${serenity.jar}" dest="${temp}" overwrite="true" />
+                                <jar destfile="${serenity.jar}" basedir="${temp}" manifest="${manifest}" />
                             </tasks>
                         </configuration>
                         <goals>
@@ -206,4 +205,8 @@
             <url>http://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
+
+  <scm>
+    <tag>serenity-1.1</tag>
+  </scm>
 </project>
