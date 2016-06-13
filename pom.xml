@@ -12,7 +12,22 @@
     <version>1.1</version>
     <packaging>hpi</packaging>
     <name>Jenkins Serenity plugin</name>
+    <description>Code metrics and coverage plugin for Jenkins, dynamic instrumentation, and soon continuous profiling!</description>
     <url>https://wiki.jenkins-ci.org/display/JENKINS/Serenity+Plugin</url>
+
+    <scm>
+        <connection>scm:git:ssh://git@github.com/jenkinsci/serenity-plugin.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/serenity-plugin.git</developerConnection>
+        <url>https://github.com/jenkinsci/serenity-plugin</url>
+        <tag>head</tag>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>MIT license</name>
+            <comments>All source code is under the MIT license.</comments>
+        </license>
+    </licenses>
 
     <properties>
         <main-class>com.ikokoon.serenity.Messenger</main-class>
@@ -205,8 +220,4 @@
             <url>http://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
-
-  <scm>
-    <tag>serenity-1.1</tag>
-  </scm>
 </project>
