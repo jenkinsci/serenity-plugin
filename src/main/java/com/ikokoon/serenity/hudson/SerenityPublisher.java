@@ -21,9 +21,10 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import net.sf.json.JSONObject;
-import org.apache.log4j.Logger;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,9 +36,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This class runs at the end of the build, called by Hudson. The purpose is to copy the database files from the output directories for each module in the case
- * of Maven and Ant builds to the output directory for the build for display in the Hudson front end plugin. As well as this the source that was found for the
- * project is copied to the source directory where the front end can access it.
+ * This class runs at the end of the build, called by Hudson. The purpose is to copy the database files from the output
+ * directories for each module in the case of Maven and Ant builds to the output directory for the build for display in the
+ * Hudson front end plugin. As well as this the source that was found for the project is copied to the source directory where
+ * the front end can access it.
  * <p>
  * Once all the database files are copied to a location on the local machine then they are merged together and pruned.
  *
@@ -61,11 +63,12 @@ public class SerenityPublisher extends Recorder implements Serializable {
     /**
      * The LOGGER.
      */
-    protected static final Logger LOGGER = Logger.getLogger(SerenityPublisher.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(SerenityPublisher.class);
     /**
      * The description for Hudson.
      */
     @Extension
+    @SuppressWarnings("unused")
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     @DataBoundConstructor
@@ -91,15 +94,16 @@ public class SerenityPublisher extends Recorder implements Serializable {
             // Copy the database files from the output directories to the build directory. and
             // merge them and then aggregate all the data, then prune the data
             IDataBase targetDataBase = copyDataBasesToBuildDirectory(build, buildListener);
-            aggregate(build, buildListener, targetDataBase);
-            prune(build, buildListener, targetDataBase);
+            aggregate(buildListener, targetDataBase);
+            prune(buildListener, targetDataBase);
             targetDataBase.close();
 
             printStream.println("Publishing the Serenity results...");
             ISerenityResult result = new SerenityResult(build);
             SerenityBuildAction buildAction = new SerenityBuildAction(build, result);
+            //noinspection deprecation
             build.getActions().add(buildAction);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             printStream.println(e.getMessage());
             LOGGER.error(null, e);
         }
@@ -108,8 +112,9 @@ public class SerenityPublisher extends Recorder implements Serializable {
     }
 
     /**
-     * Scans the output directory for the project and locates all the database files. These files are then copied to a local file in the user temp directory.
-     * The databases are merged into the main database.
+     * Scans the output directory for the project and locates all the database files. These files
+     * are then copied to a local file in the user temp directory. The databases are merged into the
+     * main database.
      *
      * @param build         the build for this project
      * @param buildListener the listener of the build
@@ -137,13 +142,13 @@ public class SerenityPublisher extends Recorder implements Serializable {
             // Scan the build output roots for database files to merge
             FilePath[] moduleRoots = build.getModuleRoots();
             // The list of Serenity database files found in the module roots
-            List<FilePath> databaseFiles = new ArrayList<FilePath>();
+            List<FilePath> databaseFiles = new ArrayList<>();
             Pattern pattern = Pattern.compile(SERENITY_ODB_REGEX);
             for (final FilePath moduleRoot : moduleRoots) {
                 // printStream.println("Module root : " + moduleRoot.toURI());
                 try {
-                    findFilesAndDirectories(moduleRoot, databaseFiles, pattern, printStream);
-                } catch (Exception e) {
+                    findFilesAndDirectories(moduleRoot, databaseFiles, pattern);
+                } catch (final Exception e) {
                     printStream.println("Exception searching for database files : " + moduleRoot);
                     LOGGER.error(null, e);
                 }
@@ -175,14 +180,14 @@ public class SerenityPublisher extends Recorder implements Serializable {
                         // printStream.println("Creating coverage source : " + coverageSourceCodeFile.getAbsolutePath());
                         Toolkit.setContents(coverageSourceCodeFile, htmlSource.getBytes());
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     printStream.println("Unable to copy Serenity database file from : " + sourcePath + ", to : " + targetPath);
                     LOGGER.error(null, e);
                 } finally {
                     if (sourceDataBase != null) {
                         try {
                             sourceDataBase.close();
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             printStream.println("Exception closing the source database : " + sourcePath + ", target : " + targetPath);
                         }
                     }
@@ -194,13 +199,13 @@ public class SerenityPublisher extends Recorder implements Serializable {
                                 Toolkit.deleteFile(sourceFile, 3);
                                 sourceFile.deleteOnExit();
                             }
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             printStream.println("Exception closing the source database : " + sourcePath + ", target : " + targetPath);
                         }
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             printStream.println(e.getMessage());
             LOGGER.error(null, e);
         }
@@ -210,15 +215,14 @@ public class SerenityPublisher extends Recorder implements Serializable {
     /**
      * Runs the aggregator on the final database to generate the statistics etc.
      *
-     * @param build          the build for the project
      * @param buildListener  the build listener that has the LOGGER in it
      * @param targetDataBase the target database to aggregate
      */
-    private void aggregate(final AbstractBuild<?, ?> build, final BuildListener buildListener, final IDataBase targetDataBase) {
+    private void aggregate(final BuildListener buildListener, final IDataBase targetDataBase) {
         try {
             buildListener.getLogger().println("Aggregating data... ");
             new Aggregator(null, targetDataBase).execute();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             buildListener.getLogger().println(e.getMessage());
             LOGGER.error(null, e);
         }
@@ -227,15 +231,14 @@ public class SerenityPublisher extends Recorder implements Serializable {
     /**
      * Prunes the database removing all the objects that are no longer needed, like the lines and afferent/efferent objects.
      *
-     * @param build          the build for the project
      * @param buildListener  the build listener that has the LOGGER in it
      * @param targetDataBase the target database to aggregate
      */
-    private void prune(final AbstractBuild<?, ?> build, final BuildListener buildListener, final IDataBase targetDataBase) {
+    private void prune(final BuildListener buildListener, final IDataBase targetDataBase) {
         try {
             buildListener.getLogger().println("Pruning data...");
             new Pruner(null, targetDataBase).execute();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             buildListener.getLogger().println(e.getMessage());
             LOGGER.error(null, e);
         }
@@ -284,11 +287,11 @@ public class SerenityPublisher extends Recorder implements Serializable {
                     } else {
                         LOGGER.warn("Source file does not exist : " + file);
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     LOGGER.error(null, e);
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             buildListener.getLogger().println(e.getMessage());
             LOGGER.error(null, e);
         }
@@ -298,19 +301,18 @@ public class SerenityPublisher extends Recorder implements Serializable {
     /**
      * Scans recursively the {@link FilePath}(s) for the database files.
      *
-     * @param filePath    the starting file path to start scanning from
-     * @param filePaths   the list of file paths that were found
-     * @param pattern     the pattern to find the files and directories
-     * @param printStream the LOGGER to the front end
+     * @param filePath  the starting file path to start scanning from
+     * @param filePaths the list of file paths that were found
+     * @param pattern   the pattern to find the files and directories
      * @throws Exception
      */
-    void findFilesAndDirectories(final FilePath filePath, final List<FilePath> filePaths, final Pattern pattern, final PrintStream printStream)
+    void findFilesAndDirectories(final FilePath filePath, final List<FilePath> filePaths, final Pattern pattern)
             throws Exception {
         try {
             List<FilePath> subFilePaths = filePath.list();
             if (subFilePaths != null) {
                 for (final FilePath subFilePath : subFilePaths) {
-                    findFilesAndDirectories(subFilePath, filePaths, pattern, printStream);
+                    findFilesAndDirectories(subFilePath, filePaths, pattern);
                 }
             }
             String stringFilePath = Toolkit.cleanFilePath(filePath.toURI().toString());
@@ -318,7 +320,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
             if (matcher.matches()) {
                 filePaths.add(filePath);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.error(null, e);
         }
     }
@@ -359,6 +361,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
          * {@inheritDoc}
          */
         @Override
+        @SuppressWarnings("deprecation")
         public boolean configure(final StaplerRequest req, final JSONObject json) throws FormException {
             req.bindParameters(this, "serenity.");
             save();
@@ -369,6 +372,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
          * Creates a new instance of {@link SerenityPublisher} from a submitted form.
          */
         @Override
+        @SuppressWarnings("deprecation")
         public SerenityPublisher newInstance(final StaplerRequest req, final JSONObject json) throws FormException {
             return req.bindParameters(SerenityPublisher.class, "serenity.");
         }

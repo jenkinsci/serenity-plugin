@@ -172,4 +172,5 @@ public interface IConstants {
     File chartDirectory = new File(SERENITY_DIRECTORY + File.separatorChar + CHARTS);
 
     String ENCODING = "UTF8";
+    String DELETE = "delete";
 }

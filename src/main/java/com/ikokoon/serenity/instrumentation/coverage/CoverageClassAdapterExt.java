@@ -1,8 +1,9 @@
 package com.ikokoon.serenity.instrumentation.coverage;
 
 import com.ikokoon.toolkit.Toolkit;
-import org.apache.log4j.Logger;
 import org.objectweb.asm.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
@@ -23,7 +24,7 @@ import java.util.Arrays;
  */
 public class CoverageClassAdapterExt extends ClassVisitor implements Opcodes {
 
-    private Logger logger = Logger.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     /**
      * The name of the class that is being instrumented.
      */

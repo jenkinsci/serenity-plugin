@@ -4,8 +4,9 @@ import com.ikokoon.serenity.Collector;
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import com.ikokoon.toolkit.Toolkit;
-import org.apache.log4j.Logger;
 import org.objectweb.asm.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -34,7 +35,7 @@ public class DependencyClassAdapter extends ClassVisitor implements Opcodes {
     /**
      * The LOGGER for the class.
      */
-    private Logger logger = Logger.getLogger(DependencyClassAdapter.class);
+    private Logger logger = LoggerFactory.getLogger(DependencyClassAdapter.class);
     /**
      * The name of the class to collect dependency metrics on.
      */

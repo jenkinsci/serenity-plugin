@@ -5,7 +5,8 @@ import com.ikokoon.serenity.model.*;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.toolkit.Toolkit;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -19,7 +20,7 @@ public abstract class AAggregator implements IAggregator {
 
     private static final int PRECISION = 2;
 
-    protected Logger logger = Logger.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
     protected IDataBase dataBase;
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private Map<Object, List<?>> lines = new HashMap<>();

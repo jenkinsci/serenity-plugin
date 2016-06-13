@@ -1,10 +1,11 @@
 package com.ikokoon.serenity.instrumentation.coverage;
 
 import com.ikokoon.toolkit.Toolkit;
-import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Michael Couck
@@ -24,7 +25,7 @@ public class CoverageMethodAdapterExt extends MethodVisitor {
         this.className = Toolkit.slashToDot(className);
         this.linesArrayName = linesArrayName;
         this.linesArrayDescription = linesArrayDescription;
-        Logger logger = Logger.getLogger(this.getClass());
+        Logger logger = LoggerFactory.getLogger(this.getClass());
         logger.debug("Class name : " + className + ", lines array name : " + linesArrayName + ", lines array desc : " + linesArrayDescription);
     }
 

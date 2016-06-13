@@ -2,7 +2,8 @@ package com.ikokoon.serenity.persistence;
 
 import com.ikokoon.serenity.model.Composite;
 import com.ikokoon.toolkit.ObjectFactory;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +30,7 @@ public interface IDataBase {
      */
     class DataBaseManager {
 
-        private static Logger logger = Logger.getLogger(DataBaseManager.class);
+        private static Logger logger = LoggerFactory.getLogger(DataBaseManager.class);
         /**
          * The map of open databases keyed on the database file name.
          */
@@ -49,9 +50,9 @@ public interface IDataBase {
         }
 
         /**
-         * Accesses a database. In the case the database is not open one will be instantiated on the database file specified. In the case the database
-         * is open but not the right type of database, the old one will be closed and the new one will be opened on the database file, otherwise the
-         * database is returned.
+         * Accesses a database. In the case the database is not open one will be instantiated on the database file specified.
+         * In the case the database is open but not the right type of database, the old one will be closed and the new one will
+         * be opened on the database file, otherwise the database is returned.
          *
          * @param <E>              the database type
          * @param klass            the class of database to initialise
@@ -59,7 +60,7 @@ public interface IDataBase {
          * @param internalDataBase the underlying database
          * @return the database
          */
-        public static synchronized <E extends IDataBase> IDataBase getDataBase(Class<E> klass, String dataBaseFile, IDataBase internalDataBase) {
+        public static synchronized <E extends IDataBase> IDataBase getDataBase(final Class<E> klass, final String dataBaseFile, final IDataBase internalDataBase) {
             IDataBase dataBase = dataBases.get(dataBaseFile);
             if (dataBase == null || dataBase.isClosed()) {
                 getDataBaseListener(dataBaseFile);

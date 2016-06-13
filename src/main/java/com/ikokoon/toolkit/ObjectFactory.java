@@ -1,6 +1,7 @@
 package com.ikokoon.toolkit;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -9,7 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * This is an abstract factory. Classes are selected for construction according to the best match between the parameters and the solid implementation
+ * This is an abstract factory. Classes are selected for construction according to the best match between the parameters
+ * and the solid implementation
  * of the class.
  *
  * @author Michael Couck
@@ -21,20 +23,20 @@ public abstract class ObjectFactory {
     /**
      * The LOGGER for the class.
      */
-    private static Logger LOGGER = Logger.getLogger(ObjectFactory.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ObjectFactory.class);
 
     /**
-     * This method instantiates a class based on the solid implementation class passed as a parameter and the parameters. A best match between the two
-     * parameters determines the class to be instanciated.
+     * This method instantiates a class based on the solid implementation class passed as a parameter and the parameters.
+     * A best match between the two parameters determines the class to be instantiated.
      *
-     * @param <E>           the desired class to be instanciated
-     * @param klass         the class to be instanciated
+     * @param <E>           the desired class to be instantiated
+     * @param klass         the class to be instantiated
      * @param allParameters the parameters for the constructor, these cannot be primitives and the parameters in the constructor have to be objects as well, not
      *                      primitives
      * @return the class that best matches the desired class and the parameters for constructors
      */
-    public static <E> E getObject(Class<E> klass, Object... allParameters) {
-        List<Object> parameters = new ArrayList<Object>();
+    public static <E> E getObject(final Class<E> klass, final Object... allParameters) {
+        List<Object> parameters = new ArrayList<>();
         Constructor<E> constructor = getConstructor(klass, allParameters, parameters);
         if (constructor != null) {
             if (!constructor.isAccessible()) {
@@ -75,7 +77,7 @@ public abstract class ObjectFactory {
         }
 
         Permutations permutations = new Permutations();
-        List<Object[]> permutationsList = new ArrayList<Object[]>();
+        List<Object[]> permutationsList = new ArrayList<>();
         permutations.getPermutations(allParameters, permutationsList, allParameters.length);
         for (Object[] permutationParameters : permutationsList) {
             LOGGER.debug("Permutations : " + Arrays.asList(permutationParameters));

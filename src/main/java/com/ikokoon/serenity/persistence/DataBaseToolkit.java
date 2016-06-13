@@ -6,11 +6,10 @@ import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.toolkit.LoggingConfigurator;
 import com.ikokoon.toolkit.Toolkit;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
-
-import static com.ikokoon.serenity.persistence.IDataBase.DataBaseManager.getDataBase;
 
 /**
  * Just some useful methods to dump the database and clean it.
@@ -33,7 +32,7 @@ public final class DataBaseToolkit {
         LoggingConfigurator.configure();
     }
 
-    private static final Logger logger = Logger.getLogger(DataBaseToolkit.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataBaseToolkit.class);
 
     /**
      * Clears the data in the database.
@@ -144,19 +143,19 @@ public final class DataBaseToolkit {
      * @param message  the message to set
      */
     @SuppressWarnings("rawtypes")
-    public static synchronized void dump(IDataBase dataBase, ICriteria criteria, String message) {
+    public static synchronized void dump(final IDataBase dataBase, final ICriteria criteria, final String message) {
         if (message != null) {
-            logger.warn(message);
+            LOGGER.warn(message);
         }
         try {
             Object object = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
-            logger.info(object);
+            LOGGER.info("" + object);
             Project<?, ?> project = (Project<?, ?>) dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
             if (project != null) {
-                logger.warn("Project : " + project.getName());
+                LOGGER.warn("Project : " + project.getName());
             }
-        } catch (Exception e) {
-            logger.error("Exception dumping the data for the project object.", e);
+        } catch (final Exception e) {
+            LOGGER.error("Exception dumping the data for the project object.", e);
         }
         try {
             List<Package> packages = dataBase.find(Package.class);
@@ -167,9 +166,9 @@ public final class DataBaseToolkit {
                     log(criteria, klass, 2, " : id : ", klass.getId(), " : name : ", klass.getName(), " : coverage : ", klass.getCoverage(), ", complexity : ",
                             klass.getComplexity(), ", outer class : ", klass.getOuterClass(), ", outer method : ", klass.getOuterMethod(), ", lines : ", klass
                                     .getChildren().size(), ", inner classes : ", klass.getInnerClasses());
-                    if (klass.getSource() != null) {
+                    /*if (klass.getSource() != null) {
                         log(criteria, klass, 5, klass.getSource());
-                    }
+                    }*/
                     List<Efferent> efferents = klass.getEfferent();
                     List<Afferent> afferents = klass.getAfferent();
                     for (final Efferent efferent : efferents) {
@@ -188,8 +187,8 @@ public final class DataBaseToolkit {
                     }
                 }
             }
-        } catch (Exception e) {
-            logger.error("Exception dumping the data for the database.", e);
+        } catch (final Exception e) {
+            LOGGER.error("Exception dumping the data for the database.", e);
         }
     }
 
@@ -204,19 +203,8 @@ public final class DataBaseToolkit {
             for (final Object datum : data) {
                 builder.append(datum);
             }
-            logger.warn(builder.toString());
+            LOGGER.warn(builder.toString());
         }
-    }
-
-    public static void main(final String[] args) {
-        IDataBase dataBase = getDataBase(DataBaseOdb.class, "/usr/share/eclipse/workspace/ikube/code/core/serenity/serenity.odb", null);
-        DataBaseToolkit.dump(dataBase, new ICriteria() {
-            @SuppressWarnings("rawtypes")
-            public boolean satisfied(final Composite<?, ?> composite) {
-                return Class.class.isAssignableFrom(composite.getClass()) && ((Class) composite).getName().contains("Test");
-            }
-        }, "Database dump : ");
-        dataBase.close();
     }
 
 }

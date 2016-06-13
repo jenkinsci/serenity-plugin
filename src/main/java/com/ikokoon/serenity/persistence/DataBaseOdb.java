@@ -2,13 +2,14 @@ package com.ikokoon.serenity.persistence;
 
 import com.ikokoon.serenity.model.Composite;
 import com.ikokoon.toolkit.Toolkit;
-import org.apache.log4j.Logger;
 import org.neodatis.odb.ODB;
 import org.neodatis.odb.ODBFactory;
 import org.neodatis.odb.Objects;
 import org.neodatis.odb.core.query.IQuery;
 import org.neodatis.odb.core.query.criteria.Where;
 import org.neodatis.odb.impl.core.query.criteria.CriteriaQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
@@ -22,7 +23,7 @@ import java.util.*;
  */
 public class DataBaseOdb extends DataBase {
 
-    private Logger logger = Logger.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     /**
      * The Neodatis object database for persistence.
      */
@@ -86,7 +87,7 @@ public class DataBaseOdb extends DataBase {
         if (isClosed()) {
             return Collections.EMPTY_LIST;
         }
-        List<E> list = new ArrayList<E>();
+        List<E> list = new ArrayList<>();
         try {
             Objects objects = odb.getObjects(klass, false, start, end);
             while (objects.hasNext()) {
@@ -204,6 +205,8 @@ public class DataBaseOdb extends DataBase {
 
             IDataBaseEvent dataBaseEvent = new DataBaseEvent(this, IDataBaseEvent.Type.DATABASE_CLOSE);
             IDataBase.DataBaseManager.fireDataBaseEvent(dataBaseFile, dataBaseEvent);
+
+            logger.debug("Closed database on file : " + new File(dataBaseFile).getAbsolutePath());
         } catch (final Exception e) {
             logger.error("Exception closing the ODB database : " + this, e);
         }

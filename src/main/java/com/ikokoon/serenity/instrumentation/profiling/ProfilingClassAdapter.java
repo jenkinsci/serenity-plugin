@@ -26,7 +26,7 @@ public class ProfilingClassAdapter extends ClassVisitor implements Opcodes {
         MethodVisitor methodVisitor = super.visitMethod(access, methodName, methodDescription, methodSignature, exceptions);
         // MethodVisitor methodVisitor, Integer access, String className, String methodName, String methodDescription
         if (methodName.equals("<init>") || methodName.equals("<clinit>")) {
-            MethodVisitor methodAdapter = new AdviceAdapter(Opcodes.ASM5, methodVisitor, access, methodName, methodDescription) {
+            return new AdviceAdapter(Opcodes.ASM5, methodVisitor, access, methodName, methodDescription) {
                 @Override
                 protected void onMethodEnter() {
                     this.visitLdcInsn(className);
@@ -45,7 +45,6 @@ public class ProfilingClassAdapter extends ClassVisitor implements Opcodes {
                             IConstants.PROFILING_METHOD_DESCRIPTION);
                 }
             };
-            return methodAdapter;
         }
         return new ProfilingMethodAdapter(methodVisitor, access, className, methodName, methodDescription);
     }

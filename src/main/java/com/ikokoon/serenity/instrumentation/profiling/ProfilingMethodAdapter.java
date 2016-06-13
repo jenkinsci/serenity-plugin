@@ -2,10 +2,11 @@ package com.ikokoon.serenity.instrumentation.profiling;
 
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.toolkit.Toolkit;
-import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Not used, to be removed.
@@ -21,7 +22,7 @@ public class ProfilingMethodAdapter extends MethodVisitor implements Opcodes {
     /**
      * The LOGGER for the class.
      */
-    private Logger logger = Logger.getLogger(ProfilingMethodAdapter.class);
+    private Logger logger = LoggerFactory.getLogger(ProfilingMethodAdapter.class);
     /**
      * The name of the class that this method adapter is enhancing the methods for.
      */

@@ -8,9 +8,10 @@ import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.serenity.process.*;
 import com.ikokoon.toolkit.LoggingConfigurator;
 import com.ikokoon.toolkit.Toolkit;
-import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -21,8 +22,9 @@ import java.security.ProtectionDomain;
 import java.util.Date;
 
 /**
- * This class is the entry point for the Serenity code coverage/complexity/dependency/profiling functionality. This class is called by the JVM on startup. The
- * agent then has first access to the byte code for all classes that are loaded. During this loading the byte code can be enhanced.
+ * This class is the entry point for the Serenity code coverage/complexity/dependency/profiling functionality. This
+ * class is called by the JVM on startup. The agent then has first access to the byte code for all classes that are loaded.
+ * During this loading the byte code can be enhanced.
  *
  * @author Michael Couck
  * @version 01.00
@@ -48,13 +50,14 @@ public class Transformer implements ClassFileTransformer, IConstants {
     private static Thread SHUTDOWN_HOOK;
 
     /**
-     * This method is called by the JVM at startup. This method will only be called if the command line for starting the JVM has the following on it:
-     * -javaagent:serenity/serenity.jar. This instruction tells the JVM that there is an agent that must be used. In the META-INF directory of the jar specified
-     * there must be a MANIFEST.MF file. In this file the instructions must be something like the following:
+     * This method is called by the JVM at startup. This method will only be called if the command line for starting the
+     * JVM has the following on it: -javaagent:serenity/serenity.jar. This instruction tells the JVM that there is an agent
+     * that must be used. In the META-INF directory of the jar specified there must be a MANIFEST.MF file. In this file the
+     * instructions must be something like the following:
      * <p>
      * Manifest-Version: 1.0 <br>
-     * Boot-Class-Path: asm-3.1.jar and so on..., in the case that the required libraries are not on the classpath, which they should be<br>
-     * Premain-Class: com.ikokoon.serenity.Transformer
+     * Boot-Class-Path: asm-3.1.jar and so on..., in the case that the required libraries are not on the classpath, which
+     * they should be<br> Premain-Class: com.ikokoon.serenity.Transformer
      * <p>
      * Another line in the manifest can start an agent after the JVM has been started, but not for all JVMs. So not very useful.
      * <p>
@@ -68,7 +71,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
         if (!INITIALISED) {
             INITIALISED = true;
             LoggingConfigurator.configure();
-            LOGGER = Logger.getLogger(Transformer.class);
+            LOGGER = LoggerFactory.getLogger(Transformer.class);
             CLASS_ADAPTER_CLASSES = Configuration.getConfiguration().classAdapters.toArray(new Class[Configuration.getConfiguration().classAdapters.size()]);
             LOGGER.info("Starting Serenity : ");
             if (instrumentation != null) {
@@ -84,15 +87,21 @@ public class Transformer implements ClassFileTransformer, IConstants {
                     }
                 }
             }
+            String deleteDatabaseFile = Configuration.getConfiguration().getProperty(IConstants.DELETE);
             File file = new File(IConstants.DATABASE_FILE_ODB);
-            LOGGER.warn("Deleting database file : " + file.getAbsolutePath());
-            Toolkit.deleteFile(file, 3);
+            if (deleteDatabaseFile == null || "true".equals(deleteDatabaseFile)) {
+                LOGGER.info("Deleting database file : " + file.getAbsolutePath());
+                Toolkit.deleteFile(file, 3);
+            } else {
+                LOGGER.info("Not deleting database file : " + file.getAbsolutePath());
+            }
+
             // This is the underlying database that will persist the data to the file system
             IDataBase odbDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, IConstants.DATABASE_FILE_ODB, null);
-            DataBaseToolkit.clear(odbDataBase);
+            // DataBaseToolkit.clear(odbDataBase);
             // This is the ram database that will hold all the data in memory for better performance
             IDataBase ramDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, IConstants.DATABASE_FILE_RAM, odbDataBase);
-            DataBaseToolkit.clear(ramDataBase);
+            // DataBaseToolkit.clear(ramDataBase);
             Collector.initialize(ramDataBase);
             Profiler.initialize(ramDataBase);
             new Listener(null, ramDataBase).execute();
@@ -128,14 +137,15 @@ public class Transformer implements ClassFileTransformer, IConstants {
                 new Reporter(null, dataBase).execute();
                 LOGGER.info("Reporter : " + (System.currentTimeMillis() - processStart));
 
-                processStart = System.currentTimeMillis();
-                dataBase.close();
-                LOGGER.info("Close database : " + (System.currentTimeMillis() - processStart));
-
                 String dumpData = Configuration.getConfiguration().getProperty(IConstants.DUMP);
+                LOGGER.info("Dump data : " + dumpData + ", " + System.getProperties());
                 if (dumpData != null && "true".equals(dumpData.trim())) {
                     DataBaseToolkit.dump(dataBase, null, null);
                 }
+
+                processStart = System.currentTimeMillis();
+                dataBase.close();
+                LOGGER.info("Close database : " + (System.currentTimeMillis() - processStart));
 
                 Date end = new Date();
                 long million = 1000 * 1000;

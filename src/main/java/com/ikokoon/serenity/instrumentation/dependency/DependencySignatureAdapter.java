@@ -2,9 +2,10 @@ package com.ikokoon.serenity.instrumentation.dependency;
 
 import com.ikokoon.serenity.Collector;
 import com.ikokoon.toolkit.Toolkit;
-import org.apache.log4j.Logger;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class visits a class signature and extracts the dependency information.
@@ -15,7 +16,7 @@ import org.objectweb.asm.signature.SignatureVisitor;
  */
 public class DependencySignatureAdapter extends SignatureVisitor {
 
-    private Logger logger = Logger.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     /**
      * The name of the class to visit the byte code signature for.
      */

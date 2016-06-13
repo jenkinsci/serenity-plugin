@@ -2,11 +2,12 @@ package com.ikokoon.serenity.instrumentation.coverage;
 
 import com.ikokoon.serenity.Collector;
 import com.ikokoon.toolkit.Toolkit;
-import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class actually enhances the lines to call the collector class which gathers the data on the lines that are executed during the unit tests.
@@ -20,7 +21,7 @@ public class CoverageMethodAdapter extends MethodVisitor {
     /**
      * The LOGGER for the class.
      */
-    private Logger logger = Logger.getLogger(CoverageMethodAdapter.class);
+    private Logger logger = LoggerFactory.getLogger(CoverageMethodAdapter.class);
 
     /**
      * The type of parameters that the {@link Collector} takes in the coverage collection method.

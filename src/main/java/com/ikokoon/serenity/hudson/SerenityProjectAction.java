@@ -4,10 +4,11 @@ import hudson.model.AbstractProject;
 import hudson.model.Actionable;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Run;
-import org.apache.log4j.Logger;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -21,7 +22,7 @@ import java.io.IOException;
 @SuppressWarnings("rawtypes")
 public class SerenityProjectAction extends Actionable implements ProminentProjectAction {
 
-    private Logger logger = Logger.getLogger(SerenityProjectAction.class);
+    private Logger logger = LoggerFactory.getLogger(SerenityProjectAction.class);
     /**
      * The real owner that generated the build.
      */

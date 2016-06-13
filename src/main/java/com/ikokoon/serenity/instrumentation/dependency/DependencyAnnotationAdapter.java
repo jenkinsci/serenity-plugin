@@ -2,9 +2,10 @@ package com.ikokoon.serenity.instrumentation.dependency;
 
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import com.ikokoon.toolkit.Toolkit;
-import org.apache.log4j.Logger;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Opcodes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class visits the annotation description collecting the dependency information on the class that defines the annotation.
@@ -15,7 +16,7 @@ import org.objectweb.asm.Opcodes;
  */
 public class DependencyAnnotationAdapter extends AnnotationVisitor {
 
-    private Logger logger = Logger.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     /**
      * The parent annotation visitor.
      */

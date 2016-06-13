@@ -8,9 +8,10 @@ import hudson.model.Api;
 import hudson.model.Item;
 import hudson.model.labels.LabelAtom;
 import jenkins.model.Jenkins;
-import org.apache.log4j.Logger;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class SerenityPlugin extends Plugin {
      */
     public SerenityPlugin() {
         LoggingConfigurator.configure();
-        Logger logger = Logger.getLogger(SerenityPlugin.class);
+        Logger logger = LoggerFactory.getLogger(SerenityPlugin.class);
         logger.debug("Loaded plugin : " + this.getClass().getName());
     }
 

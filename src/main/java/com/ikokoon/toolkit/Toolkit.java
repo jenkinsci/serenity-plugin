@@ -2,7 +2,8 @@ package com.ikokoon.toolkit;
 
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.model.Unique;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -26,7 +27,7 @@ public final class Toolkit {
     /**
      * The LOGGER.
      */
-    private static Logger logger = Logger.getLogger(Toolkit.class);
+    private static Logger logger = LoggerFactory.getLogger(Toolkit.class);
 
     /**
      * Simple, fast hash function to generate quite unique hashes from strings(i.e. toCharArray()).

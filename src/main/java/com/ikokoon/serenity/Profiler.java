@@ -5,7 +5,8 @@ import com.ikokoon.serenity.model.Snapshot;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.serenity.process.Reporter;
 import com.ikokoon.serenity.process.Snapshooter;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -78,7 +79,7 @@ import java.util.*;
  */
 public class Profiler {
 
-    protected static final Logger LOGGER = Logger.getLogger(Profiler.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(Profiler.class);
 
     private static double TIME_UNIT_DENOMINATOR = 1d;
 

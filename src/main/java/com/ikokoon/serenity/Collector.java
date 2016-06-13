@@ -7,7 +7,8 @@ import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.toolkit.Toolkit;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -35,7 +36,7 @@ public final class Collector implements IConstants {
     /**
      * The LOGGER.
      */
-    private static final Logger LOGGER = Logger.getLogger(Collector.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Collector.class);
     /**
      * The database/persistence object.
      */
@@ -182,7 +183,7 @@ public final class Collector implements IConstants {
             }
         }
         if (file.exists()) {
-            LOGGER.warn("Writing source to file : " + file.getAbsolutePath());
+            LOGGER.debug("Writing source to file : " + file.getAbsolutePath());
             ISourceCode sourceCode = new CoverageSourceCode(klass, source);
             String htmlSource = sourceCode.getSource();
             Toolkit.setContents(file, htmlSource.getBytes(Charset.defaultCharset()));

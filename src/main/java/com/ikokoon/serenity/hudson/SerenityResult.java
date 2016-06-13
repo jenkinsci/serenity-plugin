@@ -12,11 +12,12 @@ import com.ikokoon.toolkit.Toolkit;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.remoting.Base64;
-import org.apache.log4j.Logger;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.kohsuke.stapler.export.Exported;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -52,7 +53,7 @@ public class SerenityResult implements ISerenityResult {
      */
     public SerenityResult(final AbstractBuild<?, ?> abstractBuild) {
         this.abstractBuild = abstractBuild;
-        logger = Logger.getLogger(SerenityResult.class);
+        logger = LoggerFactory.getLogger(SerenityResult.class);
     }
 
     /**
@@ -224,9 +225,9 @@ public class SerenityResult implements ISerenityResult {
     @JavaScriptMethod
     public String getModel(final String klass, final String identifier) {
         Composite<?, ?> composite = getComposite(klass, identifier);
-        logger.info("Composite : " + klass + ", " + identifier + ", " + composite);
+        logger.debug("Composite : " + klass + ", " + identifier + ", " + composite);
         String model = getModel(composite);
-        logger.info("Model : " + model);
+        logger.debug("Model : " + model);
         return model;
     }
 

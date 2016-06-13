@@ -55,7 +55,7 @@ public class GoogleChartModeller implements IModeller {
             List<Map<String, Object>> values = new ArrayList<>();
 
             values.add(getValue(buildNumbers[index++]));
-            values.add(getValue(random.nextDouble() * 100));
+            values.add(getValue(composite.getCoverage()));
             values.add(getValue(composite.getComplexity()));
             values.add(getValue(composite.getStability() * 100));
             values.add(getValue(composite.getAbstractness() * 100));

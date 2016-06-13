@@ -3,8 +3,9 @@ package com.ikokoon.serenity.instrumentation.dependency;
 import com.ikokoon.serenity.Collector;
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import com.ikokoon.toolkit.Toolkit;
-import org.apache.log4j.Logger;
 import org.objectweb.asm.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class visits the method instructions and collects dependency metrics on the method.
@@ -18,7 +19,7 @@ public class DependencyMethodAdapter extends MethodVisitor implements Opcodes {
     /**
      * The LOGGER for the class.
      */
-    private Logger logger = Logger.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     /**
      * The name of the class that this method adapter parsing for dependency metrics.
      */

@@ -10,6 +10,7 @@
 		<copy todir="serenity" file="${serenity.jar}" overwrite="true" failonerror="true" />
 		<echo message="Copying the serrenity jar to the test project (i-discover)" />
 		<copy todir="../i-discover/serenity/" file="${serenity.jar}" overwrite="true" failonerror="true" />
+		<copy todir="../ikube/serenity/" file="${serenity.jar}" overwrite="true" failonerror="true" />
 		<copy todir="serenity" file="${serenity.jar}" overwrite="true" failonerror="true" />
 	</target>
 	

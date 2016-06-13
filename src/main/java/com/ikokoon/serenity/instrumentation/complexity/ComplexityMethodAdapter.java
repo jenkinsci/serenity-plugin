@@ -3,10 +3,11 @@ package com.ikokoon.serenity.instrumentation.complexity;
 import com.ikokoon.serenity.Collector;
 import com.ikokoon.serenity.instrumentation.coverage.CoverageMethodAdapter;
 import com.ikokoon.toolkit.Toolkit;
-import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TODO - add the interesting methods to the collection of the complexity. Do we need to add try catch? And what about multiple catch? One for each
@@ -24,7 +25,7 @@ public class ComplexityMethodAdapter extends MethodVisitor {
     /**
      * The LOGGER for the class.
      */
-    private Logger logger = Logger.getLogger(CoverageMethodAdapter.class);
+    private Logger logger = LoggerFactory.getLogger(CoverageMethodAdapter.class);
 
     /**
      * The name of the class that this method adapter is enhancing the methods for.
