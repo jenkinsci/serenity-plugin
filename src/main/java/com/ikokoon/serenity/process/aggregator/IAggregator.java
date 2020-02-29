@@ -2,9 +2,12 @@ package com.ikokoon.serenity.process.aggregator;
 
 /**
  * @author Michael Couck
- * @since 07.03.10
  * @version 01.00
+ * @since 07.03.10
  */
+@SuppressWarnings("WeakerAccess")
 public interface IAggregator {
-	public void aggregate();
+
+    void aggregate();
+
 }

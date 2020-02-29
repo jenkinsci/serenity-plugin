@@ -3,13 +3,12 @@ package com.ikokoon.serenity;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Method;
 import com.ikokoon.serenity.persistence.DataBaseOdb;
-import com.ikokoon.serenity.persistence.DataBaseToolkit;
 import com.ikokoon.serenity.persistence.IDataBase;
-import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * This test needs to have assertions. TODO implement the real tests.
@@ -20,7 +19,7 @@ import java.util.List;
  */
 public class ProfilerTest extends ATest implements IConstants {
 
-    private Logger logger = Logger.getLogger(this.getClass());
+    private Logger logger = Logger.getLogger(this.getClass().getName());
     private static IDataBase dataBase;
 
     @BeforeClass
@@ -38,7 +37,7 @@ public class ProfilerTest extends ATest implements IConstants {
             List<Method<?, ?>> methods = klass.getChildren();
             for (Method<?, ?> method : methods) {
                 double averageMethodNetTime = Profiler.averageMethodNetTime(method);
-                logger.debug("Average net method time : method : " + method.getName() + " - " + averageMethodNetTime);
+                logger.info("Average net method time : method : " + method.getName() + " - " + averageMethodNetTime);
             }
         }
     }
@@ -51,7 +50,7 @@ public class ProfilerTest extends ATest implements IConstants {
             List<Method<?, ?>> methods = klass.getChildren();
             for (Method<?, ?> method : methods) {
                 double averageMethodTime = Profiler.averageMethodTime(method);
-                logger.debug("Average method : method : " + method.getName() + " - " + averageMethodTime);
+                logger.info("Average method : method : " + method.getName() + " - " + averageMethodTime);
             }
         }
     }
@@ -64,7 +63,7 @@ public class ProfilerTest extends ATest implements IConstants {
             List<Method<?, ?>> methods = klass.getChildren();
             for (Method<?, ?> method : methods) {
                 double methodChange = Profiler.methodChange(method);
-                logger.debug("Method change : method : " + method.getName() + " - " + methodChange);
+                logger.info("Method change : method : " + method.getName() + " - " + methodChange);
             }
         }
     }
@@ -77,7 +76,7 @@ public class ProfilerTest extends ATest implements IConstants {
             List<Method<?, ?>> methods = klass.getChildren();
             for (Method<?, ?> method : methods) {
                 List<Double> series = Profiler.methodChangeSeries(method);
-                logger.debug("Method change series : " + method.getName() + " - " + series);
+                logger.info("Method change series : " + method.getName() + " - " + series);
             }
         }
     }
@@ -90,7 +89,7 @@ public class ProfilerTest extends ATest implements IConstants {
             List<Method<?, ?>> methods = klass.getChildren();
             for (Method<?, ?> method : methods) {
                 double methodNetChange = Profiler.methodNetChange(method);
-                logger.debug("Method net change : method : " + method.getName() + " - " + methodNetChange);
+                logger.info("Method net change : method : " + method.getName() + " - " + methodNetChange);
             }
         }
     }
@@ -103,7 +102,7 @@ public class ProfilerTest extends ATest implements IConstants {
             List<Method<?, ?>> methods = klass.getChildren();
             for (Method<?, ?> method : methods) {
                 List<Double> methodNetChangeSeries = Profiler.methodNetChangeSeries(method);
-                logger.debug("Method net change series : method : " + method.getName() + " - " + methodNetChangeSeries);
+                logger.info("Method net change series : method : " + method.getName() + " - " + methodNetChangeSeries);
             }
         }
     }
@@ -116,7 +115,7 @@ public class ProfilerTest extends ATest implements IConstants {
             List<Method<?, ?>> methods = klass.getChildren();
             for (Method<?, ?> method : methods) {
                 List<Double> methodNetSeries = Profiler.methodNetSeries(method);
-                logger.debug("Method net series : method : " + method.getName() + " - " + methodNetSeries);
+                logger.info("Method net series : method : " + method.getName() + " - " + methodNetSeries);
             }
         }
     }
@@ -129,7 +128,7 @@ public class ProfilerTest extends ATest implements IConstants {
             List<Method<?, ?>> methods = klass.getChildren();
             for (Method<?, ?> method : methods) {
                 List<Double> series = Profiler.methodSeries(method);
-                logger.debug("Method series : " + method.getName() + " - " + series);
+                logger.info("Method series : " + method.getName() + " - " + series);
             }
         }
     }
@@ -142,7 +141,7 @@ public class ProfilerTest extends ATest implements IConstants {
             List<Method<?, ?>> methods = klass.getChildren();
             for (Method<?, ?> method : methods) {
                 double totalMethodTime = Profiler.totalMethodTime(method);
-                logger.debug("Total method time : method : " + method.getName() + " - " + totalMethodTime);
+                logger.info("Total method time : method : " + method.getName() + " - " + totalMethodTime);
             }
         }
     }
@@ -155,7 +154,7 @@ public class ProfilerTest extends ATest implements IConstants {
             List<Method<?, ?>> methods = klass.getChildren();
             for (Method<?, ?> method : methods) {
                 double totalNetMethodTime = Profiler.totalNetMethodTime(method);
-                logger.debug("Total net method time : method : " + method.getName() + " - " + totalNetMethodTime);
+                logger.info("Total net method time : method : " + method.getName() + " - " + totalNetMethodTime);
             }
         }
     }

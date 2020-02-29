@@ -16,12 +16,12 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.kohsuke.stapler.export.Exported;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This is the result that will be used to render the results on the front end.
@@ -53,7 +53,7 @@ public class SerenityResult implements ISerenityResult {
      */
     public SerenityResult(final AbstractBuild<?, ?> abstractBuild) {
         this.abstractBuild = abstractBuild;
-        logger = LoggerFactory.getLogger(SerenityResult.class);
+        logger = Logger.getLogger(SerenityResult.class.getName());
     }
 
     /**
@@ -175,7 +175,7 @@ public class SerenityResult implements ISerenityResult {
         try {
             return Toolkit.getContents(this.getClass().getResourceAsStream(name)).toString(IConstants.ENCODING);
         } catch (final UnsupportedEncodingException e) {
-            logger.error(IConstants.ENCODING + " not supported on this platform : ", e);
+            logger.log(Level.SEVERE, IConstants.ENCODING + " not supported on this platform : ", e);
         }
         return null;
     }
@@ -225,9 +225,9 @@ public class SerenityResult implements ISerenityResult {
     @JavaScriptMethod
     public String getModel(final String klass, final String identifier) {
         Composite<?, ?> composite = getComposite(klass, identifier);
-        logger.debug("Composite : " + klass + ", " + identifier + ", " + composite);
+        logger.fine("Composite : " + klass + ", " + identifier + ", " + composite);
         String model = getModel(composite);
-        logger.debug("Model : " + model);
+        logger.fine("Model : " + model);
         return model;
     }
 
@@ -294,7 +294,7 @@ public class SerenityResult implements ISerenityResult {
         Enumeration<String> parameterNames = req.getParameterNames();
         while (parameterNames.hasMoreElements()) {
             String parameterName = parameterNames.nextElement();
-            logger.debug("Parameter : " + parameterName + ", value : " + req.getParameter(parameterName));
+            logger.fine("Parameter : " + parameterName + ", value : " + req.getParameter(parameterName));
         }
     }
 
@@ -309,7 +309,7 @@ public class SerenityResult implements ISerenityResult {
                 dataBase.close();
             }
         } catch (final Exception e) {
-            logger.error("Exception closing database : " + dataBase, e);
+            logger.log(Level.SEVERE, "Exception closing database : " + dataBase, e);
         }
     }
 

@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -29,7 +30,7 @@ public class CoverageTest extends ATest {
         try {
             visitClass(CoverageClassAdapterChecker.class, className, classBytes, sourceBytes);
         } catch (Exception e) {
-            LOGGER.error("Expected exception : " + e.getMessage() + ", " + e);
+            LOGGER.log(Level.SEVERE, "Expected exception : " + e.getMessage() + ", " + e);
             exception = e;
         }
         assertNotNull(exception);

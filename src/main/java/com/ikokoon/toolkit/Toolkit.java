@@ -2,8 +2,6 @@ package com.ikokoon.toolkit;
 
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.model.Unique;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -13,6 +11,8 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class contains methods for changing a string to the byte code representation and visa versa. Also some other nifty functions like
@@ -27,7 +27,7 @@ public final class Toolkit {
     /**
      * The LOGGER.
      */
-    private static Logger logger = LoggerFactory.getLogger(Toolkit.class);
+    private static Logger logger = Logger.getLogger(Toolkit.class.getName());
 
     /**
      * Simple, fast hash function to generate quite unique hashes from strings(i.e. toCharArray()).
@@ -68,7 +68,7 @@ public final class Toolkit {
      */
     public static String slashToDot(final String name) {
         if (name == null) {
-            return name;
+            return null;
         }
         return name.replace('/', '.').replace('\\', '.');
     }
@@ -137,7 +137,7 @@ public final class Toolkit {
      * @param name  the name of the field
      * @return the field in the object or super classes of the object
      */
-    public static Field getField(final Class<?> klass, final String name) {
+    private static Field getField(final Class<?> klass, final String name) {
         Class<?> targetClass = klass;
         do {
             try {
@@ -164,7 +164,7 @@ public final class Toolkit {
      * @param <E>    the type to return
      * @return the value of the field if there is such a field or null if there isn't ir if anything goes wrong
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "WeakerAccess", "UnusedParameters"})
     public static <E> E getValue(final Class<E> klass, final Object object, final String name) {
         if (object == null) {
             return null;
@@ -174,8 +174,8 @@ public final class Toolkit {
             try {
                 field.setAccessible(true);
                 return (E) field.get(object);
-            } catch (Exception e) {
-                logger.error("Exception accessing the field's value", e);
+            } catch (final Exception e) {
+                logger.log(Level.SEVERE, "Exception accessing the field's value", e);
             }
         }
         return null;
@@ -193,15 +193,15 @@ public final class Toolkit {
             method.setAccessible(true);
             return (E) method.invoke(object, parameters);
         } catch (SecurityException e) {
-            logger.error("Security exception", e);
+            logger.log(Level.SEVERE, "Security exception", e);
         } catch (NoSuchMethodException e) {
-            logger.error("No such method exception", e);
+            logger.log(Level.SEVERE, "No such method exception", e);
         } catch (IllegalArgumentException e) {
-            logger.error("Illegal argument exception", e);
+            logger.log(Level.SEVERE, "Illegal argument exception", e);
         } catch (IllegalAccessException e) {
-            logger.error("Illegal access exception", e);
+            logger.log(Level.SEVERE, "Illegal access exception", e);
         } catch (InvocationTargetException e) {
-            logger.error("Target invocation exception", e);
+            logger.log(Level.SEVERE, "Target invocation exception", e);
         }
         return null;
     }
@@ -265,9 +265,9 @@ public final class Toolkit {
             for (String extension : extensions) {
                 if (fileName.endsWith(extension)) {
                     if (file.delete()) {
-                        logger.debug("Deleted file : " + file);
+                        logger.fine("Deleted file : " + file);
                     } else {
-                        logger.warn("Couldn't delete file : " + file);
+                        logger.warning("Couldn't delete file : " + file);
                     }
                 }
             }
@@ -318,10 +318,10 @@ public final class Toolkit {
         InputStream inputStream = null;
         try {
             inputStream = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            logger.error("No file by that name.", e);
-        } catch (Exception e) {
-            logger.error("General error accessing the file " + file, e);
+        } catch (final FileNotFoundException e) {
+            logger.log(Level.SEVERE, "No file by that name.", e);
+        } catch (final Exception e) {
+            logger.log(Level.SEVERE, "General error accessing the file " + file, e);
         }
         return getContents(inputStream);
     }
@@ -343,14 +343,14 @@ public final class Toolkit {
             while ((read = inputStream.read(bytes)) > -1) {
                 bos.write(bytes, 0, read);
             }
-            logger.debug("Read bytes : " + bos.toString(IConstants.ENCODING));
+            logger.fine("Read bytes : " + bos.toString(IConstants.ENCODING));
         } catch (Exception e) {
-            logger.error("Exception accessing the file contents.", e);
+            logger.log(Level.SEVERE, "Exception accessing the file contents.", e);
         } finally {
             try {
                 inputStream.close();
             } catch (Exception e) {
-                logger.error("Exception closing input stream " + inputStream, e);
+                logger.log(Level.SEVERE, "Exception closing input stream " + inputStream, e);
             }
         }
         return bos;
@@ -361,7 +361,7 @@ public final class Toolkit {
             ByteArrayOutputStream byteArrayOutputStream = getContents(inputStream);
             return byteArrayOutputStream.toString(IConstants.ENCODING);
         } catch (final UnsupportedEncodingException e) {
-            logger.error(IConstants.ENCODING + " not supported on this platform : ", e);
+            logger.log(Level.SEVERE, IConstants.ENCODING + " not supported on this platform : ", e);
         }
         return null;
     }
@@ -386,18 +386,18 @@ public final class Toolkit {
             }
             fileOutputStream = new FileOutputStream(file);
             fileOutputStream.write(bytes, 0, bytes.length);
-        } catch (FileNotFoundException e) {
-            logger.error("File " + file + " not found", e);
-        } catch (IOException e) {
-            logger.error("IO exception writing file contents", e);
-        } catch (Exception e) {
-            logger.error("General exception setting the file contents", e);
+        } catch (final FileNotFoundException e) {
+            logger.log(Level.SEVERE, "File " + file + " not found", e);
+        } catch (final IOException e) {
+            logger.log(Level.SEVERE, "IO exception writing file contents", e);
+        } catch (final Exception e) {
+            logger.log(Level.SEVERE, "General exception setting the file contents", e);
         } finally {
             if (fileOutputStream != null) {
                 try {
                     fileOutputStream.close();
                 } catch (IOException e) {
-                    logger.error("Exception closing the output stream", e);
+                    logger.log(Level.SEVERE, "Exception closing the output stream", e);
                 }
             }
         }
@@ -415,8 +415,8 @@ public final class Toolkit {
         doubleString = format(doubleString, precision);
         try {
             return Double.parseDouble(doubleString);
-        } catch (Exception e) {
-            logger.error("Exception formatting : " + d + ", " + precision, e);
+        } catch (final Exception e) {
+            logger.log(Level.SEVERE, "Exception formatting : " + d + ", " + precision, e);
         }
         return d;
     }
@@ -472,12 +472,13 @@ public final class Toolkit {
             return (T[]) new Object[]{t};
         }
         String[] fields = unique.fields();
-        List<T> values = new ArrayList<T>();
+        List<T> values = new ArrayList<>();
         for (String field : fields) {
             Object value = Toolkit.getValue(Object.class, t, field);
             T[] uniqueValues = (T[]) getUniqueValues(value);
             Collections.addAll(values, uniqueValues);
         }
+        //noinspection SuspiciousToArrayCall
         return (T[]) values.toArray(new Object[values.size()]);
     }
 
@@ -492,7 +493,7 @@ public final class Toolkit {
                 //noinspection ResultOfMethodCallIgnored
                 out.createNewFile();
             } catch (IOException e) {
-                logger.error("Exception creating new file : " + out.getAbsolutePath(), e);
+                logger.log(Level.SEVERE, "Exception creating new file : " + out.getAbsolutePath(), e);
             }
         }
         FileChannel inChannel = null;
@@ -502,20 +503,20 @@ public final class Toolkit {
             outChannel = new FileOutputStream(out).getChannel();
             inChannel.transferTo(0, inChannel.size(), outChannel);
         } catch (Exception e) {
-            logger.error("Exception copying file : " + in + ", to : " + out, e);
+            logger.log(Level.SEVERE, "Exception copying file : " + in + ", to : " + out, e);
         } finally {
             if (inChannel != null) {
                 try {
                     inChannel.close();
                 } catch (Exception e) {
-                    logger.error("", e);
+                    logger.log(Level.SEVERE, "", e);
                 }
             }
             if (outChannel != null) {
                 try {
                     outChannel.close();
                 } catch (Exception e) {
-                    logger.error("", e);
+                    logger.log(Level.SEVERE, "", e);
                 }
             }
         }
@@ -529,13 +530,13 @@ public final class Toolkit {
      * @param src  A File object that represents the source for the copy
      * @param dest A File object that represents the destination for the copy.
      */
-    public static void copyFiles(final File src, final File dest) {
+    static void copyFiles(final File src, final File dest) {
         // Check to ensure that the source is valid...
         if (!src.exists()) {
-            logger.warn("Source file/directory does not exist : " + src);
+            logger.warning("Source file/directory does not exist : " + src);
             return;
         } else if (!src.canRead()) { // check to ensure we have rights to the source...
-            logger.warn("Source file/directory not readable : " + src);
+            logger.warning("Source file/directory not readable : " + src);
             return;
         }
         // is this a directory copy?
@@ -543,16 +544,18 @@ public final class Toolkit {
             if (!dest.exists()) { // does the destination already exist?
                 // if not we need to make it exist if possible (note this is mkdirs not mkdir)
                 if (!dest.mkdirs()) {
-                    logger.warn("Could not create the new destination directory : " + dest);
+                    logger.warning("Could not create the new destination directory : " + dest);
                 }
             }
             // get a listing of files...
             String children[] = src.list();
             // copy all the files in the list.
-            for (final String aChildren : children) {
-                File childSrc = new File(src, aChildren);
-                File childDest = new File(dest, aChildren);
-                copyFiles(childSrc, childDest);
+            if (children != null) {
+                for (final String aChildren : children) {
+                    File childSrc = new File(src, aChildren);
+                    File childDest = new File(dest, aChildren);
+                    copyFiles(childSrc, childDest);
+                }
             }
         } else {
             // This was not a directory, so lets just copy the file
@@ -576,7 +579,7 @@ public final class Toolkit {
         // startIdx and idxOld delimit various chunks of aInput; these
         // chunks always end where aOldPattern begins
         int startIdx = 0;
-        int idxOld = 0;
+        int idxOld;
         while ((idxOld = aInput.indexOf(aOldPattern, startIdx)) >= 0) {
             // grab a part of aInput which does not include aOldPattern
             result.append(aInput.substring(startIdx, idxOld));
@@ -595,18 +598,18 @@ public final class Toolkit {
         boolean allCreated = file == null;
         if (file != null && file.getParentFile() != null && !file.getParentFile().exists()) {
             if (!file.getParentFile().mkdirs()) {
-                logger.warn("Directory : " + file.getParent() + ", not created.");
+                logger.warning("Directory : " + file.getParent() + ", not created.");
                 allCreated = false;
             }
         }
         if (file != null && !file.exists()) {
             try {
                 if (!file.createNewFile()) {
-                    logger.warn("Didn't create file : " + file.getAbsolutePath());
+                    logger.warning("Didn't create file : " + file.getAbsolutePath());
                     allCreated = false;
                 }
-            } catch (Exception e) {
-                logger.error("Exception creating file : " + file, e);
+            } catch (final Exception e) {
+                logger.log(Level.SEVERE, "Exception creating file : " + file, e);
             }
         }
         if (file != null && file.exists()) {

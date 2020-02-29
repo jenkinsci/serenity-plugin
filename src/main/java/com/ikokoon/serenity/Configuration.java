@@ -8,11 +8,10 @@ import com.ikokoon.serenity.model.Project;
 import com.ikokoon.toolkit.LoggingConfigurator;
 import com.ikokoon.toolkit.Toolkit;
 import org.objectweb.asm.ClassVisitor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * The configuration object holds the parameters for the processing, some from the system parameters that
@@ -64,7 +63,7 @@ public class Configuration {
      */
     private Configuration() {
         LoggingConfigurator.configure();
-        logger = LoggerFactory.getLogger(this.getClass());
+        logger = Logger.getLogger(this.getClass().getName());
         addIncludedPackages();
         addExcludedPackages();
         addIncludedClassAdapters();
@@ -218,7 +217,7 @@ public class Configuration {
                         classAdapters.add((Class<ClassVisitor>) Class.forName(ProfilingClassAdviceAdapter.class.getName()));
                     }
                 } catch (ClassNotFoundException e) {
-                    logger.error("Class : " + adapterName + " not found", e);
+                    logger.severe("Class : " + adapterName + " not found" + e);
                 }
             }
         }

@@ -5,13 +5,11 @@ import com.ikokoon.serenity.persistence.DataBaseOdb;
 import com.ikokoon.serenity.persistence.DataBaseRam;
 import com.ikokoon.serenity.persistence.DataBaseToolkit;
 import com.ikokoon.serenity.persistence.IDataBase;
-import com.ikokoon.serenity.process.*;
+import com.ikokoon.serenity.process.Listener;
 import com.ikokoon.toolkit.LoggingConfigurator;
 import com.ikokoon.toolkit.Toolkit;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -19,7 +17,7 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
-import java.util.Date;
+import java.util.logging.Logger;
 
 /**
  * This class is the entry point for the Serenity code coverage/complexity/dependency/profiling functionality. This
@@ -71,7 +69,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
         if (!INITIALISED) {
             INITIALISED = true;
             LoggingConfigurator.configure();
-            LOGGER = LoggerFactory.getLogger(Transformer.class);
+            LOGGER = Logger.getLogger(Transformer.class.getName());
             CLASS_ADAPTER_CLASSES = Configuration.getConfiguration().classAdapters.toArray(new Class[Configuration.getConfiguration().classAdapters.size()]);
             LOGGER.info("Starting Serenity : ");
             if (instrumentation != null) {
@@ -83,7 +81,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
                 Toolkit.deleteFiles(serenityDirectory, ".class");
                 if (!serenityDirectory.exists()) {
                     if (!serenityDirectory.mkdirs()) {
-                        LOGGER.warn("Didn't re-create Serenity directory : " + serenityDirectory.getAbsolutePath());
+                        LOGGER.warning("Didn't re-create Serenity directory : " + serenityDirectory.getAbsolutePath());
                     }
                 }
             }
@@ -105,6 +103,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
             Collector.initialize(ramDataBase);
             Profiler.initialize(ramDataBase);
             new Listener(null, ramDataBase).execute();
+
             addShutdownHook(ramDataBase);
             LOGGER.info("Finished initializing Serenity : ");
         }
@@ -118,57 +117,27 @@ public class Transformer implements ClassFileTransformer, IConstants {
     private static void addShutdownHook(final IDataBase dataBase) {
         SHUTDOWN_HOOK = new Thread() {
             public void run() {
-                Date start = new Date();
-                LOGGER.info("Starting accumulation : " + start);
-
-                long processStart = System.currentTimeMillis();
-                new Accumulator(null).execute();
-                LOGGER.info("Accumlulator : " + (System.currentTimeMillis() - processStart));
-
-                processStart = System.currentTimeMillis();
-                new Cleaner(null, dataBase).execute();
-                LOGGER.info("Cleaner : " + (System.currentTimeMillis() - processStart));
-
-                processStart = System.currentTimeMillis();
-                new Aggregator(null, dataBase).execute();
-                LOGGER.info("Aggregator : " + (System.currentTimeMillis() - processStart));
-
-                processStart = System.currentTimeMillis();
-                new Reporter(null, dataBase).execute();
-                LOGGER.info("Reporter : " + (System.currentTimeMillis() - processStart));
-
-                String dumpData = Configuration.getConfiguration().getProperty(IConstants.DUMP);
-                LOGGER.info("Dump data : " + dumpData + ", " + System.getProperties());
-                if (dumpData != null && "true".equals(dumpData.trim())) {
-                    DataBaseToolkit.dump(dataBase, null, null);
-                }
-
-                processStart = System.currentTimeMillis();
-                dataBase.close();
-                LOGGER.info("Close database : " + (System.currentTimeMillis() - processStart));
-
-                Date end = new Date();
-                long million = 1000 * 1000;
-                long duration = end.getTime() - start.getTime();
-                LOGGER.info("Finished accumulation : " + end + ", duration : " + duration + " millis");
-                LOGGER.info("Total memory : " + (Runtime.getRuntime().totalMemory() / million) + ", max memory : "
-                        + (Runtime.getRuntime().maxMemory() / million) + ", free memory : " + (Runtime.getRuntime().freeMemory() / million));
+                DataBaseToolkit.accumulateCleanAggregate(dataBase);
             }
         };
         Runtime.getRuntime().addShutdownHook(SHUTDOWN_HOOK);
     }
 
-    protected static void removeShutdownHook() {
+    static void removeShutdownHook() {
         Runtime.getRuntime().removeShutdownHook(SHUTDOWN_HOOK);
     }
 
     /**
      * This method transforms the classes that are specified.
      */
-    public byte[] transform(final ClassLoader loader, final String className, final Class<?> classBeingRedefined, final ProtectionDomain protectionDomain,
-                            final byte[] classBytes) throws IllegalClassFormatException {
+    public byte[] transform(
+            final ClassLoader loader,
+            final String className,
+            final Class<?> classBeingRedefined,
+            final ProtectionDomain protectionDomain,
+            final byte[] classBytes) throws IllegalClassFormatException {
         if (Configuration.getConfiguration().included(className) && !Configuration.getConfiguration().excluded(className)) {
-            LOGGER.debug("Enhancing class : " + className);
+            LOGGER.fine("Enhancing class : " + className);
             ByteArrayOutputStream source = new ByteArrayOutputStream(0);
             ClassWriter writer = (ClassWriter) VisitorFactory.getClassVisitor(CLASS_ADAPTER_CLASSES, className, classBytes, source);
             byte[] enhancedClassBytes = writer.toByteArray();
@@ -179,7 +148,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
             // Return the injected bytes for the class, i.e. with the coverage instructions
             return enhancedClassBytes;
         } else {
-            LOGGER.debug("Class not included : " + className);
+            LOGGER.fine("Class not included : " + className);
         }
         // Return the original bytes for the class
         return classBytes;
@@ -200,7 +169,7 @@ public class Transformer implements ClassFileTransformer, IConstants {
             //noinspection ResultOfMethodCallIgnored
             boolean mkDirs = directory.mkdirs();
             if (!mkDirs) {
-                LOGGER.warn("Couldn't make directory to write out injected classes : " + directory.getAbsolutePath());
+                LOGGER.warning("Couldn't make directory to write out injected classes : " + directory.getAbsolutePath());
             }
         }
         File file = new File(directory, fileName);

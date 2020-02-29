@@ -5,8 +5,8 @@ import com.ikokoon.toolkit.Toolkit;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.logging.Logger;
 
 /**
  * Not used, to be removed.
@@ -22,7 +22,7 @@ public class ProfilingMethodAdapter extends MethodVisitor implements Opcodes {
     /**
      * The LOGGER for the class.
      */
-    private Logger logger = LoggerFactory.getLogger(ProfilingMethodAdapter.class);
+    private Logger logger = Logger.getLogger(ProfilingMethodAdapter.class.getName());
     /**
      * The name of the class that this method adapter is enhancing the methods for.
      */
@@ -57,7 +57,7 @@ public class ProfilingMethodAdapter extends MethodVisitor implements Opcodes {
         this.className = Toolkit.slashToDot(className);
         this.methodName = methodName;
         this.methodDescription = methodDescription;
-        logger.debug("Class name : " + className + ", name : " + methodName + ", desc : " + methodDescription);
+        logger.fine("Class name : " + className + ", name : " + methodName + ", desc : " + methodDescription);
 
         if (methodName.equals("<clinit>")) {
             clinit = true;
@@ -67,7 +67,7 @@ public class ProfilingMethodAdapter extends MethodVisitor implements Opcodes {
     }
 
     public void visitCode() {
-        logger.warn("Class name : " + className + ", name : " + methodName + ", desc : " + methodDescription);
+        logger.warning("Class name : " + className + ", name : " + methodName + ", desc : " + methodDescription);
         if (clinit) {
             // super.visitCode()
             this.mv.visitCode();

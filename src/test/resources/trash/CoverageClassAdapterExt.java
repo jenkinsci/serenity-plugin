@@ -2,10 +2,9 @@ package com.ikokoon.serenity.instrumentation.coverage;
 
 import com.ikokoon.toolkit.Toolkit;
 import org.objectweb.asm.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 /**
  * This is an alternative class for adding coverage instructions line by line. The process is as follows:
@@ -24,7 +23,7 @@ import java.util.Arrays;
  */
 public class CoverageClassAdapterExt extends ClassVisitor implements Opcodes {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = Logger.getLogger(this.getClass().getName());
     /**
      * The name of the class that is being instrumented.
      */
@@ -43,14 +42,14 @@ public class CoverageClassAdapterExt extends ClassVisitor implements Opcodes {
     public CoverageClassAdapterExt(ClassVisitor visitor, String className) {
         super(Opcodes.ASM5, visitor);
         this.className = Toolkit.slashToDot(className);
-        logger.debug("Constructor : " + className + ", " + linesArrayName + ", " + linesArrayDescription);
+        logger.fine("Constructor : " + className + ", " + linesArrayName + ", " + linesArrayDescription);
     }
 
     public MethodVisitor visitMethod(int access, String methodName, String methodDescription, String methodSignature, String[] exceptions) {
-        logger.debug("visitMethod : " + access + ", " + methodName + ", " + methodDescription + ", " + methodSignature + ", " + Arrays.toString(exceptions));
+        logger.fine("visitMethod : " + access + ", " + methodName + ", " + methodDescription + ", " + methodSignature + ", " + Arrays.toString(exceptions));
         MethodVisitor methodVisitor = super.visitMethod(access, methodName, methodDescription, methodSignature, exceptions);
         CoverageMethodAdapterExt methodAdapter = new CoverageMethodAdapterExt(methodVisitor, className, linesArrayName, linesArrayDescription);
-        logger.debug("Lines : " + methodAdapter.getLines());
+        logger.fine("Lines : " + methodAdapter.getLines());
         return methodAdapter;
     }
 

@@ -23,6 +23,7 @@ public class GoogleChartModeller implements IModeller {
     @Override
     public void visit(final Class<?> klass, final Composite<?, ?>... composites) {
         Map<String, Object> data = new HashMap<>();
+        @SuppressWarnings("ConfusingArgumentToVarargsMethod")
         List<Map<String, Object>> columns = getColumns(
                 new String[]{"id", "label", "type"},
                 new String[][]{
@@ -46,15 +47,15 @@ public class GoogleChartModeller implements IModeller {
         model = json.toString();
     }
 
+    @SuppressWarnings("WeakerAccess")
     List<Map<String, List<Map<String, Object>>>> getRows(final Composite<?, ?>... composites) {
         List<Map<String, List<Map<String, Object>>>> rows = new ArrayList<>();
         int index = 0;
-        Random random = new Random();
         for (final Composite<?, ?> composite : composites) {
             Map<String, List<Map<String, Object>>> row = new HashMap<>();
             List<Map<String, Object>> values = new ArrayList<>();
 
-            values.add(getValue(buildNumbers[index++]));
+            values.add(getValue(buildNumbers[index]));
             values.add(getValue(composite.getCoverage()));
             values.add(getValue(composite.getComplexity()));
             values.add(getValue(composite.getStability() * 100));
@@ -63,17 +64,21 @@ public class GoogleChartModeller implements IModeller {
 
             row.put("c", values);
             rows.add(row);
+
+            index++;
         }
 
         return rows;
     }
 
+    @SuppressWarnings("WeakerAccess")
     Map<String, Object> getValue(final double metric) {
         Map<String, Object> value = new HashMap<>();
         value.put("v", metric);
         return value;
     }
 
+    @SuppressWarnings("WeakerAccess")
     List<Map<String, Object>> getColumns(final String[] keys, final Object[]... values) {
         List<Map<String, Object>> columns = new ArrayList<>();
         for (final Object[] value : values) {

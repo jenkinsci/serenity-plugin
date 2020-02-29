@@ -5,10 +5,9 @@ import com.ikokoon.serenity.model.Snapshot;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.serenity.process.Reporter;
 import com.ikokoon.serenity.process.Snapshooter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * This class generates the reports for the profiled classes.
@@ -79,7 +78,7 @@ import java.util.*;
  */
 public class Profiler {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(Profiler.class);
+    protected static final Logger LOGGER = Logger.getLogger(Profiler.class.getName());
 
     private static double TIME_UNIT_DENOMINATOR = 1d;
 
@@ -91,10 +90,10 @@ public class Profiler {
                 @Override
                 public void run() {
                     try {
-                        LOGGER.error("Taking snapshot at : " + new Date());
+                        LOGGER.severe("Taking snapshot at : " + new Date());
                         new Snapshooter(null, dataBase).execute();
                     } catch (Exception e) {
-                        LOGGER.error("Exception taking the snapshot : ", e);
+                        LOGGER.severe("Exception taking the snapshot : " + e);
                     }
                 }
             };
@@ -107,10 +106,10 @@ public class Profiler {
                 @Override
                 public void run() {
                     try {
-                        LOGGER.error("Writing report at : " + new Date());
+                        LOGGER.severe("Writing report at : " + new Date());
                         new Reporter(null, dataBase).execute();
                     } catch (Exception e) {
-                        LOGGER.error("Exception taking the snapshot : ", e);
+                        LOGGER.severe("Exception taking the snapshot : " + e);
                     }
                 }
             };

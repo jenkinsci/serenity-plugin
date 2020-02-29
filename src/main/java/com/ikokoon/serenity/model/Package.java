@@ -6,157 +6,166 @@ import java.util.TreeSet;
 
 /**
  * @author Michael Couck
- * @since 12.08.09
  * @version 01.00
+ * @since 12.08.09
  */
-@Unique(fields = { Composite.NAME })
+@Unique(fields = {Composite.NAME})
 public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> implements Comparable<Package<?, ?>>, Serializable {
 
-	private String name;
+    private String name;
 
-	private double coverage;
-	private double complexity;
-	private double abstractness;
-	private double stability;
-	private double distance;
+    private double coverage;
+    private double complexity;
+    private double abstractness;
+    private double stability;
+    private double distance;
 
-	private double lines;
-	private double interfaces;
-	private double implementations;
-	private double executed;
+    private double lines;
+    private double interfaces;
+    private double implementations;
+    private double executed;
 
-	private double efference;
-	private double afference;
+    private double efference;
+    private double afference;
 
-	private Set<Efferent> efferent = new TreeSet<Efferent>();
-	private Set<Afferent> afferent = new TreeSet<Afferent>();
+    private Set<Efferent> efferent = new TreeSet<>();
+    private Set<Afferent> afferent = new TreeSet<>();
 
-	public String getName() {
-		return name;
-	}
+    public Package() {
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public Package(final Set<Efferent> efferent, final Set<Afferent> afferent) {
+        this.efferent = efferent;
+        this.afferent = afferent;
+    }
 
-	public double getLines() {
-		return lines;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setLines(double lines) {
-		this.lines = lines;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public double getExecuted() {
-		return executed;
-	}
+    public double getLines() {
+        return lines;
+    }
 
-	public void setExecuted(double totalLinesExecuted) {
-		this.executed = totalLinesExecuted;
-	}
+    public void setLines(double lines) {
+        this.lines = lines;
+    }
 
-	public double getComplexity() {
-		return complexity;
-	}
+    public double getExecuted() {
+        return executed;
+    }
 
-	public void setComplexity(double complexity) {
-		this.complexity = complexity;
-	}
+    public void setExecuted(double totalLinesExecuted) {
+        this.executed = totalLinesExecuted;
+    }
 
-	public double getCoverage() {
-		return coverage;
-	}
+    public double getComplexity() {
+        return complexity;
+    }
 
-	public void setCoverage(double coverage) {
-		this.coverage = coverage;
-	}
+    public void setComplexity(double complexity) {
+        this.complexity = complexity;
+    }
 
-	public double getAbstractness() {
-		return abstractness;
-	}
+    public double getCoverage() {
+        return coverage;
+    }
 
-	public void setAbstractness(double abstractness) {
-		this.abstractness = abstractness;
-	}
+    public void setCoverage(double coverage) {
+        this.coverage = coverage;
+    }
 
-	public double getStability() {
-		return stability;
-	}
+    public double getAbstractness() {
+        return abstractness;
+    }
 
-	public void setStability(double stability) {
-		this.stability = stability;
-	}
+    public void setAbstractness(double abstractness) {
+        this.abstractness = abstractness;
+    }
 
-	public double getDistance() {
-		return distance;
-	}
+    public double getStability() {
+        return stability;
+    }
 
-	public void setDistance(double distance) {
-		this.distance = distance;
-	}
+    public void setStability(double stability) {
+        this.stability = stability;
+    }
 
-	public double getInterfaces() {
-		return interfaces;
-	}
+    public double getDistance() {
+        return distance;
+    }
 
-	public void setInterfaces(double interfaces) {
-		this.interfaces = interfaces;
-	}
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
 
-	public double getImplementations() {
-		return implementations;
-	}
+    public double getInterfaces() {
+        return interfaces;
+    }
 
-	public void setImplementations(double implementations) {
-		this.implementations = implementations;
-	}
+    public void setInterfaces(double interfaces) {
+        this.interfaces = interfaces;
+    }
 
-	public double getEfference() {
-		return efference;
-	}
+    public double getImplementations() {
+        return implementations;
+    }
 
-	public void setEfference(double efferent) {
-		this.efference = efferent;
-	}
+    public void setImplementations(double implementations) {
+        this.implementations = implementations;
+    }
 
-	public double getAfference() {
-		return afference;
-	}
+    public double getEfference() {
+        return efference;
+    }
 
-	public void setAfference(double afferent) {
-		this.afference = afferent;
-	}
+    public void setEfference(double efferent) {
+        this.efference = efferent;
+    }
 
-	public Set<Efferent> getEfferent() {
-		return efferent;
-	}
+    public double getAfference() {
+        return afference;
+    }
 
-	public void setEfferent(Set<Efferent> efference) {
-		this.efferent = efference;
-	}
+    public void setAfference(double afferent) {
+        this.afference = afferent;
+    }
 
-	public Set<Afferent> getAfferent() {
-		return afferent;
-	}
+    public Set<Efferent> getEfferent() {
+        return efferent;
+    }
 
-	public void setAfferent(Set<Afferent> afference) {
-		this.afferent = afference;
-	}
+    public void setEfferent(Set<Efferent> efference) {
+        this.efferent = efference;
+    }
 
-	public String toString() {
-		return getId() + ":" + name;
-	}
+    public Set<Afferent> getAfferent() {
+        return afferent;
+    }
 
-	public int compareTo(Package<?, ?> o) {
-		int comparison = 0;
-		if (this.getId() != null && o.getId() != null) {
-			comparison = this.getId().compareTo(o.getId());
-		} else {
-			if (this.getName() != null && o.getName() != null) {
-				comparison = this.getName().compareTo(o.getName());
-			}
-		}
-		return comparison;
-	}
+    public void setAfferent(Set<Afferent> afference) {
+        this.afferent = afference;
+    }
+
+    public String toString() {
+        return getId() + ":" + name;
+    }
+
+    @SuppressWarnings("NullableProblems")
+    public int compareTo(final Package<?, ?> o) {
+        int comparison = 0;
+        if (this.getId() != null && o.getId() != null) {
+            comparison = this.getId().compareTo(o.getId());
+        } else {
+            if (this.getName() != null && o.getName() != null) {
+                comparison = this.getName().compareTo(o.getName());
+            }
+        }
+        return comparison;
+    }
 
 }

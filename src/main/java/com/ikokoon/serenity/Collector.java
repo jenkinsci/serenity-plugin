@@ -7,14 +7,13 @@ import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.toolkit.Toolkit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Note to self: Make this class non static? Is this a better option? More OO? Better performance? Will it be easier to understand? In the case of distributing
@@ -31,12 +30,13 @@ import java.util.List;
  * @version 01.00
  * @since 12.07.09
  */
+@SuppressWarnings("DanglingJavadoc")
 public final class Collector implements IConstants {
 
     /**
      * The LOGGER.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Collector.class);
+    private static final Logger LOGGER = Logger.getLogger(Collector.class.getName());
     /**
      * The database/persistence object.
      */
@@ -161,34 +161,34 @@ public final class Collector implements IConstants {
         // We only set the source if it is null
         if (klass.getSource() == null && source != null && !"".equals(source.trim())) {
             klass.setSource(source);
-            LOGGER.debug("Setting source : " + klass.getName());
-            LOGGER.debug("                       : " + klass.getSource());
+            LOGGER.fine("Setting source : " + klass.getName());
+            LOGGER.fine("                       : " + klass.getSource());
         }
         File file = new File(IConstants.SERENITY_SOURCE, className + ".html");
         if (!file.getParentFile().exists()) {
             boolean madeDirectories = file.getParentFile().mkdirs();
             if (!madeDirectories) {
-                LOGGER.warn("Couldn't make directories : " + file.getAbsolutePath());
+                LOGGER.warning("Couldn't make directories : " + file.getAbsolutePath());
             }
         }
         // LOGGER.error("Collecting source : " + className + ", " + file.getAbsolutePath());
         // We try to delete the old file first
         boolean deleted = file.delete();
         if (!deleted) {
-            LOGGER.warn("Didn't delete source coverage file : " + file);
+            LOGGER.warning("Didn't delete source coverage file : " + file);
         }
         if (!file.exists()) {
             if (!Toolkit.createFile(file)) {
-                LOGGER.warn("Couldn't create new source file : " + file);
+                LOGGER.warning("Couldn't create new source file : " + file);
             }
         }
         if (file.exists()) {
-            LOGGER.debug("Writing source to file : " + file.getAbsolutePath());
+            LOGGER.fine("Writing source to file : " + file.getAbsolutePath());
             ISourceCode sourceCode = new CoverageSourceCode(klass, source);
             String htmlSource = sourceCode.getSource();
             Toolkit.setContents(file, htmlSource.getBytes(Charset.defaultCharset()));
         } else {
-            LOGGER.warn("Source file does not exist : " + file);
+            LOGGER.warning("Source file does not exist : " + file);
         }
     }
 
@@ -389,7 +389,7 @@ public final class Collector implements IConstants {
         return method;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked", "rawtypes", "WeakerAccess"})
     protected static Line<?, ?> getLine(final String className, final String methodName, final String methodDescription, final double lineNumber) {
         long id = Toolkit.hash(className, methodName, lineNumber);
         Line line = DATABASE.find(Line.class, id);

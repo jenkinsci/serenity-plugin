@@ -38,12 +38,12 @@ public class ToolkitTest extends ATest {
 	public void classNameToPackageName() {
 		Type[] types = Type.getArgumentTypes("(Ljava/lang/Integer;Ljava/math/BigDecimal;)Ljava/lang/String;");
 		for (Type argumentType : types) {
-			LOGGER.debug("Type : " + argumentType.getClassName() + ", " + argumentType.getDescriptor() + ", " + argumentType.getInternalName() + ", "
+			LOGGER.fine("Type : " + argumentType.getClassName() + ", " + argumentType.getDescriptor() + ", " + argumentType.getInternalName() + ", "
 					+ argumentType.getSize() + ", " + argumentType.getSort());
 		}
 
 		Type returnType = Type.getReturnType("(Ljava/lang/Integer;Ljava/math/BigDecimal;)Ljava/lang/String;");
-		LOGGER.debug("Type : " + returnType.getClassName() + ", " + returnType.getDescriptor() + ", " + returnType.getInternalName() + ", "
+		LOGGER.fine("Type : " + returnType.getClassName() + ", " + returnType.getDescriptor() + ", " + returnType.getInternalName() + ", "
 				+ returnType.getSize() + ", " + returnType.getSort());
 
 		String name = Toolkit.classNameToPackageName(Toolkit.dotToSlash(Target.class.getName()));
@@ -82,7 +82,7 @@ public class ToolkitTest extends ATest {
 	public void deleteFile() throws Exception {
 		File folder = createFolderAndOneFile("target/folder", "file.txt");
 		Toolkit.deleteFile(folder, 3);
-		LOGGER.debug("Deleted folder and file : " + folder.exists());
+		LOGGER.fine("Deleted folder and file : " + folder.exists());
 	}
 
 	private File createFolderAndOneFile(String folderName, String fileName) throws Exception {
@@ -104,9 +104,9 @@ public class ToolkitTest extends ATest {
 		if (destination.exists()) {
 			Toolkit.deleteFile(destination, 3);
 		}
-		LOGGER.debug("Deleted destination : " + destination.exists());
+		LOGGER.fine("Deleted destination : " + destination.exists());
 		Toolkit.copyFiles(source, destination);
-		LOGGER.debug("Copied file exists : " + new File(destination, "file.txt").exists());
+		LOGGER.fine("Copied file exists : " + new File(destination, "file.txt").exists());
 	}
 
 }

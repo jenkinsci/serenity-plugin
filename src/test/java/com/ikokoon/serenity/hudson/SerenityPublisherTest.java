@@ -38,7 +38,7 @@ public class SerenityPublisherTest extends ATest {
         serenityPublisher = new SerenityPublisher();
         Mockito.doAnswer(new Answer<Void>() {
             public Void answer(final InvocationOnMock invocation) throws Throwable {
-                LOGGER.error(Arrays.deepToString(invocation.getArguments()));
+                LOGGER.severe(Arrays.deepToString(invocation.getArguments()));
                 return null;
             }
         }).when(printStream).println(Mockito.anyString());

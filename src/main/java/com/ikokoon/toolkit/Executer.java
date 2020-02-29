@@ -1,11 +1,10 @@
 package com.ikokoon.toolkit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Logger;
 
 public class Executer {
 
-    private static Logger logger = LoggerFactory.getLogger(Executer.class);
+    private static Logger logger = Logger.getLogger(Executer.class.getName());
 
     public interface IPerform {
         public void execute();

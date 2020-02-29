@@ -6,13 +6,13 @@ import de.java2html.converter.JavaSource2HTMLConverter;
 import de.java2html.javasource.JavaSource;
 import de.java2html.javasource.JavaSourceParser;
 import de.java2html.options.JavaSourceConversionOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class takes the source for a Java file and generates HTML from the source that can be displayed in a browser. This class uses the Java2Html
@@ -24,7 +24,7 @@ import java.io.StringWriter;
  */
 public class CoverageSourceCode implements ISourceCode {
 
-    private Logger logger = LoggerFactory.getLogger(CoverageSourceCode.class);
+    private Logger logger = Logger.getLogger(CoverageSourceCode.class.getName());
     /**
      * The class from the model that has the source code in it.
      */
@@ -63,8 +63,8 @@ public class CoverageSourceCode implements ISourceCode {
         this.source = source;
         try {
             javaSourceParser = new JavaSourceParserExt();
-        } catch (Exception e) {
-            logger.info("Exception initialising the Java source parser", e);
+        } catch (final Exception e) {
+            logger.log(Level.SEVERE, "Exception initialising the Java source parser", e);
         }
     }
 
@@ -82,7 +82,7 @@ public class CoverageSourceCode implements ISourceCode {
                 converter.convert(javaSource, options, writer);
                 return writer.toString();
             } catch (final Exception e) {
-                logger.error("Exception generating the HTML for the class source : " + klass, e);
+                logger.log(Level.SEVERE, "Exception generating the HTML for the class source : " + klass, e);
             }
         }
         return "No source";

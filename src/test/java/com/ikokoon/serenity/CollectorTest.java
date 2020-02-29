@@ -6,8 +6,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,7 +66,7 @@ public class CollectorTest extends ATest implements IConstants {
 
 		// We must test that the package is correct
 		Long packageId = Toolkit.hash(packageName);
-		LOGGER.warn("Looking for package with id : " + packageId + ", " + packageName);
+		LOGGER.severe("Looking for package with id : " + packageId + ", " + packageName);
 		Package pakkage = (Package) dataBase.find(Package.class, packageId);
 		assertNotNull(pakkage);
 

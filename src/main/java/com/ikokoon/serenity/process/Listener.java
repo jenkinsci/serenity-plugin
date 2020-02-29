@@ -10,6 +10,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
 
 /**
  * This class listens on a port for the client to send a message to perform certain actions. At the time of writing the only action was to report, i.e. to dump
@@ -58,25 +59,25 @@ public class Listener extends AProcess {
                                     }
                                 }
                             } catch (Exception e) {
-                                logger.error("Exception listening on the prot : " + IConstants.PORT, e);
+                                logger.log(Level.SEVERE, "Exception listening on the prot : " + IConstants.PORT, e);
                             }
                         }
                     } catch (Exception e) {
-                        logger.error("Exception opening a socket, could be the firewall, the listener will not be listening : ", e);
+                        logger.log(Level.SEVERE, "Exception opening a socket, could be the firewall, the listener will not be listening : ", e);
                     } finally {
                         try {
                             if (serverSocket != null) {
                                 serverSocket.close();
                             }
                         } catch (IOException e) {
-                            logger.error("Exception closing the socket : ");
+                            logger.log(Level.SEVERE, "Exception closing the socket : ");
                         }
                     }
                 }
             };
             timer.schedule(timerTask, 1000);
         } catch (Exception e) {
-            logger.error("Exeption listening on the port : " + IConstants.PORT, e);
+            logger.log(Level.SEVERE, "Exception listening on the port : " + IConstants.PORT, e);
         }
     }
 }

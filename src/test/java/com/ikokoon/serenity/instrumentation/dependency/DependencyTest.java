@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.apache.log4j.Logger;
 import org.junit.Before;
@@ -84,12 +85,12 @@ public class DependencyTest extends ATest {
 
 		List<Class<?, ?>> innerClasses = klass.getInnerClasses();
 		for (Class<?, ?> innerClass : innerClasses) {
-			LOGGER.warn("Inner class : " + innerClass.getName() + ", " + innerClass.getAccess());
+			LOGGER.warning("Inner class : " + innerClass.getName() + ", " + innerClass.getAccess());
 		}
 
 		List<Method<?, ?>> methods = klass.getChildren();
 		for (Method<?, ?> method : methods) {
-			LOGGER.warn("Method : " + method.getName() + ", " + method.getAccess());
+			LOGGER.warning("Method : " + method.getName() + ", " + method.getAccess());
 		}
 
 		// printOpCodes();
@@ -108,7 +109,7 @@ public class DependencyTest extends ATest {
 				field.setAccessible(true);
 				builder.append(field.get(opcodes));
 			} catch (Exception e) {
-				LOGGER.error("", e);
+				LOGGER.log(Level.SEVERE, "", e);
 			}
 			builder.append("\" />");
 
@@ -118,7 +119,7 @@ public class DependencyTest extends ATest {
 
 	private boolean containsAfferentPackage(List<Afferent> afferent, String name) {
 		for (Afferent aff : afferent) {
-			LOGGER.debug("Afferent : " + aff);
+			LOGGER.fine("Afferent : " + aff);
 			if (aff.getName().indexOf(name) > -1) {
 				return true;
 			}

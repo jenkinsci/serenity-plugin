@@ -4,8 +4,8 @@ import com.ikokoon.serenity.Collector;
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import com.ikokoon.toolkit.Toolkit;
 import org.objectweb.asm.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.logging.Logger;
 
 /**
  * This class visits the method instructions and collects dependency metrics on the method.
@@ -19,7 +19,8 @@ public class DependencyMethodAdapter extends MethodVisitor implements Opcodes {
     /**
      * The LOGGER for the class.
      */
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = Logger.getLogger(this.getClass().getName());
+
     /**
      * The name of the class that this method adapter parsing for dependency metrics.
      */
@@ -58,9 +59,7 @@ public class DependencyMethodAdapter extends MethodVisitor implements Opcodes {
                 visitArray(argumentType);
             }
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("Class name : " + className + ", name : " + methodName + ", desc : " + methodDescription);
-        }
+        logger.fine("Class name : " + className + ", name : " + methodName + ", desc : " + methodDescription);
     }
 
     /**
@@ -82,7 +81,7 @@ public class DependencyMethodAdapter extends MethodVisitor implements Opcodes {
      * {@inheritDoc}
      */
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-        logger.debug("visitAnnotation : " + desc + ", " + visible);
+        logger.fine("visitAnnotation : " + desc + ", " + visible);
         VisitorFactory.getSignatureVisitor(className, desc);
         return this.mv.visitAnnotation(desc, visible);
     }
@@ -91,9 +90,7 @@ public class DependencyMethodAdapter extends MethodVisitor implements Opcodes {
      * {@inheritDoc}
      */
     public void visitFieldInsn(int opcode, String owner, String name, String desc) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("visitFieldInst : " + owner + ", " + name + ", " + desc);
-        }
+        logger.fine("visitFieldInst : " + owner + ", " + name + ", " + desc);
         VisitorFactory.getSignatureVisitor(className, desc);
         this.mv.visitFieldInsn(opcode, owner, name, desc);
     }
@@ -102,10 +99,8 @@ public class DependencyMethodAdapter extends MethodVisitor implements Opcodes {
      * {@inheritDoc}
      */
     public void visitLineNumber(int lineNumber, Label label) {
-        if (logger.isDebugEnabled()) {
-            logger.info("visitLineNumber : " + className + ", " + lineNumber + ", " + label + ", " + label.getOffset() + ", " + className + ", "
-                    + methodName);
-        }
+        logger.fine("visitLineNumber : " + className + ", " + lineNumber + ", " + label + ", " + label.getOffset() + ", " + className + ", "
+                + methodName);
         Collector.collectLine(className, methodName, methodDescription, lineNumber);
         this.mv.visitLineNumber(lineNumber, label);
     }
@@ -114,9 +109,7 @@ public class DependencyMethodAdapter extends MethodVisitor implements Opcodes {
      * {@inheritDoc}
      */
     public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("visitLocalVariable : " + name + ", " + desc + ", " + signature + ", " + start + ", " + end + ", " + index);
-        }
+        logger.fine("visitLocalVariable : " + name + ", " + desc + ", " + signature + ", " + start + ", " + end + ", " + index);
         VisitorFactory.getSignatureVisitor(className, desc);
         if (signature != null) {
             VisitorFactory.getSignatureVisitor(className, signature);
@@ -128,9 +121,7 @@ public class DependencyMethodAdapter extends MethodVisitor implements Opcodes {
      * {@inheritDoc}
      */
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean inf) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("visitMethodInst : " + opcode + ", " + owner + ", " + name + ", " + desc);
-        }
+        logger.fine("visitMethodInst : " + opcode + ", " + owner + ", " + name + ", " + desc);
         VisitorFactory.getSignatureVisitor(className, desc);
         this.mv.visitMethodInsn(opcode, owner, name, desc, inf);
     }
@@ -139,9 +130,7 @@ public class DependencyMethodAdapter extends MethodVisitor implements Opcodes {
      * {@inheritDoc}
      */
     public void visitMultiANewArrayInsn(String desc, int dims) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("visitMultiANewArrayInst : " + desc + ", " + dims);
-        }
+        logger.fine("visitMultiANewArrayInst : " + desc + ", " + dims);
         VisitorFactory.getSignatureVisitor(className, desc);
         this.mv.visitMultiANewArrayInsn(desc, dims);
     }
@@ -150,9 +139,7 @@ public class DependencyMethodAdapter extends MethodVisitor implements Opcodes {
      * {@inheritDoc}
      */
     public AnnotationVisitor visitParameterAnnotation(int parameter, String desc, boolean visible) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("visitParameterAnnotation : " + parameter + ", " + desc + ", " + visible);
-        }
+        logger.fine("visitParameterAnnotation : " + parameter + ", " + desc + ", " + visible);
         VisitorFactory.getSignatureVisitor(className, desc);
         return this.mv.visitParameterAnnotation(parameter, desc, visible);
     }

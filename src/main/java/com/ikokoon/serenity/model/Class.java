@@ -16,7 +16,7 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 	private String name;
 	private Class<?, ?> outerClass;
 	private Method<?, ?> outerMethod;	
-	private List<Class<?, ?>> innerClasses = new ArrayList<Class<?, ?>>();
+	private List<Class<?, ?>> innerClasses = new ArrayList<>();
 
 	private double coverage;
 	private double complexity;
@@ -29,10 +29,10 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 
 	private double allocations;
 
-	private List<Efferent> efferent = new ArrayList<Efferent>();
-	private List<Afferent> afferent = new ArrayList<Afferent>();
+	private List<Efferent> efferent = new ArrayList<>();
+	private List<Afferent> afferent = new ArrayList<>();
 
-	private List<Snapshot<?, ?>> snapshots = new ArrayList<Snapshot<?, ?>>();
+	private List<Snapshot<?, ?>> snapshots = new ArrayList<>();
 
 	private String source;
 
@@ -72,6 +72,7 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 		return innerClasses;
 	}
 
+	@SuppressWarnings("unused")
 	public void setInnerClasses(List<Class<?, ?>> innerClasses) {
 		this.innerClasses = innerClasses;
 	}
@@ -168,6 +169,7 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 		return getId() + ":" + name;
 	}
 
+	@SuppressWarnings("NullableProblems")
 	public int compareTo(Class<?, ?> o) {
 		int comparison = 0;
 		if (this.getId() != null && o.getId() != null) {

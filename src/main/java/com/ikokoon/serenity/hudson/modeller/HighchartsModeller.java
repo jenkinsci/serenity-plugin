@@ -5,12 +5,11 @@ import com.ikokoon.serenity.model.Composite;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.model.Project;
 import com.ikokoon.toolkit.Toolkit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * This class takes the composites and generates the data arrays for the Highcharts model, and makes
@@ -27,7 +26,8 @@ public class HighchartsModeller implements IModeller {
         void construct(StringBuilder builder, Composite<?, ?> composite);
     }
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = Logger.getLogger(this.getClass().getName());
+
     private String model;
     private String modelName;
     private Integer[] buildNumbers;
@@ -73,7 +73,7 @@ public class HighchartsModeller implements IModeller {
 
         for (Map.Entry<String, IConstructor> mapEntry : constructors.entrySet()) {
             String data = getData(mapEntry.getValue(), composites);
-            logger.debug("Data : " + data);
+            logger.fine("Data : " + data);
             model = Toolkit.replaceAll(model, mapEntry.getKey(), data);
         }
     }

@@ -5,11 +5,11 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>2.8</version>
+        <version>2.11</version>
     </parent>
 
     <artifactId>serenity</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <name>Jenkins Serenity plugin</name>
     <description>Code metrics and coverage plugin for Jenkins, dynamic instrumentation, and soon continuous profiling!</description>
@@ -40,7 +40,6 @@
             <id>michael.couck</id>
             <name>Michael Couck</name>
             <email>michael.couck@gmail.com</email>
-            <url>http://www.ikube.be/ikube/system/dash.html</url>
             <timezone>Gent</timezone>
         </developer>
     </developers>
@@ -62,7 +61,9 @@
                                 <property name="manifest" value="src/main/resources/META-INF/MANIFEST.MF" />
 
                                 <echo message="Unpacking and repacking serenity.jar with the agent manifest" />
+                                <!--suppress MavenModelInspection -->
                                 <unjar src="${serenity.jar}" dest="${temp}" overwrite="true" />
+                                <!--suppress MavenModelInspection -->
                                 <jar destfile="${serenity.jar}" basedir="${temp}" manifest="${manifest}" />
                             </tasks>
                         </configuration>
@@ -107,7 +108,7 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <!-- This is for dynamic manifest generation, but just easier by hand. -->
             <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -125,7 +126,6 @@
                     </archive>
                 </configuration>
             </plugin>-->
-
         </plugins>
     </build>
 
@@ -156,12 +156,7 @@
             <version>5.0.3</version>
             <scope>compile</scope>
         </dependency>
-        <!--<dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
-            <scope>compile</scope>
-        </dependency>-->
+
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
@@ -187,31 +182,6 @@
             <id>repo.jenkins-ci.org-mirror</id>
             <url>http://mirrors.jenkins-ci.org/war/</url>
         </repository>
-        <repository>
-            <id>ikube</id>
-            <url>http://ikube.be/artifactory/libs-release-local/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <!--<repository>
-            <id>repo1.maven.org</id>
-            <name>repo1 Mirror of http://repo1.maven.org/maven2</name>
-            <url>http://repo1.maven.org/maven2</url>
-        </repository>
-        <repository>
-            <id>repo2.maven.org</id>
-            <name>repo2 Mirror of http://repo2.maven.org/maven2</name>
-            <url>http://repo2.maven.org/maven2</url>
-        </repository>
-        <repository>
-            <id>ibiblio.org</id>
-            <name>ibiblio Mirror of http://repo1.maven.org/maven2/</name>
-            <url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
-        </repository>-->
     </repositories>
 
     <pluginRepositories>

@@ -10,12 +10,11 @@ import hudson.model.labels.LabelAtom;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * Entry point of a plugin.
@@ -41,8 +40,8 @@ public class SerenityPlugin extends Plugin {
      */
     public SerenityPlugin() {
         LoggingConfigurator.configure();
-        Logger logger = LoggerFactory.getLogger(SerenityPlugin.class);
-        logger.debug("Loaded plugin : " + this.getClass().getName());
+        Logger logger = Logger.getLogger(SerenityPlugin.class.getName());
+        logger.fine("Loaded plugin : " + this.getClass().getName());
     }
 
     /**

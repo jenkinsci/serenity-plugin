@@ -5,11 +5,11 @@ import com.ikokoon.serenity.model.*;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.persistence.IDataBase;
 import com.ikokoon.toolkit.Toolkit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Michael Couck
@@ -20,7 +20,8 @@ public abstract class AAggregator implements IAggregator {
 
     private static final int PRECISION = 2;
 
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = Logger.getLogger(this.getClass().getName());
+
     protected IDataBase dataBase;
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private Map<Object, List<?>> lines = new HashMap<>();
@@ -39,7 +40,7 @@ public abstract class AAggregator implements IAggregator {
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected List<Line<?, ?>> getLines(List<Package> pakkages) {
-        List<Line<?, ?>> projectLines = new ArrayList<Line<?, ?>>();
+        List<Line<?, ?>> projectLines = new ArrayList<>();
         for (Package<?, ?> pakkage : pakkages) {
             List<Line<?, ?>> lines = (List<Line<?, ?>>) this.lines.get(pakkage);
             if (lines == null) {
@@ -58,7 +59,7 @@ public abstract class AAggregator implements IAggregator {
      */
     @SuppressWarnings("unchecked")
     protected List<Line<?, ?>> getLines(Package<?, ?> pakkage) {
-        List<Line<?, ?>> packageLines = new ArrayList<Line<?, ?>>();
+        List<Line<?, ?>> packageLines = new ArrayList<>();
         for (Class<?, ?> klass : pakkage.getChildren()) {
             List<Line<?, ?>> lines = (List<Line<?, ?>>) this.lines.get(klass);
             if (lines == null) {
@@ -118,9 +119,9 @@ public abstract class AAggregator implements IAggregator {
      * @param pakkages bla...
      * @return bla...
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked", "rawtypes", "WeakerAccess"})
     protected List<Method<?, ?>> getMethods(Collection<Package> pakkages) {
-        List<Method<?, ?>> projectMethods = new ArrayList<Method<?, ?>>();
+        List<Method<?, ?>> projectMethods = new ArrayList<>();
         for (Package<?, ?> pakkage : pakkages) {
             List<Method<?, ?>> methods = (List<Method<?, ?>>) this.methods.get(pakkage);
             if (methods == null) {
@@ -131,7 +132,7 @@ public abstract class AAggregator implements IAggregator {
         return projectMethods;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "WeakerAccess"})
     protected List<Method<?, ?>> getMethods(Package<?, ?> pakkage) {
         List<Method<?, ?>> packageMethods = (List<Method<?, ?>>) methods.get(pakkage);
         if (packageMethods == null) {
@@ -145,6 +146,7 @@ public abstract class AAggregator implements IAggregator {
         return packageMethods;
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected List<Method<?, ?>> getMethods(Class<?, ?> klass, List<Method<?, ?>> methods) {
         for (Class<?, ?> innerKlass : klass.getInnerClasses()) {
             getMethods(innerKlass, methods);
@@ -155,6 +157,7 @@ public abstract class AAggregator implements IAggregator {
         return methods;
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected void setPrecision(Composite<?, ?> composite) {
         Field[] fields = composite.getClass().getDeclaredFields();
         for (Field field : fields) {
@@ -165,7 +168,7 @@ public abstract class AAggregator implements IAggregator {
                     value = Toolkit.format(value, PRECISION);
                     field.setDouble(composite, value);
                 } catch (Exception e) {
-                    logger.error("Exception accessing the field : " + field, e);
+                    logger.log(Level.SEVERE, "Exception accessing the field : " + field, e);
                 }
             }
         }
@@ -185,6 +188,7 @@ public abstract class AAggregator implements IAggregator {
      * @param abstractness bla...
      * @return bla...
      */
+    @SuppressWarnings("WeakerAccess")
     protected double getDistance(double stability, double abstractness) {
         double a = -1, b = -1;
         return Math.abs(-stability + -abstractness + 1) / Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
@@ -198,6 +202,7 @@ public abstract class AAggregator implements IAggregator {
      * @param implementations bla...
      * @return bla...
      */
+    @SuppressWarnings("WeakerAccess")
     protected double getAbstractness(double interfaces, double implementations) {
         return (interfaces + implementations) > 0 ? interfaces / (interfaces + implementations) : 1d;
     }

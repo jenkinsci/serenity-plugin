@@ -1,15 +1,22 @@
 package com.ikokoon.serenity.persistence;
 
 import com.ikokoon.serenity.Collector;
+import com.ikokoon.serenity.Configuration;
+import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.model.*;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Package;
+import com.ikokoon.serenity.process.Accumulator;
+import com.ikokoon.serenity.process.Aggregator;
+import com.ikokoon.serenity.process.Cleaner;
+import com.ikokoon.serenity.process.Reporter;
 import com.ikokoon.toolkit.LoggingConfigurator;
 import com.ikokoon.toolkit.Toolkit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Just some useful methods to dump the database and clean it.
@@ -32,7 +39,45 @@ public final class DataBaseToolkit {
         LoggingConfigurator.configure();
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataBaseToolkit.class);
+    private static final Logger LOGGER = Logger.getLogger(DataBaseToolkit.class.getName());
+
+    public static void accumulateCleanAggregate(final IDataBase dataBase) {
+        Date start = new Date();
+        LOGGER.info("Starting accumulation : " + start);
+
+        long processStart = System.currentTimeMillis();
+        new Accumulator(null).execute();
+        LOGGER.info("Accumulator : " + (System.currentTimeMillis() - processStart));
+
+        processStart = System.currentTimeMillis();
+        new Cleaner(null, dataBase).execute();
+        LOGGER.info("Cleaner : " + (System.currentTimeMillis() - processStart));
+
+        processStart = System.currentTimeMillis();
+        new Aggregator(null, dataBase).execute();
+        LOGGER.info("Aggregator : " + (System.currentTimeMillis() - processStart));
+
+        processStart = System.currentTimeMillis();
+        new Reporter(null, dataBase).execute();
+        LOGGER.info("Reporter : " + (System.currentTimeMillis() - processStart));
+
+        String dumpData = Configuration.getConfiguration().getProperty(IConstants.DUMP);
+        LOGGER.info("Dump data : " + dumpData + ", " + System.getProperties());
+        if (dumpData != null && "true".equals(dumpData.trim())) {
+            DataBaseToolkit.dump(dataBase, null, null);
+        }
+
+        processStart = System.currentTimeMillis();
+        dataBase.close();
+        LOGGER.info("Close database : " + (System.currentTimeMillis() - processStart));
+
+        Date end = new Date();
+        long million = 1000 * 1000;
+        long duration = end.getTime() - start.getTime();
+        LOGGER.info("Finished accumulation : " + end + ", duration : " + duration + " millis");
+        LOGGER.info("Total memory : " + (Runtime.getRuntime().totalMemory() / million) + ", max memory : "
+                + (Runtime.getRuntime().maxMemory() / million) + ", free memory : " + (Runtime.getRuntime().freeMemory() / million));
+    }
 
     /**
      * Clears the data in the database.
@@ -113,24 +158,12 @@ public final class DataBaseToolkit {
         }
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes", "UnusedAssignment"})
-    private static synchronized void collectEfferentAndAfferent(final Class klass, final List<Package> packages) {
-        List<Efferent> efferents = klass.getEfferent();
-        for (final Efferent efferent : efferents) {
-            String efferentPackage = Toolkit.replaceAll(efferent.getName(), "<e:", "");
-            efferentPackage = Toolkit.replaceAll(efferent.getName(), ">", "");
-            for (final Package pakkage : packages) {
-                List<Class> children = pakkage.getChildren();
-                for (final Class child : children) {
-                    List<Afferent> afferents = child.getAfferent();
-                    for (final Afferent afferent : afferents) {
-                        String afferentPackage = Toolkit.replaceAll(afferent.getName(), "<a:", "");
-                        afferentPackage = Toolkit.replaceAll(afferent.getName(), ">", "");
-                        if (efferentPackage.equals(afferentPackage)) {
-                            Collector.collectEfferentAndAfferent(klass.getName(), child.getName());
-                        }
-                    }
-                }
+    @SuppressWarnings({"unchecked", "rawtypes", "UnusedAssignment", "WeakerAccess"})
+    public static synchronized void collectEfferentAndAfferent(final Class klass, final List<Package> packages) {
+        for (final Package pakkage : packages) {
+            List<Class> children = pakkage.getChildren();
+            for (final Class child : children) {
+                Collector.collectEfferentAndAfferent(klass.getName(), child.getName());
             }
         }
     }
@@ -145,17 +178,17 @@ public final class DataBaseToolkit {
     @SuppressWarnings("rawtypes")
     public static synchronized void dump(final IDataBase dataBase, final ICriteria criteria, final String message) {
         if (message != null) {
-            LOGGER.warn(message);
+            LOGGER.warning(message);
         }
         try {
             Object object = dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
             LOGGER.info("" + object);
             Project<?, ?> project = (Project<?, ?>) dataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
             if (project != null) {
-                LOGGER.warn("Project : " + project.getName());
+                LOGGER.warning("Project : " + project.getName());
             }
         } catch (final Exception e) {
-            LOGGER.error("Exception dumping the data for the project object.", e);
+            LOGGER.log(Level.SEVERE, "Exception dumping the data for the project object.", e);
         }
         try {
             List<Package> packages = dataBase.find(Package.class);
@@ -166,9 +199,6 @@ public final class DataBaseToolkit {
                     log(criteria, klass, 2, " : id : ", klass.getId(), " : name : ", klass.getName(), " : coverage : ", klass.getCoverage(), ", complexity : ",
                             klass.getComplexity(), ", outer class : ", klass.getOuterClass(), ", outer method : ", klass.getOuterMethod(), ", lines : ", klass
                                     .getChildren().size(), ", inner classes : ", klass.getInnerClasses());
-                    /*if (klass.getSource() != null) {
-                        log(criteria, klass, 5, klass.getSource());
-                    }*/
                     List<Efferent> efferents = klass.getEfferent();
                     List<Afferent> afferents = klass.getAfferent();
                     for (final Efferent efferent : efferents) {
@@ -188,7 +218,7 @@ public final class DataBaseToolkit {
                 }
             }
         } catch (final Exception e) {
-            LOGGER.error("Exception dumping the data for the database.", e);
+            LOGGER.log(Level.SEVERE, "Exception dumping the data for the database.", e);
         }
     }
 
@@ -203,7 +233,7 @@ public final class DataBaseToolkit {
             for (final Object datum : data) {
                 builder.append(datum);
             }
-            LOGGER.warn(builder.toString());
+            LOGGER.warning(builder.toString());
         }
     }
 

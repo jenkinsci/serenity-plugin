@@ -2,13 +2,12 @@ package com.ikokoon.serenity.persistence;
 
 import com.ikokoon.serenity.model.Composite;
 import com.ikokoon.toolkit.ObjectFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * This is the persistence interface for the Serenity code coverage and dependency functionality.
@@ -30,7 +29,7 @@ public interface IDataBase {
      */
     class DataBaseManager {
 
-        private static Logger logger = LoggerFactory.getLogger(DataBaseManager.class);
+        private static Logger logger = Logger.getLogger(DataBaseManager.class.getName());
         /**
          * The map of open databases keyed on the database file name.
          */
@@ -65,10 +64,10 @@ public interface IDataBase {
             if (dataBase == null || dataBase.isClosed()) {
                 getDataBaseListener(dataBaseFile);
                 dataBase = ObjectFactory.getObject(klass, dataBaseFile, internalDataBase);
-                logger.debug("Adding database : " + dataBase);
+                logger.fine("Adding database : " + dataBase);
                 dataBases.put(dataBaseFile, dataBase);
             }
-            logger.debug("Returned database : " + klass + ", data base : " + dataBase + ", file : " + dataBaseFile);
+            logger.fine("Returned database : " + klass + ", data base : " + dataBase + ", file : " + dataBaseFile);
             return dataBase;
         }
 
@@ -109,9 +108,9 @@ public interface IDataBase {
                     if (dataBaseEvent.getEventType().equals(IDataBaseEvent.Type.DATABASE_CLOSE)) {
                         IDataBase dataBase = dataBaseEvent.getDataBase();
                         if (!dataBases.values().remove(dataBase)) {
-                            logger.debug("Database not removed : " + dataBase);
+                            logger.fine("Database not removed : " + dataBase);
                         } else {
-                            logger.debug("Removed database : " + dataBase);
+                            logger.fine("Removed database : " + dataBase);
                         }
                         DataBaseManager.removeDataBaseListener(dataBaseFile, this);
                     }

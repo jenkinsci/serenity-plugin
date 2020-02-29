@@ -36,14 +36,14 @@ public class ListenerTest extends ATest {
         Thread.sleep(10000);
         // Verify that the reports are written
         File file = new File(IConstants.SERENITY_DIRECTORY);
-        LOGGER.warn("Searching directory : " + file.getAbsolutePath());
+        LOGGER.warning("Searching directory : " + file.getAbsolutePath());
         List<File> files = new ArrayList<File>();
         Toolkit.findFiles(new File("."), new Toolkit.IFileFilter() {
             public boolean matches(File file) {
                 return file.getName().equals(IConstants.METHOD_SERIES);
             }
         }, files);
-        LOGGER.warn("Report files : " + files);
+        LOGGER.warning("Report files : " + files);
         assertTrue(files.size() > 0);
     }
 

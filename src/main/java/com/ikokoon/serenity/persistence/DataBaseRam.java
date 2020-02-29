@@ -4,12 +4,12 @@ import com.ikokoon.serenity.model.Composite;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.model.Project;
 import com.ikokoon.toolkit.Toolkit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This is the in memory database. Several options were explored including DB4O, Neodatis, JPA, SQL, and finally none were performant enough. As well
@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public final class DataBaseRam extends DataBase {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = Logger.getLogger(this.getClass().getName());
     /**
      * The database file for access.
      */
@@ -60,9 +60,6 @@ public final class DataBaseRam extends DataBase {
      * {@inheritDoc}
      */
     public synchronized final <E extends Composite<?, ?>> E persist(E composite) {
-//		if (com.ikokoon.serenity.model.Class.class.isAssignableFrom(composite.getClass())) {
-//			logger.error("Persisting : " + composite);
-//		}
         setIds(composite);
         return composite;
     }
@@ -136,7 +133,7 @@ public final class DataBaseRam extends DataBase {
             }
             composite.setParent(null);
             if (!index.remove(composite)) {
-                logger.warn("Didn't remove composite with id : " + id + ", because it wasn't in the index.");
+                logger.warning("Didn't remove composite with id : " + id + ", because it wasn't in the index.");
             }
         }
         if (this.dataBase != null) {
@@ -172,20 +169,19 @@ public final class DataBaseRam extends DataBase {
             if (dataBase != null) {
                 for (Composite<?, ?> composite : index) {
                     if (Package.class.isInstance(composite) || Project.class.isInstance(composite)) {
-                        logger.debug("Persisting : " + composite);
                         dataBase.persist(composite);
                     }
                 }
                 dataBase.close();
             } else {
-                logger.warn("Persistence database was null : " + this);
+                logger.warning("Persistence database was null : " + this);
             }
             index.clear();
 
             IDataBaseEvent dataBaseEvent = new DataBaseEvent(this, IDataBaseEvent.Type.DATABASE_CLOSE);
             IDataBase.DataBaseManager.fireDataBaseEvent(dataBaseFile, dataBaseEvent);
         } catch (Exception e) {
-            logger.error("Exception committing and closing the database", e);
+            logger.log(Level.SEVERE, "Exception committing and closing the database", e);
         }
         closed = true;
     }
@@ -205,11 +201,10 @@ public final class DataBaseRam extends DataBase {
         super.setId(composite);
         // Insert the object into the index
         insert(index, composite);
-        logger.debug("Persisted object : " + composite);
         if (composite instanceof com.ikokoon.serenity.model.Class) {
             String name = ((com.ikokoon.serenity.model.Class) composite).getName();
             if (name.indexOf('/') > -1) {
-                logger.warn("Invalid class name : " + name);
+                logger.warning("Invalid class name : " + name);
                 Thread.dumpStack();
             }
         }
@@ -262,10 +257,8 @@ public final class DataBaseRam extends DataBase {
      * @param toInsert the composite to insert into the index
      */
     final void insert(List<Composite<?, ?>> index, Composite<?, ?> toInsert) {
-        boolean inserted = false;
         if (index.size() == 0) {
             index.add(toInsert);
-            inserted = true;
         } else {
             long key = toInsert.getId();
             int low = 0;
@@ -274,7 +267,6 @@ public final class DataBaseRam extends DataBase {
                 int mid = (low + high) >>> 1;
                 if (mid >= index.size()) {
                     index.add(mid, toInsert);
-                    inserted = true;
                     break;
                 }
                 Composite<?, ?> composite = index.get(mid);
@@ -286,7 +278,6 @@ public final class DataBaseRam extends DataBase {
                         long nextVal = nextComposite.getId();
                         if (nextVal > key) {
                             index.add(next, toInsert);
-                            inserted = true;
                             break;
                         }
                     }
@@ -298,12 +289,10 @@ public final class DataBaseRam extends DataBase {
                         long previousVal = previousComposite.getId();
                         if (previousVal < key) {
                             index.add(mid, toInsert);
-                            inserted = true;
                             break;
                         }
                     } else {
                         index.add(0, toInsert);
-                        inserted = true;
                         break;
                     }
                     high = mid - 1;
@@ -312,7 +301,6 @@ public final class DataBaseRam extends DataBase {
                 }
             }
         }
-        logger.debug("Inserted : " + toInsert + " - " + inserted);
     }
 
     public <E extends Composite<?, ?>> List<E> find(Class<E> klass, Map<String, ?> parameters) {

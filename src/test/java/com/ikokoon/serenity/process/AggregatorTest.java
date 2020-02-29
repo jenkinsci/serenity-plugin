@@ -40,7 +40,8 @@ public class AggregatorTest extends ATest implements IConstants {
     public void aggregate() {
         double aggregationDuration = Executer.execute(new Executer.IPerform() {
             public void execute() {
-                File odbDataBaseFile = new File("./src/test/resources/findbugs/serenity.odb");
+                // File odbDataBaseFile = new File("./src/test/resources/findbugs/serenity.odb");
+                File odbDataBaseFile = new File("/home/laptop/Workspace/serenity/work/jobs/ronin-microservice/builds/7/./serenity/serenity.odb");
 
                 IDataBase odbDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, odbDataBaseFile.getAbsolutePath(), null);
                 IDataBase ramDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseRam.class, "ramDatabase.ram", odbDataBase);
@@ -49,21 +50,21 @@ public class AggregatorTest extends ATest implements IConstants {
 
                 Project<?, ?> project = (Project<?, ?>) ramDataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
                 if (project != null) {
-                    LOGGER.warn(ToStringBuilder.reflectionToString(project));
+                    LOGGER.warning(ToStringBuilder.reflectionToString(project));
                 } else {
-                    LOGGER.warn("Project null : ");
+                    LOGGER.warning("Project null : ");
                 }
 
                 ramDataBase.close();
 
                 odbDataBase = IDataBase.DataBaseManager.getDataBase(DataBaseOdb.class, odbDataBaseFile.getAbsolutePath(), mockInternalDataBase);
                 project = (Project<?, ?>) odbDataBase.find(Project.class, Toolkit.hash(Project.class.getName()));
-                LOGGER.warn(ToStringBuilder.reflectionToString(project));
+                LOGGER.warning(ToStringBuilder.reflectionToString(project));
 
                 odbDataBase.close();
             }
         }, "AggregatorTest : ", 1);
-        LOGGER.warn("Aggregation took : " + aggregationDuration);
+        LOGGER.warning("Aggregation took : " + aggregationDuration);
     }
 
     @Test
@@ -128,9 +129,9 @@ public class AggregatorTest extends ATest implements IConstants {
 
         Package<?, ?> pakkage = dataBase.find(Package.class, Toolkit.hash(Discovery.class.getPackage().getName()));
 
-        Set<Class<?, ?>> classes = new TreeSet<Class<?, ?>>();
-        Set<Method<?, ?>> methods = new TreeSet<Method<?, ?>>();
-        Set<Line<?, ?>> lines = new TreeSet<Line<?, ?>>();
+        Set<Class<?, ?>> classes = new TreeSet<>();
+        Set<Method<?, ?>> methods = new TreeSet<>();
+        Set<Line<?, ?>> lines = new TreeSet<>();
         getClassesMethodsAndLines(pakkage, classes, methods, lines);
 
         for (Method<?, ?> method : methods) {
@@ -244,7 +245,7 @@ public class AggregatorTest extends ATest implements IConstants {
         }
     }
 
-    protected double getStability(Package<?, ?> pakkage) {
+    private double getStability(Package<?, ?> pakkage) {
         double efferent = 0d;
         double afferent = 0d;
         for (Class<?, ?> klass : pakkage.getChildren()) {
@@ -255,13 +256,13 @@ public class AggregatorTest extends ATest implements IConstants {
         return denominator > 0 ? efferent / denominator : 1d;
     }
 
-    protected double getDistance(Package<?, ?> pakkage) {
+    private double getDistance(Package<?, ?> pakkage) {
         // TODO - validate this test - A + I = 1
         double a = -1, b = -1;
         return Math.abs(-pakkage.getStability() + -pakkage.getAbstractness() + 1) / Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
     }
 
-    protected double getCoverage(Package<?, ?> pakkage) {
+    private double getCoverage(Package<?, ?> pakkage) {
         double coverage = 0d;
         for (Class<?, ?> klass : pakkage.getChildren()) {
             coverage += klass.getCoverage();
@@ -269,7 +270,7 @@ public class AggregatorTest extends ATest implements IConstants {
         return coverage / pakkage.getChildren().size();
     }
 
-    protected double getComplexity(Package<?, ?> pakkage) {
+    private double getComplexity(Package<?, ?> pakkage) {
         double complexity = 0d;
         for (Class<?, ?> klass : pakkage.getChildren()) {
             complexity += klass.getComplexity();
@@ -278,17 +279,17 @@ public class AggregatorTest extends ATest implements IConstants {
         return complexity;
     }
 
-    protected double getAbstractness(Package<?, ?> pakkage) {
+    private double getAbstractness(Package<?, ?> pakkage) {
         return pakkage.getInterfaces() / (pakkage.getImplementations() + pakkage.getInterfaces());
     }
 
-    protected double getStability(Class<?, ?> klass) {
-        double numerator = klass.getEfferent().size();
-        double denominator = klass.getEfferent().size() + klass.getAfferent().size();
-        return denominator > 0 ? numerator / denominator : 0d;
+    private double getStability(Class<?, ?> klass) {
+        double efferent = klass.getEfferent().size();
+        double afferent = klass.getAfferent().size();
+        return efferent + afferent > 0 ? efferent / efferent + afferent : 1d;
     }
 
-    protected double getCoverage(Class<?, ?> klass) {
+    private double getCoverage(Class<?, ?> klass) {
         double coverage = 0d;
         for (Method<?, ?> method : klass.getChildren()) {
             coverage += method.getCoverage();
@@ -297,7 +298,7 @@ public class AggregatorTest extends ATest implements IConstants {
         return coverage;
     }
 
-    protected double getComplexity(Class<?, ?> klass) {
+    private double getComplexity(Class<?, ?> klass) {
         double complexity = 0d;
         for (Method<?, ?> method : klass.getChildren()) {
             complexity += method.getComplexity();

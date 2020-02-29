@@ -4,8 +4,8 @@ import com.ikokoon.serenity.Collector;
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import com.ikokoon.toolkit.Toolkit;
 import org.objectweb.asm.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.logging.Logger;
 
 /**
  * Visits and collects the dependency metrics for a field in a class.
@@ -16,7 +16,8 @@ import org.slf4j.LoggerFactory;
  */
 public class DependencyFieldAdapter extends FieldVisitor {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = Logger.getLogger(this.getClass().getName());
+
     /**
      * The parent visitor.
      */
@@ -39,7 +40,7 @@ public class DependencyFieldAdapter extends FieldVisitor {
         super(Opcodes.ASM5, visitor);
         this.visitor = visitor;
         this.className = Toolkit.slashToDot(className);
-        logger.debug("Class name : " + this.className + ", " + description + ", " + signature);
+        logger.fine("Class name : " + this.className + ", " + description + ", " + signature);
         VisitorFactory.getSignatureVisitor(this.className, description);
         if (signature != null) {
             VisitorFactory.getSignatureVisitor(this.className, signature);
@@ -52,7 +53,7 @@ public class DependencyFieldAdapter extends FieldVisitor {
      * {@inheritDoc}
      */
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-        logger.debug("visitAnnotation : " + desc + ", " + visible);
+        logger.fine("visitAnnotation : " + desc + ", " + visible);
         AnnotationVisitor annotationVisitor = visitor.visitAnnotation(desc, visible);
         AnnotationVisitor adapter = VisitorFactory.getAnnotationVisitor(annotationVisitor, className, desc);
         return adapter;

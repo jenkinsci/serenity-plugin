@@ -11,7 +11,7 @@ D:\Eclipse\workspace\serenity># -B -Dresume=false -Dusername=michaelcouck -Dpass
 '#' is not recognized as an internal or external command,
 operable program or batch file.
 
-D:\Eclipse\workspace\serenity>mvn release:prepare release:perform
+D:\Eclipse\workspace\serenity>mvn -DdryRun=true release:prepare release:perform
 [INFO] Scanning for projects...
 [INFO] ------------------------------------------------------------------------
 [INFO] Building Hudson Serenity plugin

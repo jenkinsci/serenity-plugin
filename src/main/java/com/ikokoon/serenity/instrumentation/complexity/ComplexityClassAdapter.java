@@ -5,10 +5,9 @@ import com.ikokoon.toolkit.Toolkit;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 /**
  * This is the top level class adapter for collecting the complexity for the classes. It just calls the complexity method adapter where the real work
@@ -20,7 +19,7 @@ import java.util.Arrays;
  */
 public class ComplexityClassAdapter extends ClassVisitor {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = Logger.getLogger(this.getClass().getName());
     /**
      * The name of the class that is being instrumented.
      */
@@ -36,19 +35,13 @@ public class ComplexityClassAdapter extends ClassVisitor {
     public ComplexityClassAdapter(ClassVisitor visitor, String className) {
         super(Opcodes.ASM5, visitor);
         this.className = Toolkit.slashToDot(className);
-        logger.debug("Constructor : " + className);
+        logger.fine("Constructor : " + className);
     }
 
     /**
      * {@inheritDoc}
      */
     public void visit(int version, int access, String className, String signature, String superName, String[] interfaces) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("visit : " + version + ", " + access + ", " + className + ", " + signature + ", " + superName);
-            if (interfaces != null) {
-                logger.debug(Arrays.asList(interfaces).toString());
-            }
-        }
         super.visit(version, access, className, signature, superName, interfaces);
     }
 
@@ -56,7 +49,6 @@ public class ComplexityClassAdapter extends ClassVisitor {
      * {@inheritDoc}
      */
     public MethodVisitor visitMethod(int access, String methodName, String methodDescription, String signature, String[] exceptions) {
-        logger.debug("visitMethod : " + access + ", " + methodName + ", " + methodDescription + ", " + signature + ", " + Arrays.toString(exceptions));
         MethodVisitor methodVisitor = super.visitMethod(access, methodName, methodDescription, signature, exceptions);
         return VisitorFactory.getMethodVisitor(methodVisitor, ComplexityMethodAdapter.class, access,
                 className, methodName, methodDescription);

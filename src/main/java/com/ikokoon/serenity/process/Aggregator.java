@@ -32,7 +32,7 @@ public class Aggregator extends AProcess implements IConstants {
      * @param parent   the parent process that will call this child. The child process, i.e. this instance, will add it's self to the parent
      * @param dataBase the database to aggregate the statistics for
      */
-    public Aggregator(IProcess parent, IDataBase dataBase) {
+    public Aggregator(final IProcess parent, final IDataBase dataBase) {
         super(parent);
         this.dataBase = dataBase;
     }

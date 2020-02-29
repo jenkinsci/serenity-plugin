@@ -12,6 +12,7 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 
 /**
@@ -47,16 +48,16 @@ public class Accumulator extends AProcess {
     public void execute() {
         super.execute();
         // All the files that we are interested in
-        Set<File> files = new TreeSet<File>();
+        Set<File> files = new TreeSet<>();
 
         // Look for all jars below this directory to find some source
         File dotDirectory = new File(".");
         walkFileSystem(dotDirectory, files);
-        logger.debug("Files : " + files);
+        logger.fine("Files : " + files);
 
         // Walk the class path looking for files that are included
         String classpath = Configuration.getConfiguration().getClassPath();
-        logger.debug("Class path : " + File.pathSeparator + ", " + classpath);
+        logger.fine("Class path : " + File.pathSeparator + ", " + classpath);
         StringTokenizer stringTokenizer = new StringTokenizer(classpath, ";:", false);
         while (stringTokenizer.hasMoreTokens()) {
             String token = stringTokenizer.nextToken();
@@ -68,7 +69,7 @@ public class Accumulator extends AProcess {
 
     private void walkFileSystem(final File file, final Set<File> files) {
         try {
-            logger.debug("Walking file : " + file);
+            logger.fine("Walking file : " + file);
             if (file.isDirectory()) {
                 File[] childFiles = file.listFiles();
                 if (childFiles != null && childFiles.length > 0) {
@@ -82,11 +83,11 @@ public class Accumulator extends AProcess {
                 }
             }
         } catch (Exception e) {
-            logger.error("Exception walking the file tree : ", e);
+            logger.log(Level.SEVERE, "Exception walking the file tree : ", e);
         }
     }
 
-    void processFiles(final Set<File> files) {
+    private void processFiles(final Set<File> files) {
         for (final File file : files) {
             processFile(file, files);
         }
@@ -97,7 +98,7 @@ public class Accumulator extends AProcess {
      *
      * @param file the directory or file to look in for the class data
      */
-    void processFile(final File file, final Set<File> files) {
+    private void processFile(final File file, final Set<File> files) {
         String filePath = file.getAbsolutePath();
         if (filePath.endsWith("jar") || filePath.endsWith("zip")) {
             processJar(file);
@@ -108,11 +109,12 @@ public class Accumulator extends AProcess {
         }
     }
 
-    void processClass(final File file, final Set<File> files) {
+    private void processClass(final File file, final Set<File> files) {
         String filePath = Toolkit.slashToDot(Toolkit.cleanFilePath(file.getAbsolutePath()));
         byte[] classBytes = Toolkit.getContents(file).toByteArray();
         // Strip the beginning of the path off the name
         for (String packageName : Configuration.getConfiguration().includedPackages) {
+            //noinspection IndexOfReplaceableByContains
             if (filePath.indexOf(packageName) > -1) {
                 int indexOfPackageName = filePath.lastIndexOf(packageName);
                 int classIndex = filePath.lastIndexOf(".class");
@@ -130,14 +132,14 @@ public class Accumulator extends AProcess {
                             inputStream = new FileInputStream(sourceFile);
                             source = Toolkit.getContents(inputStream);
                         } catch (IOException e) {
-                            logger.error("Exception processing source file : " + sourceFile, e);
+                            logger.log(Level.SEVERE, "Exception processing source file : " + sourceFile, e);
                         } finally {
                             try {
                                 if (inputStream != null) {
                                     inputStream.close();
                                 }
                             } catch (Exception e) {
-                                logger.error("Exception closing the input stream : " + sourceFile, e);
+                                logger.log(Level.SEVERE, "Exception closing the input stream : " + sourceFile, e);
                             }
                         }
                     }
@@ -148,7 +150,7 @@ public class Accumulator extends AProcess {
         }
     }
 
-    File getSourceFile(final String className, final Set<File> files) {
+    private File getSourceFile(final String className, final Set<File> files) {
         if (className.indexOf('$') > -1) {
             return null;
         }
@@ -158,7 +160,7 @@ public class Accumulator extends AProcess {
             }
             String sourceFilePath = Toolkit.slashToDot(Toolkit.cleanFilePath(file.getAbsolutePath()));
             if (sourceFilePath.contains(className)) {
-                logger.debug("Got source file : " + sourceFilePath);
+                logger.fine("Got source file : " + sourceFilePath);
                 return file;
             }
         }
@@ -172,11 +174,11 @@ public class Accumulator extends AProcess {
      * @param file the file to look in for the class data
      */
     private void processJar(final File file) {
-        JarFile jarFile = null;
+        JarFile jarFile;
         try {
             jarFile = new JarFile(file);
         } catch (Exception e) {
-            logger.error("Exeption accessing the jar : " + file, e);
+            logger.log(Level.SEVERE, "Exception accessing the jar : " + file, e);
             return;
         }
         Enumeration<JarEntry> jarEntries = jarFile.entries();
@@ -188,10 +190,11 @@ public class Accumulator extends AProcess {
                 continue;
             }
             try {
-                logger.debug("Processsing entry : " + className);
+                logger.fine("Processing entry : " + className);
                 InputStream inputStream = jarFile.getInputStream(jarEntry);
                 byte[] classFileBytes = Toolkit.getContents(inputStream).toByteArray();
-                ByteArrayOutputStream source = null;
+                ByteArrayOutputStream source;
+                //noinspection IndexOfReplaceableByContains
                 if (jarEntry.getName().indexOf("$") == -1) {
                     source = getSource(jarFile, entryName);
                 } else {
@@ -199,7 +202,7 @@ public class Accumulator extends AProcess {
                 }
                 processClass(Toolkit.slashToDot(entryName), classFileBytes, source);
             } catch (Exception e) {
-                logger.error("Exception reading entry : " + jarEntry + ", from file : " + file, e);
+                logger.log(Level.SEVERE, "Exception reading entry : " + jarEntry + ", from file : " + file, e);
             }
         }
     }
@@ -207,10 +210,10 @@ public class Accumulator extends AProcess {
     protected ByteArrayOutputStream getSource(final JarFile jarFile, final String entryName) throws IOException {
         // Look for the source
         final String javaEntryName = entryName.substring(0, entryName.lastIndexOf('.')) + ".java";
-        logger.debug("Looking for source : " + javaEntryName + ", " + entryName + ", " + jarFile.getName());
+        logger.fine("Looking for source : " + javaEntryName + ", " + entryName + ", " + jarFile.getName());
         ZipEntry javaEntry = jarFile.getEntry(javaEntryName);
         if (javaEntry != null) {
-            logger.debug("Got source : " + javaEntry);
+            logger.fine("Got source : " + javaEntry);
             InputStream inputStream = jarFile.getInputStream(javaEntry);
             return Toolkit.getContents(inputStream);
         }
@@ -222,7 +225,7 @@ public class Accumulator extends AProcess {
         if (strippedName != null && strippedName.endsWith("class")) {
             strippedName = strippedName.substring(0, strippedName.lastIndexOf('.'));
         }
-        logger.debug("Adding class : " + strippedName);
+        logger.fine("Adding class : " + strippedName);
         VisitorFactory.getClassVisitor(CLASS_ADAPTER_CLASSES, strippedName, classBytes, source);
     }
 
@@ -232,17 +235,17 @@ public class Accumulator extends AProcess {
             return true;
         }
         if (!name.endsWith("class") && !name.endsWith("java") && !name.endsWith("jar") && !name.endsWith("zip")) {
-            logger.debug("Not processing file : " + name);
+            logger.fine("Not processing file : " + name);
             return true;
         }
         // Check that the class is included in the included packages
         if (!Configuration.getConfiguration().included(name)) {
-            logger.debug("File not included : " + name);
+            logger.fine("File not included : " + name);
             return true;
         } else {
             // Check that the class is not excluded in the excluded packages
             if (Configuration.getConfiguration().excluded(name)) {
-                logger.debug("Excluded file : " + name);
+                logger.fine("Excluded file : " + name);
                 return true;
             }
         }

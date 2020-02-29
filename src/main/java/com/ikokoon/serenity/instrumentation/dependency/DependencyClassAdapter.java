@@ -5,12 +5,11 @@ import com.ikokoon.serenity.IConstants;
 import com.ikokoon.serenity.instrumentation.VisitorFactory;
 import com.ikokoon.toolkit.Toolkit;
 import org.objectweb.asm.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This is the entry point for parsing the byte code and collecting the dependency metrics for the class. This class also collects the Java source for
@@ -35,7 +34,8 @@ public class DependencyClassAdapter extends ClassVisitor implements Opcodes {
     /**
      * The LOGGER for the class.
      */
-    private Logger logger = LoggerFactory.getLogger(DependencyClassAdapter.class);
+    private Logger logger = Logger.getLogger(DependencyClassAdapter.class.getName());
+
     /**
      * The name of the class to collect dependency metrics on.
      */
@@ -57,19 +57,13 @@ public class DependencyClassAdapter extends ClassVisitor implements Opcodes {
         super(Opcodes.ASM5, classVisitor);
         this.className = Toolkit.slashToDot(className);
         this.source = source;
-        logger.debug("Class name : " + className + ", source : " + source);
+        logger.fine("Class name : " + className + ", source : " + source);
     }
 
     /**
      * {@inheritDoc}
      */
     public void visit(final int version, final int access, final String className, final String signature, final String superName, final String[] interfaces) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("visit : " + version + ", " + access + ", " + className + ", " + signature + ", " + superName);
-            if (interfaces != null) {
-                logger.debug(Arrays.asList(interfaces).toString());
-            }
-        }
         assert interfaces != null;
         String[] normedInterfaces = new String[interfaces.length];
         for (int i = 0; i < interfaces.length; i++) {
@@ -86,9 +80,7 @@ public class DependencyClassAdapter extends ClassVisitor implements Opcodes {
      * {@inheritDoc}
      */
     public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("visitAnnotation : " + desc + ", " + visible);
-        }
+        logger.fine("visitAnnotation : " + desc + ", " + visible);
         AnnotationVisitor visitor = super.visitAnnotation(desc, visible);
         return VisitorFactory.getAnnotationVisitor(visitor, className, desc);
     }
@@ -97,9 +89,7 @@ public class DependencyClassAdapter extends ClassVisitor implements Opcodes {
      * {@inheritDoc}
      */
     public void visitAttribute(final Attribute attr) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("visitAttribute : " + attr);
-        }
+        logger.fine("visitAttribute : " + attr);
         // Attributes are code added that is not standard, and we are not really interested in it are we?
         super.visitAttribute(attr);
     }
@@ -108,9 +98,7 @@ public class DependencyClassAdapter extends ClassVisitor implements Opcodes {
      * {@inheritDoc}
      */
     public FieldVisitor visitField(final int access, final String fieldName, final String desc, final String signature, final Object value) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("visitField : " + access + ", " + fieldName + ", " + desc + ", " + signature + ", " + value);
-        }
+        logger.fine("visitField : " + access + ", " + fieldName + ", " + desc + ", " + signature + ", " + value);
         FieldVisitor visitor = super.visitField(access, fieldName, desc, signature, value);
         return VisitorFactory.getFieldVisitor(visitor, DependencyFieldAdapter.class, className, desc, signature);
     }
@@ -119,9 +107,7 @@ public class DependencyClassAdapter extends ClassVisitor implements Opcodes {
      * {@inheritDoc}
      */
     public void visitInnerClass(final String innerName, final String outerName, final String innerSimpleName, final int access) {
-        if (logger.isDebugEnabled()) {
-            logger.info("visitInnerClass : inner name : " + innerName + ", outer name : " + outerName + ", inner simple name : " + innerSimpleName);
-        }
+        logger.fine("visitInnerClass : inner name : " + innerName + ", outer name : " + outerName + ", inner simple name : " + innerSimpleName);
         if (outerName != null) {
             Collector.collectInnerClass(Toolkit.slashToDot(innerName), Toolkit.slashToDot(outerName));
         }
@@ -135,10 +121,8 @@ public class DependencyClassAdapter extends ClassVisitor implements Opcodes {
      * {@inheritDoc}
      */
     public void visitOuterClass(final String outerName, final String outerMethodName, final String outerMethodDescription) {
-        if (logger.isDebugEnabled()) {
-            logger.info("visitOuterClass : class name : " + className + ", owner : " + outerName + ", method name : " + outerMethodName
-                    + ", description : " + outerMethodDescription);
-        }
+        logger.fine("visitOuterClass : class name : " + className + ", owner : " + outerName + ", method name : " + outerMethodName
+                + ", description : " + outerMethodDescription);
         Collector.collectOuterClass(className, Toolkit.slashToDot(outerName), outerMethodName, outerMethodDescription);
         super.visitOuterClass(outerName, outerMethodName, outerMethodDescription);
     }
@@ -147,12 +131,7 @@ public class DependencyClassAdapter extends ClassVisitor implements Opcodes {
      * {@inheritDoc}
      */
     public MethodVisitor visitMethod(final int access, final String methodName, final String methodDescription, final String signature, final String[] exceptions) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("visitMethod : " + access + ", " + methodName + ", " + methodDescription + ", " + signature);
-            if (exceptions != null) {
-                logger.debug(Arrays.asList(exceptions).toString());
-            }
-        }
+        logger.fine("visitMethod : " + access + ", " + methodName + ", " + methodDescription + ", " + signature);
         MethodVisitor visitor = super.visitMethod(access, methodName, methodDescription, signature, exceptions);
         if (exceptions != null) {
             for (String exception : exceptions) {
@@ -167,14 +146,12 @@ public class DependencyClassAdapter extends ClassVisitor implements Opcodes {
      * {@inheritDoc}
      */
     public void visitSource(final String source, final String debug) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("visitSource : " + source + ", " + debug);
-        }
+        logger.fine("visitSource : " + source + ", " + debug);
         if (this.source != null && this.source.size() > 0) {
             try {
                 Collector.collectSource(className, this.source.toString(IConstants.ENCODING));
             } catch (final UnsupportedEncodingException e) {
-                logger.error(null, e);
+                logger.log(Level.SEVERE, null, e);
             }
         }
         super.visitSource(source, debug);
@@ -184,7 +161,7 @@ public class DependencyClassAdapter extends ClassVisitor implements Opcodes {
      * {@inheritDoc}
      */
     public void visitEnd() {
-        logger.debug("visitEnd : ");
+        logger.fine("visitEnd : ");
         super.visitEnd();
     }
 

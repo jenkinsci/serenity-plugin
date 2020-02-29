@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 /**
  * This class takes a database and produces reports based on the snapshots for each method, for the profiler.
@@ -51,9 +52,9 @@ public class Reporter extends AProcess {
     public void execute() {
         try {
             // Only execute the reports for the profiler if the snapshot interval is set
-            long snapshptInterval = Configuration.getConfiguration().getSnapshotInterval();
-            logger.error("Reporter : ");
-            if (snapshptInterval < 0) {
+            long snapshotInterval = Configuration.getConfiguration().getSnapshotInterval();
+            logger.log(Level.SEVERE, "Reporter : ");
+            if (snapshotInterval < 0) {
                 return;
             }
             try {
@@ -64,13 +65,13 @@ public class Reporter extends AProcess {
                     Toolkit.setContents(file, Toolkit.getContents(inputStream).toByteArray());
                 }
             } catch (Exception e) {
-                logger.error("Exception writing the style sheet : ", e);
+                logger.log(Level.SEVERE, "Exception writing the style sheet : ", e);
             }
 
             String html = methodSeries(dataBase);
             writeReport(IConstants.METHOD_SERIES_FILE, html);
         } catch (Exception e) {
-            logger.error("Exception writing the reports", e);
+            logger.log(Level.SEVERE, "Exception writing the reports", e);
         }
         super.execute();
     }
@@ -92,10 +93,10 @@ public class Reporter extends AProcess {
                 //noinspection ResultOfMethodCallIgnored
                 file.createNewFile();
             }
-            logger.error("Writing report : " + file.getAbsolutePath());
+            logger.info("Writing report : " + file.getAbsolutePath());
             Toolkit.setContents(file, html.getBytes(IConstants.ENCODING));
         } catch (Exception e) {
-            logger.error("Exception writing report : " + name, e);
+            logger.log(Level.SEVERE, "Exception writing report : " + name, e);
         }
     }
 
@@ -107,7 +108,7 @@ public class Reporter extends AProcess {
      * @return the html representing the series of timings for the method
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected String methodSeries(final IDataBase dataBase) {
+    String methodSeries(final IDataBase dataBase) {
         Comparator<Method> comparator = new Comparator<Method>() {
             public int compare(Method o1, Method o2) {
                 Double o1Average = Profiler.averageMethodTime(o1);
@@ -230,12 +231,12 @@ public class Reporter extends AProcess {
             writer.write(document);
             return byteArrayOutputStream.toString(IConstants.ENCODING);
         } catch (Exception e) {
-            logger.error("Exception pretty printing the output", e);
+            logger.log(Level.SEVERE, "Exception pretty printing the output", e);
         }
         return document.asXML();
     }
 
-    protected String buildGraph(String seriesDirectory, Method<?, ?> method, List<Double> datas) {
+    String buildGraph(String seriesDirectory, Method<?, ?> method, List<Double> datas) {
         XYSeries series = new XYSeries("XYGraph", false, false);
 
         double snapshot = 0;
@@ -291,7 +292,7 @@ public class Reporter extends AProcess {
 
             return builder.toString();
         } catch (Exception e) {
-            logger.error("Exception generating the graph", e);
+            logger.log(Level.SEVERE, "Exception generating the graph", e);
         }
         return null;
     }

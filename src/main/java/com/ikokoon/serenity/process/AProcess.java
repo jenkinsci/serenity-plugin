@@ -1,7 +1,6 @@
 package com.ikokoon.serenity.process;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Logger;
 
 /**
  * This class is the process that calls the child processes in the chain. At the end of the coverage processing, i.e. when the unit tests are finished
@@ -17,7 +16,7 @@ public abstract class AProcess implements IProcess {
     /**
      * The LOGGER for the class.
      */
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = Logger.getLogger(this.getClass().getName());
     /**
      * The child process in the chain if there is one.
      */

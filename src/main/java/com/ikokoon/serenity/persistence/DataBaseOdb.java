@@ -8,11 +8,11 @@ import org.neodatis.odb.Objects;
 import org.neodatis.odb.core.query.IQuery;
 import org.neodatis.odb.core.query.criteria.Where;
 import org.neodatis.odb.impl.core.query.criteria.CriteriaQuery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This is the database class using Neodatis as the persistence tool.
@@ -23,7 +23,7 @@ import java.util.*;
  */
 public class DataBaseOdb extends DataBase {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = Logger.getLogger(this.getClass().getName());
     /**
      * The Neodatis object database for persistence.
      */
@@ -45,12 +45,12 @@ public class DataBaseOdb extends DataBase {
     public DataBaseOdb(final String dataBaseFile) {
         synchronized (DataBaseOdb.class) {
             this.dataBaseFile = dataBaseFile;
-            logger.debug("Opening ODB database on file : " + new File(dataBaseFile).getAbsolutePath());
+            logger.fine("Opening ODB database on file : " + new File(dataBaseFile).getAbsolutePath());
             try {
                 odb = ODBFactory.open(this.dataBaseFile);
                 closed = false;
             } catch (final Exception e) {
-                logger.error("Exception initialising the database : " + dataBaseFile + ", " + this, e);
+                logger.log(Level.SEVERE, "Exception initialising the database : " + dataBaseFile + ", " + this, e);
             }
         }
     }
@@ -95,7 +95,7 @@ public class DataBaseOdb extends DataBase {
                 list.add((E) object);
             }
         } catch (final Exception e) {
-            logger.error("Exception selecting objects with class : " + klass + ", " + this, e);
+            logger.log(Level.SEVERE, "Exception selecting objects with class : " + klass + ", " + this, e);
         }
         return list;
     }
@@ -111,23 +111,19 @@ public class DataBaseOdb extends DataBase {
         Set<E> set = new TreeSet<>();
         for (final Map.Entry<String, ?> mapEntry : parameters.entrySet()) {
             Object value = mapEntry.getValue();
-            logger.debug("Field : " + mapEntry.getKey() + ", " + value);
             IQuery query = new CriteriaQuery(klass, Where.like(mapEntry.getKey(), "%" + value.toString() + "%"));
             try {
                 Objects objects = odb.getObjects(query);
-                logger.debug("Objects : " + objects);
                 if (set.size() == 0) {
                     set.addAll(objects);
                 }
                 set.retainAll(objects);
-                logger.debug("Set : " + set);
             } catch (Exception e) {
-                logger.error("Exception selecting objects with class : " + klass + ", parameters : " + parameters + ", " + this, e);
+                logger.log(Level.SEVERE, "Exception selecting objects with class : " + klass + ", parameters : " + parameters + ", " + this, e);
             }
         }
         List<E> list = new ArrayList<>();
         list.addAll(set);
-        logger.debug("List : " + list);
         return list;
     }
 
@@ -137,7 +133,7 @@ public class DataBaseOdb extends DataBase {
                 odb.commit();
             }
         } catch (final Exception e) {
-            logger.error("Exception committing the ODB database : " + this, e);
+            logger.log(Level.SEVERE, "Exception committing the ODB database : " + this, e);
         }
     }
 
@@ -154,14 +150,13 @@ public class DataBaseOdb extends DataBase {
             E duplicate = (E) find(composite.getClass(), composite.getId());
             if (duplicate != null) {
                 if (duplicate != composite) {
-                    logger.warn("Attempted to persist a duplicate composite : " + composite + ", " + this);
+                    logger.warning("Attempted to persist a duplicate composite : " + composite + ", " + this);
                     return composite;
                 }
             }
-            logger.debug("Persisting composite : " + composite);
             odb.store(composite);
         } catch (final Exception e) {
-            logger.error("Exception persisting object : " + composite + ", " + this, e);
+            logger.log(Level.SEVERE, "Exception persisting object : " + composite + ", " + this, e);
         }
         commit();
         return composite;
@@ -177,7 +172,7 @@ public class DataBaseOdb extends DataBase {
                 odb.delete(composite);
             }
         } catch (final Exception e) {
-            logger.error("Exception deleting object : " + id + ", " + this, e);
+            logger.log(Level.SEVERE, "Exception deleting object : " + id + ", " + this, e);
         }
         commit();
         return composite;
@@ -196,7 +191,7 @@ public class DataBaseOdb extends DataBase {
     public synchronized void close() {
         try {
             if (isClosed()) {
-                logger.warn("Attempted to close the database again : " + this);
+                logger.warning("Attempted to close the database again : " + this);
                 return;
             }
 
@@ -206,9 +201,9 @@ public class DataBaseOdb extends DataBase {
             IDataBaseEvent dataBaseEvent = new DataBaseEvent(this, IDataBaseEvent.Type.DATABASE_CLOSE);
             IDataBase.DataBaseManager.fireDataBaseEvent(dataBaseFile, dataBaseEvent);
 
-            logger.debug("Closed database on file : " + new File(dataBaseFile).getAbsolutePath());
+            logger.fine("Closed database on file : " + new File(dataBaseFile).getAbsolutePath());
         } catch (final Exception e) {
-            logger.error("Exception closing the ODB database : " + this, e);
+            logger.log(Level.SEVERE, "Exception closing the ODB database : " + this, e);
         }
         closed = true;
     }
@@ -224,10 +219,10 @@ public class DataBaseOdb extends DataBase {
             if (objects.size() == 1) {
                 e = (E) objects.getFirst();
             } else if (objects.size() > 1) {
-                logger.warn("Id for object must be unique : " + query);
+                logger.warning("Id for object must be unique : " + query);
             }
         } catch (final Exception ex) {
-            logger.error("Exception selecting object on ODB database : " + query + ", " + this.dataBaseFile + ", " + this, ex);
+            logger.log(Level.SEVERE, "Exception selecting object on ODB database : " + query + ", " + this.dataBaseFile + ", " + this, ex);
         }
         return e;
     }
@@ -246,7 +241,6 @@ public class DataBaseOdb extends DataBase {
             return;
         }
         super.setId(composite);
-        logger.debug("Persisted object : " + composite);
         List<Composite<?, ?>> children = (List<Composite<?, ?>>) composite.getChildren();
         if (children != null) {
             for (final Composite<?, ?> child : children) {

@@ -7,10 +7,9 @@ import hudson.model.Run;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * An object in the chain of proxy objects that serve the front end in Hudson.
@@ -22,7 +21,7 @@ import java.io.IOException;
 @SuppressWarnings("rawtypes")
 public class SerenityProjectAction extends Actionable implements ProminentProjectAction {
 
-    private Logger logger = LoggerFactory.getLogger(SerenityProjectAction.class);
+    private Logger logger = Logger.getLogger(SerenityProjectAction.class.getName());
     /**
      * The real owner that generated the build.
      */
@@ -34,7 +33,7 @@ public class SerenityProjectAction extends Actionable implements ProminentProjec
      * @param owner the build that generated the actual build
      */
     public SerenityProjectAction(AbstractProject owner) {
-        logger.debug("SerenityProjectAction:");
+        logger.fine("SerenityProjectAction:");
         this.owner = owner;
     }
 
@@ -42,7 +41,7 @@ public class SerenityProjectAction extends Actionable implements ProminentProjec
      * {@inheritDoc}
      */
     public String getDisplayName() {
-        logger.debug("getDisplayName");
+        logger.fine("getDisplayName");
         return "Serenity report";
     }
 
@@ -50,7 +49,7 @@ public class SerenityProjectAction extends Actionable implements ProminentProjec
      * {@inheritDoc}
      */
     public String getIconFileName() {
-        logger.debug("getIconFileName");
+        logger.fine("getIconFileName");
         return "graph.gif";
     }
 
@@ -58,7 +57,7 @@ public class SerenityProjectAction extends Actionable implements ProminentProjec
      * {@inheritDoc}
      */
     public String getUrlName() {
-        logger.debug("getUrlName");
+        logger.fine("getUrlName");
         return "serenity";
     }
 
@@ -66,13 +65,13 @@ public class SerenityProjectAction extends Actionable implements ProminentProjec
      * {@inheritDoc}
      */
     public String getSearchUrl() {
-        logger.debug("getSearchUrl");
+        logger.fine("getSearchUrl");
         return getUrlName();
     }
 
     @JavaScriptMethod
     public ISerenityResult getLastResult() {
-        logger.debug("getLastResult");
+        logger.fine("getLastResult");
         Run build = owner.getLastStableBuild();
         if (build == null) {
             build = owner.getLastBuild();
@@ -97,7 +96,7 @@ public class SerenityProjectAction extends Actionable implements ProminentProjec
     }
 
     public void doIndex(StaplerRequest req, StaplerResponse rsp) throws IOException {
-        logger.debug("doIndex");
+        logger.fine("doIndex");
         if (hasResult()) {
             rsp.sendRedirect2("../lastBuild/serenity");
         } else {
@@ -106,7 +105,7 @@ public class SerenityProjectAction extends Actionable implements ProminentProjec
     }
 
     public boolean hasResult() {
-        logger.debug("hasResult");
+        logger.fine("hasResult");
         return getLastResult() != null;
     }
 

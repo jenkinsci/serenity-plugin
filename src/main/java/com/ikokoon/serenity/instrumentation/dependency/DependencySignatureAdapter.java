@@ -4,8 +4,8 @@ import com.ikokoon.serenity.Collector;
 import com.ikokoon.toolkit.Toolkit;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.logging.Logger;
 
 /**
  * This class visits a class signature and extracts the dependency information.
@@ -16,7 +16,8 @@ import org.slf4j.LoggerFactory;
  */
 public class DependencySignatureAdapter extends SignatureVisitor {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = Logger.getLogger(this.getClass().getName());
+
     /**
      * The name of the class to visit the byte code signature for.
      */
@@ -30,14 +31,14 @@ public class DependencySignatureAdapter extends SignatureVisitor {
     public DependencySignatureAdapter(String className) {
         super(Opcodes.ASM5);
         this.className = Toolkit.slashToDot(className);
-        logger.debug("Class name : " + className);
+        logger.fine("Class name : " + className);
     }
 
     /**
      * {@inheritDoc}
      */
     public void visitClassType(String name) {
-        logger.debug("visitClassType : " + name);
+        logger.fine("visitClassType : " + name);
         String normedName = Toolkit.slashToDot(name);
         Collector.collectEfferentAndAfferent(className, normedName);
     }
@@ -46,7 +47,7 @@ public class DependencySignatureAdapter extends SignatureVisitor {
      * {@inheritDoc}
      */
     public SignatureVisitor visitTypeArgument(char wildcard) {
-        logger.debug("visitTypeArgument : " + wildcard);
+        logger.fine("visitTypeArgument : " + wildcard);
         return this;
     }
 
@@ -54,28 +55,28 @@ public class DependencySignatureAdapter extends SignatureVisitor {
      * {@inheritDoc}
      */
     public void visitTypeVariable(String name) {
-        logger.debug("visitTypeVariable : " + name);
+        logger.fine("visitTypeVariable : " + name);
     }
 
     /**
      * {@inheritDoc}
      */
     public void visitBaseType(char descriptor) {
-        logger.debug("visitBaseType : " + descriptor);
+        logger.fine("visitBaseType : " + descriptor);
     }
 
     /**
      * {@inheritDoc}
      */
     public void visitFormalTypeParameter(String name) {
-        logger.debug("visitFormalTypeParameter : " + name);
+        logger.fine("visitFormalTypeParameter : " + name);
     }
 
     /**
      * {@inheritDoc}
      */
     public void visitInnerClassType(String name) {
-        logger.debug("visitInnerClassType : " + name);
+        logger.fine("visitInnerClassType : " + name);
     }
 
     /**
@@ -96,14 +97,14 @@ public class DependencySignatureAdapter extends SignatureVisitor {
      * {@inheritDoc}
      */
     public void visitEnd() {
-        logger.debug("visitEnd : ");
+        logger.fine("visitEnd : ");
     }
 
     /**
      * {@inheritDoc}
      */
     public SignatureVisitor visitExceptionType() {
-        logger.debug("visitExceptionType : ");
+        logger.fine("visitExceptionType : ");
         return this;
     }
 
@@ -111,7 +112,7 @@ public class DependencySignatureAdapter extends SignatureVisitor {
      * {@inheritDoc}
      */
     public SignatureVisitor visitInterface() {
-        logger.debug("visitInterface : ");
+        logger.fine("visitInterface : ");
         return this;
     }
 
@@ -119,7 +120,7 @@ public class DependencySignatureAdapter extends SignatureVisitor {
      * {@inheritDoc}
      */
     public SignatureVisitor visitInterfaceBound() {
-        logger.debug("visitInterfaceBound : ");
+        logger.fine("visitInterfaceBound : ");
         return this;
     }
 
@@ -127,7 +128,7 @@ public class DependencySignatureAdapter extends SignatureVisitor {
      * {@inheritDoc}
      */
     public SignatureVisitor visitParameterType() {
-        logger.debug("visitParameterType : ");
+        logger.fine("visitParameterType : ");
         return this;
     }
 
@@ -135,7 +136,7 @@ public class DependencySignatureAdapter extends SignatureVisitor {
      * {@inheritDoc}
      */
     public SignatureVisitor visitReturnType() {
-        logger.debug("visitReturnType : ");
+        logger.fine("visitReturnType : ");
         return this;
     }
 
@@ -143,7 +144,7 @@ public class DependencySignatureAdapter extends SignatureVisitor {
      * {@inheritDoc}
      */
     public SignatureVisitor visitSuperclass() {
-        logger.debug("visitSuperClass : ");
+        logger.fine("visitSuperClass : ");
         return this;
     }
 
@@ -151,7 +152,7 @@ public class DependencySignatureAdapter extends SignatureVisitor {
      * {@inheritDoc}
      */
     public void visitTypeArgument() {
-        logger.debug("visitArgumentType : ");
+        logger.fine("visitArgumentType : ");
     }
 
 }

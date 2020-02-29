@@ -1,13 +1,12 @@
 package com.ikokoon.toolkit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This is an abstract factory. Classes are selected for construction according to the best match between the parameters
@@ -23,7 +22,7 @@ public abstract class ObjectFactory {
     /**
      * The LOGGER for the class.
      */
-    private static Logger LOGGER = LoggerFactory.getLogger(ObjectFactory.class);
+    private static Logger LOGGER = Logger.getLogger(ObjectFactory.class.getName());
 
     /**
      * This method instantiates a class based on the solid implementation class passed as a parameter and the parameters.
@@ -45,13 +44,13 @@ public abstract class ObjectFactory {
             try {
                 return constructor.newInstance(parameters.toArray());
             } catch (IllegalArgumentException e) {
-                LOGGER.error("Exception generating the action for " + klass + ", with parameters : " + Arrays.asList(allParameters), e);
+                LOGGER.log(Level.SEVERE, "Exception generating the action for " + klass + ", with parameters : " + Arrays.asList(allParameters), e);
             } catch (InstantiationException e) {
-                LOGGER.error("Exception generating the action for " + klass + ", with parameters : " + Arrays.asList(allParameters), e);
+                LOGGER.log(Level.SEVERE, "Exception generating the action for " + klass + ", with parameters : " + Arrays.asList(allParameters), e);
             } catch (IllegalAccessException e) {
-                LOGGER.error("Exception generating the action for " + klass + ", with parameters : " + Arrays.asList(allParameters), e);
+                LOGGER.log(Level.SEVERE, "Exception generating the action for " + klass + ", with parameters : " + Arrays.asList(allParameters), e);
             } catch (InvocationTargetException e) {
-                LOGGER.error("Exception generating the action for " + klass + ", with parameters : " + Arrays.asList(allParameters), e);
+                LOGGER.log(Level.SEVERE, "Exception generating the action for " + klass + ", with parameters : " + Arrays.asList(allParameters), e);
             }
         }
         return null;
@@ -72,7 +71,7 @@ public abstract class ObjectFactory {
         Constructor<E> constructor = getConstructor(klass, allParameters);
         if (constructor != null) {
             parameters.addAll(Arrays.asList(allParameters));
-            LOGGER.debug("Got constructor : " + constructor + ", with parameters : " + parameters);
+            LOGGER.fine("Got constructor : " + constructor + ", with parameters : " + parameters);
             return constructor;
         }
 
@@ -80,24 +79,24 @@ public abstract class ObjectFactory {
         List<Object[]> permutationsList = new ArrayList<>();
         permutations.getPermutations(allParameters, permutationsList, allParameters.length);
         for (Object[] permutationParameters : permutationsList) {
-            LOGGER.debug("Permutations : " + Arrays.asList(permutationParameters));
+            LOGGER.fine("Permutations : " + Arrays.asList(permutationParameters));
             constructor = getConstructor(klass, permutationParameters);
             if (constructor != null) {
                 parameters.addAll(Arrays.asList(allParameters));
-                LOGGER.debug("Got constructor : " + constructor + ", with parameters : " + parameters);
+                LOGGER.fine("Got constructor : " + constructor + ", with parameters : " + parameters);
                 return constructor;
             }
             // Try every possible permutation of the parameters, we ignore nulls
             for (int first = 0; first < permutationParameters.length; first++) {
                 for (int last = first; last < permutationParameters.length; last++) {
                     int size = last - first;
-                    LOGGER.debug("First : " + first + ", last : " + last + ", size : " + size);
+                    LOGGER.fine("First : " + first + ", last : " + last + ", size : " + size);
                     Object[] dest = new Object[size];
                     System.arraycopy(permutationParameters, first, dest, 0, size);
                     constructor = getConstructor(klass, dest);
                     if (constructor != null) {
                         parameters.addAll(Arrays.asList(dest));
-                        LOGGER.debug("Got constructor : " + constructor + ", with parameters : " + parameters);
+                        LOGGER.fine("Got constructor : " + constructor + ", with parameters : " + parameters);
                         return constructor;
                     }
                 }
@@ -108,11 +107,11 @@ public abstract class ObjectFactory {
 
     @SuppressWarnings("unchecked")
     private static <E> Constructor<E> getConstructor(Class<E> klass, Object[] permutationParameters) {
-        LOGGER.debug("Stripped permutations : " + Arrays.asList(permutationParameters));
+        LOGGER.fine("Stripped permutations : " + Arrays.asList(permutationParameters));
         Constructor<?>[] constructors = klass.getDeclaredConstructors();
         outer:
         for (Constructor<?> constructor : constructors) {
-            LOGGER.debug("Looking at constructor : " + constructor + " for class " + klass);
+            LOGGER.fine("Looking at constructor : " + constructor + " for class " + klass);
             Class<?>[] parameterTypes = constructor.getParameterTypes();
             if (parameterTypes != null && parameterTypes.length != permutationParameters.length) {
                 continue;

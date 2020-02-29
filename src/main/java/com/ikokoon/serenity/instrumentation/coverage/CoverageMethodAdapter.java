@@ -6,8 +6,8 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.logging.Logger;
 
 /**
  * This class actually enhances the lines to call the collector class which gathers the data on the lines that are executed during the unit tests.
@@ -21,16 +21,16 @@ public class CoverageMethodAdapter extends MethodVisitor {
     /**
      * The LOGGER for the class.
      */
-    private Logger logger = LoggerFactory.getLogger(CoverageMethodAdapter.class);
+    private Logger logger = Logger.getLogger(CoverageMethodAdapter.class.getName());
 
     /**
      * The type of parameters that the {@link Collector} takes in the coverage collection method.
      */
-    protected Type stringType = Type.getType(String.class);
+    private Type stringType = Type.getType(String.class);
     /**
      * The type parameter for the line number in the {@link Collector} collect coverage method.
      */
-    protected Type intType = Type.getType(int.class);
+    private Type intType = Type.getType(int.class);
     /**
      * The array of type parameters for the {@link Collector} for the coverage method.
      */
@@ -39,15 +39,16 @@ public class CoverageMethodAdapter extends MethodVisitor {
     /**
      * The name of the class ({@link Collector}) that will be the collector for the method adapter.
      */
-    protected String collectorClassName = Type.getInternalName(Collector.class);
+    private String collectorClassName = Type.getInternalName(Collector.class);
     /**
      * The coverage method that is called on the {@link Collector} by the added instructions.
      */
-    protected String collectorMethodName = "collectCoverage";
+    @SuppressWarnings("FieldCanBeLocal")
+    private String collectorMethodName = "collectCoverage";
     /**
      * The byte code signature of the coverage method in the {@link Collector}.
      */
-    protected String collectorMethodDescription = Type.getMethodDescriptor(Type.VOID_TYPE, types);
+    private String collectorMethodDescription = Type.getMethodDescriptor(Type.VOID_TYPE, types);
 
     /**
      * The name of the class that this method adapter is enhancing the methods for.
@@ -72,12 +73,13 @@ public class CoverageMethodAdapter extends MethodVisitor {
      * @param methodName        the name of the method
      * @param methodDescription the description of the method
      */
-    public CoverageMethodAdapter(MethodVisitor methodVisitor, Integer access, String className, String methodName, String methodDescription) {
+    @SuppressWarnings("UnusedParameters")
+    public CoverageMethodAdapter(final MethodVisitor methodVisitor, final Integer access, final String className, final String methodName, final String methodDescription) {
         super(Opcodes.ASM5, methodVisitor);
         this.className = Toolkit.slashToDot(className);
         this.methodName = methodName;
         this.methodDescription = methodDescription;
-        logger.debug("Class name : " + className + ", name : " + methodName + ", desc : " + methodDescription);
+        logger.fine("Class name : " + className + ", name : " + methodName + ", desc : " + methodDescription);
     }
 
     /**
@@ -86,11 +88,12 @@ public class CoverageMethodAdapter extends MethodVisitor {
      * collector class and passed as parameters to the collector method.
      */
     public void visitLineNumber(int lineNumber, Label label) {
-        logger.debug("visitLineNumber : " + lineNumber + ", " + label + ", " + label.getOffset() + ", " + className + ", " + methodName);
+        logger.fine("visitLineNumber : " + lineNumber + ", " + label + ", " + label.getOffset() + ", " + className + ", " + methodName);
         this.mv.visitLdcInsn(className);
         this.mv.visitLdcInsn(methodName);
         this.mv.visitLdcInsn(methodDescription);
         this.mv.visitLdcInsn(lineNumber);
+        //noinspection deprecation
         this.mv.visitMethodInsn(Opcodes.INVOKESTATIC, collectorClassName, collectorMethodName, collectorMethodDescription);
         this.mv.visitLineNumber(lineNumber, label);
     }

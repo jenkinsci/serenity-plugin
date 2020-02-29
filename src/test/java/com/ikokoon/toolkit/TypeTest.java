@@ -31,14 +31,14 @@ public class TypeTest extends ATest {
         printType(type);
 
         String internalName = Type.getInternalName(Collector.class);
-        LOGGER.debug("Internal name : " + internalName);
+        LOGGER.fine("Internal name : " + internalName);
         String methodDescriptor = Type.getMethodDescriptor(Type.getType(String.class), Type.getType(Project.class), Type.getType(IDataBase.class));
-        LOGGER.debug("Method descriptor : " + methodDescriptor);
+        LOGGER.fine("Method descriptor : " + methodDescriptor);
     }
 
     private void printType(Type type) {
         if (type != null) {
-            LOGGER.warn("Type : class name : " + type.getClassName() + ", descriptor : " + type.getDescriptor() + ", internal name : "
+            LOGGER.warning("Type : class name : " + type.getClassName() + ", descriptor : " + type.getDescriptor() + ", internal name : "
                     + type.getInternalName() + ", op code : " + type.getOpcode(Opcodes.ISTORE));
         }
     }
