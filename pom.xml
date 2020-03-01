@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>serenity</artifactId>
-    <version>1.2</version>
+    <version>1.3-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <name>Jenkins Serenity plugin</name>
     <description>Code metrics and coverage plugin for Jenkins, dynamic instrumentation, and soon continuous profiling!</description>
