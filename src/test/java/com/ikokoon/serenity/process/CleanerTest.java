@@ -57,7 +57,7 @@ public class CleanerTest extends ATest implements IConstants {
 
 	@Test
 	public void execute() {
-		DataBaseToolkit.dump(dataBase, null, null);
+		// DataBaseToolkit.dump(dataBase, null, null);
 		assertTrue("", containsPattern(dataBase, className));
 		assertTrue(containsPattern(dataBase, packageName));
 		Executer.execute(new Executer.IPerform() {

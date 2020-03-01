@@ -11,6 +11,7 @@ import com.ikokoon.toolkit.Toolkit;
  * @since 01.12.09
  * @version 01.00
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class DataBase implements IDataBase {
 
 	/**

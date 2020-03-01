@@ -1,19 +1,20 @@
 package com.ikokoon.toolkit;
 
 import com.ikokoon.serenity.ATest;
-import com.ikokoon.serenity.model.*;
 import com.ikokoon.serenity.model.Class;
+import com.ikokoon.serenity.model.Composite;
+import com.ikokoon.serenity.model.Efferent;
 import com.ikokoon.serenity.model.Package;
 import com.ikokoon.serenity.persistence.DataBaseOdb;
 import com.ikokoon.serenity.persistence.DataBaseToolkit;
 import com.ikokoon.serenity.persistence.IDataBase;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import static com.ikokoon.serenity.persistence.IDataBase.DataBaseManager.getDataBase;
 
@@ -44,39 +45,37 @@ public class DataBaseToolkitTest extends ATest {
         dataBase.close();
     }
 
-    @SuppressWarnings("unchecked")
     @Test
+    @SuppressWarnings("unchecked")
     public void collectEfferentAndAfferent() {
-        DataBaseToolkit.dump(dataBase, new DataBaseToolkit.ICriteria() {
-            @SuppressWarnings("rawtypes")
+        Class source = new Class();
+        source.setName("io.ronin.packageOne.ClassOne");
+        source.setId(Toolkit.hash(source.getName()));
+
+        Class target = new Class();
+        target.setName("io.ronin.packageTwo.ClassTwo");
+        target.setEfferent(Collections.singletonList(new Efferent("<e:io.ronin.packageOne>")));
+        target.setId(Toolkit.hash(target.getName()));
+
+        List<Package> targetPackages = new ArrayList<>();
+        Package targetPackage = new Package();
+        targetPackage.setChildren(Collections.singletonList(target));
+        targetPackages.add(targetPackage);
+
+        dataBase.persist(source);
+        dataBase.persist(target);
+
+        DataBaseToolkit.collectEfferentAndAfferent(source, targetPackages);
+
+        /*DataBaseToolkit.dump(dataBase, new DataBaseToolkit.ICriteria() {
             public boolean satisfied(final Composite<?, ?> composite) {
                 return Boolean.TRUE;
             }
-        }, "Database dump : ");
+        }, "Database dump : ");*/
 
-        Class class_ = new Class();
-        class_.setId(new Random().nextLong());
-        dataBase.remove(Class.class, class_.getId());
-        class_.setName("io.ronin.packageOne.ClassOne");
-        class_.setEfferent(Collections.singletonList(new Efferent("<e:io.ronin.packageTwo>")));
-
-        Class child = new Class();
-        child.setId(new Random().nextLong());
-        dataBase.remove(Class.class, child.getId());
-        child.setName("io.ronin.packageTwo.ClassTwo");
-        child.setAfferent(Collections.singletonList(new Afferent("<a:io.ronin.packageOne>")));
-
-        List<Package> packages = new ArrayList<>();
-        Package package_ = new Package();
-        package_.setChildren(Collections.singletonList(child));
-        packages.add(package_);
-
-        DataBaseToolkit.collectEfferentAndAfferent(class_, packages);
-
-        dataBase.remove(Class.class, class_.getId());
-        dataBase.remove(Class.class, child.getId());
-
-        // TODO: Verify the result, still looks strange
+        Class sourceWithEfferent = dataBase.find(Class.class, source.getId());
+        // We expect that the efferent item in the target class has created an afferent item in 'our' class
+        Assert.assertEquals(1, sourceWithEfferent.getEfferent().size());
     }
 
 }

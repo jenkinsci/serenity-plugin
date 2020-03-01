@@ -62,7 +62,7 @@ public class ProfilingClassAdviceAdapter extends ClassVisitor {
         }
 
         if (isAbstract) {
-            logger.info("Abstract method : " + access + " : " + methodName);
+            logger.fine("Abstract method : " + access + " : " + methodName);
             return methodVisitor;
         }
 

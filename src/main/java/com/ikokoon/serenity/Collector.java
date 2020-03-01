@@ -207,13 +207,13 @@ public final class Collector implements IConstants {
     }
 
     /**
-     * Collects the packages that the class references and adds them to the document.
+     * Collects the packages that the class references and adds them to the data.
      *
-     * @param className        the name of the classes
-     * @param targetClassNames the referenced class names
+     * @param sourceClassName        the name of the class in the source application
+     * @param targetClassNames the class names that are found in the source class, i.e. the efferent classes
      */
-    public static void collectEfferentAndAfferent(final String className, final String... targetClassNames) {
-        String packageName = Toolkit.classNameToPackageName(className);
+    public static void collectEfferentAndAfferent(final String sourceClassName, final String... targetClassNames) {
+        String sourcePackageName = Toolkit.classNameToPackageName(sourceClassName);
         for (String targetClassName : targetClassNames) {
             // Is the target name outside the package for this class
             String targetPackageName = Toolkit.classNameToPackageName(targetClassName);
@@ -221,25 +221,19 @@ public final class Collector implements IConstants {
                 continue;
             }
             // Is the target and the source the same package name
-            if (targetPackageName.equals(packageName)) {
+            if (targetPackageName.equals(sourcePackageName)) {
                 continue;
             }
             // Exclude java.lang classes and packages
-            if (Configuration.getConfiguration().excluded(packageName) || Configuration.getConfiguration().excluded(targetPackageName)) {
+            if (Configuration.getConfiguration().excluded(sourcePackageName) || Configuration.getConfiguration().excluded(targetPackageName)) {
                 continue;
             }
             // Add the target package name to the afferent packages for this package
-            Class<Package<?, ?>, Method<?, ?>> klass = getClass(className);
-            Afferent afferent = getAfferent(klass, targetPackageName);
-            if (!klass.getAfferent().contains(afferent)) {
-                klass.getAfferent().add(afferent);
-            }
+            Class<Package<?, ?>, Method<?, ?>> sourceClass = getClass(sourceClassName);
+            getEfferent(sourceClass, targetPackageName);
             // Add this package to the efferent packages of the target
             Class<Package<?, ?>, Method<?, ?>> targetClass = getClass(targetClassName);
-            Efferent efferent = getEfferent(targetClass, packageName);
-            if (!targetClass.getEfferent().contains(efferent)) {
-                targetClass.getEfferent().add(efferent);
-            }
+            getAfferent(targetClass, sourcePackageName);
         }
     }
 

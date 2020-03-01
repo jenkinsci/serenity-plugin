@@ -31,14 +31,6 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
     private Set<Efferent> efferent = new TreeSet<>();
     private Set<Afferent> afferent = new TreeSet<>();
 
-    public Package() {
-    }
-
-    public Package(final Set<Efferent> efferent, final Set<Afferent> afferent) {
-        this.efferent = efferent;
-        this.afferent = afferent;
-    }
-
     public String getName() {
         return name;
     }

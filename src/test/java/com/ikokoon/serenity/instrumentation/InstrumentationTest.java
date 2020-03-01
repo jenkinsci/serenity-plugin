@@ -98,7 +98,7 @@ public class InstrumentationTest extends ATest {
 
         Long joinTime = 1000l;
         Toolkit.executeMethod(target, joinMethodName, new Object[]{joinTime, 0});
-        DataBaseToolkit.dump(dataBase, null, "Dump after profiling");
+        // DataBaseToolkit.dump(dataBase, null, "Dump after profiling");
 
         Method<Class<?, ?>, Line<?, ?>> method = dataBase.find(Method.class, Arrays.asList(className, joinMethodName, joinMethodDescription));
         LOGGER.warning("Method : " + method);
@@ -210,7 +210,7 @@ public class InstrumentationTest extends ATest {
         Thread.currentThread().setContextClassLoader(loader);
         Object target = loader.loadClass(className).newInstance();
         Toolkit.executeMethod(target, methodName, new Object[]{"", "", "", 1, 2});
-        DataBaseToolkit.dump(dataBase, null, "Dump after profiling");
+        // DataBaseToolkit.dump(dataBase, null, "Dump after profiling");
 
         Method<Class<?, ?>, Line<?, ?>> method = dataBase.find(Method.class, Arrays.asList(className, methodName, methodDescription));
         LOGGER.warning("Method : " + method);

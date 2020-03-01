@@ -193,7 +193,7 @@ public final class DataBaseRam extends DataBase {
      *
      * @param composite the object to set the id for
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked", "rawtypes", "WeakerAccess"})
     synchronized final void setIds(Composite<?, ?> composite) {
         if (composite == null) {
             return;

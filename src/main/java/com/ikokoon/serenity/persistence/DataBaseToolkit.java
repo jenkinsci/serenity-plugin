@@ -64,7 +64,7 @@ public final class DataBaseToolkit {
         String dumpData = Configuration.getConfiguration().getProperty(IConstants.DUMP);
         LOGGER.info("Dump data : " + dumpData + ", " + System.getProperties());
         if (dumpData != null && "true".equals(dumpData.trim())) {
-            DataBaseToolkit.dump(dataBase, null, null);
+            // DataBaseToolkit.dump(dataBase, null, null);
         }
 
         processStart = System.currentTimeMillis();
@@ -158,12 +158,28 @@ public final class DataBaseToolkit {
         }
     }
 
+    /**
+     * This function looks into the class entities from the other database, if there is an efferent item from a class in the
+     * other database that references this class then we create an afferent item in this class. We don't need to create the efferent
+     * items in this class because we have scanned it completely already in this VM.
+     *
+     * @param sourceClass    the source class that we are looking for efferent references from the target
+     * @param targetPackages the target package to look for references to this class
+     */
     @SuppressWarnings({"unchecked", "rawtypes", "UnusedAssignment", "WeakerAccess"})
-    public static synchronized void collectEfferentAndAfferent(final Class klass, final List<Package> packages) {
-        for (final Package pakkage : packages) {
-            List<Class> children = pakkage.getChildren();
-            for (final Class child : children) {
-                Collector.collectEfferentAndAfferent(klass.getName(), child.getName());
+    public static synchronized void collectEfferentAndAfferent(final Class sourceClass, final List<Package> targetPackages) {
+        String sourcePackageName = Toolkit.classNameToPackageName(sourceClass.getName());
+        for (final Package targetPackage : targetPackages) {
+            List<Class> targetClasses = targetPackage.getChildren();
+            for (final Class targetClass : targetClasses) {
+                // If the target contains efferent reference to this class then add an afferent in this class, in other
+                // words the target has a dependency on this class(efferent), so this class is depended upon by the target(afferent)
+                List<Efferent> efferents = targetClass.getEfferent();
+                for (final Efferent targetEfferent : efferents) {
+                    if (targetEfferent.getName().contains(sourcePackageName)) {
+                        Collector.collectEfferentAndAfferent(sourceClass.getName(), targetClass.getName());
+                    }
+                }
             }
         }
     }
