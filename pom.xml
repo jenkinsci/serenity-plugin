@@ -13,7 +13,7 @@
     <packaging>hpi</packaging>
     <name>Jenkins Serenity plugin</name>
     <description>Code metrics and coverage plugin for Jenkins, dynamic instrumentation, and soon continuous profiling!</description>
-    <url>https://wiki.jenkins-ci.org/display/JENKINS/Serenity+Plugin</url>
+    <url>https://github.com/jenkinsci/serenity-plugin</url>
 
     <scm>
         <connection>scm:git:ssh://git@github.com/jenkinsci/serenity-plugin.git</connection>
@@ -37,7 +37,7 @@
 
     <developers>
         <developer>
-            <id>michael.couck</id>
+            <id>michael_couck</id>
             <name>Michael Couck</name>
             <email>michael.couck@gmail.com</email>
             <timezone>Gent</timezone>
