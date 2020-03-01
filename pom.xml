@@ -19,7 +19,7 @@
         <connection>scm:git:ssh://git@github.com/jenkinsci/serenity-plugin.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/jenkinsci/serenity-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/serenity-plugin</url>
-        <tag>serenity-1.2</tag>
+        <tag>serenity-1.3</tag>
     </scm>
 
     <licenses>
