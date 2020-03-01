@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>serenity</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
     <packaging>hpi</packaging>
     <name>Jenkins Serenity plugin</name>
     <description>Code metrics and coverage plugin for Jenkins, dynamic instrumentation, and soon continuous profiling!</description>
@@ -19,7 +19,7 @@
         <connection>scm:git:ssh://git@github.com/jenkinsci/serenity-plugin.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/jenkinsci/serenity-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/serenity-plugin</url>
-        <tag>head</tag>
+        <tag>serenity-1.2</tag>
     </scm>
 
     <licenses>
