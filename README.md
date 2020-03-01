@@ -155,8 +155,8 @@ sensitive.
 
 This is a screen shot of the Serenity trend result and the report in Jenkins.
 
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Main page")
+![Main page](https://github.com/jenkinsci/serenity-plugin/blob/master/releases/images/serenity-floating-1200.jpeg "Main page")
 
 Code tree and source coverage visualized.
 
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Detail page")
+![Details page](https://github.com/jenkinsci/serenity-plugin/blob/master/releases/images/serenity-report-1200.jpeg "Detail page")
