@@ -1,5 +1,6 @@
 package com.ikokoon.serenity.model;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 
 /**
@@ -33,16 +34,8 @@ public class Afferent extends Composite<Object, Object> implements Comparable<Af
         return getId() + ":" + name;
     }
 
-    public int compareTo(@SuppressWarnings("NullableProblems") final Afferent o) {
-        int comparison = 0;
-        if (this.getId() != null && o.getId() != null) {
-            comparison = this.getId().compareTo(o.getId());
-        } else {
-            if (this.getName() != null && o.getName() != null) {
-                comparison = this.getName().compareTo(o.getName());
-            }
-        }
-        return comparison;
+    public int compareTo(@Nonnull final Afferent o) {
+        return getId() != null && o.getId() != null ? getId().compareTo(o.getId()) : 0;
     }
 
 }

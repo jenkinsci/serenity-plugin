@@ -1,5 +1,6 @@
 package com.ikokoon.serenity.model;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -229,16 +230,8 @@ public class Method<E, F> extends Composite<Class<?, ?>, Line<?, ?>> implements 
         setTotalTime(0);
     }
 
-    public int compareTo(Method<?, ?> o) {
-        int comparison = 0;
-        if (this.getId() != null && o.getId() != null) {
-            comparison = this.getId().compareTo(o.getId());
-        } else {
-            if (this.getName() != null && o.getName() != null) {
-                comparison = this.getName().compareTo(o.getName());
-            }
-        }
-        return comparison;
+    public int compareTo(@Nonnull final Method<?, ?> o) {
+        return getId() != null && o.getId() != null ? getId().compareTo(o.getId()) : 0;
     }
 
 }

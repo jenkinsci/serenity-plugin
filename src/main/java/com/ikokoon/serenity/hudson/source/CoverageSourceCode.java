@@ -76,7 +76,7 @@ public class CoverageSourceCode implements ISourceCode {
             try {
                 // Convert the Java source to HTML
                 InputStream inputStream = new ByteArrayInputStream(source.getBytes(IConstants.ENCODING));
-                JavaSource javaSource = javaSourceParser.parse(new InputStreamReader(inputStream));
+                JavaSource javaSource = javaSourceParser.parse(new InputStreamReader(inputStream, IConstants.ENCODING));
                 JavaSource2HTMLConverter converter = new JavaSource2HTMLConverterExt(klass);
                 StringWriter writer = new StringWriter();
                 converter.convert(javaSource, options, writer);

@@ -2,12 +2,10 @@ package com.ikokoon.serenity.instrumentation;
 
 import com.ikokoon.serenity.ATest;
 import com.ikokoon.serenity.IConstants;
-import com.ikokoon.serenity.instrumentation.profiling.ProfilingClassAdapter;
 import com.ikokoon.serenity.instrumentation.profiling.ProfilingClassAdviceAdapter;
 import com.ikokoon.serenity.model.Class;
 import com.ikokoon.serenity.model.Line;
 import com.ikokoon.serenity.model.Method;
-import com.ikokoon.serenity.persistence.DataBaseToolkit;
 import com.ikokoon.toolkit.Toolkit;
 import org.junit.Test;
 import org.mockito.asm.Type;
@@ -172,9 +170,9 @@ public class InstrumentationTest extends ATest {
         source.write(sourceBytes);
         ClassReader reader = new ClassReader(classBytes);
         ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
-        ProfilingClassAdapter profilingClassAdapter = new ProfilingClassAdapter(writer, className);
+        ProfilingClassAdviceAdapter profilingClassAdapter = new ProfilingClassAdviceAdapter(writer, className);
 
-        reader.accept(profilingClassAdapter, 0);
+        reader.accept(profilingClassAdapter, ClassReader.EXPAND_FRAMES);
         classBytes = writer.toByteArray();
 
         String classPath = Toolkit.dotToSlash(this.className);

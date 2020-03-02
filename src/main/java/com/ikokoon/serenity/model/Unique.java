@@ -23,6 +23,6 @@ public @interface Unique {
 	 * 
 	 * @return the names of the unique field combination in the object
 	 */
-	public String[] fields();
+	String[] fields();
 
 }

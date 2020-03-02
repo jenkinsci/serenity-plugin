@@ -24,6 +24,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -185,7 +186,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
                         ISourceCode sourceCode = new CoverageSourceCode(clazz, clazz.getSource());
                         String htmlSource = sourceCode.getSource();
                         // printStream.println("Creating coverage source : " + coverageSourceCodeFile.getAbsolutePath());
-                        Toolkit.setContents(coverageSourceCodeFile, htmlSource.getBytes());
+                        Toolkit.setContents(coverageSourceCodeFile, htmlSource.getBytes(IConstants.ENCODING));
                     }
                 } catch (final Exception e) {
                     printStream.println("Unable to copy Serenity database file from : " + sourcePath + ", to : " + targetPath);
@@ -289,7 +290,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
                         LOGGER.fine("Writing source to : " + file);
                         ISourceCode sourceCode = new CoverageSourceCode(clazz, source);
                         String htmlSource = sourceCode.getSource();
-                        Toolkit.setContents(file, htmlSource.getBytes());
+                        Toolkit.setContents(file, htmlSource.getBytes(IConstants.ENCODING));
                     } else {
                         LOGGER.warning("Source file does not exist : " + file);
                     }
@@ -379,7 +380,7 @@ public class SerenityPublisher extends Recorder implements Serializable {
          */
         @Override
         @SuppressWarnings("deprecation")
-        public SerenityPublisher newInstance(final StaplerRequest req, final JSONObject json) throws FormException {
+        public SerenityPublisher newInstance(final StaplerRequest req, @Nonnull final JSONObject json) throws FormException {
             return req.bindParameters(SerenityPublisher.class, "serenity.");
         }
     }

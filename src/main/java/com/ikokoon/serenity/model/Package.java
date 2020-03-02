@@ -1,5 +1,6 @@
 package com.ikokoon.serenity.model;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.TreeSet;
@@ -147,17 +148,8 @@ public class Package<E, F> extends Composite<Project<?, ?>, Class<?, ?>> impleme
         return getId() + ":" + name;
     }
 
-    @SuppressWarnings("NullableProblems")
-    public int compareTo(final Package<?, ?> o) {
-        int comparison = 0;
-        if (this.getId() != null && o.getId() != null) {
-            comparison = this.getId().compareTo(o.getId());
-        } else {
-            if (this.getName() != null && o.getName() != null) {
-                comparison = this.getName().compareTo(o.getName());
-            }
-        }
-        return comparison;
+    public int compareTo(@Nonnull final Package<?, ?> o) {
+        return getId() != null && o.getId() != null ? getId().compareTo(o.getId()) : 0;
     }
 
 }

@@ -52,11 +52,7 @@ public class Snapshot<E, F> extends Composite<Package<?, ?>, Method<?, ?>> imple
 	}
 
 	public int compareTo(Class<?, ?> o) {
-		int comparison = 0;
-		if (this.getId() != null && o.getId() != null) {
-			comparison = this.getId().compareTo(o.getId());
-		}
-		return comparison;
+		return getId() != null && o.getId() != null ? getId().compareTo(o.getId()) : 0;
 	}
 
 }

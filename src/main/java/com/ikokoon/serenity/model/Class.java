@@ -1,5 +1,6 @@
 package com.ikokoon.serenity.model;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,17 +170,8 @@ public class Class<E, F> extends Composite<Package<?, ?>, Method<?, ?>> implemen
 		return getId() + ":" + name;
 	}
 
-	@SuppressWarnings("NullableProblems")
-	public int compareTo(Class<?, ?> o) {
-		int comparison = 0;
-		if (this.getId() != null && o.getId() != null) {
-			comparison = this.getId().compareTo(o.getId());
-		} else {
-			if (this.getName() != null && o.getName() != null) {
-				comparison = this.getName().compareTo(o.getName());
-			}
-		}
-		return comparison;
+	public int compareTo(@Nonnull final Class<?, ?> o) {
+		return getId() != null && o.getId() != null ? getId().compareTo(o.getId()) : 0;
 	}
 
 }

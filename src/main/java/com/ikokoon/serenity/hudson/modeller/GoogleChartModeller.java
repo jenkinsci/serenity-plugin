@@ -79,7 +79,7 @@ public class GoogleChartModeller implements IModeller {
     }
 
     @SuppressWarnings("WeakerAccess")
-    List<Map<String, Object>> getColumns(final String[] keys, final Object[]... values) {
+    List<Map<String, Object>> getColumns(final String[] keys, final Object[][] values) {
         List<Map<String, Object>> columns = new ArrayList<>();
         for (final Object[] value : values) {
             Map<String, Object> column = new HashMap<>();

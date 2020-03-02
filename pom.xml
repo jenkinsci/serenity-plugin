@@ -30,8 +30,8 @@
     </licenses>
 
     <properties>
-        <main-class>com.ikokoon.serenity.Messenger</main-class>
-        <pre-main-class>com.ikokoon.serenity.Transformer</pre-main-class>
+        <java.level>8</java.level>
+        <spotbugs.failOnError>false</spotbugs.failOnError>
         <project.build.sourceEncoding>UTF8</project.build.sourceEncoding>
     </properties>
 
@@ -82,16 +82,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <configuration>
-                    <xmlOutput>true</xmlOutput>
-                    <findbugsXmlOutput>true</findbugsXmlOutput>
-                    <xmlOutputDirectory>serenity</xmlOutputDirectory>
-                    <failOnError>false</failOnError>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.2</version>
@@ -108,24 +98,37 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- This is for dynamic manifest generation, but just easier by hand. -->
-            <!--<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.1</version>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
                 <configuration>
-                    <verbose>true</verbose>
-                    <archive>
-                        <index>true</index>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>${main-class}</mainClass>
-                            <preMainClass>${pre-main-class}</preMainClass>
-                        </manifest>
-                    </archive>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
-            </plugin>-->
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>3.0.3</version>
+                <executions>
+                    <execution>
+                        <id>findbugs</id>
+                        <phase>site</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <xmlOutput>true</xmlOutput>
+                            <findbugsXmlOutput>false</findbugsXmlOutput>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <failOnError>false</failOnError>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -168,26 +171,26 @@
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
+            <url>https://repo.jenkins-ci.org/public/</url>
         </repository>
         <repository>
             <id>repo.jenkins-ci.org-war</id>
-            <url>http://repo.jenkins-ci.org/repo/org/jenkins-ci/main/jenkins-war/</url>
+            <url>https://repo.jenkins-ci.org/repo/org/jenkins-ci/main/jenkins-war/</url>
         </repository>
         <repository>
             <id>repo.jenkins-ci.org-plugins</id>
-            <url>http://repo.jenkins-ci.org/repo/org/jenkins-ci/plugins/</url>
+            <url>https://repo.jenkins-ci.org/repo/org/jenkins-ci/plugins/</url>
         </repository>
         <repository>
             <id>repo.jenkins-ci.org-mirror</id>
-            <url>http://mirrors.jenkins-ci.org/war/</url>
+            <url>https://mirrors.jenkins-ci.org/war/</url>
         </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
             <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
+            <url>https://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
 </project>

@@ -1,4 +1,4 @@
-package com.ikokoon.serenity.instrumentation.profiling;
+package trash;
 
 import com.ikokoon.serenity.IConstants;
 import com.ikokoon.toolkit.Toolkit;

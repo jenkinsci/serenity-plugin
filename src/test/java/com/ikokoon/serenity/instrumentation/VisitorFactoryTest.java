@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayOutputStream;
 
+import com.ikokoon.serenity.instrumentation.profiling.ProfilingClassAdviceAdapter;
 import org.junit.Before;
 import org.junit.Test;
 import org.objectweb.asm.ClassVisitor;
@@ -15,7 +16,6 @@ import com.ikokoon.serenity.instrumentation.complexity.ComplexityClassAdapter;
 import com.ikokoon.serenity.instrumentation.complexity.ComplexityMethodAdapter;
 import com.ikokoon.serenity.instrumentation.coverage.CoverageClassAdapter;
 import com.ikokoon.serenity.instrumentation.dependency.DependencyClassAdapter;
-import com.ikokoon.serenity.instrumentation.profiling.ProfilingClassAdapter;
 
 public class VisitorFactoryTest extends ATest {
 
@@ -34,7 +34,7 @@ public class VisitorFactoryTest extends ATest {
         byte[] classBytes = getClassBytes(className);
         byte[] sourceBytes = getSourceBytes(className);
         Class[] adapters = new Class[]{CoverageClassAdapter.class, ComplexityClassAdapter.class, DependencyClassAdapter.class,
-                ProfilingClassAdapter.class};
+                ProfilingClassAdviceAdapter.class};
 
         ByteArrayOutputStream source = new ByteArrayOutputStream();
         source.write(sourceBytes);
